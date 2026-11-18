@@ -28,7 +28,7 @@ dependencyResolutionManagement {
 rootProject.name = "VerityCamera"
 
 // Pure-JVM modules: the colour pipeline and the Claude "director". Build and test anywhere.
-include(":core", ":director")
+include(":core", ":director", ":inpaint")
 
 // Android app: only included when an Android SDK is available, so the JVM modules
 // stay buildable on CI boxes / containers without one.

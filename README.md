@@ -34,23 +34,43 @@ Offline (no key, no network, refusal, malformed answer) the deterministic auto-g
 
 No full-resolution float buffers: a 12 MP frame is processed in one row-parallel pass over packed ARGB.
 
+## Object and person removal (explicit request only)
+
+The brief allows removal "only when explicitly requested", so nothing is ever removed automatically.
+
+**Selecting** (Remove objects tab):
+- *Brush / Unselect* — paint over what should go; trim with Unselect.
+- *AI suggestions* — Claude (`director/…/RemovalScout.kt`) proposes up to 6 distractions (photobombers behind the subject, litter, wires, bins, signs) as boxes. It is instructed never to propose the main subject, anyone in the group, clothing, jewellery, or religious and cultural elements. Tap a chip to accept.
+- *Describe what to remove* — "the man in the red shirt on the left": Claude locates it and pre-selects it. Boxes are approximate; check and trim before removing.
+
+**Filling** (`core/…/ObjectRemover.kt`, all on the phone):
+1. Selection grown by ~0.4% of the long edge so outlines, hair and contact shadows go too.
+2. Optional neural pass: LaMa (ONNX, ~200 MB, downloaded from Settings) sees a context crop at 512 px and proposes the structure behind the object.
+3. PatchMatch completion (`PatchInpainter.kt`: multi-scale PatchMatch + EM voting + dominant self-similarity offsets) rebuilds the region at full resolution from real patches of the same photo, guided by the neural structure if present. This replaces the model's soft low-res texture with the scene's own grain.
+4. Only selected pixels are written; every other pixel is bit-identical (tested).
+
+Undo is one level. Saved files carry `Edited with Verity: … object removal` in their MediaStore description; originals are never overwritten.
+
+Measured (JVM, 4 cores): 80×100 px object on a brick wall, 0.25 s, fill error 11.2 vs 26.1 for an ideal flat fill; 12 MP frame with a 400×900 px person-sized hole, 5.5 s. Phones will be slower.
+
 ## What it will not do (deliberately)
 
 - **"4K" is interpolation, not super-resolution.** Phones already shoot 12 MP (> 4K UHD), so most photos are not upscaled at all. Small/old images are resized cleanly; no detail is invented, per brief §9.
-- **Scratch removal on old photos** needs inpainting, i.e. inventing pixels. Not implemented; colour, contrast and noise are restored.
-- **"Remove distracting elements"** is not implemented (same reason; brief says only on explicit request).
+- **Scratches on old photos are not auto-detected.** Paint over them in Remove objects; the fill borrows from the surrounding print.
+- **Removal is never automatic.** Even AI suggestions need a tap.
 
 ## Modules
 
 - `core/` — pure Kotlin/JVM pipeline. `gradle :core:test` (10 tests: cast removal, skin hue drift < 4°, edge positions, saturation ceiling, curve monotonicity, 4K geometry, avatar circle fit; writes `core/build/visual/before.png|after.png`).
 - `director/` — Claude integration via the official `anthropic-java` SDK: `claude-opus-5-5`, structured JSON output, low effort, server-side refusal fallback, image input. `gradle :director:test`.
+- `inpaint/` — ONNX Runtime wrapper for LaMa-style models (`OnnxInpainter`). Tested against a toy model with LaMa's exact I/O signature; the real model's output quality is not tested here.
 - `app/` — Android (Compose + CameraX): capture, gallery import, "Share to Verity", before/after drag comparison, strength slider (blends parameters, not pixels), Save 4K, Save profile 1:1 to `Pictures/Verity`. Settings hold the API key in Keystore-encrypted prefs.
 
 ## Build
 
 ```bash
 # JVM modules (no Android SDK needed)
-./gradlew :core:test :director:test
+./gradlew :core:test :director:test :inpaint:test
 
 # Android app: needs an Android SDK (local.properties sdk.dir=… or ANDROID_HOME)
 ./gradlew :app:assembleDebug

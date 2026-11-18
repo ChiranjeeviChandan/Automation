@@ -10,6 +10,11 @@ import com.verity.core.SceneAnalyzer
 import com.verity.core.SceneStats
 import com.verity.director.Direction
 import com.verity.director.GradeDirector
+import com.verity.director.RemovalScout
+import com.verity.director.ScoutResult
+import com.verity.core.Mask
+import com.verity.core.ObjectRemover
+import kotlin.math.max
 
 /** Everything decided about one photo; rendering it at any size is then deterministic. */
 data class Plan(
@@ -18,11 +23,47 @@ data class Plan(
     val faces: List<NormRect>,
 )
 
+/** A brush stroke in normalised image coordinates. [radius] is a fraction of the long edge. */
+data class Stroke(val points: List<Pair<Float, Float>>, val radius: Float, val erase: Boolean)
+
+/** Rasterise a selection at any resolution: boxes first, then strokes in order (so the eraser can trim boxes). */
+fun selectionMask(w: Int, h: Int, boxes: List<NormRect>, strokes: List<Stroke>): Mask {
+    val m = Mask(w, h)
+    boxes.forEach { m.rect(it.toPixels(w, h)) }
+    val long = max(w, h).toFloat()
+    strokes.forEach { s -> m.stroke(s.points.map { (x, y) -> x * w to y * h }, s.radius * long, value = !s.erase) }
+    return m
+}
+
 /** Blocking calls: run on Dispatchers.Default. */
-class EnhanceEngine(private val settings: Settings) {
+class EnhanceEngine(private val settings: Settings, val models: ModelStore) {
 
     private var director: GradeDirector? = null
+    private var scout: RemovalScout? = null
     private var directorKey: String? = null
+
+    val aiAvailable get() = settings.aiEnabled && settings.apiKey.isNotBlank()
+
+    /** Claude suggests distractions, or locates what [request] describes. */
+    fun scout(image: Bitmap, request: String?): ScoutResult {
+        if (!aiAvailable) return ScoutResult(emptyList(), "Add an Anthropic API key in Settings to use AI find. You can still paint over objects.", ok = false)
+        directorFor(settings.apiKey)
+        return scout!!.scout(Bitmaps.jpeg(Bitmaps.scaled(image, 1280), 85), request)
+    }
+
+    /** Full-resolution removal. Returns the new image and whether the neural model contributed. */
+    fun remove(image: Bitmap, boxes: List<NormRect>, strokes: List<Stroke>): Pair<Bitmap, Boolean> {
+        val src = Bitmaps.toArgb(image)
+        val sel = selectionMask(src.width, src.height, boxes, strokes)
+        if (sel.isEmpty()) return image to false
+        val neural = models.inpainter()
+        val res = ObjectRemover.remove(src, sel, neural, neural?.inputSize ?: 512)
+        return Bitmaps.fromArgb(res.image) to res.usedNeural
+    }
+
+    /** After an edit, re-measure the image but keep the chosen grade (no second AI call). */
+    fun restat(plan: Plan, image: Bitmap): Plan =
+        plan.copy(stats = SceneAnalyzer.analyze(Bitmaps.toArgb(image)), faces = Bitmaps.detectFaces(image))
 
     fun plan(original: Bitmap): Plan {
         val faces = Bitmaps.detectFaces(original)
@@ -66,7 +107,9 @@ class EnhanceEngine(private val settings: Settings) {
     }
 
     private fun directorFor(key: String): GradeDirector {
-        if (director == null || directorKey != key) { director = GradeDirector(key); directorKey = key }
+        if (director == null || directorKey != key) {
+            director = GradeDirector(key); scout = RemovalScout(key); directorKey = key
+        }
         return director!!
     }
 }

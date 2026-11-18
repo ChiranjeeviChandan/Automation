@@ -40,6 +40,8 @@ android {
 
 dependencies {
     implementation(project(":director"))
+    implementation(project(":inpaint"))
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.20.0")
 
     val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
     implementation(composeBom)

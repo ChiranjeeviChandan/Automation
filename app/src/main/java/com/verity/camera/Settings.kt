@@ -28,7 +28,17 @@ class Settings(context: Context) {
         get() = prefs.getBoolean("ai_enabled", true)
         set(v) = prefs.edit().putBoolean("ai_enabled", v).apply()
 
+    /** Where the optional on-device LaMa ONNX model is downloaded from. */
+    var modelUrl: String
+        get() = prefs.getString("model_url", DEFAULT_MODEL_URL).orEmpty().ifBlank { DEFAULT_MODEL_URL }
+        set(v) = prefs.edit().putString("model_url", v.trim()).apply()
+
     var upscaleTo4k: Boolean
         get() = prefs.getBoolean("upscale_4k", true)
         set(v) = prefs.edit().putBoolean("upscale_4k", v).apply()
+
+    companion object {
+        /** Public LaMa export with a fixed 512x512 [image, mask] -> image signature. */
+        const val DEFAULT_MODEL_URL = "https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx"
+    }
 }

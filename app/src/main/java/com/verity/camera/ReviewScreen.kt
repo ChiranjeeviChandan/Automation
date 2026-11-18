@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -53,11 +54,25 @@ fun ReviewScreen(state: UiState, vm: VerityViewModel) {
             if (state.plan?.direction?.fellBack == false) Text("AI graded", color = Color(0xFFE8B26A), fontSize = 12.sp, modifier = Modifier.padding(end = 12.dp))
         }
 
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(selected = state.mode == Mode.GRADE, onClick = { vm.setMode(Mode.GRADE) }, label = { Text("Enhance") })
+            FilterChip(selected = state.mode == Mode.ERASE, onClick = { vm.setMode(Mode.ERASE) }, label = { Text("Remove objects") })
+        }
+
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             val before = state.originalPreview
             val after = state.gradedPreview
-            if (before != null) CompareView(before, after)
+            if (state.mode == Mode.ERASE) { if (before != null) EraseCanvas(before, state.erase, vm::addStroke) }
+            else if (before != null) CompareView(before, after)
         }
+
+        if (state.mode == Mode.ERASE) EraseControls(state, vm) else GradeControls(state, vm)
+    }
+}
+
+@Composable
+private fun GradeControls(state: UiState, vm: VerityViewModel) {
+    Column {
 
         state.plan?.direction?.rationale?.takeIf { it.isNotBlank() }?.let {
             Text(it, color = Color(0xFFBDBDBD), fontSize = 13.sp, lineHeight = 18.sp, modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp))

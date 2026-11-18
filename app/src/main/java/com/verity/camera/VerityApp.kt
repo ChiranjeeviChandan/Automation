@@ -1,6 +1,8 @@
 package com.verity.camera
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -26,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -52,19 +56,20 @@ fun VerityApp(vm: VerityViewModel) {
         }
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(bottom = 120.dp))
     }
-    if (state.showSettings) SettingsDialog(vm.settings) { vm.toggleSettings(false) }
+    if (state.showSettings) SettingsDialog(vm.settings, state, vm) { vm.toggleSettings(false) }
 }
 
 @Composable
-private fun SettingsDialog(settings: Settings, onDismiss: () -> Unit) {
+private fun SettingsDialog(settings: Settings, state: UiState, vm: VerityViewModel, onDismiss: () -> Unit) {
     var key by remember { mutableStateOf(settings.apiKey) }
     var ai by remember { mutableStateOf(settings.aiEnabled) }
     var uhd by remember { mutableStateOf(settings.upscaleTo4k) }
+    var modelUrl by remember { mutableStateOf(settings.modelUrl) }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Settings") },
         text = {
-            Column {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("AI scene direction (Claude)", Modifier.weight(1f)); Switch(ai, { ai = it })
                 }
@@ -82,11 +87,36 @@ private fun SettingsDialog(settings: Settings, onDismiss: () -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 12.dp)) {
                     Text("Upscale smaller photos to 4K", Modifier.weight(1f)); Switch(uhd, { uhd = it })
                 }
+
+                Text("On-device AI eraser", fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(top = 16.dp))
+                Text(
+                    "Optional ~200 MB neural model (LaMa) that rebuilds structure behind large objects and people. " +
+                        "Runs on this phone. Without it, removal uses texture synthesis from the photo itself.",
+                    fontSize = 12.sp, color = Color(0xFF9E9E9E),
+                )
+                val p = state.modelProgress
+                when {
+                    p != null -> {
+                        if (p >= 0f) LinearProgressIndicator(progress = { p }, modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
+                        else LinearProgressIndicator(Modifier.fillMaxWidth().padding(top = 8.dp))
+                    }
+                    state.modelInstalled -> Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("Installed", color = Color(0xFF8BC34A), modifier = Modifier.weight(1f))
+                        TextButton(onClick = vm::deleteModel) { Text("Delete") }
+                    }
+                    else -> {
+                        OutlinedTextField(
+                            value = modelUrl, onValueChange = { modelUrl = it }, label = { Text("Model URL (.onnx)") }, singleLine = true,
+                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        )
+                        TextButton(onClick = { settings.modelUrl = modelUrl; vm.downloadModel() }) { Text("Download model") }
+                    }
+                }
             }
         },
         confirmButton = {
             TextButton(onClick = {
-                settings.apiKey = key; settings.aiEnabled = ai; settings.upscaleTo4k = uhd; onDismiss()
+                settings.apiKey = key; settings.aiEnabled = ai; settings.upscaleTo4k = uhd; settings.modelUrl = modelUrl; onDismiss()
             }) { Text("Save") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },

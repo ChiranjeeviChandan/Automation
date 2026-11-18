@@ -76,13 +76,15 @@ object Bitmaps {
     }
 
     /** Save as a high-quality JPEG into Pictures/Verity. Returns the new item's Uri. */
-    fun saveToGallery(context: Context, b: Bitmap, name: String): Uri {
+    fun saveToGallery(context: Context, b: Bitmap, name: String, description: String): Uri {
         val resolver = context.contentResolver
         val values = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "$name.jpg")
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Verity")
             put(MediaStore.Images.Media.IS_PENDING, 1)
+            // Authenticity: edited photos say so. The original file is never overwritten.
+            put(MediaStore.Images.Media.DESCRIPTION, description)
         }
         val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
             ?: error("MediaStore insert failed")
