@@ -4,13 +4,7 @@ buildscript {
     val sdkPresent = System.getenv("ANDROID_HOME") != null || System.getenv("ANDROID_SDK_ROOT") != null ||
         rootDir.resolve("local.properties").let { it.exists() && it.readText().contains("sdk.dir") }
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google\\.android.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        if (sdkPresent) google()
         mavenCentral()
     }
     if (sdkPresent) dependencies { classpath("com.android.tools.build:gradle:8.7.3") }

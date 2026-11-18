@@ -1,6 +1,9 @@
 pluginManagement {
     repositories {
-        google {
+        // With an Android SDK: Google's Maven in full. Without one (JVM-only builds behind restrictive
+        // proxies): only Android groups, so other lookups never hit a blocked host.
+        if (System.getenv("ANDROID_HOME") != null || System.getenv("ANDROID_SDK_ROOT") != null ||
+            file("local.properties").let { it.exists() && it.readText().contains("sdk.dir") }) google() else google {
             content {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google\\.android.*")
@@ -14,7 +17,10 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google {
+        // With an Android SDK: Google's Maven in full. Without one (JVM-only builds behind restrictive
+        // proxies): only Android groups, so other lookups never hit a blocked host.
+        if (System.getenv("ANDROID_HOME") != null || System.getenv("ANDROID_SDK_ROOT") != null ||
+            file("local.properties").let { it.exists() && it.readText().contains("sdk.dir") }) google() else google {
             content {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google\\.android.*")
