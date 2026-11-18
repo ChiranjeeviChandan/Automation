@@ -50,35 +50,44 @@ class Mask(val width: Int, val height: Int, val bits: BooleanArray = BooleanArra
 
     fun or(other: Mask): Mask { require(other.width == width && other.height == height); return Mask(width, height, BooleanArray(bits.size) { bits[it] || other.bits[it] }) }
 
-    /** Grow the selection by [r] pixels (Euclidean-ish, via a two-pass chamfer distance transform). */
+    /**
+     * Grow the selection by [r] pixels (two-pass chamfer distance transform). Works only inside the
+     * selection's bounding box plus r, so a small selection on a 12 MP frame costs kilobytes, not 48 MB.
+     */
     fun dilated(r: Float): Mask {
-        if (r <= 0f) return Mask(width, height, bits.copyOf())
+        val out = Mask(width, height, bits.copyOf())
+        if (r <= 0f) return out
+        val bb = bbox() ?: return out
+        val pad = r.toInt() + 1
+        val x0 = max(0, bb.left - pad); val y0 = max(0, bb.top - pad)
+        val w = min(width, bb.right + pad) - x0; val h = min(height, bb.bottom + pad) - y0
         val inf = 1e9f
-        val d = FloatArray(bits.size) { if (bits[it]) 0f else inf }
+        val d = FloatArray(w * h) { i -> if (bits[(y0 + i / w) * width + x0 + i % w]) 0f else inf }
         val a = 1f; val b = 1.4142f
-        for (y in 0 until height) for (x in 0 until width) {
-            val i = y * width + x
+        for (y in 0 until h) for (x in 0 until w) {
+            val i = y * w + x
             var v = d[i]
             if (x > 0) v = min(v, d[i - 1] + a)
             if (y > 0) {
-                v = min(v, d[i - width] + a)
-                if (x > 0) v = min(v, d[i - width - 1] + b)
-                if (x < width - 1) v = min(v, d[i - width + 1] + b)
+                v = min(v, d[i - w] + a)
+                if (x > 0) v = min(v, d[i - w - 1] + b)
+                if (x < w - 1) v = min(v, d[i - w + 1] + b)
             }
             d[i] = v
         }
-        for (y in height - 1 downTo 0) for (x in width - 1 downTo 0) {
-            val i = y * width + x
+        for (y in h - 1 downTo 0) for (x in w - 1 downTo 0) {
+            val i = y * w + x
             var v = d[i]
-            if (x < width - 1) v = min(v, d[i + 1] + a)
-            if (y < height - 1) {
-                v = min(v, d[i + width] + a)
-                if (x < width - 1) v = min(v, d[i + width + 1] + b)
-                if (x > 0) v = min(v, d[i + width - 1] + b)
+            if (x < w - 1) v = min(v, d[i + 1] + a)
+            if (y < h - 1) {
+                v = min(v, d[i + w] + a)
+                if (x < w - 1) v = min(v, d[i + w + 1] + b)
+                if (x > 0) v = min(v, d[i + w - 1] + b)
             }
             d[i] = v
         }
-        return Mask(width, height, BooleanArray(bits.size) { d[it] <= r })
+        for (i in d.indices) if (d[i] <= r) out.bits[(y0 + i / w) * width + x0 + i % w] = true
+        return out
     }
 
     companion object {
