@@ -3,7 +3,7 @@ package com.verity.camera
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
+import androidx.security.crypto.MasterKeys
 
 /**
  * User settings. The Anthropic API key is stored with Android Keystore-backed encryption and never
@@ -13,9 +13,9 @@ import androidx.security.crypto.MasterKey
  */
 class Settings(context: Context) {
     private val prefs: SharedPreferences = EncryptedSharedPreferences.create(
-        context,
         "verity_settings",
-        MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build(),
+        MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
+        context,
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
     )
