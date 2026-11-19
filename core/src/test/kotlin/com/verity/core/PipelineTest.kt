@@ -22,7 +22,7 @@ class PipelineTest {
     private fun castOf(rgb: FloatArray) = maxOf(rgb[0], rgb[1], rgb[2]) / minOf(rgb[0], rgb[1], rgb[2])
 
     private fun grade(img: ArgbImage, faces: Int = 0, opts: RenderOptions = RenderOptions(targetLongEdge = 0)): Pair<ArgbImage, GradeParams> {
-        val s = SceneAnalyzer.analyze(img)
+        val s = SceneAnalyzer.analyze(img, hasFaces = faces > 0)
         val p = AutoGrader.propose(s, AutoGrader.classify(s, faces))
         return Renderer.render(img, s, p, opts) to p
     }
@@ -60,6 +60,28 @@ class PipelineTest {
             assertTrue(dh < 4f, "$name hue moved $dh deg")
             assertTrue(cr in 0.85f..1.12f, "$name chroma ratio $cr")
         }
+    }
+
+    /** Regression: a selfie dominated by warm skin and a yellow curtain must not be "corrected" to ashy skin. */
+    @Test fun warmSelfieKeepsSkinWarm() {
+        val w = 600; val h = 800
+        val img = ArgbImage(w, h)
+        val skin = Rect(150, 200, 450, 650)
+        for (y in 0 until h) for (x in 0 until w) {
+            val (r, g, b) = when {
+                x >= skin.left && x < skin.right && y >= skin.top && y < skin.bottom -> Triple(205, 150, 120)
+                y < 300 -> Triple(215, 185, 60)   // yellow curtain
+                y > 650 -> Triple(25, 25, 28)     // black vest
+                else -> Triple(230, 160, 160)     // pink wall
+            }
+            img.pixels[y * w + x] = -0x1000000 or (r shl 16) or (g shl 8) or b
+        }
+        val (out, p) = grade(img, faces = 1)
+        val a = Synth.mean(img, skin); val b = Synth.mean(out, skin)
+        val warmBefore = a[0] / a[2]; val warmAfter = b[0] / b[2]
+        println("selfie skin R/B %.3f -> %.3f, hue shift %.2f deg, wb=%.2f".format(warmBefore, warmAfter, abs(hueDeg(a) - hueDeg(b)), p.wbStrength))
+        assertTrue(warmAfter > warmBefore * 0.95f, "skin cooled: $warmBefore -> $warmAfter")
+        assertTrue(abs(hueDeg(a) - hueDeg(b)) < 3f)
     }
 
     @Test fun landscapeColoursGetRicherButStayBelowTheCeiling() {

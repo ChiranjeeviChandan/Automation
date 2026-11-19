@@ -2,13 +2,7 @@ package com.verity.director
 
 import com.anthropic.client.AnthropicClient
 import com.anthropic.client.okhttp.AnthropicOkHttpClient
-import com.anthropic.core.JsonValue
-import com.anthropic.models.beta.messages.BetaBase64ImageSource
-import com.anthropic.models.beta.messages.BetaContentBlockParam
-import com.anthropic.models.beta.messages.BetaJsonOutputFormat
 import com.anthropic.models.beta.messages.BetaOutputConfig
-import com.anthropic.models.beta.messages.BetaStopReason
-import com.anthropic.models.beta.messages.MessageCreateParams
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.verity.core.GradeParams
@@ -16,7 +10,6 @@ import com.verity.core.NormRect
 import com.verity.core.SceneStats
 import com.verity.core.SceneType
 import java.time.Duration
-import java.util.Base64
 
 /** What the director decided for one photograph. */
 data class Direction(
@@ -62,42 +55,17 @@ class GradeDirector(
         userNote: String? = null,
     ): Direction {
         val fallback = Direction(baselineScene, baseline, null, "Offline auto-grade.", fellBack = true)
-        val request = MessageCreateParams.builder()
-            .model(model)
-            .maxTokens(4000L)
-            .system(SYSTEM_PROMPT)
-            // Refusal safety net: route a refused request to a fallback model server-side.
-            .addBeta("server-side-fallback-2026-07-01")
-            .fallbacksDefault()
-            .outputConfig(
-                BetaOutputConfig.builder()
-                    // A bounded perception + judgement task: low effort keeps latency camera-friendly.
-                    .effort(BetaOutputConfig.Effort.LOW)
-                    .format(BetaJsonOutputFormat.builder().schema(schema()).build())
-                    .build(),
+        val text = try {
+            ClaudeCall.json(
+                client, model, SYSTEM_PROMPT, previewJpeg,
+                userText(stats, baselineScene, baseline, faceCount, profilePicture, userNote),
+                schema(), BetaOutputConfig.Effort.LOW, // bounded perception task: keep latency camera-friendly
             )
-            .addUserMessageOfContentBlockParams(
-                listOf(
-                    BetaContentBlockParam.ofImage(
-                        BetaBase64ImageSource.builder()
-                            .mediaType(BetaBase64ImageSource.MediaType.IMAGE_JPEG)
-                            .data(Base64.getEncoder().encodeToString(previewJpeg))
-                            .build(),
-                    ),
-                    BetaContentBlockParam.ofText(userText(stats, baselineScene, baseline, faceCount, profilePicture, userNote)),
-                ),
-            )
-            .build()
-
-        val response = try {
-            client.beta().messages().create(request)
+        } catch (e: ClaudeCallException) {
+            return fallback.copy(rationale = "${e.message} Used offline auto-grade.")
         } catch (e: Exception) {
-            return fallback.copy(rationale = "AI unavailable (${e.javaClass.simpleName}); used offline auto-grade.")
+            return fallback.copy(rationale = "AI unavailable (${e.javaClass.simpleName}: ${e.message?.take(120)}). Used offline auto-grade.")
         }
-        if (response.stopReason().map { it == BetaStopReason.REFUSAL || it == BetaStopReason.MAX_TOKENS }.orElse(false)) {
-            return fallback.copy(rationale = "AI declined or was cut off; used offline auto-grade.")
-        }
-        val text = response.content().mapNotNull { it.text().orElse(null)?.text() }.joinToString("")
         return parse(text, baselineScene, baseline) ?: fallback.copy(rationale = "AI answer unreadable; used offline auto-grade.")
     }
 
@@ -155,7 +123,7 @@ class GradeDirector(
         append("Return the final grade.")
     }
 
-    private fun schema(): BetaJsonOutputFormat.Schema {
+    private fun schema(): Map<String, Any> {
         fun num(desc: String) = mapOf("type" to "number", "description" to desc)
         val gradeProps = linkedMapOf(
             "wb_strength" to num("0..1 fraction of the measured cast to remove"),
@@ -193,9 +161,7 @@ class GradeDirector(
                 "subject" to obj(boxProps),
             ),
         )
-        val b = BetaJsonOutputFormat.Schema.builder()
-        root.forEach { (k, v) -> b.putAdditionalProperty(k, JsonValue.from(v)) }
-        return b.build()
+        return root
     }
 
     companion object {

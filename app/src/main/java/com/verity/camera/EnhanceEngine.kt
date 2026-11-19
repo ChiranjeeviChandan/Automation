@@ -62,12 +62,14 @@ class EnhanceEngine(private val settings: Settings, val models: ModelStore) {
     }
 
     /** After an edit, re-measure the image but keep the chosen grade (no second AI call). */
-    fun restat(plan: Plan, image: Bitmap): Plan =
-        plan.copy(stats = SceneAnalyzer.analyze(Bitmaps.toArgb(image)), faces = Bitmaps.detectFaces(image))
+    fun restat(plan: Plan, image: Bitmap): Plan {
+        val faces = Bitmaps.detectFaces(image)
+        return plan.copy(stats = SceneAnalyzer.analyze(Bitmaps.toArgb(image), hasFaces = faces.isNotEmpty()), faces = faces)
+    }
 
     fun plan(original: Bitmap): Plan {
         val faces = Bitmaps.detectFaces(original)
-        val stats = SceneAnalyzer.analyze(Bitmaps.toArgb(original))
+        val stats = SceneAnalyzer.analyze(Bitmaps.toArgb(original), hasFaces = faces.isNotEmpty())
         val scene = AutoGrader.classify(stats, faces.size)
         val baseline = AutoGrader.propose(stats, scene)
         val key = settings.apiKey

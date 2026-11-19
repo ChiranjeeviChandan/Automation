@@ -35,3 +35,17 @@ class RemovalScoutTest {
         assertTrue(RemovalScout.SYSTEM.contains("religious or cultural symbols"))
     }
 }
+
+class ClaudeCallTest {
+    @Test fun extractsJsonFromProseAndFences() {
+        assertEquals("""{"a":{"b":"}"}}""", ClaudeCall.extractJson("Here you go:\n```json\n{\"a\":{\"b\":\"}\"}}\n```"))
+        assertNull(ClaudeCall.extractJson("no json here"))
+    }
+}
+
+class ApiMessageTest {
+    @Test fun pullsTheSentenceOutOfTheErrorJson() {
+        val e = Exception("""400: {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API."}}""")
+        assertEquals("Your credit balance is too low to access the Anthropic API.", ClaudeCall.apiMessage(e))
+    }
+}

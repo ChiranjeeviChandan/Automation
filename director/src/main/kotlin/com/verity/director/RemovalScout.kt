@@ -2,17 +2,10 @@ package com.verity.director
 
 import com.anthropic.client.AnthropicClient
 import com.anthropic.client.okhttp.AnthropicOkHttpClient
-import com.anthropic.core.JsonValue
-import com.anthropic.models.beta.messages.BetaBase64ImageSource
-import com.anthropic.models.beta.messages.BetaContentBlockParam
-import com.anthropic.models.beta.messages.BetaJsonOutputFormat
 import com.anthropic.models.beta.messages.BetaOutputConfig
-import com.anthropic.models.beta.messages.BetaStopReason
-import com.anthropic.models.beta.messages.MessageCreateParams
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.verity.core.NormRect
 import java.time.Duration
-import java.util.Base64
 
 enum class RemovalKind { PERSON, VEHICLE, LITTER, SIGN, WIRE, ANIMAL, OBJECT }
 
@@ -43,39 +36,14 @@ class RemovalScout(private val client: AnthropicClient, private val model: Strin
             "Suggest distractions worth removing from this photograph, if any."
         else
             "The photographer asks: \"${request.trim()}\". Locate exactly what they mean. If nothing matches, return no suggestions and say so in the note."
-        val params = MessageCreateParams.builder()
-            .model(model)
-            .maxTokens(4000L)
-            .system(SYSTEM)
-            .addBeta("server-side-fallback-2026-07-01")
-            .fallbacksDefault()
-            .outputConfig(
-                BetaOutputConfig.builder()
-                    .effort(BetaOutputConfig.Effort.MEDIUM) // localisation benefits from a little more care than grading
-                    .format(BetaJsonOutputFormat.builder().schema(schema()).build())
-                    .build(),
-            )
-            .addUserMessageOfContentBlockParams(
-                listOf(
-                    BetaContentBlockParam.ofImage(
-                        BetaBase64ImageSource.builder()
-                            .mediaType(BetaBase64ImageSource.MediaType.IMAGE_JPEG)
-                            .data(Base64.getEncoder().encodeToString(previewJpeg))
-                            .build(),
-                    ),
-                    BetaContentBlockParam.ofText(ask),
-                ),
-            )
-            .build()
-        val response = try {
-            client.beta().messages().create(params)
+        val text = try {
+            // localisation benefits from a little more care than grading
+            ClaudeCall.json(client, model, SYSTEM, previewJpeg, ask, schema(), BetaOutputConfig.Effort.MEDIUM)
+        } catch (e: ClaudeCallException) {
+            return ScoutResult(emptyList(), "${e.message} Paint over what you want removed.", ok = false)
         } catch (e: Exception) {
             return ScoutResult(emptyList(), "AI unavailable (${e.javaClass.simpleName}). Paint over what you want removed.", ok = false)
         }
-        if (response.stopReason().map { it == BetaStopReason.REFUSAL || it == BetaStopReason.MAX_TOKENS }.orElse(false)) {
-            return ScoutResult(emptyList(), "AI declined. Paint over what you want removed.", ok = false)
-        }
-        val text = response.content().mapNotNull { it.text().orElse(null)?.text() }.joinToString("")
         return parse(text) ?: ScoutResult(emptyList(), "AI answer unreadable. Paint over what you want removed.", ok = false)
     }
 
@@ -100,7 +68,7 @@ class RemovalScout(private val client: AnthropicClient, private val model: Strin
         null
     }
 
-    private fun schema(): BetaJsonOutputFormat.Schema {
+    private fun schema(): Map<String, Any> {
         fun num(d: String) = mapOf("type" to "number", "description" to d)
         fun obj(props: Map<String, Any>) = mapOf("type" to "object", "properties" to props, "required" to props.keys.toList(), "additionalProperties" to false)
         val box = obj(linkedMapOf("left" to num("0..1 of image width"), "top" to num("0..1 of image height"), "right" to num("0..1"), "bottom" to num("0..1")))
@@ -118,9 +86,7 @@ class RemovalScout(private val client: AnthropicClient, private val model: Strin
                 "note" to mapOf("type" to "string", "description" to "One sentence for the photographer"),
             ),
         )
-        val b = BetaJsonOutputFormat.Schema.builder()
-        root.forEach { (k, v) -> b.putAdditionalProperty(k, JsonValue.from(v)) }
-        return b.build()
+        return root
     }
 
     companion object {
