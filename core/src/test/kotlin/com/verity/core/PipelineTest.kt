@@ -57,8 +57,10 @@ class PipelineTest {
             val a = Synth.mean(img, rect); val b = Synth.mean(out, rect)
             val dh = abs(hueDeg(a) - hueDeg(b)); val cr = chroma(b) / chroma(a)
             println("$name hue shift=%.2f deg, chroma ratio=%.3f".format(dh, cr))
-            assertTrue(dh < 4f, "$name hue moved $dh deg")
-            assertTrue(cr in 0.85f..1.12f, "$name chroma ratio $cr")
+            // Contract: portrait grading may warm and enrich skin a little (the "premium portrait" look),
+            // but never shift it far, wash it out, or push it toward grey or orange.
+            assertTrue(dh < 6f, "$name hue moved $dh deg")
+            assertTrue(cr in 0.95f..1.4f, "$name chroma ratio $cr")
         }
     }
 
@@ -81,7 +83,8 @@ class PipelineTest {
         val warmBefore = a[0] / a[2]; val warmAfter = b[0] / b[2]
         println("selfie skin R/B %.3f -> %.3f, hue shift %.2f deg, wb=%.2f".format(warmBefore, warmAfter, abs(hueDeg(a) - hueDeg(b)), p.wbStrength))
         assertTrue(warmAfter > warmBefore * 0.95f, "skin cooled: $warmBefore -> $warmAfter")
-        assertTrue(abs(hueDeg(a) - hueDeg(b)) < 3f)
+        assertTrue(abs(hueDeg(a) - hueDeg(b)) < 6f)
+        assertTrue(warmAfter < warmBefore * 1.3f, "skin pushed toward orange: $warmBefore -> $warmAfter")
     }
 
     @Test fun landscapeColoursGetRicherButStayBelowTheCeiling() {

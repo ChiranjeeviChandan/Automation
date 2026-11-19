@@ -29,6 +29,8 @@ data class SceneStats(
     val colorfulness: Float,
     /** Estimated luma noise sigma on the 0..1 encoded scale. */
     val noiseSigma: Float,
+    /** Median linear luminance inside detected faces (centre region), or -1 when no faces were given. */
+    val faceLuma: Float = -1f,
     /** Dynamic range between p05 and p95 in stops. */
     val dynamicRangeStops: Float,
 ) {
@@ -74,7 +76,7 @@ object SceneAnalyzer {
      *   white-balance estimate. Without faces it stays in: an orange-lit grey wall and skin have the
      *   same colour, and only the detector can tell them apart.
      */
-    fun analyze(img: ArgbImage, hasFaces: Boolean = false): SceneStats {
+    fun analyze(img: ArgbImage, hasFaces: Boolean = false, faces: List<NormRect> = emptyList()): SceneStats {
         val p = proxy(img)
         val n = p.w * p.h
         val lum = FloatArray(n)
@@ -96,7 +98,7 @@ object SceneAnalyzer {
         val sorted = lum.copyOf().also { it.sort() }
         fun pct(q: Float) = sorted[((n - 1) * q).toInt()]
 
-        val (gains, wbConfidence) = estimateIlluminant(p, hasFaces)
+        val (gains, wbConfidence) = estimateIlluminant(p, hasFaces || faces.isNotEmpty())
         val p05 = pct(0.05f); val p95 = pct(0.95f)
         return SceneStats(
             width = img.width, height = img.height,
@@ -109,6 +111,7 @@ object SceneAnalyzer {
             skyFraction = sky.toFloat() / n,
             colorfulness = (chromaSum / n).toFloat(),
             noiseSigma = estimateNoise(img),
+            faceLuma = faceLuma(p, faces),
             dynamicRangeStops = (ln(max(p95, 1e-4f) / max(p05, 1e-4f)) / ln(2f)),
         )
     }
@@ -155,6 +158,20 @@ object SceneAnalyzer {
         // ~15% of the frame confirmed neutral = full trust; ~2% or less = barely any.
         val confidence = ColorMath.smoothstep(0.02f, 0.15f, neutralCount.toFloat() / n)
         return floatArrayOf(gr, 1f, gb) to confidence
+    }
+
+    private fun faceLuma(p: LinearProxy, faces: List<NormRect>): Float {
+        val vals = ArrayList<Float>()
+        for (f in faces) {
+            // centre 60% of the box: cheeks, nose, forehead - not hair, beard edge or background
+            val w = f.right - f.left; val h = f.bottom - f.top
+            val x0 = ((f.left + 0.2f * w) * p.w).toInt().coerceIn(0, p.w - 1); val x1 = ((f.right - 0.2f * w) * p.w).toInt().coerceIn(x0 + 1, p.w)
+            val y0 = ((f.top + 0.2f * h) * p.h).toInt().coerceIn(0, p.h - 1); val y1 = ((f.bottom - 0.25f * h) * p.h).toInt().coerceIn(y0 + 1, p.h)
+            for (y in y0 until y1) for (x in x0 until x1) { val i = y * p.w + x; vals += ColorMath.luma(p.r[i], p.g[i], p.b[i]) }
+        }
+        if (vals.isEmpty()) return -1f
+        vals.sort()
+        return vals[vals.size / 2]
     }
 
     /** Skin locus in Y'CbCr - wide enough for all skin tones, deliberately not brightness-dependent. */

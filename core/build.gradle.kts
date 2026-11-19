@@ -13,6 +13,6 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
     maxHeapSize = "2g"
-    listOf("verity.input", "verity.output", "verity.faces").forEach { k -> (project.findProperty(k) as String?)?.let { systemProperty(k, it) } }
+    listOf("verity.input", "verity.output", "verity.faces", "verity.face").forEach { k -> (project.findProperty(k) as String?)?.let { systemProperty(k, it) } }
     testLogging { showStandardStreams = true; events("passed", "failed"); exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL }
 }

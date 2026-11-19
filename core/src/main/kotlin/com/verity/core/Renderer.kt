@@ -93,8 +93,8 @@ internal class ToneStage(private val p: GradeParams, stats: SceneStats) {
         var r = 1f + (stats.neutralGains[0] - 1f) * p.wbStrength
         var g = 1f + (stats.neutralGains[1] - 1f) * p.wbStrength
         var b = 1f + (stats.neutralGains[2] - 1f) * p.wbStrength
-        r *= 1f + 0.12f * p.temperature
-        b *= 1f - 0.12f * p.temperature
+        r *= 1f + 0.1f * p.temperature  // warm = mostly less blue: cream whites, not peach
+        b *= 1f - 0.3f * p.temperature
         g *= 1f - 0.06f * p.tint
         val norm = ColorMath.luma(r, g, b) // keep overall brightness; exposure is separate
         val e = 2f.pow(p.exposureEv) / norm

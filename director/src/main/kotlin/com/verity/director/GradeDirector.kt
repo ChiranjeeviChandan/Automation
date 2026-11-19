@@ -115,6 +115,7 @@ class GradeDirector(
             .format(s.p01, s.p05, s.p50, s.p95, s.p99, s.dynamicRangeStops))
         appendLine("  neutralising gains R=%.3f G=1 B=%.3f (cast strength %.2f), clipped=%.2f%%"
             .format(s.neutralGains[0], s.neutralGains[2], s.castStrength, s.clippedFraction * 100))
+        if (s.faceLuma > 0f) appendLine("  face centre luminance=%.3f (target ~0.24)".format(s.faceLuma))
         appendLine("  skin=%.1f%% foliage=%.1f%% sky=%.1f%% colourfulness=%.3f noise sigma=%.4f"
             .format(s.skinFraction * 100, s.foliageFraction * 100, s.skyFraction * 100, s.colorfulness, s.noiseSigma))
         appendLine("Offline baseline scene: $scene")
@@ -191,6 +192,10 @@ class GradeDirector(
             |- Night: keep it dark. Lift visibility a little, control highlights, denoise chroma, sharpen gently.
             |- Old photographs: restore faded colour and contrast. Scratches cannot be removed by this renderer and you must not
             |  pretend otherwise in the rationale.
+            |- The photographer's preferred finish (from their own before/after examples): warm-neutral whites (cream,
+            |  never blue), faces exposed for the face rather than the bright background, firm contrast with deep but
+            |  detailed blacks, controlled highlights, rich believable reds and golds, skin warm and healthy rather than
+            |  pale or grey. The baseline already leans this way; refine it, do not undo it.
             |- Restraint over drama. When unsure, stay close to the baseline. Never chase "HDR".
             |- If a profile picture is requested, return the main subject's box (normalised 0..1, head and face for people);
             |  otherwise set subject.present=false.
