@@ -224,8 +224,9 @@ class CaptureAgent(private val context: Context) {
         val d = brain.decide(state, m.measure, now)
 
         // Apply.
-        if (mode == AgentMode.PRO && state.manualSupported && d.iso != null && d.exposureNs != null) {
-            val want = d.iso to d.exposureNs
+        val dIso = d.iso; val dExp = d.exposureNs // locals: cross-module properties don't smart-cast
+        if (mode == AgentMode.PRO && state.manualSupported && dIso != null && dExp != null) {
+            val want: Pair<Int, Long> = dIso to dExp
             val prev = appliedManual
             if (prev == null || abs(prev.first - want.first) > prev.first / 10 || abs(prev.second - want.second) > prev.second / 10) {
                 Camera2CameraControl.from(cam.cameraControl).setCaptureRequestOptions(
