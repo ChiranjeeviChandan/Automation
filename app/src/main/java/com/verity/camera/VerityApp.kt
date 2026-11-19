@@ -43,7 +43,7 @@ fun VerityApp(vm: VerityViewModel) {
 
     Box(Modifier.fillMaxSize().background(Color.Black)) {
         if (state.reviewing) ReviewScreen(state, vm)
-        else CameraScreen(onCaptured = vm::onCaptured, onPicked = vm::onPicked, onSettings = { vm.toggleSettings(true) })
+        else CameraScreen(vm)
 
         state.busy?.let { label ->
             Column(
@@ -64,6 +64,7 @@ private fun SettingsDialog(settings: Settings, state: UiState, vm: VerityViewMod
     var key by remember { mutableStateOf(settings.apiKey) }
     var ai by remember { mutableStateOf(settings.aiEnabled) }
     var uhd by remember { mutableStateOf(settings.upscaleTo4k) }
+    var keepOrig by remember { mutableStateOf(settings.keepOriginal) }
     var modelUrl by remember { mutableStateOf(settings.modelUrl) }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -86,6 +87,9 @@ private fun SettingsDialog(settings: Settings, state: UiState, vm: VerityViewMod
                 )
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 12.dp)) {
                     Text("Upscale smaller photos to 4K", Modifier.weight(1f)); Switch(uhd, { uhd = it })
+                }
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
+                    Text("Also keep the unedited original", Modifier.weight(1f)); Switch(keepOrig, { keepOrig = it })
                 }
 
                 Text("On-device AI eraser", fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(top = 16.dp))
@@ -116,7 +120,7 @@ private fun SettingsDialog(settings: Settings, state: UiState, vm: VerityViewMod
         },
         confirmButton = {
             TextButton(onClick = {
-                settings.apiKey = key; settings.aiEnabled = ai; settings.upscaleTo4k = uhd; settings.modelUrl = modelUrl; onDismiss()
+                settings.apiKey = key; settings.aiEnabled = ai; settings.upscaleTo4k = uhd; settings.keepOriginal = keepOrig; settings.modelUrl = modelUrl; onDismiss()
             }) { Text("Save") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },

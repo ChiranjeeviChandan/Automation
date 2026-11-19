@@ -130,6 +130,14 @@ object AutoGrader {
             skinProtect = if (portraitLike || s.skinFraction > 0.02f) 0.6f else 0.5f,
             chromaDenoise = ((0.2f + s.noiseSigma * 25f) + if (scene == SceneType.NIGHT) 0.3f else 0f).coerceIn(0.2f, 0.9f),
             lumaDenoise = (s.noiseSigma * 12f + if (scene == SceneType.NIGHT) 0.15f else 0f).coerceIn(0f, 0.4f),
+            // Subject separation (applied only when the renderer is given face boxes): background
+            // a touch darker, more so when it is blown out, so the eye goes to the person.
+            subjectEv = if (portraitLike) 0.2f else 0f,
+            backgroundEv = when {
+                !portraitLike -> 0f
+                s.clippedFraction > 0.05f -> -0.3f
+                else -> -0.15f
+            },
             // Phone JPEGs arrive pre-sharpened; more on top produces crunchy edges and halos.
             sharpen = when (scene) {
                 SceneType.PORTRAIT -> 0.1f

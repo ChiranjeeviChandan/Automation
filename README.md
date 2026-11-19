@@ -34,6 +34,18 @@ Offline (no key, no network, refusal, malformed answer) the deterministic auto-g
 
 No full-resolution float buffers: a 12 MP frame is processed in one row-parallel pass over packed ARGB.
 
+## The two agents
+
+**Capture agent** (`app/…/CaptureAgent.kt`, decisions in `core/…/CaptureBrain.kt`, measurements in `core/…/FrameMeter.kt`).
+Runs on the phone on every preview frame (~10 per second). An LLM is far too slow for this loop, so it is a tested feedback controller:
+- Face priority: finds faces (camera hardware detector, platform detector as fallback) and points autofocus, auto-exposure and white-balance metering at the face, re-arming only when the face moves (no focus hunting).
+- Exposure: trims exposure compensation so faces land at portrait brightness, and pulls back when large areas would blow out (highlights win over a face that wants more light). Dead-band and rate limit, so the preview never pulses.
+- PRO mode (devices with manual sensor control): the agent sets ISO and shutter itself — the slowest shutter that freezes the motion it measures, 1/125 s or faster with people in frame, lowest ISO that reaches the exposure, 50/60 Hz anti-flicker shutter snapping indoors, ISO capped at 1600 before trading for a slower shutter on still scenes.
+- Monitoring: focus peaking, zebra stripes on clipped highlights, live histogram, sharpness and shake meters, ISO / shutter / EV / focus distance / AF and AWB state readout, and the agent's current reasoning.
+- Tap to focus overrides the agent for 5 seconds.
+
+**Editor agent** (`app/…/EditorAgent.kt`). Every shot is queued and edited in the background while you keep shooting: scene analysis, Claude direction when a key is set, full-resolution grade with face-based exposure and edge-aware subject dodge & burn, then saved. Only the edited photo is saved; "Also keep the unedited original" in Settings keeps both. Gallery photos still open in the manual editor (Enhance / Remove objects).
+
 ## Object and person removal (explicit request only)
 
 The brief allows removal "only when explicitly requested", so nothing is ever removed automatically.

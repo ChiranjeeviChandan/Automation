@@ -19,7 +19,7 @@ class ManualRun {
         println("stats p01=%.4f p05=%.4f p50=%.4f p95=%.4f p99=%.4f gains=%s cast=%.2f clip=%.3f skin=%.2f noise=%.4f dr=%.1f face=%.3f".format(
             s.p01, s.p05, s.p50, s.p95, s.p99, s.neutralGains.joinToString(), s.castStrength, s.clippedFraction, s.skinFraction, s.noiseSigma, s.dynamicRangeStops, s.faceLuma))
         println("scene=$scene params=$p")
-        val out = Renderer.render(img, s, p, RenderOptions(targetLongEdge = 0))
+        val out = Renderer.render(img, s, p, RenderOptions(targetLongEdge = 0, subjects = listOfNotNull(face)))
         val side = BufferedImage(img.width * 2 + 8, img.height, BufferedImage.TYPE_INT_RGB)
         side.setRGB(0, 0, img.width, img.height, img.pixels, 0, img.width)
         side.setRGB(img.width + 8, 0, out.width, out.height, out.pixels, 0, out.width)

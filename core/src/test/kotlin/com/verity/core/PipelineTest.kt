@@ -162,3 +162,23 @@ class PipelineTest {
         return (((p shr 16) and 0xFF) * 2126 + ((p shr 8) and 0xFF) * 7152 + (p and 0xFF) * 722) / 10000
     }
 }
+
+class SubjectMaskTest {
+    @Test fun backgroundDarkensMoreThanFaceAndNoHaloAtTheEdge() {
+        val w = 400; val h = 400
+        val img = ArgbImage(w, h, IntArray(w * h) { -0x1000000 or 0xE0E0E0 }) // bright wall
+        val face = Rect(150, 120, 250, 260)
+        for (y in face.top until face.bottom) for (x in face.left until face.right) img.pixels[y * w + x] = -0x1000000 or (190 shl 16) or (140 shl 8) or 110
+        val s = SceneAnalyzer.analyze(img)
+        val p = GradeParams(wbStrength = 0f, shadows = 0f, highlights = 0f, contrast = 0f, clarity = 0f, vibrance = 0f, saturation = 0f,
+            chromaDenoise = 0f, lumaDenoise = 0f, sharpen = 0f, subjectEv = 0.1f, backgroundEv = -0.5f)
+        val nf = NormRect(0.375f, 0.3f, 0.625f, 0.65f)
+        val out = Renderer.render(img, s, p, RenderOptions(targetLongEdge = 0, subjects = listOf(nf)))
+        fun l(px: Int) = (px shr 8) and 0xFF
+        val wallFar = l(out.pixels[20 * w + 20]); val wallNear = l(out.pixels[190 * w + 140]); val faceC = l(out.pixels[190 * w + 200])
+        println("wall far=$wallFar near=$wallNear face=$faceC (wall in=224, face in=140)")
+        assertTrue(wallFar < 214, "background not burned")
+        assertTrue(faceC >= 138, "face darkened")
+        assertTrue(kotlin.math.abs(wallNear - wallFar) <= 6, "halo next to the subject: near=$wallNear far=$wallFar")
+    }
+}

@@ -44,6 +44,10 @@ data class GradeParams(
     val chromaDenoise: Float = 0.4f,
     val lumaDenoise: Float = 0.2f,
     val sharpen: Float = 0.35f,
+    /** Local exposure on the subject (faces), in stops: the retoucher's "dodge". */
+    val subjectEv: Float = 0f,
+    /** Local exposure on everything else, in stops: the retoucher's "burn" for subject separation. */
+    val backgroundEv: Float = 0f,
 ) {
     fun clamped() = GradeParams(
         wbStrength = wbStrength.coerceIn(0f, 1f),
@@ -65,6 +69,8 @@ data class GradeParams(
         chromaDenoise = chromaDenoise.coerceIn(0f, 1f),
         lumaDenoise = lumaDenoise.coerceIn(0f, 0.8f),
         sharpen = sharpen.coerceIn(0f, 0.8f),
+        subjectEv = subjectEv.coerceIn(-0.5f, 0.5f),
+        backgroundEv = backgroundEv.coerceIn(-0.8f, 0.3f),
     )
 }
 
@@ -74,4 +80,6 @@ data class RenderOptions(
     val targetLongEdge: Int = 3840,
     /** Square 1:1 profile crop centred on this subject (e.g. detected faces). Null = keep aspect ratio. */
     val profileSubject: NormRect? = null,
+    /** Subjects (normally detected faces) for local dodge & burn. Empty = global grade only. */
+    val subjects: List<NormRect> = emptyList(),
 )

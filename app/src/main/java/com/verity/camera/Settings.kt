@@ -33,6 +33,24 @@ class Settings(context: Context) {
         get() = prefs.getString("model_url", DEFAULT_MODEL_URL).orEmpty().ifBlank { DEFAULT_MODEL_URL }
         set(v) = prefs.edit().putString("model_url", v.trim()).apply()
 
+    /** Also save the unedited capture. Off: only the edited photo is kept. */
+    var keepOriginal: Boolean
+        get() = prefs.getBoolean("keep_original", false)
+        set(v) = prefs.edit().putBoolean("keep_original", v).apply()
+
+    /** Capture agent mode: false = Assist (camera AE + agent trims), true = Pro (agent sets ISO/shutter). */
+    var proAgent: Boolean
+        get() = prefs.getBoolean("pro_agent", false)
+        set(v) = prefs.edit().putBoolean("pro_agent", v).apply()
+
+    var peaking: Boolean
+        get() = prefs.getBoolean("peaking", true)
+        set(v) = prefs.edit().putBoolean("peaking", v).apply()
+
+    var zebras: Boolean
+        get() = prefs.getBoolean("zebras", true)
+        set(v) = prefs.edit().putBoolean("zebras", v).apply()
+
     var upscaleTo4k: Boolean
         get() = prefs.getBoolean("upscale_4k", true)
         set(v) = prefs.edit().putBoolean("upscale_4k", v).apply()

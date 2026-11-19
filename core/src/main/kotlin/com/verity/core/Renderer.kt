@@ -11,7 +11,8 @@ import kotlin.math.sqrt
 /**
  * The grading pipeline. Order of operations (each step chosen so it cannot alter identity):
  *
- *  1. White balance + exposure        - per-channel gains in linear light
+ *  1. White balance + exposure        - per-channel gains in linear light, plus edge-aware local
+ *                                       dodge (subject) & burn (background) when subjects are given
  *  2. Tone curve                      - on luminance, applied to RGB as a ratio (hue-preserving)
  *  3. Soft gamut mapping              - desaturate toward luminance instead of clipping channels
  *  4. Local contrast ("clarity")      - fast guided filter base/detail split, midtones only, no halos
@@ -32,8 +33,9 @@ object Renderer {
         val pn = proxy.w * proxy.h
         val py = FloatArray(pn); val pcb = FloatArray(pn); val pcr = FloatArray(pn)
         val tmp = FloatArray(3)
+        val local = SubjectMask.build(proxy, options.subjects, p)
         for (i in 0 until pn) {
-            stage.tone(proxy.r[i], proxy.g[i], proxy.b[i], tmp)
+            stage.tone(proxy.r[i], proxy.g[i], proxy.b[i], tmp, local?.gain(i) ?: 1f)
             py[i] = tmp[0]; pcb[i] = tmp[1]; pcr[i] = tmp[2]
         }
         val clarityRadius = max(2, max(proxy.w, proxy.h) / 64)
@@ -53,8 +55,8 @@ object Renderer {
             val v = (y + 0.5f) * inv - 0.5f
             for (x in 0 until w) {
                 val px = src.pixels[y * w + x]
-                stage.tone(lut[(px shr 16) and 0xFF], lut[(px shr 8) and 0xFF], lut[px and 0xFF], ycc)
                 val u = (x + 0.5f) * inv - 0.5f
+                stage.tone(lut[(px shr 16) and 0xFF], lut[(px shr 8) and 0xFF], lut[px and 0xFF], ycc, local?.gainAt(u, v) ?: 1f)
                 val y0 = ycc[0]
                 // Clarity: amplify the edge-aware detail layer, fading out in deep shadows/highlights.
                 val detail = (y0 - baseCoef.eval(u, v, y0)).coerceIn(-0.15f, 0.15f)
@@ -102,8 +104,8 @@ internal class ToneStage(private val p: GradeParams, stats: SceneStats) {
     }
 
     /** Linear RGB in -> Y'CbCr (encoded) out. */
-    fun tone(r0: Float, g0: Float, b0: Float, out: FloatArray) {
-        var r = r0 * gr; var g = g0 * gg; var b = b0 * gb
+    fun tone(r0: Float, g0: Float, b0: Float, out: FloatArray, localGain: Float = 1f) {
+        var r = r0 * gr * localGain; var g = g0 * gg * localGain; var b = b0 * gb * localGain
         val yl = max(ColorMath.luma(r, g, b), 1e-5f)
         val yt = curve.apply(yl)
         val k = yt / yl

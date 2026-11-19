@@ -59,12 +59,29 @@ class VerityViewModel(app: Application) : AndroidViewModel(app) {
     val settings = Settings(app)
     val models = ModelStore(app, settings)
     private val engine = EnhanceEngine(settings, models)
+    /** Live camera control (exposure, focus, metering, overlays). */
+    val captureAgent = CaptureAgent(app).also {
+        it.peaking = settings.peaking; it.zebras = settings.zebras
+        it.setMode(if (settings.proAgent) com.verity.core.AgentMode.PRO else com.verity.core.AgentMode.ASSIST)
+    }
+    /** Background retoucher: edits and saves every shot. */
+    val editor = EditorAgent(app, engine, settings, viewModelScope)
     private val _state = MutableStateFlow(UiState(modelInstalled = models.installed))
     private var undoImage: Bitmap? = null
     val state: StateFlow<UiState> = _state
     private var previewJob: Job? = null
 
-    fun onCaptured(bitmap: Bitmap) { start(bitmap) }
+    /** A photo from the camera goes straight to the editor agent; only the edited version is saved. */
+    fun onCaptured(bitmap: Bitmap) {
+        if (!editor.submit(bitmap)) _state.update { it.copy(message = "Still editing the previous shots - give it a second.") }
+    }
+
+    fun toggleProAgent() {
+        settings.proAgent = !settings.proAgent
+        captureAgent.setMode(if (settings.proAgent) com.verity.core.AgentMode.PRO else com.verity.core.AgentMode.ASSIST)
+    }
+    fun togglePeaking() { settings.peaking = !settings.peaking; captureAgent.peaking = settings.peaking }
+    fun toggleZebras() { settings.zebras = !settings.zebras; captureAgent.zebras = settings.zebras }
 
     fun onPicked(uri: Uri) { viewModelScope.launch {
         _state.update { it.copy(busy = "Opening photo…") }
@@ -200,6 +217,7 @@ class VerityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun deleteModel() { models.remove(); _state.update { it.copy(modelInstalled = false) } }
+    fun showMessage(m: String) = _state.update { it.copy(message = m) }
     fun dismissMessage() = _state.update { it.copy(message = null) }
     fun toggleSettings(show: Boolean) = _state.update { it.copy(showSettings = show) }
 

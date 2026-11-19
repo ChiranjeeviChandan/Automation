@@ -91,7 +91,7 @@ class EnhanceEngine(private val settings: Settings, val models: ModelStore) {
     /** Fast on-screen preview: same parameters, smaller canvas, no upscale. */
     fun renderPreview(original: Bitmap, plan: Plan, params: GradeParams): Bitmap {
         val small = Bitmaps.scaled(original, 1600)
-        return Bitmaps.fromArgb(Renderer.render(Bitmaps.toArgb(small), plan.stats, params, RenderOptions(targetLongEdge = 0)))
+        return Bitmaps.fromArgb(Renderer.render(Bitmaps.toArgb(small), plan.stats, params, RenderOptions(targetLongEdge = 0, subjects = plan.faces)))
     }
 
     /** Full-resolution export. Profile mode = square crop around faces (or the AI's subject box). */
@@ -104,7 +104,7 @@ class EnhanceEngine(private val settings: Settings, val models: ModelStore) {
             settings.upscaleTo4k -> 3840
             else -> 0
         }
-        val out = Renderer.render(Bitmaps.toArgb(original), plan.stats, params, RenderOptions(target, subject))
+        val out = Renderer.render(Bitmaps.toArgb(original), plan.stats, params, RenderOptions(target, subject, subjects = plan.faces))
         return Bitmaps.fromArgb(out)
     }
 
