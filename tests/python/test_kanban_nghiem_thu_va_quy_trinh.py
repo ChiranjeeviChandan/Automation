@@ -238,8 +238,8 @@ def test_blocked_parent_names_the_jobs_waiting_on_it(tmp_path):
 def test_image_capability_grants_only_the_image_tools(tmp_path):
     feature, _brain = _feature(tmp_path)
     tools, mode, disallowed = feature._lane_tools({"capability": "image", "execution_mode": "auto"})
-    assert "mcp__jeevi-plugins__jeevi_generate_image" in tools
-    assert "mcp__jeevi-plugins__jeevi_describe_image" in tools
+    assert "mcp__jeevi-plugins__javis_generate_image" in tools
+    assert "mcp__jeevi-plugins__javis_describe_image" in tools
     assert not any("fb_" in t or "zalo" in t for t in tools)
     assert "Bash" in disallowed and mode == "auto"
     assert plugins_host.granted_plugin_tools(tools) == {"javis_generate_image", "javis_describe_image"}
@@ -253,7 +253,7 @@ def test_heuristic_spec_picks_image_without_eating_anh_huong(tmp_path):
 
 def test_grant_patterns_reject_odd_names():
     assert plugins_host.grant_patterns(["javis_generate_image", "Bash", "x;rm", ""]) == [
-        "mcp__jeevi-plugins__jeevi_generate_image", "mcp__jeevi__jeevi_generate_image"]
+        "mcp__jeevi-plugins__javis_generate_image", "mcp__jeevi__javis_generate_image"]
 
 
 # ---------------------------------------------------------------- workflow helpers
@@ -488,7 +488,7 @@ def test_step_tools_reach_a_gated_run(tmp_path, monkeypatch):
                                       tools=["Read", "Write"], mode="auto"))
     writer = engines[0]
     allowed = writer.kw["allowed_tools"]
-    assert "mcp__jeevi-plugins__jeevi_generate_image" in allowed and "WebSearch" in allowed
+    assert "mcp__jeevi-plugins__javis_generate_image" in allowed and "WebSearch" in allowed
     assert "Bash" not in allowed and "Bash" in writer.disallowed_tools
     assert "WebSearch" not in writer.disallowed_tools
     assert getattr(writer, "jeevi_mode", None) == "auto"

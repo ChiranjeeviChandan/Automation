@@ -174,7 +174,7 @@ const at = (h, m) => new Date(2026, 9, 4, h, m || 0).getTime();
 
 // ---- The pre-paint script in index.html must agree with theme.js ----
 const html = fs.readFileSync(path.join(ROOT, "dashboard", "index.html"), "utf8");
-const pre = (html.match(/<script>(\(function\(\)\{try\{var m=localStorage\.getItem\('jeevi\.theme'\)[\s\S]*?)<\/script>/) || [])[1];
+const pre = (html.match(/<script>(\(function\(\)\{try\{var m=localStorage\.getItem\('javis\.theme'\)[\s\S]*?)<\/script>/) || [])[1];
 check("found the pre-paint script", !!pre);
 check("theme.js is cache-busted past the old version", /\/static\/theme\.js\?v=([3-9]|\d\d)/.test(html));
 if (pre) {
