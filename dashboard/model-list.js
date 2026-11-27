@@ -221,5 +221,5 @@
     return html;
   }
 
-  window.JavisModelList = { models, peek, refresh, why, render, clearCache };
+  window.JeeviModelList = { models, peek, refresh, why, render, clearCache };
 })();

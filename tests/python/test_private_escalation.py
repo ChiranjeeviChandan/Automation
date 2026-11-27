@@ -18,7 +18,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-esc-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-esc-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

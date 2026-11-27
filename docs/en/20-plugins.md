@@ -15,7 +15,7 @@ A plugin is **one folder** with 2 files:
 
 A plugin gives Jeevi two things:
 
-- **A tool**: something an engine can call, for example `javis_now` (asking what time it is in Vietnam) or `javis_generate_image` (creating an image). Plugin tools go through the MCP Hub, so **every engine can use them**, not only Claude Code.
+- **A tool**: something an engine can call, for example `jeevi_now` (asking what time it is in Vietnam) or `javis_generate_image` (creating an image). Plugin tools go through the MCP Hub, so **every engine can use them**, not only Claude Code.
 - **A hook**: code that runs **around each tool call**. The current build supports two events around tools: `pre_tool_call` (before the tool runs) and `post_tool_call` (after it finishes). When no plugin registers a hook, Jeevi wraps nothing at all, so it costs nothing. A third event, `chatbot_turn_context`, runs once per dedicated-bot turn and lets a plugin add one line of context (see [below](#chatbot-turn-context-hook-chatbot_turn_context)).
 
 Plugin tools **respect Jeevi's 3 permission levels** exactly like any other tool, so a loop running read-only cannot call a plugin's write tool.
@@ -39,7 +39,7 @@ Open the dashboard (default port 7777), look at the left navigation rail, click 
 Right under the heading are three introductory blocks:
 
 1. A description line: "Plugins add native **tools** (callable by engines) and **hooks** to Jeevi without touching the core, usable on EVERY engine (Claude Code, Codex, API) through the hub, respecting the 3 permission levels like any other tool."
-2. An orange warning box (shown only when this machine turns user plugins off): "**⚠ Plugins you installed are turned off on this machine.** This machine sets the environment variable `JAVIS_ENABLE_USER_PLUGINS=false` so global and brain plugins do not run. Remove it (or set it to true) and restart Jeevi. Bundled plugins keep running normally."
+2. An orange warning box (shown only when this machine turns user plugins off): "**⚠ Plugins you installed are turned off on this machine.** This machine sets the environment variable `JEEVI_ENABLE_USER_PLUGINS=false` so global and brain plugins do not run. Remove it (or set it to true) and restart Jeevi. Bundled plugins keep running normally."
 3. A grey signpost line: "Drop a GLOBAL plugin (used by EVERY brain) into `<the real path on your machine>` · each plugin is `plugin.yaml` + `plugin.py`. Or tell Jeevi in the chat box: 'create a plugin ...'."
 
 The path on the third line is the **real** path on the machine running Jeevi, so copy it from the screen rather than typing it from the documentation.
@@ -55,7 +55,7 @@ Each plugin is a card. Read it top to bottom:
 | Source label | Meaning | Where it lives |
 |---|---|---|
 | **Bundled** (green) | A plugin shipped with the app, published by Jeevi, trusted | `system/plugins/<slug>/` in the install folder |
-| **Global** (blue) | A plugin you installed, shared by **every brain** | Jeevi's state folder, `<JAVIS_STATE_DIR>/plugins/<slug>/` |
+| **Global** (blue) | A plugin you installed, shared by **every brain** | Jeevi's state folder, `<JEEVI_STATE_DIR>/plugins/<slug>/` |
 | **This brain** (orange) | A plugin you installed, used by **one brain** only | `<brain>/plugins/<slug>/` (an older brain may have `<brain>/Jeevi/plugins/<slug>/`) |
 
 On a slug collision, the later source wins: a "This brain" plugin named `datetime-vn` replaces the "Bundled" one of the same name.
@@ -90,7 +90,7 @@ For **Global** and **This brain** plugins, Jeevi writes `enabled: true/false` st
 
 Enabling and disabling takes effect immediately with no restart: Jeevi refreshes the hub's cache so the tool appears or disappears on the next chat turn, and the brain's capability index `Jeevi/index.md` is rebuilt too.
 
-The one exception: if you enable a **Global/This brain** plugin on a machine that sets `JAVIS_ENABLE_USER_PLUGINS=false`, Jeevi shows a dialog saying it was enabled in the manifest BUT this machine turns user-installed plugins off, and to remove that variable (or set it to true) and restart. The card then switches to **⚠ off by env**.
+The one exception: if you enable a **Global/This brain** plugin on a machine that sets `JEEVI_ENABLE_USER_PLUGINS=false`, Jeevi shows a dialog saying it was enabled in the manifest BUT this machine turns user-installed plugins off, and to remove that variable (or set it to true) and restart. The card then switches to **⚠ off by env**.
 
 ### Step 3: Check that the tool reached the engine
 
@@ -104,15 +104,15 @@ These ship with the app (the **Bundled** label). All are on by default except `t
 
 | Name on the card | slug | Tools provided | Minimum level | Default |
 |---|---|---|---|---|
-| Time and date (timezone picked in Settings) | `datetime-vn` | `javis_now`, `javis_date_add` | read only | On |
-| Recurring jobs and reminders | `javis-schedule` | `javis_schedule` | write (safe) | On |
-| Queue Kanban work | `javis-task` | `javis_task` | write (safe) | On |
-| Attach another MCP | `javis-connect` | `javis_add_mcp` | write (safe) | On |
+| Time and date (timezone picked in Settings) | `datetime-vn` | `jeevi_now`, `jeevi_date_add` | read only | On |
+| Recurring jobs and reminders | `jeevi-schedule` | `javis_schedule` | write (safe) | On |
+| Queue Kanban work | `jeevi-task` | `jeevi_task` | write (safe) | On |
+| Attach another MCP | `jeevi-connect` | `jeevi_add_mcp` | write (safe) | On |
 | Create and view images (ChatGPT) | `image-chatgpt` | `javis_generate_image`, `javis_describe_image` | write (safe); viewing: read only | On |
-| Read YouTube videos | `youtube-read` | `javis_youtube_read` | read only | On |
+| Read YouTube videos | `youtube-read` | `jeevi_youtube_read` | read only | On |
 | Meta Ads (Graph API) | `meta-ads-graph` | `meta_ads_accounts`, `meta_ads_insights`, `meta_ads_campaigns`, `meta_ads_get` | read only | On |
 | Facebook Pages (Graph API) | `meta-pages-graph` | `fb_pages_list`, `fb_page_posts`, `fb_page_comments`, `fb_page_scheduled`, `fb_page_post`, `fb_page_photo`, `fb_page_album`, `fb_page_video`, `fb_page_edit`, `fb_page_delete`, `fb_page_reply` | full power | On |
-| Tool usage log | `tool-audit` | `javis_tool_stats` + the `post_tool_call` hook | read only | **Off** |
+| Tool usage log | `tool-audit` | `jeevi_tool_stats` + the `post_tool_call` hook | read only | **Off** |
 
 What each one does:
 
@@ -139,7 +139,7 @@ Since 0.55.23, a **Package** installed on the **Capabilities > Install store** p
 They differ from the other three sources in three ways:
 
 - **Enabling, disabling and removing all happen in the Install store**, not here. A plugin travels with its whole package, so toggling it separately only causes confusion. The card on this page has a button that takes you straight there.
-- **`JAVIS_ENABLE_USER_PLUGINS` does not apply to packages.** A package goes through the installer, meaning you saw the screen listing every code file before clicking agree, and its code signature is checked on every load.
+- **`JEEVI_ENABLE_USER_PLUGINS` does not apply to packages.** A package goes through the installer, meaning you saw the screen listing every code file before clicking agree, and its code signature is checked on every load.
 - **The code in the package is locked to its content.** At install time, Jeevi records a fingerprint of all the code in the package. On every load it recomputes and compares: one byte off and the plugin **does not run**, with the card stating that the code in the package changed since you agreed to install it. To keep using it, reinstall from the Install store to review and confirm again.
 
 A note when editing by hand: opening a package's `plugin.py` in a Windows editor and saving is enough to shift the fingerprint, because many editors change the line endings. That is not a bug, the file content genuinely differs. To modify a plugin, edit it in your own plugin folder rather than inside a package.
@@ -172,7 +172,7 @@ The chat box you type into runs at the full level, so all three kinds are callab
 
 There are two places, depending on whether the plugin should be shared or private:
 
-- **Global** (recommended): `<JAVIS_STATE_DIR>/plugins/<slug>/`. Every brain sees it and every engine can call it. The real path is already shown on the signpost line of the Plugins page, so copy it from there. `JAVIS_STATE_DIR` defaults to the project's `server/` folder; on Docker/VPS it is usually `/data/state`.
+- **Global** (recommended): `<JEEVI_STATE_DIR>/plugins/<slug>/`. Every brain sees it and every engine can call it. The real path is already shown on the signpost line of the Plugins page, so copy it from there. `JEEVI_STATE_DIR` defaults to the project's `server/` folder; on Docker/VPS it is usually `/data/state`.
 - **One brain only**: `<brain>/plugins/<slug>/`. Only that brain can use it. Suitable when the plugin is tightly bound to one brain's data.
 
 `<slug>` is the folder name and must be lowercase ASCII without diacritics, starting with a letter or digit, containing only letters, digits, dots, underscores and hyphens. Get the character set wrong and Jeevi skips the plugin, reporting "invalid slug".
@@ -228,17 +228,17 @@ Since 0.162.0, Jeevi **loads the plugins you install by default**: a plugin with
 To block user plugins on a machine altogether (for example a shared server):
 
 1. Open the `.env` file in the project root (create it if absent, see [.env configuration](16-env-configuration.md)).
-2. Add one line: `JAVIS_ENABLE_USER_PLUGINS=false`
+2. Add one line: `JEEVI_ENABLE_USER_PLUGINS=false`
 3. Save the file and **restart Jeevi**.
 
-Off accepts `0`, `false`, `no` or `off` (case insensitive). The old name `JAVIS_ENABLE_VAULT_PLUGINS` still works, but when both are set the new name wins.
+Off accepts `0`, `false`, `no` or `off` (case insensitive). The old name `JEEVI_ENABLE_VAULT_PLUGINS` still works, but when both are set the new name wins.
 
 ## Safety rails (read before installing an unfamiliar plugin)
 
 This is the most important part of this page.
 
 - **Plugins you install run real Python code, inside Jeevi's own server process.** They have that process's rights: reading and writing files, calling the network, reading environment variables. Since 0.162.0 the project owner chose to **load them by default**; the remaining guard is each plugin's own **Enable** switch (`enabled: true` in `plugin.yaml`).
-- **Only enable a plugin once you have read its code.** Note: anyone who can write into a `plugins/` folder (including the model, since it can write into the brain) can also write `enabled: true`. On a shared server, or one that runs bots for strangers, set `JAVIS_ENABLE_USER_PLUGINS=false`.
+- **Only enable a plugin once you have read its code.** Note: anyone who can write into a `plugins/` folder (including the model, since it can write into the brain) can also write `enabled: true`. On a shared server, or one that runs bots for strangers, set `JEEVI_ENABLE_USER_PLUGINS=false`.
 - **Bundled plugins (the "Bundled" label) are not subject to this switch** because they ship with the Jeevi release. They keep working even when the machine sets `false`.
 - **A plugin Jeevi creates from chat is always disabled** (`enabled: false`) and at the `readonly` level. Jeevi never enables it for you; you must read the code then click **Enable** yourself.
 - **Do not write plugins that perform money, order, messaging or publishing actions.** Those should go through MCP connections and the permission system, where the blocks and logs already exist. A plugin should be `min_mode: readonly` unless you deliberately need otherwise.
@@ -301,9 +301,9 @@ Rails Jeevi enforces, which a plugin cannot loosen:
 - A callback that raises or takes longer than **2 seconds** is skipped and logged, and the reply goes on. A synchronous callback runs in a worker thread so it cannot stall other chats.
 - Each callback gets **its own copy** of the keys: whatever one plugin edits, the next one does not see.
 
-All three kinds of turn fire the hook: the live turn, the Inbox **Reply for me / Suggest a reply** turn (the sender is whoever wrote the last message of that chat), and the **Try bot** turn. A try turn carries `trial: true` and the try page's synthetic sender (`javis-try-user`, chat `javis-try`), the same stand-in a try turn already uses for every per-person check. That id matches nobody real, so a roster-style plugin shows its "stranger" path. A plugin that wants to treat try turns differently reads `trial`.
+All three kinds of turn fire the hook: the live turn, the Inbox **Reply for me / Suggest a reply** turn (the sender is whoever wrote the last message of that chat), and the **Try bot** turn. A try turn carries `trial: true` and the try page's synthetic sender (`jeevi-try-user`, chat `jeevi-try`), the same stand-in a try turn already uses for every per-person check. That id matches nobody real, so a roster-style plugin shows its "stranger" path. A plugin that wants to treat try turns differently reads `trial`.
 
-A plugin using this hook sits behind the usual rails: a user-installed plugin only runs with `JAVIS_ENABLE_USER_PLUGINS=true`, a Package plugin goes through the installer, and it should declare `min_mode: readonly` when it only reads.
+A plugin using this hook sits behind the usual rails: a user-installed plugin only runs with `JEEVI_ENABLE_USER_PLUGINS=true`, a Package plugin goes through the installer, and it should declare `min_mode: readonly` when it only reads.
 
 ## Own page and HTTP routes (since 0.64.26)
 
@@ -337,7 +337,7 @@ tools Jeevi already has, that door carries five tools only the outside AI sees (
 | `javis_chat_result` | Read the answer when Jeevi takes long | Any |
 | `javis_chat_note` | Save a note of the outside chat: what the owner said and decided (since 0.441.0) | Draft, Full |
 | `javis_sync_setup` | Turn on Jeevi Sync on a coding agent's machine: returns one install command the AI runs | Draft, Full |
-| `javis_brains` | List the brains: name, path, the default brain, the brain used last | Any |
+| `jeevi_brains` | List the brains: name, path, the default brain, the brain used last | Any |
 
 - **Picking the brain (#1726):** claude.ai cannot send a header, so it cannot pick a brain that way. Every Gate
   tool that reads or writes a brain (files, notes, tasks, reminders...) takes an optional `brain`: a brain's name
@@ -363,7 +363,7 @@ tools Jeevi already has, that door carries five tools only the outside AI sees (
 ### Saving Claude Code and Codex sessions automatically (Jeevi Sync)
 
 A coding agent busy writing code almost never calls `javis_chat_note` by itself. **Jeevi Sync**
-(`tools/javis-sync/javis_sync.py`) does it automatically: it runs on the machine with Claude Code or Codex, as Claude
+(`tools/jeevi-sync/jeevi_sync.py`) does it automatically: it runs on the machine with Claude Code or Codex, as Claude
 Code's **Stop hook** and Codex's **notify** program. After each turn it sends the owner's prompt and the agent's final
 answer (not the tool calls in between) to `POST /chat/external` on Jeevi.
 
@@ -373,7 +373,7 @@ answer (not the tool calls in between) to `POST /chat/external` on Jeevi.
 - API keys in the text are masked before saving. Very long text is cut, with a line saying how much is missing.
 - When Jeevi is off or unreachable, unsent turns are kept and sent on the next run; a turn Jeevi already has is
   skipped, never duplicated.
-- The hook never breaks Claude Code or Codex: failures only go to `~/.javis-sync/sync.log`.
+- The hook never breaks Claude Code or Codex: failures only go to `~/.jeevi-sync/sync.log`.
 
 **Setup: just connect Gate.** As soon as Claude Code or Codex connects to Jeevi Gate, the Gate tells it to ask you
 once: "Turn on Jeevi Sync?". Say yes and it calls the `javis_sync_setup` tool, runs the install command on its machine
@@ -390,25 +390,25 @@ and reports back. No command to type, no token to copy. To turn it on later, tel
 Manual setup (a machine not connected to Gate): create a token on the **Integrations** page, **API tokens** tab, then:
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/tools/javis-sync/javis_sync.py
-python3 javis_sync.py install --url https://<your-javis-domain> --token jvs_...
+curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/tools/jeevi-sync/jeevi_sync.py
+python3 jeevi_sync.py install --url https://<your-jeevi-domain> --token jvs_...
 ```
 
 `install` tests the connection first and installs nothing on a wrong URL or token. It copies the script to
-`~/.javis-sync/`, adds the hook to `~/.claude/settings.json` and a `notify` line to `~/.codex/config.toml` (with a
+`~/.jeevi-sync/`, adds the hook to `~/.claude/settings.json` and a `notify` line to `~/.codex/config.toml` (with a
 `.bak` backup). If Codex already had a notify program, it keeps running. Only one side: add `--claude` or `--codex`.
 
 - The first turn of a Claude Code session also sends what was said before the install.
-- Status: `python3 ~/.javis-sync/javis_sync.py status`. Remove: `... uninstall` (restores Codex's previous notify).
-- Never send one folder: add its path to `"exclude"` in `~/.javis-sync/config.json`. Pause one shell:
-  `JAVIS_SYNC_OFF=1`.
+- Status: `python3 ~/.jeevi-sync/jeevi_sync.py status`. Remove: `... uninstall` (restores Codex's previous notify).
+- Never send one folder: add its path to `"exclude"` in `~/.jeevi-sync/config.json`. Pause one shell:
+  `JEEVI_SYNC_OFF=1`.
 
 ## Quick reference of buttons and states
 
 | What you see | Meaning / action |
 |---|---|
 | **● running** (green) | The plugin is loaded and its tools are available to the engine |
-| **⚠ off by env** (orange) | You enabled the plugin but this machine sets `JAVIS_ENABLE_USER_PLUGINS=false` |
+| **⚠ off by env** (orange) | You enabled the plugin but this machine sets `JEEVI_ENABLE_USER_PLUGINS=false` |
 | **⚠ error** (red) | The manifest is broken or the code failed to load; the reason appears under the chip row |
 | **○ off** (grey) | The plugin is present but disabled, exposing no tools |
 | **● enabled (not loaded)** (orange) | A rare state: enabled but not loaded for some other reason. Reload the page, and if it persists check the server log |
@@ -432,14 +432,14 @@ python3 javis_sync.py install --url https://<your-javis-domain> --token jvs_...
 
 ## Common problems
 
-- **The card reads "⚠ off by env":** this machine sets `JAVIS_ENABLE_USER_PLUGINS=false`. Remove that line from `.env` (or set `true`) and restart Jeevi. The variable is only read at startup.
+- **The card reads "⚠ off by env":** this machine sets `JEEVI_ENABLE_USER_PLUGINS=false`. Remove that line from `.env` (or set `true`) and restart Jeevi. The variable is only read at startup.
 - **The environment variable is set and it is still blocked:** check that the `.env` file is in the project root, that the line has no leading `#`, and that the value is `true` (or `1`/`yes`/`on`). On Docker, set the variable in the container's Environment section rather than in a file on the host.
 - **A newly dropped plugin does not appear on the page:** the folder must be **directly** inside the plugins folder (no extra nesting) and must contain `plugin.py` (or `__init__.py`). Without that, Jeevi does not consider it a plugin. The folder name must also be a valid slug (lowercase, no diacritics).
 - **The card reads "⚠ error" with "plugin.py missing":** the folder has only `plugin.yaml`. Add the code file.
 - **The card reads "⚠ error" with "manifest error: ...":** `plugin.yaml` has invalid YAML. Most often a description containing a colon without quotes.
 - **The card reads "⚠ error" with "no register(ctx) function":** `plugin.py` has no `register` function, or you named it something else. It must be named exactly `register` and take one parameter.
 - **The card reads "⚠ error" with a Python error name (`ModuleNotFoundError`, say):** the plugin code uses a library not installed in Jeevi's Python environment. Install it into the virtual environment Jeevi actually runs in, then restart.
-- **The plugin is running but the engine does not see the tool:** most likely the tool name **collides** with an existing MCP or core tool. Jeevi does not let a plugin take a core tool's place, so it skips the colliding tool and writes a line to the server log. Rename the tool in `plugin.py` (a private prefix is the safest approach). Core names that cannot be reused: `javis_connections`, `javis_read_file`, `javis_list_dir`, `javis_write_file`, `javis_use_skill`.
+- **The plugin is running but the engine does not see the tool:** most likely the tool name **collides** with an existing MCP or core tool. Jeevi does not let a plugin take a core tool's place, so it skips the colliding tool and writes a line to the server log. Rename the tool in `plugin.py` (a private prefix is the safest approach). Core names that cannot be reused: `jeevi_connections`, `jeevi_read_file`, `jeevi_list_dir`, `jeevi_write_file`, `jeevi_use_skill`.
 - **The tool returns `ERROR: tool '<name>' needs a higher permission level`:** the run is permission-restricted. If it is a recurring job, raise that job's mode (see [Recurring jobs and reminders](08-recurring-jobs.md)); if it is your own plugin, review the `min_mode` declared in `register_tool`.
 - **The tool returns "not connected ...":** the plugin needs a connection you have not attached. Follow the instruction in the error exactly, usually going to the **Connections** page (or **Models** for the image plugin).
 - **Clicking Enable reports "plugin not found":** the list on screen is stale compared to disk (you just deleted or renamed the folder). Reload the page.
@@ -450,7 +450,7 @@ python3 javis_sync.py install --url https://<your-javis-domain> --token jvs_...
 - [Skills](06-skills.md) - when what you lack is know-how rather than running code.
 - [Connections and business data](09-connections-and-business-data.md) - attaching external data sources; the Meta Ads, Facebook Pages and Apify plugins take their tokens from here.
 - [Models and engines](10-models-and-engines.md) - why every engine can call plugin tools.
-- [Recurring jobs and reminders](08-recurring-jobs.md) - the three permission levels of background work, and the `javis-schedule` plugin.
+- [Recurring jobs and reminders](08-recurring-jobs.md) - the three permission levels of background work, and the `jeevi-schedule` plugin.
 - [Zalo Agent MCP](12-zalo-agent-mcp.md) - Zalo now uses the MCP of Jeevi's own `javis-zalo` CLI and no longer has its own plugin.
 - [.env configuration](16-env-configuration.md) - how to set an environment variable and restart.
 - [Agents and Workflows](07-agents-and-workflows.md) - Jeevi's other kinds of capability.

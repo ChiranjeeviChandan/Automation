@@ -1,11 +1,11 @@
-"""Resonance: javis_goal phải tới được tay bộ não theo ĐÚNG đường mà prompt chỉ, trên từng engine.
+"""Resonance: jeevi_goal phải tới được tay bộ não theo ĐÚNG đường mà prompt chỉ, trên từng engine.
 
     python tests/run.py resonance_tool_path
 
 Lỗi thật, tìm ra khi kiểm bằng mã sau pilot lần 2 (07/10/2026): dòng gợi ý trong system prompt bảo
-"chưa thấy tool thì tìm bằng javis_search_tools". Trên engine Claude Code, plugin đi bằng MCP in-process
-"javis-plugins" và hub bị báo bỏ nhóm plugin (X-Jeevi-No-Plugins), nên javis_search_tools không bao giờ
-trả về javis_goal ở đó. Gợi ý đúng cho mọi engine trừ engine dùng nhiều nhất.
+"chưa thấy tool thì tìm bằng jeevi_search_tools". Trên engine Claude Code, plugin đi bằng MCP in-process
+"jeevi-plugins" và hub bị báo bỏ nhóm plugin (X-Jeevi-No-Plugins), nên jeevi_search_tools không bao giờ
+trả về jeevi_goal ở đó. Gợi ý đúng cho mọi engine trừ engine dùng nhiều nhất.
 
 Test chỉ kiểm cơ chế (đăng ký, danh sách tới engine, đường tìm, nguồn tin người dùng). Nó KHÔNG chứng
 minh model sẽ chọn đúng; việc đó chỉ pilot thật mới trả lời được. Không gọi model, không đọc settings thật.
@@ -17,7 +17,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-res-toolpath-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-res-toolpath-")
 
 import claude_agent_sdk  # noqa: E402
 import claude_sdk_engine  # noqa: E402
@@ -70,14 +70,14 @@ def _in_plain_turn(fn):
 
 
 # 1. Đăng ký theo đúng lượt và brain
-check("lượt của agent đã bật: plugin_tools có javis_goal", "javis_goal" in _in_agent_turn(lambda: _names(ON)))
-check("lượt chat thường cùng brain: plugin_tools không có javis_goal",
-      "javis_goal" not in _in_plain_turn(lambda: _names(ON)))
-check("ngoài lượt (danh sách hub dùng chung), brain có agent bật: có javis_goal (chỉ gợi ý)", "javis_goal" in _names(ON))
-check("brain không có agent nào bật: không có javis_goal", "javis_goal" not in _names(OFF))
-check("không biết brain: không có javis_goal", "javis_goal" not in _names(None))
+check("lượt của agent đã bật: plugin_tools có jeevi_goal", "jeevi_goal" in _in_agent_turn(lambda: _names(ON)))
+check("lượt chat thường cùng brain: plugin_tools không có jeevi_goal",
+      "jeevi_goal" not in _in_plain_turn(lambda: _names(ON)))
+check("ngoài lượt (danh sách hub dùng chung), brain có agent bật: có jeevi_goal (chỉ gợi ý)", "jeevi_goal" in _names(ON))
+check("brain không có agent nào bật: không có jeevi_goal", "jeevi_goal" not in _names(OFF))
+check("không biết brain: không có jeevi_goal", "jeevi_goal" not in _names(None))
 
-# 2. Danh sách tới engine Claude: server in-process "javis-plugins", hub được báo bỏ plugin
+# 2. Danh sách tới engine Claude: server in-process "jeevi-plugins", hub được báo bỏ plugin
 _seen = {}
 _real = claude_agent_sdk.create_sdk_mcp_server
 
@@ -89,7 +89,7 @@ def _spy(name, tools=None, **kw):
 
 claude_agent_sdk.create_sdk_mcp_server = _spy
 _cfg = Path(tempfile.mkdtemp(prefix="cfg-toolpath-")) / "mcp.json"
-_cfg.write_text(json.dumps({"mcpServers": {"javis": {"type": "http", "url": "http://127.0.0.1:1/mcp/hub",
+_cfg.write_text(json.dumps({"mcpServers": {"jeevi": {"type": "http", "url": "http://127.0.0.1:1/mcp/hub",
                                                      "headers": {"X-Jeevi-Engine": "claude"}}}}), encoding="utf-8")
 
 
@@ -98,9 +98,9 @@ def _servers(vault):
     _desc_seen.clear()
     e = claude_sdk_engine.ClaudeSDK(cwd=vault or ON)
     e.mcp_config = str(_cfg)
-    e.javis_vault = vault
+    e.jeevi_vault = vault
     out = e._mcp_servers()[0] or {}
-    _desc_seen.update(_seen.get("javis-plugins") or {})
+    _desc_seen.update(_seen.get("jeevi-plugins") or {})
     return out
 
 
@@ -110,55 +110,55 @@ _desc_seen = {}
 try:
     s_on = _in_agent_turn(lambda: _servers(ON))
     desc_on = dict(_desc_seen)
-    check("Claude: có server javis-plugins", "javis-plugins" in s_on)
-    check("Claude: javis-plugins mang javis_goal", "javis_goal" in _seen.get("javis-plugins", []))
+    check("Claude: có server jeevi-plugins", "jeevi-plugins" in s_on)
+    check("Claude: jeevi-plugins mang jeevi_goal", "jeevi_goal" in _seen.get("jeevi-plugins", []))
     check("Claude: hub nhận X-Jeevi-No-Plugins=1",
-          (s_on.get("javis", {}).get("headers") or {}).get("X-Jeevi-No-Plugins") == "1")
+          (s_on.get("jeevi", {}).get("headers") or {}).get("X-Jeevi-No-Plugins") == "1")
     _servers(OFF)
     desc_off = dict(_desc_seen)
-    check("Claude, brain tắt: javis-plugins không mang javis_goal", "javis_goal" not in _seen.get("javis-plugins", []))
+    check("Claude, brain tắt: jeevi-plugins không mang jeevi_goal", "jeevi_goal" not in _seen.get("jeevi-plugins", []))
     _servers(None)
-    check("Claude, chưa đặt javis_vault: không mang javis_goal (main._apply_mcp phải đặt)",
-          "javis_goal" not in _seen.get("javis-plugins", []))
+    check("Claude, chưa đặt jeevi_vault: không mang jeevi_goal (main._apply_mcp phải đặt)",
+          "jeevi_goal" not in _seen.get("jeevi-plugins", []))
 finally:
     claude_agent_sdk.create_sdk_mcp_server = _real
 
 
-# 3. Đường tìm: hub tìm ra javis_goal khi có plugin (engine API/Codex), KHÔNG khi đi đường Claude
+# 3. Đường tìm: hub tìm ra jeevi_goal khi có plugin (engine API/Codex), KHÔNG khi đi đường Claude
 async def _search(include_plugins):
     _, route = await mcp_hub.discover_all("full", vault_root=ON, include_plugins=include_plugins,
                                           include_ambient=not include_plugins, force_refresh=True, force_lazy=True)
-    res = await route[mcp_hub._LAZY_SEARCH]["call"]({"query": "javis_goal mục tiêu"})
-    return "javis_goal" in str(res)
+    res = await route[mcp_hub._LAZY_SEARCH]["call"]({"query": "jeevi_goal mục tiêu"})
+    return "jeevi_goal" in str(res)
 
 
-check("hub có plugin (engine API/Codex): javis_search_tools tìm ra javis_goal", asyncio.run(_search(True)))
-check("hub đường Claude (No-Plugins): javis_search_tools KHÔNG tìm ra javis_goal", not asyncio.run(_search(False)))
+check("hub có plugin (engine API/Codex): jeevi_search_tools tìm ra jeevi_goal", asyncio.run(_search(True)))
+check("hub đường Claude (No-Plugins): jeevi_search_tools KHÔNG tìm ra jeevi_goal", not asyncio.run(_search(False)))
 
 # 4. Prompt chỉ đúng đường cho từng engine (dòng gợi ý chỉ có trong lượt của agent đã bật)
 p_on = _in_agent_turn(lambda: main.build_system_prompt(ON))
 p_off = main.build_system_prompt(OFF)
-check("lượt chat thường cùng brain: prompt không nhắc javis_goal",
-      "javis_goal" not in _in_plain_turn(lambda: main.build_system_prompt(ON)))
-_full = "mcp__javis-plugins__javis_goal"
+check("lượt chat thường cùng brain: prompt không nhắc jeevi_goal",
+      "jeevi_goal" not in _in_plain_turn(lambda: main.build_system_prompt(ON)))
+_full = "mcp__jeevi-plugins__jeevi_goal"
 check("prompt nêu ToolSearch kèm tên đầy đủ đúng server in-process",
-      "ToolSearch" in p_on and _full in p_on and _full == "mcp__" + "javis-plugins" + "__javis_goal")
-check("prompt vẫn nêu javis_search_tools cho engine khác", "javis_search_tools" in p_on)
-check("prompt nêu đủ ranh giới: làm luôn, javis_task, javis_schedule, javis_goal",
-      all(x in p_on for x in ("just do it", "javis_task", "javis_schedule", "javis_goal op=create")))
-check("brain tắt: prompt không nhắc javis_goal hay ToolSearch",
-      "javis_goal" not in p_off and _full not in p_off)
+      "ToolSearch" in p_on and _full in p_on and _full == "mcp__" + "jeevi-plugins" + "__jeevi_goal")
+check("prompt vẫn nêu jeevi_search_tools cho engine khác", "jeevi_search_tools" in p_on)
+check("prompt nêu đủ ranh giới: làm luôn, jeevi_task, javis_schedule, jeevi_goal",
+      all(x in p_on for x in ("just do it", "jeevi_task", "javis_schedule", "jeevi_goal op=create")))
+check("brain tắt: prompt không nhắc jeevi_goal hay ToolSearch",
+      "jeevi_goal" not in p_off and _full not in p_off)
 
 # 5. Mô tả tool THẬT SỰ tới engine Claude (metadata của server in-process), brain bật và tắt.
-# Brain tắt Resonance không được nhận chỉ dẫn mới nào: mô tả javis_task giữ nguyên, không nhắc javis_goal
-# (review PR #579, P2). Ranh giới chỉ nằm ở mô tả javis_goal và dòng gợi ý, hai thứ chỉ có khi bật.
-check("javis_task: mô tả tới engine giống hệt nhau khi bật và khi tắt",
-      bool(desc_on.get("javis_task")) and desc_on.get("javis_task") == desc_off.get("javis_task"))
-check("javis_task: mô tả không nhắc javis_goal hay ranh giới Resonance",
-      "javis_goal" not in desc_off.get("javis_task", "") and "hết trách nhiệm" not in desc_off.get("javis_task", ""))
-check("brain tắt: engine không nhận javis_goal", "javis_goal" not in desc_off)
-check("javis_goal (brain bật): nhắc sửa theo phản hồi và chỉ việc một lần sang javis_task",
-      "sửa theo phản hồi" in desc_on.get("javis_goal", "") and "javis_task" in desc_on.get("javis_goal", ""))
+# Brain tắt Resonance không được nhận chỉ dẫn mới nào: mô tả jeevi_task giữ nguyên, không nhắc jeevi_goal
+# (review PR #579, P2). Ranh giới chỉ nằm ở mô tả jeevi_goal và dòng gợi ý, hai thứ chỉ có khi bật.
+check("jeevi_task: mô tả tới engine giống hệt nhau khi bật và khi tắt",
+      bool(desc_on.get("jeevi_task")) and desc_on.get("jeevi_task") == desc_off.get("jeevi_task"))
+check("jeevi_task: mô tả không nhắc jeevi_goal hay ranh giới Resonance",
+      "jeevi_goal" not in desc_off.get("jeevi_task", "") and "hết trách nhiệm" not in desc_off.get("jeevi_task", ""))
+check("brain tắt: engine không nhận jeevi_goal", "jeevi_goal" not in desc_off)
+check("jeevi_goal (brain bật): nhắc sửa theo phản hồi và chỉ việc một lần sang jeevi_task",
+      "sửa theo phản hồi" in desc_on.get("jeevi_goal", "") and "jeevi_task" in desc_on.get("jeevi_goal", ""))
 
 # 6. Nguồn tin người dùng: tool đọc đúng lượt đang chạy của brain
 k = luot_dang_chay.bat_dau("web:sess-tp", ON, msg_id=11, user_text="lời thật của người dùng")

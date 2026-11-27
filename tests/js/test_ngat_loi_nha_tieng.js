@@ -17,7 +17,7 @@
    nhá với mức trước khi nhá là biết, trong 400 ms, không cần chữ.
 
    Test khoá:
-     1. Phép phân biệt (JavisVoice.laNguoiThat) đúng trên các mẫu thật.
+     1. Phép phân biệt (JeeviVoice.laNguoiThat) đúng trên các mẫu thật.
      2. Ngưỡng nghi ngờ TỰ HỌC theo nền vọng, không còn đo một lần trong 600 ms đầu.
      3. Nhá tiếng xong mà là vọng thì NÂNG nền rồi đọc tiếp, không dừng.
      4. Âm lượng được áp cho MỌI khúc audio mới, và mọi đường dừng đều trả âm lượng về đầy.
@@ -39,39 +39,39 @@ const has = (acts, t) => acts.some(a => a.type === t);
 
 // ---- 1. Phép phân biệt vọng / người, chạy THẬT ----
 // Nhấc class ra chạy bằng node: voice.js đụng window ở dòng cuối nên nạp phần class thôi.
-const classSrc = voiceSrc.slice(voiceSrc.indexOf("class JavisVoice"), voiceSrc.lastIndexOf("window.JavisVoice"));
-const JavisVoice = new Function("window", "localStorage", classSrc + "\nreturn JavisVoice;")(
+const classSrc = voiceSrc.slice(voiceSrc.indexOf("class JeeviVoice"), voiceSrc.lastIndexOf("window.JeeviVoice"));
+const JeeviVoice = new Function("window", "localStorage", classSrc + "\nreturn JeeviVoice;")(
   { speechSynthesis: {}, AudioContext: function () {} },
   { getItem: () => null, setItem: () => {} });
 
 check("hằng số nhá tiếng có mặt",
-  JavisVoice.NHA_GAIN === 0.12 && JavisVoice.NHA_TICKS === 4 && JavisVoice.NHA_MIN_HIT === 2);
+  JeeviVoice.NHA_GAIN === 0.12 && JeeviVoice.NHA_TICKS === 4 && JeeviVoice.NHA_MIN_HIT === 2);
 
 // Vọng của loa: hạ còn 12% âm lượng thì mức mic tụt theo (0.09 -> ~0.011).
 check("vọng loa: nhá xong mức sập -> KHÔNG phải người",
-  JavisVoice.laNguoiThat(0.09, [0.012, 0.010, 0.011, 0.009]) === false);
+  JeeviVoice.laNguoiThat(0.09, [0.012, 0.010, 0.011, 0.009]) === false);
 // Giọng người: nhá âm lượng không ảnh hưởng gì tới giọng họ.
 check("giọng người: nhá xong mức giữ nguyên -> là người",
-  JavisVoice.laNguoiThat(0.09, [0.085, 0.09, 0.08, 0.075]) === true);
+  JeeviVoice.laNguoiThat(0.09, [0.085, 0.09, 0.08, 0.075]) === true);
 // Tiếng "thôi" ngắn: còn tiếng ở 2 nhịp đầu rồi im. Đây chính là ca đường cũ bỏ lọt.
 check("tiếng 'thôi' ngắn (2 nhịp rồi im) vẫn tính là người",
-  JavisVoice.laNguoiThat(0.09, [0.08, 0.07, 0.008, 0.006]) === true);
+  JeeviVoice.laNguoiThat(0.09, [0.08, 0.07, 0.008, 0.006]) === true);
 // Tiếng ho tắt ngay khi vừa nhá: chỉ 1 nhịp, không đủ.
 check("tiếng ho tắt ngay -> không phải người",
-  JavisVoice.laNguoiThat(0.09, [0.07, 0.008, 0.006, 0.005]) === false);
+  JeeviVoice.laNguoiThat(0.09, [0.07, 0.008, 0.006, 0.005]) === false);
 // Phòng im hẳn trong lúc nhá.
 check("phòng im -> không phải người",
-  JavisVoice.laNguoiThat(0.05, [0.004, 0.003, 0.004, 0.003]) === false);
+  JeeviVoice.laNguoiThat(0.05, [0.004, 0.003, 0.004, 0.003]) === false);
 // Loa rất nhỏ (preLevel thấp) thì sàn tuyệt đối giữ cho tiếng ồn lí nhí không thành "người".
 check("mức nền lí nhí không vượt sàn NHA_SAN",
-  JavisVoice.laNguoiThat(0.01, [0.015, 0.016, 0.014, 0.015]) === false);
+  JeeviVoice.laNguoiThat(0.01, [0.015, 0.016, 0.014, 0.015]) === false);
 
 // ---- 2. Ngưỡng tự học, không còn hiệu chỉnh một lần ----
 check("CANARY: bỏ hẳn kiểu đo nền 600 ms đầu rồi thôi", !/ticks <= 6/.test(voiceSrc));
 check("CANARY: bỏ hẳn ngưỡng chết 0.045 viết thẳng trong vòng đo",
   !/Math\.max\(0\.045, baseline/.test(voiceSrc));
 check("ngưỡng tính từ nền tự học _echoFloor",
-  /const thresh = Math\.max\(JavisVoice\.BARGE_SAN, this\._echoFloor \* 1\.8 \+ 0\.01\);/.test(voiceSrc));
+  /const thresh = Math\.max\(JeeviVoice\.BARGE_SAN, this\._echoFloor \* 1\.8 \+ 0\.01\);/.test(voiceSrc));
 check("nền CHỈ học ở nhịp không nghi ngờ (không kéo theo giọng người)",
   /hits = 0; gan = \[\];\s*\n\s*this\._echoFloor = this\._echoFloor \* 0\.9 \+ rms \* 0\.1;/.test(voiceSrc));
 check("nghi ngờ đủ nhịp thì NHÁ TIẾNG, không gọi thẳng _bargeIn",
@@ -86,8 +86,8 @@ check("là vọng -> nâng nền THEO BẬC, không nhảy thẳng tới mức v
 check("là vọng -> mở lại bộ rình, KHÔNG dừng đọc",
   /this\._nhoNenVong\(\);\s*\n\s*this\._startBargeMonitor\(\);/.test(voiceSrc));
 check("nền vọng được nhớ qua các lần mở trang, có chặn trên chống giá trị rác",
-  /localStorage\.setItem\("javis\.nenVong"/.test(voiceSrc)
-  && /Math\.min\(0\.3, parseFloat\(localStorage\.getItem\("javis\.nenVong"\)\) \|\| 0\)/.test(voiceSrc));
+  /localStorage\.setItem\("jeevi\.nenVong"/.test(voiceSrc)
+  && /Math\.min\(0\.3, parseFloat\(localStorage\.getItem\("jeevi\.nenVong"\)\) \|\| 0\)/.test(voiceSrc));
 
 // Leo bậc chạy thật: một tiếng ho to (0.2) chỉ đẩy được một bậc nhỏ, không treo nền lên 0.21.
 const leo = (nen, pre) => Math.max(nen, Math.min(pre * 1.05, nen * 1.6 + 0.02));
@@ -109,7 +109,7 @@ check("stopSpeaking huỷ cuộc thăm dò dở", /this\._stopBargeMonitor\(\);\
 check("pauseSpeaking cũng huỷ", (voiceSrc.match(/this\._huyNha\(\);/g) || []).length >= 2);
 
 // Chạy thật _apAmLuong để chắc con số đúng chiều.
-const v = Object.create(JavisVoice.prototype);
+const v = Object.create(JeeviVoice.prototype);
 v._dangNha = true;
 const fake = { volume: 1 };
 v._apAmLuong(fake);
@@ -166,7 +166,7 @@ function dungDongHo() {
 
 const dh = dungDongHo();
 const Lop = new Function("window", "localStorage", "setInterval", "clearInterval", "setTimeout", "clearTimeout",
-  classSrc + "\nreturn JavisVoice;")(
+  classSrc + "\nreturn JeeviVoice;")(
   // SpeechRecognition giả: chỉ để _initRecognition không kêu "trình duyệt không hỗ trợ".
   // Ngắt lời KHÔNG dùng tới nhận dạng nữa, đó chính là điểm của đợt sửa này.
   { speechSynthesis: { getVoices: () => [], speak() {}, cancel() {} },

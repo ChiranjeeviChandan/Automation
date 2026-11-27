@@ -1,7 +1,7 @@
 """The Learned tab of an assistant (Cộng sự page, 2026-11-16).
 
 Owner, 16/11/2026: bring the project's self-learning into the Cộng sự page, rename its documents button to
-"Tài liệu & Đã học" and add a tab there. An assistant already learns on its own (`JAVIS_LESSON` lines go to
+"Tài liệu & Đã học" and add a tab there. An assistant already learns on its own (`JEEVI_LESSON` lines go to
 `agent_lessons`), but since 0.190.0 nothing on screen showed what it had learnt. This tab is that list, kept as plain
 as the project's Learned tab: one row per lesson in use, with edit and remove, and a box to add one. No scopes to pick,
 no promote button: the owner removed exactly that in 0.190.0 because nobody knew where a lesson applied.
@@ -10,7 +10,7 @@ It reads and writes the store that already feeds the prompt, never a second one,
 assistant uses:
 
 - `L<id>` rows: lessons in `agent_lessons` with status `active`. A lesson the owner adds here goes to scope `*`
-  (every chat, team and workflow step), the same as `javis_memory op=lesson_add`. Editing keeps the scope and makes the
+  (every chat, team and workflow step), the same as `jeevi_memory op=lesson_add`. Editing keeps the scope and makes the
   lesson the owner's. Removing revokes it, so the assistant does not learn the same words again.
 - `C<n>` rows: old lessons still under "## Bài học (tự học)" in the assistant's MEMORY.md (before 0.156.0). Removing
   deletes the line; editing moves it into the store as the owner's lesson.

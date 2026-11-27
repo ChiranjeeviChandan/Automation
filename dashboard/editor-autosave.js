@@ -24,7 +24,7 @@
   var DELAY_MS = 1200;        // pause in typing before the file is written
   var DRAFT_DELAY_MS = 500;   // pause before the local copy is refreshed
   var RETRY_MS = 5000;        // a failed write is tried again after this long
-  var DRAFT_PREFIX = "javis.draft.";
+  var DRAFT_PREFIX = "jeevi.draft.";
   var DRAFT_MAX_AGE_MS = 7 * 24 * 3600 * 1000;
   var KEEPALIVE_MAX_BYTES = 60000;   // browsers refuse a keepalive body above 64 KB
 
@@ -227,6 +227,6 @@
   }
 
   var api = { attach: attach, hash: hash, pickDraft: pickDraft, DELAY_MS: DELAY_MS, DRAFT_PREFIX: DRAFT_PREFIX };
-  if (typeof window !== "undefined") window.JavisAutosave = api;
+  if (typeof window !== "undefined") window.JeeviAutosave = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

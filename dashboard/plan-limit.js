@@ -70,7 +70,7 @@
 
   var $ = function (id) { return document.getElementById(id); };
   var tw = function (k, v) { return window.t ? window.t(k, v) : k; };
-  var LOC = function () { return (window.JavisI18n && window.JavisI18n.locale()) || "vi-VN"; };
+  var LOC = function () { return (window.JeeviI18n && window.JeeviI18n.locale()) || "vi-VN"; };
   var data = null, provider = "", model = "", busy = null, lastFetch = 0, names = {};
 
   function cur() {
@@ -181,7 +181,7 @@
   function openPop() {
     var p = $("limitPop"), b = $("limitBtn");
     if (!p || !b) return;
-    try { if (window.JavisModelBar && window.JavisModelBar.closeAll) window.JavisModelBar.closeAll(); } catch (e) {}
+    try { if (window.JeeviModelBar && window.JeeviModelBar.closeAll) window.JeeviModelBar.closeAll(); } catch (e) {}
     p.hidden = false;
     b.setAttribute("aria-expanded", "true");
     paintPop();
@@ -204,7 +204,7 @@
   }
   // True while model-picker.js owns the three chips (a phone, or its sheet still open): it opens and closes this panel.
   function sheetOwns() {
-    try { return !!(window.JavisModelBar && window.JavisModelBar.sheetOwns && window.JavisModelBar.sheetOwns()); } catch (e) { return false; }
+    try { return !!(window.JeeviModelBar && window.JeeviModelBar.sheetOwns && window.JeeviModelBar.sheetOwns()); } catch (e) { return false; }
   }
 
   // withNames: the popover opening also asks the server to name each plan (it may run `claude auth status`).
@@ -239,11 +239,11 @@
     if (e.key === "Escape" && popOpen() && !sheetOwns()) { closePop(); var b = $("limitBtn"); if (b) b.focus(); }
   });
 
-  window.addEventListener("javis:i18n", paintRing);
+  window.addEventListener("jeevi:i18n", paintRing);
 
   api.setProvider = setProvider;
   api.refresh = function () { return refresh(true); };
   api.close = closePop;
   api.showInSheet = showInSheet;
-  window.JavisPlanLimit = api;
+  window.JeeviPlanLimit = api;
 })();

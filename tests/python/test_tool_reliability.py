@@ -9,12 +9,12 @@ import json
 import os
 # 0.438.5: vòng tool mặc định gọi model dạng stream. File này thử logic vòng tool trên đường non-stream
 # (giả lập client.post / máy chủ trả JSON), đường đó vẫn là đường lui. Đường stream: test_api_stream_vong.py.
-os.environ["JAVIS_API_STREAM_TOOLS"] = "0"
+os.environ["JEEVI_API_STREAM_TOOLS"] = "0"
 import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-tool-reliability-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-tool-reliability-")
 
 import engine  # noqa: E402
 import mcp_client  # noqa: E402
@@ -44,7 +44,7 @@ check("chat kiến thức thuần -> không ép tool",
 check("dữ liệu Google hiện tại -> ép ít nhất một tool",
       engine._tool_requirement(
           [{"role": "user", "content": "Xem Google Tasks hiện có giúp anh"}],
-          [{"fn": "javis_search_tools"}]) == "required")
+          [{"fn": "jeevi_search_tools"}]) == "required")
 check("câu chỉ xem lịch -> nhận ra đường read-only",
       engine._schedule_read_request(
           [{"role": "user", "content": "Kiểm tra cron đang chạy và lịch thuốc hôm nay"}]))
@@ -293,7 +293,7 @@ asyncio.run(schedule_cancel_gateway_tests())
 
 
 async def hub_vault_test():
-    vault = tempfile.mkdtemp(prefix="javis-brain-")
+    vault = tempfile.mkdtemp(prefix="jeevi-brain-")
     seen = []
     old_discover = mcp_hub.discover_all
 
@@ -304,8 +304,8 @@ async def hub_vault_test():
     class FakeRequest:
         headers = {
             "authorization": f"Bearer {mcp_hub.hub_token()}",
-            "x-javis-mode": "full",
-            "x-javis-vault": vault,
+            "x-jeevi-mode": "full",
+            "x-jeevi-vault": vault,
         }
 
         async def json(self):
@@ -323,11 +323,11 @@ async def hub_vault_test():
 
 asyncio.run(hub_vault_test())
 
-vault = tempfile.mkdtemp(prefix="javis-codex-brain-")
+vault = tempfile.mkdtemp(prefix="jeevi-codex-brain-")
 override = mcp_hub.codex_vault_override(vault)
 cli = CodexCLI(cwd=vault)
 cli.cli_path = "codex"
-cli.profile = "javis"
+cli.profile = "jeevi"
 cli.extra_config.append(override)
 args = cli._build_args()
 check("Codex argv mang override X-Jeevi-Vault theo từng phiên",

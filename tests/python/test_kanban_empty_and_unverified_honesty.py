@@ -7,7 +7,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-pr3-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-pr3-"))
 
 import localefmt  # noqa: E402
 import pytest  # noqa: E402

@@ -652,7 +652,7 @@ window.t = function (k) { return ({"fast.claude": "Tính vào usage credits, gi�
     };
   }
   api.mount = mount;
-  window.JavisEffortSlider = api;
+  window.JeeviEffortSlider = api;
 })();
 
 </script>
@@ -794,12 +794,12 @@ document.addEventListener("click", (e) => {
       // The app's own slider (dashboard/effort-slider.js), mounted as the composer mounts it.
       const chipEl = t.classList.contains("cp-eff") ? t : null;
       const sup = !chipEl || chipEl.dataset.fast === "1";
-      window.JavisEffortSlider.mount(document.getElementById("effBox"), { value: (chipEl && chipEl.dataset.v) || "medium",
+      window.JeeviEffortSlider.mount(document.getElementById("effBox"), { value: (chipEl && chipEl.dataset.v) || "medium",
         // Fast mode: the same bolt as the composer's slider, one setting for the whole app; greyed out on a model
         // without Fast mode (same rule as model-picker.js fastNote), e.g. Antigravity.
         fast: { supported: sup, on: window.FAST_ON, title: () => "Fast mode\n" + window.t(chipEl && chipEl.dataset.for === "ChatGPT" ? "fast.codex" : sup ? "fast.api" : "fast.none"),
           onToggle: (on) => { window.FAST_ON = on; document.querySelectorAll(".cp-eff[data-fast='1'] .cp-eff-fast").forEach(x => { x.hidden = !on; }); } },
-        onChange: (v) => { if (chipEl) { chipEl.dataset.v = v; chipEl.querySelector(".ev").textContent = window.t(window.JavisEffortSlider.LABEL_KEY[v]); } } });
+        onChange: (v) => { if (chipEl) { chipEl.dataset.v = v; chipEl.querySelector(".ev").textContent = window.t(window.JeeviEffortSlider.LABEL_KEY[v]); } } });
     }
     return;
   }

@@ -31,7 +31,7 @@ The **Account** tab:
 
 The **Security** tab (added after the incident of 2026-11-09):
 
-- **Overview**: whether 2FA is on, devices signed in, the last sign-in (time, IP, device), failed sign-ins in 7 days, API tokens. A red line when the settings file was ever changed outside Jeevi, an amber line while `JAVIS_ADMIN_PASSWORD` or `JAVIS_RESET_2FA` is still in the environment.
+- **Overview**: whether 2FA is on, devices signed in, the last sign-in (time, IP, device), failed sign-ins in 7 days, API tokens. A red line when the settings file was ever changed outside Jeevi, an amber line while `JEEVI_ADMIN_PASSWORD` or `JEEVI_RESET_2FA` is still in the environment.
 - **Two-factor authentication**: turn on, turn off, regenerate recovery codes.
 - **Devices signed in**: one row per browser (device, IP, last activity). Sign out one, or press **Sign out all other devices** without changing the password.
 - **Sign-in and security history**: every successful and failed sign-in, sign-out, username or password change, 2FA change, new token, reset from the environment, outside edit of the settings file, and AI assistant call blocked near a secret file. Filter by Sign-ins, Changes, Warnings.
@@ -46,10 +46,10 @@ Jeevi decides whether to force a login based on how the server is running:
 | Running public (Docker/VPS/Hostinger), listening on `0.0.0.0`, `::` or a LAN IP | Yes, turned on automatically |
 | A password has been set on the Account page | Yes, in every mode |
 
-You can force it either way with the `JAVIS_REQUIRE_LOGIN` environment variable:
+You can force it either way with the `JEEVI_REQUIRE_LOGIN` environment variable:
 
-- `JAVIS_REQUIRE_LOGIN=1` : always force login, localhost included. Set this when you expose Jeevi through a tunnel (Cloudflare Tunnel, ngrok...) from a personal machine.
-- `JAVIS_REQUIRE_LOGIN=0` : turn forced login off.
+- `JEEVI_REQUIRE_LOGIN=1` : always force login, localhost included. Set this when you expose Jeevi through a tunnel (Cloudflare Tunnel, ngrok...) from a personal machine.
+- `JEEVI_REQUIRE_LOGIN=0` : turn forced login off.
 
 The safety principle is fail-closed: if the server listens on an address that is **not** purely localhost, Jeevi treats it as public and turns login on. Environment variable details in [.env configuration](16-env-configuration.md).
 
@@ -62,8 +62,8 @@ The first time you open the dashboard on a public server with no admin yet, Jeev
 **Way 1 - Set the admin through environment variables (recommended):**
 
 1. In your deploy configuration (the Hostinger compose file, say), add 2 variables:
-   - `JAVIS_ADMIN_PASSWORD` : the admin password you choose.
-   - `JAVIS_ADMIN_USER` : the username (optional, defaults to `admin`).
+   - `JEEVI_ADMIN_PASSWORD` : the admin password you choose.
+   - `JEEVI_ADMIN_USER` : the username (optional, defaults to `admin`).
 2. Start Jeevi. At boot it creates the admin from these two variables and **closes** the create-account screen entirely. Opening the app takes you straight to the sign-in screen.
 3. Sign in with the user and password you just set.
 
@@ -106,13 +106,13 @@ Changing only the username leaves other sessions alive, since the password did n
 - **Jeevi opened from another device (phone, tunnel):** the line shows the steps in its (i) popup: go to the computer that runs Jeevi and double-click the file as above.
 - **Docker, Hostinger, VPS:** the line shows the environment-variable steps below.
 
-The script does not reopen the first-run wizard (models, channels and API keys stay). It also removes `JAVIS_ADMIN_PASSWORD` and `JAVIS_ADMIN_USER` from the install's `.env` (a Mac installed with `install.sh` has both), because leaving them would make Jeevi put the old password back at the next start.
+The script does not reopen the first-run wizard (models, channels and API keys stay). It also removes `JEEVI_ADMIN_PASSWORD` and `JEEVI_ADMIN_USER` from the install's `.env` (a Mac installed with `install.sh` has both), because leaving them would make Jeevi put the old password back at the next start.
 
 Manual way on a server:
 
 1. Stop the container (or stop Jeevi).
 2. Delete (or empty) the `"auth"` block in `settings.json` in the state folder (Docker: `/data/state/settings.json`).
-3. Set `JAVIS_ADMIN_PASSWORD` (and `JAVIS_ADMIN_USER` if you want) then restart. Jeevi recreates the admin from the environment variables at boot.
+3. Set `JEEVI_ADMIN_PASSWORD` (and `JEEVI_ADMIN_USER` if you want) then restart. Jeevi recreates the admin from the environment variables at boot.
 
 Skip step 3 and the account form **stays shut to other devices**: on a machine that had an owner, a missing password lets only a browser on the machine running Jeevi create the next account, or any device for 24 hours after you run `python tools/reset_auth.py` on the server. This way a password that goes missing does not let a stranger in (incident of 2026-11-22). Each blocked try raises an alert in the security log, with the real IP of whoever tried.
 
@@ -133,7 +133,7 @@ Only do this on a personal machine, never on a VPS.
 3. Confirm in the dialog warning that anyone opening the dashboard will be able to use it.
 4. Jeevi deletes the password and **signs out every open session**.
 
-Note: if the server is still running public (or you set `JAVIS_REQUIRE_LOGIN=1`), turning the password off does **not** throw the dashboard open, it returns to the forced create-account screen. Login is only truly off when the server listens on localhost and login is not forced.
+Note: if the server is still running public (or you set `JEEVI_REQUIRE_LOGIN=1`), turning the password off does **not** throw the dashboard open, it returns to the forced create-account screen. Login is only truly off when the server listens on localhost and login is not forced.
 
 ### F. Renaming the workspace
 
@@ -150,7 +150,7 @@ These events are **sent to the owner right away** (bell, push notification, the 
 - A sign-in from a network never seen before (the same /24 is not new, so a phone moving between towers does not keep alerting).
 - A sign-in with a 2FA recovery code.
 - Username or password changed, 2FA turned on or off, recovery codes regenerated, API token created, login turned off.
-- The account created or reset from the environment, 2FA removed with `JAVIS_RESET_2FA`.
+- The account created or reset from the environment, 2FA removed with `JEEVI_RESET_2FA`.
 - **The settings file changed outside Jeevi** (below).
 
 ### Detecting an outside edit of the settings file
@@ -169,11 +169,11 @@ It stops the plain request, it is not a wall: code running as the same OS user c
 
 Signs: an unknown username, the right password reported wrong, your 2FA codes no longer accepted, a "settings file changed outside Jeevi" alert, or an unknown device in the Security tab. In this order:
 
-1. **Take the account back.** On Hostinger: add `JAVIS_ADMIN_USER` and `JAVIS_ADMIN_PASSWORD` (a NEW password) in the Environment box and redeploy. Jeevi resets the account, keeps 2FA and signs out every old session.
-2. **2FA is not yours?** Add `JAVIS_RESET_2FA=1` in the same step. Jeevi removes 2FA once at startup. It applies once per value; to use it again later, set another value, such as the date (`JAVIS_RESET_2FA=2026-11-09`).
+1. **Take the account back.** On Hostinger: add `JEEVI_ADMIN_USER` and `JEEVI_ADMIN_PASSWORD` (a NEW password) in the Environment box and redeploy. Jeevi resets the account, keeps 2FA and signs out every old session.
+2. **2FA is not yours?** Add `JEEVI_RESET_2FA=1` in the same step. Jeevi removes 2FA once at startup. It applies once per value; to use it again later, set another value, such as the date (`JEEVI_RESET_2FA=2026-11-09`).
 3. **Sign in, open Account > Security.** Read the sign-in history (IP, device, time) and press **Sign out all other devices**.
 4. **Turn 2FA on again** with your phone and keep the 8 recovery codes somewhere safe.
-5. **Remove `JAVIS_ADMIN_PASSWORD` and `JAVIS_RESET_2FA` from the Environment box** and redeploy. The account is not affected. The password sits there in plain text, so do not leave it.
+5. **Remove `JEEVI_ADMIN_PASSWORD` and `JEEVI_RESET_2FA` from the Environment box** and redeploy. The account is not affected. The password sits there in plain text, so do not leave it.
 6. **Find how they got in.** Whoever edited the settings file had access to the server: look for unknown SSH keys (`cat /root/.ssh/authorized_keys`), change the root password (`passwd`), change the password of the Hostinger account and turn on its 2FA, block port 7777 at the firewall once an HTTPS domain works.
 7. **Rotate the connection keys** stored in Jeevi (POS, Cloudflare, Gmail, Zalo, API keys), money and customer data first: someone on the server may have read them.
 8. **Look for anything left behind**: unknown recurring jobs, reminders, agents, plugins, MCP servers; on the server run `crontab -l`.
@@ -196,9 +196,9 @@ Jeevi blocks both paths with a gate standing in front of the login gate itself:
 | A non-browser client (no `Origin` sent, for example the CLI, curl, MCP) | Allowed |
 | Host is an IP address | The Host check is skipped |
 
-The allowlist contains: `localhost`, `127.0.0.1`, `::1`, `0.0.0.0`, plus the custom domain you set in **Settings → Domain and SSL**, plus every name in the `JAVIS_ALLOWED_HOSTS` environment variable (comma separated).
+The allowlist contains: `localhost`, `127.0.0.1`, `::1`, `0.0.0.0`, plus the custom domain you set in **Settings → Domain and SSL**, plus every name in the `JEEVI_ALLOWED_HOSTS` environment variable (comma separated).
 
-When you might need to touch this: running Jeevi behind a reverse proxy on a domain not declared in the app, while **no** password is set. Jeevi then treats that domain as unknown and returns 403. The fix: set a password (turning the login gate on makes the Host check step aside), or add the domain to `JAVIS_ALLOWED_HOSTS`.
+When you might need to touch this: running Jeevi behind a reverse proxy on a domain not declared in the app, while **no** password is set. Jeevi then treats that domain as unknown and returns 403. The fix: set a password (turning the login gate on makes the Host check step aside), or add the domain to `JEEVI_ALLOWED_HOSTS`.
 
 ## Blocking search engines and AI bots
 
@@ -222,7 +222,7 @@ curl -s -o /dev/null -w "%{http_code}\n" -A GPTBot https://your-domain/
 
 It must print `403`. A browser still opens the page as usual.
 
-This layer only catches bots that NAME themselves. A bot posing as Chrome still only sees the login screen, so the password and 2FA remain the main protection. If a service you use is blocked by mistake because its name is on the list, set `JAVIS_BLOCK_BOTS=0` and restart: only the 403 layer turns off, the `noindex` header and `robots.txt` stay.
+This layer only catches bots that NAME themselves. A bot posing as Chrome still only sees the login screen, so the password and 2FA remain the main protection. If a service you use is blocked by mistake because its name is on the list, set `JEEVI_BLOCK_BOTS=0` and restart: only the 403 layer turns off, the `noindex` header and `robots.txt` stay.
 
 ## API tokens, the door for CLI and scripts
 
@@ -261,7 +261,7 @@ The encrypted fields:
 | `backup.token` | The GitHub PAT used for brain backup |
 | `voice.elevenlabs_key` | ElevenLabs API key |
 
-The encryption key lives in the **`.secret_key`** file in the state folder (`JAVIS_STATE_DIR`, Docker: `/data/state/.secret_key`). The file is generated once and never goes into git.
+The encryption key lives in the **`.secret_key`** file in the state folder (`JEEVI_STATE_DIR`, Docker: `/data/state/.secret_key`). The file is generated once and never goes into git.
 
 Operational consequences worth remembering:
 
@@ -285,7 +285,7 @@ Operational consequences worth remembering:
 | Bot blocking | `noindex` on every answer, `/robots.txt`, and 403 for self-declared AI bots, search engines, SEO tools and scanners (see the dedicated section above). |
 | Secrets on disk | API keys and tokens in `settings.json` are Fernet-encrypted with `.secret_key` in the state folder. |
 
-About the `secure` cookie: by default Jeevi does **not** force it, so it runs over both HTTP and HTTPS (avoiding a login loop behind an HTTP proxy such as a path-style `http://host/PORT/`). If you are certain you run HTTPS end to end, set `JAVIS_SECURE_COOKIE=1` in the environment (see [.env configuration](16-env-configuration.md)). Accessing through the proper custom domain makes Jeevi enable `secure` on its own without that variable (based on the Host matching the domain, not inferred from `X-Forwarded-Proto`).
+About the `secure` cookie: by default Jeevi does **not** force it, so it runs over both HTTP and HTTPS (avoiding a login loop behind an HTTP proxy such as a path-style `http://host/PORT/`). If you are certain you run HTTPS end to end, set `JEEVI_SECURE_COOKIE=1` in the environment (see [.env configuration](16-env-configuration.md)). Accessing through the proper custom domain makes Jeevi enable `secure` on its own without that variable (based on the Host matching the domain, not inferred from `X-Forwarded-Proto`).
 
 ## Quick reference of buttons and states
 
@@ -301,15 +301,15 @@ About the `secure` cookie: by default Jeevi does **not** force it, so it runs ov
 | ✅ Account saved. | Login account | The password was set successfully |
 | ⚠ Password must be at least 8 characters. | Login account | The interface blocks before sending, at the same threshold as the server |
 | ⚠ Current password is wrong. | Login account | The **Current password** field was typed wrong, nothing was changed |
-| **Forgot your password?** | Sign-in screen | Clicking it explains how to run `reset-auth.bat` (Mac: `reset-auth.command`), or change `JAVIS_ADMIN_PASSWORD` on a server |
+| **Forgot your password?** | Sign-in screen | Clicking it explains how to run `reset-auth.bat` (Mac: `reset-auth.command`), or change `JEEVI_ADMIN_PASSWORD` on a server |
 | **Forgot your current password?** | Account, under Change password | Windows/Mac: opens the folder with the reset file selected. Server: shows the steps in the (i) popup |
 
 ## Tips
 
-- **Always set the admin before going public.** The surest way is setting `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` at deploy time, so the server is never without an admin.
+- **Always set the admin before going public.** The surest way is setting `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` at deploy time, so the server is never without an admin.
 - **Use a long enough password.** At least 8 characters; a long, hard to guess phrase is better.
 - **Run over HTTPS for remote access.** Use a custom domain (a Hostinger `*.hstgr.cloud` name, say) or Cloudflare Tunnel rather than exposing raw port 7777 to the Internet. How to point a domain and enable HTTPS: [Branding and custom domains](15-branding-and-domains.md).
-- **Localhost plus a tunnel you run yourself means setting `JAVIS_REQUIRE_LOGIN=1`.** When the machine only listens on localhost but you run a tunnel (cloudflared, ngrok...) outside Jeevi, Jeevi cannot tell it is public, so force login manually. The **Remote access** section in Settings does not need this: Jeevi knows its tunnel is on, forces login and only runs it once a password is set.
+- **Localhost plus a tunnel you run yourself means setting `JEEVI_REQUIRE_LOGIN=1`.** When the machine only listens on localhost but you run a tunnel (cloudflared, ngrok...) outside Jeevi, Jeevi cannot tell it is public, so force login manually. The **Remote access** section in Settings does not need this: Jeevi knows its tunnel is on, forces login and only runs it once a password is set.
 - **Turn on two-factor (2FA) right after the first sign-in.** If the password leaks, a stranger still lacks the TOTP code on your phone.
 - **Back up `.secret_key` alongside `settings.json`.** Missing either one means re-entering every API key.
 
@@ -322,35 +322,35 @@ A bug in versions before 0.28.3, now fixed. If the open page still holds the old
 By design. Changing the password destroys every old session so someone borrowing your machine cannot keep using it; sign in again with the new password and you are done.
 
 **The correct user and password still bounce back to the sign-in screen (a login loop).**
-Usually the `secure` cookie is on while you access over HTTP (many proxies serve HTTP as a path-style `http://host/PORT/`). Do not set `JAVIS_SECURE_COOKIE` unless you are certain of end-to-end HTTPS. If you already did, remove the variable and restart the server.
+Usually the `secure` cookie is on while you access over HTTP (many proxies serve HTTP as a path-style `http://host/PORT/`). Do not set `JEEVI_SECURE_COOKIE` unless you are certain of end-to-end HTTPS. If you already did, remove the variable and restart the server.
 
 **You get "too many failed attempts, try again in a few minutes".**
 You (or someone on the same IP) got the password wrong too many times. Wait about 5 minutes and try again. Restarting the server also clears the counter.
 
 **Everything returns 403 "host not allowed".**
-You are reaching Jeevi through a domain it does not know, while no password is set. Add that domain to `JAVIS_ALLOWED_HOSTS`, or enter it under **Settings → Domain and SSL**, or simply set a password.
+You are reaching Jeevi through a domain it does not know, while no password is set. Add that domain to `JEEVI_ALLOWED_HOSTS`, or enter it under **Settings → Domain and SSL**, or simply set a password.
 
 **Everything returns 403 "cross-origin request blocked".**
-You are calling the Jeevi API from another page (a script, an extension, a third-party iframe). This is the CSRF layer doing its job. If it is your own tool, add its hostname to `JAVIS_ALLOWED_HOSTS`.
+You are calling the Jeevi API from another page (a script, an extension, a third-party iframe). This is the CSRF layer doing its job. If it is your own tool, add its hostname to `JEEVI_ALLOWED_HOSTS`.
 
 **You forgot the password.**
-On Docker or Hostinger (since 0.77.1): change `JAVIS_ADMIN_PASSWORD` (and `JAVIS_ADMIN_USER` if you like) in the Environment box and redeploy. At startup Jeevi sees the env value differs from last time and resets the admin to it; 2FA stays on and every old session is signed out. Leaving the env unchanged changes nothing, so a password you set in the dashboard is not overwritten on every restart.
+On Docker or Hostinger (since 0.77.1): change `JEEVI_ADMIN_PASSWORD` (and `JEEVI_ADMIN_USER` if you like) in the Environment box and redeploy. At startup Jeevi sees the env value differs from last time and resets the admin to it; 2FA stays on and every old session is signed out. Leaving the env unchanged changes nothing, so a password you set in the dashboard is not overwritten on every restart.
 
-A VPS installed directly with `install.sh` (systemd): SSH in, set the `JAVIS_ADMIN_PASSWORD` line of the `.env` file in the Jeevi install folder to the new password (add it if missing), then run `sudo systemctl restart javis`. Jeevi resets the account to the new value, as on Hostinger.
+A VPS installed directly with `install.sh` (systemd): SSH in, set the `JEEVI_ADMIN_PASSWORD` line of the `.env` file in the Jeevi install folder to the new password (add it if missing), then run `sudo systemctl restart jeevi`. Jeevi resets the account to the new value, as on Hostinger.
 
-On Windows and Mac the Jeevi install folder ships **`reset-auth.bat`** (Windows) and **`reset-auth.command`** (Mac). Double-click it and the old password is gone; open Jeevi again and set a new one on the Account page. Still signed in? Go to **Account** and click **Forgot your current password?** so Jeevi opens the right folder. If the script is not usable: edit or delete the `auth` section of `settings.json` in the state folder (Docker: `/data/state`) then restart; or set the admin again with `JAVIS_ADMIN_PASSWORD` after deleting the old `auth` section. Delete it by hand without `JAVIS_ADMIN_PASSWORD` and only a browser on the machine running Jeevi can create the new account (see section C).
+On Windows and Mac the Jeevi install folder ships **`reset-auth.bat`** (Windows) and **`reset-auth.command`** (Mac). Double-click it and the old password is gone; open Jeevi again and set a new one on the Account page. Still signed in? Go to **Account** and click **Forgot your current password?** so Jeevi opens the right folder. If the script is not usable: edit or delete the `auth` section of `settings.json` in the state folder (Docker: `/data/state`) then restart; or set the admin again with `JEEVI_ADMIN_PASSWORD` after deleting the old `auth` section. Delete it by hand without `JEEVI_ADMIN_PASSWORD` and only a browser on the machine running Jeevi can create the new account (see section C).
 
 **After changing machines or restoring a backup, every API key is empty.**
 You copied `settings.json` without `.secret_key`. There is no recovery: re-enter the keys on the Models page, the Admin channels page and Settings. Next time bring both files.
 
 **Login is turned off but it still asks for an account.**
-Because the server is still public (or `JAVIS_REQUIRE_LOGIN=1`). In that mode Jeevi does not allow login to be turned off entirely, it forces the account to be recreated. To run without a password the server must listen purely on localhost.
+Because the server is still public (or `JEEVI_REQUIRE_LOGIN=1`). In that mode Jeevi does not allow login to be turned off entirely, it forces the account to be recreated. To run without a password the server must listen purely on localhost.
 
 ## Related
 
 - [Getting started and first setup](01-getting-started.md) - standing Jeevi up and creating the first admin.
 - [Branding and custom domains](15-branding-and-domains.md) - pointing a domain and enabling automatic HTTPS.
-- [.env configuration](16-env-configuration.md) - the list of security environment variables (`JAVIS_HOST`, `JAVIS_REQUIRE_LOGIN`, `JAVIS_ADMIN_USER/PASSWORD`, `JAVIS_SECURE_COOKIE`, `JAVIS_ALLOWED_HOSTS`, `JAVIS_STATE_DIR`).
+- [.env configuration](16-env-configuration.md) - the list of security environment variables (`JEEVI_HOST`, `JEEVI_REQUIRE_LOGIN`, `JEEVI_ADMIN_USER/PASSWORD`, `JEEVI_SECURE_COOKIE`, `JEEVI_ALLOWED_HOSTS`, `JEEVI_STATE_DIR`).
 - [Plugins](20-plugins.md) - why plugins you install yourself must be enabled through an environment variable.
 - [The Jeevi CLI (terminal)](24-cli.md) - using an API token to call Jeevi from another machine.
 - [Troubleshooting and FAQ](17-troubleshooting.md) - other common errors.

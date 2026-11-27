@@ -1,7 +1,7 @@
 <!-- translated-from: README.md sha256:2e10ad3d2a86 -->
 <div align="center">
 
-<a href="https://javisos.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
+<a href="https://jeevios.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
 
 # Jeevi OS
 
@@ -9,7 +9,7 @@
 
 Jeevi OS 把 **Claude、ChatGPT、Gemini、Grok** 以及你选择的模型，变成在你自己的电脑或服务器上 24/7 工作的团队。每位同事都有自己的角色，共享同一份记忆和工具，并在后台持续工作。更好的模型一出，切换过去，团队学到的一切都会保留。
 
-**🌐 官网: [javisos.com](https://javisos.com)** · 开源 · 自托管 · 14 家 AI 提供商
+**🌐 官网: [jeevios.com](https://jeevios.com)** · 开源 · 自托管 · 14 家 AI 提供商
 
 [![GitHub stars](https://img.shields.io/github/stars/blogminhquy/javis-os?style=flat&logo=github&label=stars)](https://github.com/blogminhquy/javis-os/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](../../../LICENSE)
@@ -38,7 +38,7 @@ Jeevi OS 把 **Claude、ChatGPT、Gemini、Grok** 以及你选择的模型，变
 
 [🇬🇧 English](../../../README.md) · [🇻🇳 Tiếng Việt](../vi/README.md) · 🇨🇳 **简体中文** · [🇪🇸 Español](../es/README.md) · [🇯🇵 日本語](../ja/README.md) · [🇮🇳 हिन्दी](../hi/README.md) · [🇧🇷 Português](../pt-BR/README.md) · [🇰🇷 한국어](../ko/README.md) · [🇷🇺 Русский](../ru/README.md) · [🇩🇪 Deutsch](../de/README.md) · [🇫🇷 Français](../fr/README.md) · [🇮🇩 Bahasa Indonesia](../id/README.md) · [🌍 帮助翻译](../../../CONTRIBUTING.md#translations)
 
-[快速开始](#-快速开始) · [为什么选择 Jeevi](#-为什么选择-javis) · [大脑](#-12-种大脑一套工具) · [功能](#-功能特性) · [安装](#-安装) · [文档](../../../docs/en/README.md) · [支持](#-支持-javis-os)
+[快速开始](#-快速开始) · [为什么选择 Jeevi](#-为什么选择-jeevi) · [大脑](#-12-种大脑一套工具) · [功能](#-功能特性) · [安装](#-安装) · [文档](../../../docs/en/README.md) · [支持](#-支持-jeevi-os)
 
 <br>
 
@@ -56,8 +56,8 @@ Jeevi OS 把 **Claude、ChatGPT、Gemini、Grok** 以及你选择的模型，变
 
 | 机器 | 一条命令装好一切 |
 |---|---|
-| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git javis && cd javis && chmod +x install.sh && ./install.sh` |
-| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git javis; cd javis; powershell -ExecutionPolicy Bypass -File install.ps1` |
+| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi && chmod +x install.sh && ./install.sh` |
+| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi; powershell -ExecutionPolicy Bypass -File install.ps1` |
 | **Docker** | `curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml && docker compose up -d` |
 
 然后打开 **http://localhost:7777**。安装程序会配置好 Python、四个订阅制 CLI 大脑（`claude`、`codex`、`agy`、`grok`）以及 `.env`，随后启动服务器。每个大脑都在**仪表盘的 Models（模型）页面**上登录，无需再敲命令。
@@ -257,17 +257,17 @@ Hostinger VPS → **Docker Manager → Compose → URL** → 粘贴 Hostinger �
 https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hostinger.yml
 ```
 
-**Environment** 框只需要填三个字段：`DOMAIN_NAME`、`JAVIS_ADMIN_USER`、`JAVIS_ADMIN_PASSWORD`，另外还有一个可选的 `JAVIS_AUTO_UPDATE`（设为 `true` 后 Jeevi 每天自动更新）。
+**Environment** 框只需要填三个字段：`DOMAIN_NAME`、`JEEVI_ADMIN_USER`、`JEEVI_ADMIN_PASSWORD`，另外还有一个可选的 `JEEVI_AUTO_UPDATE`（设为 `true` 后 Jeevi 每天自动更新）。
 
 设置 `DOMAIN_NAME`，让 Hostinger 的 Traefik 签发 HTTPS 证书：
-- **免费链接**（无需购买域名）：`DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud`（主机名可在 hPanel → VPS 中找到，例如 `javis.srv1562015.hstgr.cloud`）。
+- **免费链接**（无需购买域名）：`DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud`（主机名可在 hPanel → VPS 中找到，例如 `jeevi.srv1562015.hstgr.cloud`）。
 - **你自己的域名：** `DOMAIN_NAME=example.com`，并把一条 A 记录指向 VPS 的 IP。
 
 等待 1-3 分钟让证书签发完成，然后打开 `https://<DOMAIN_NAME>`。
 
 **三个一次性步骤：**
 1. **把 GHCR 镜像设为 Public：** GitHub → 仓库 → **Packages** → `javis-os` → *Package settings* → Visibility = **Public**。
-2. **创建管理员账号：** 填写 `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD`（推荐），或者在部署后立即打开应用自行设置。在还没有管理员之前，第一个打开链接的人就可以创建它。然后**开启 2FA**（[安全与账号](../../../docs/en/14-security-and-accounts.md)）。
+2. **创建管理员账号：** 填写 `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD`（推荐），或者在部署后立即打开应用自行设置。在还没有管理员之前，第一个打开链接的人就可以创建它。然后**开启 2FA**（[安全与账号](../../../docs/en/14-security-and-accounts.md)）。
 3. 在 **Models** 页面**登录一个大脑**。
 
 详细说明与故障排查：[DEPLOY.en.md](../../../DEPLOY.en.md)。
@@ -281,14 +281,14 @@ https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hosti
 
 ```bash
 # Docker required (don't have it?  curl -fsSL https://get.docker.com | sh)
-mkdir javis && cd javis
+mkdir jeevi && cd jeevi
 curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml
 
-docker compose run --rm javis claude auth login --claudeai   # sign in to Claude once (optional)
+docker compose run --rm jeevi claude auth login --claudeai   # sign in to Claude once (optional)
 docker compose up -d                                          # pull the image and run
 ```
 
-打开 `http://<vps-ip>:7777`，立即设置管理员用户名和密码（至少 8 个字符），或者在环境变量中预先设置 `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD`。然后开启 2FA。
+打开 `http://<vps-ip>:7777`，立即设置管理员用户名和密码（至少 8 个字符），或者在环境变量中预先设置 `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD`。然后开启 2FA。
 
 没有域名时的远程访问：运行 `docker compose --profile tunnel up -d`，然后 `docker compose logs tunnel | grep trycloudflare` 会打印出一个 HTTPS 链接。
 
@@ -298,13 +298,13 @@ docker compose up -d                                          # pull the image a
 <summary><b>方式三：Linux 或 macOS，不使用 Docker</b></summary>
 
 ```bash
-git clone https://github.com/blogminhquy/javis-os.git javis && cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi
 chmod +x install.sh && ./install.sh
 ```
 
 该脚本会安装 Python、Node 和各个 CLI 大脑，创建 venv，注册一个开机自启的服务，并打印访问地址。
 
-🍎 **在 macOS 上像应用一样打开：** 双击 `JEEVI OS.app`（或 `Start JEEVI OS.command`）。登录时自动启动：`./bin/javis-autostart.sh install`。详情：[bin/README.md](../../../bin/README.md)。
+🍎 **在 macOS 上像应用一样打开：** 双击 `JEEVI OS.app`（或 `Start JEEVI OS.command`）。登录时自动启动：`./bin/jeevi-autostart.sh install`。详情：[bin/README.md](../../../bin/README.md)。
 
 </details>
 
@@ -312,7 +312,7 @@ chmod +x install.sh && ./install.sh
 <summary><b>方式四：Windows（个人电脑）</b></summary>
 
 ```powershell
-git clone https://github.com/blogminhquy/javis-os.git javis; cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
@@ -320,23 +320,23 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 
 ```
 Run with a visible window (live log):  setup.bat
-Run silently from then on:             start-javis.vbs   (log at server\javis.log)
-Stop:                                  stop-javis.bat
+Run silently from then on:             start-jeevi.vbs   (log at server\jeevi.log)
+Stop:                                  stop-jeevi.bat
 Dashboard:                             http://localhost:7777
 ```
 
-🪟 **像应用一样打开：** 首次运行之后，双击 **`JEEVI OS.bat`**。服务器会在后台启动，仪表盘在**独立窗口**中打开，并拥有自己的任务栏图标。登录时自动启动：`javis-autostart.bat install`（移除：`uninstall`）。
+🪟 **像应用一样打开：** 首次运行之后，双击 **`JEEVI OS.bat`**。服务器会在后台启动，仪表盘在**独立窗口**中打开，并拥有自己的任务栏图标。登录时自动启动：`jeevi-autostart.bat install`（移除：`uninstall`）。
 
 </details>
 
 <details>
 <summary><b>在一台 VPS 上运行多个 Jeevi 实例</b></summary>
 
-每个实例的 Brain、设置和账号完全相互隔离。实例之间只有三个值不同：`JAVIS_NAME`、`JAVIS_HOST_PORT`、`DOMAIN_NAME`。
+每个实例的 Brain、设置和账号完全相互隔离。实例之间只有三个值不同：`JEEVI_NAME`、`JEEVI_HOST_PORT`、`DOMAIN_NAME`。
 
 - **Hostinger：** 再次部署 `docker-compose.hostinger.yml` 作为第二个 stack，并填写这三个字段。
 - **自行管理的 VPS：** 为整台机器运行一次共享代理 `docker-compose.proxy.yml`，然后用 `docker-compose.multi.yml` 为每个实例分配独立的文件夹。代理会自动发现新实例并申请 SSL 证书。
-- **原生安装：** `JAVIS_NAME=javis-shop JAVIS_PORT=7778 ./install.sh`。
+- **原生安装：** `JEEVI_NAME=jeevi-shop JEEVI_PORT=7778 ./install.sh`。
 
 分步说明：[DEPLOY.en.md](../../../DEPLOY.en.md)。
 
@@ -389,14 +389,14 @@ Dashboard:                             http://localhost:7777
 
 | 变量 | 含义 | 默认值 |
 |---|---|---|
-| `JAVIS_HOST` | 监听地址。`127.0.0.1` = 仅本机，`0.0.0.0` = 公开 | `127.0.0.1` |
-| `JAVIS_PORT` | 端口 | `7777` |
-| `JAVIS_REQUIRE_LOGIN` | `1`/`0` 强制开启或关闭登录（默认：公开绑定时开启） | *（自动）* |
-| `JAVIS_ADMIN_USER` / `JAVIS_ADMIN_PASSWORD` | 在部署时创建管理员 | - |
-| `JAVIS_ALLOWED_HOSTS` | 额外加入允许列表的主机名（CSRF 和 DNS 重绑定防护） | localhost + 你的域名 |
-| `JAVIS_STATE_DIR` | 设置、会话和加密密钥的存放位置 | `server/`（Docker：`/data/state`） |
+| `JEEVI_HOST` | 监听地址。`127.0.0.1` = 仅本机，`0.0.0.0` = 公开 | `127.0.0.1` |
+| `JEEVI_PORT` | 端口 | `7777` |
+| `JEEVI_REQUIRE_LOGIN` | `1`/`0` 强制开启或关闭登录（默认：公开绑定时开启） | *（自动）* |
+| `JEEVI_ADMIN_USER` / `JEEVI_ADMIN_PASSWORD` | 在部署时创建管理员 | - |
+| `JEEVI_ALLOWED_HOSTS` | 额外加入允许列表的主机名（CSRF 和 DNS 重绑定防护） | localhost + 你的域名 |
+| `JEEVI_STATE_DIR` | 设置、会话和加密密钥的存放位置 | `server/`（Docker：`/data/state`） |
 | `BRAINS_DIR` | 存放所有 Brain 的上级文件夹 | `brains/`（Docker：`/brains`） |
-| `JAVIS_ENABLE_USER_PLUGINS` | 设为 `false` 会关闭你自己的 Plugin（它们在服务器内运行真正的 Python 代码） | *（开启）* |
+| `JEEVI_ENABLE_USER_PLUGINS` | 设为 `false` 会关闭你自己的 Plugin（它们在服务器内运行真正的 Python 代码） | *（开启）* |
 | `TTS_VOICE` / `TTS_RATE` | Edge TTS 的声音和语速 | `en-US-EmmaMultilingualNeural` / `+5%` |
 
 ---
@@ -407,7 +407,7 @@ Dashboard:                             http://localhost:7777
 - **2FA（TOTP）**、登录频率限制、至少 8 个字符的密码、HTTPS 下的 `Secure` cookie，以及 30 天后过期的会话。
 - **CSRF 和 DNS 重绑定防护**：任何来自未知来源的写入请求都会被拒绝。
 - `settings.json` 中的**密钥均已加密**（API key、OAuth 令牌、机器人令牌），使用每台机器独有的密钥。
-- **你自己的 Plugin 默认会加载，但每个 Plugin 在你于应用中开启前都保持关闭**；设置 `JAVIS_ENABLE_USER_PLUGINS=false` 可全部关闭。
+- **你自己的 Plugin 默认会加载，但每个 Plugin 在你于应用中开启前都保持关闭**；设置 `JEEVI_ENABLE_USER_PLUGINS=false` 可全部关闭。
 - **连接权限由 Hub 强制执行**，而不是由模型：只读账号无法被用来发送消息、付款或发布内容。
 
 发现了漏洞？请按照 [SECURITY.md](../../../SECURITY.md) 的说明处理，而不是公开提交 issue。
@@ -416,7 +416,7 @@ Dashboard:                             http://localhost:7777
 
 ## 🔄 更新
 
-在应用内：**Settings → Updates → Update now**，带有进度条，如果新版本出现问题还有回滚按钮。在 VPS 上：`cd javis && ./update.sh`（拉取新镜像并重启；你在数据卷中的数据会被保留）。
+在应用内：**Settings → Updates → Update now**，带有进度条，如果新版本出现问题还有回滚按钮。在 VPS 上：`cd jeevi && ./update.sh`（拉取新镜像并重启；你在数据卷中的数据会被保留）。
 
 ---
 
@@ -425,7 +425,7 @@ Dashboard:                             http://localhost:7777
 | 症状 | 处理方法 |
 |---|---|
 | Models 页面说某个 CLI 没有安装，但实际上已经安装 | **重启 Jeevi**：正在运行的进程保留的是它启动时的 PATH。 |
-| 7777 端口被占用，新版本无法启动 | 先停止旧进程（`stop-javis.bat`，或结束对应 PID），然后重新启动。 |
+| 7777 端口被占用，新版本无法启动 | 先停止旧进程（`stop-jeevi.bat`，或结束对应 PID），然后重新启动。 |
 | Hostinger 无法拉取镜像 | 把 GHCR 包设为 **Public**，并等待 GitHub Action 构建完成。 |
 | 某个大脑提示尚未登录 | **Models** → 该提供商的卡片 → 登录。 |
 
@@ -510,6 +510,6 @@ Jeevi OS 免费且开源，目前仍是一个人在写代码、支付测试服�
 <div align="center">
 <br>
 <a href="https://nguyenminhquy.com"><img src="../../assets/author.webp" width="96" height="96" alt="Minh Quý"></a><br>
-<b><a href="https://javisos.com">javisos.com</a></b><br>
+<b><a href="https://jeevios.com">jeevios.com</a></b><br>
 由 <b><a href="https://nguyenminhquy.com">Minh Quý</a></b> 在越南用 ☕ 制作
 </div>

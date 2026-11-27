@@ -14,7 +14,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-script-jobs-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-script-jobs-"))
 
 import reminders  # noqa: E402
 
@@ -27,8 +27,8 @@ def check(name, cond, extra=""):
         fails.append(name)
 
 
-spec = importlib.util.spec_from_file_location("javis_schedule_plugin",
-                                              ROOT / "system/plugins/javis-schedule/plugin.py")
+spec = importlib.util.spec_from_file_location("jeevi_schedule_plugin",
+                                              ROOT / "system/plugins/jeevi-schedule/plugin.py")
 sched = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(sched)
 
@@ -42,7 +42,7 @@ async def fake_post(payload, brain_name=""):
 
 
 sched._post_reminder = fake_post
-vault = tempfile.mkdtemp(prefix="javis-script-vault-")
+vault = tempfile.mkdtemp(prefix="jeevi-script-vault-")
 
 out = asyncio.run(sched._do_create(vault, {"name": "Canh don", "script": "check_shop.py", "schedule": "1m"}))
 p = sent[-1] if sent else {}
@@ -65,7 +65,7 @@ check("without `script` a job is still a model task", sent[-1].get("mode") == "t
       sent[-1])
 
 # ---- the reminder store, real ----
-brain = Path(tempfile.mkdtemp(prefix="javis-script-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="jeevi-script-brain-"))
 (brain / "Jeevi" / "scripts").mkdir(parents=True)
 (brain / "Jeevi" / "scripts" / "check_shop.py").write_text("print('ok')\n", encoding="utf-8")
 

@@ -30,7 +30,7 @@ if os.name == "nt":
     print("skip: the fake CLI is a POSIX script")
     sys.exit(0)
 
-_TMP = Path(tempfile.mkdtemp(prefix="javis-claude-login-"))
+_TMP = Path(tempfile.mkdtemp(prefix="jeevi-claude-login-"))
 _STATE = _TMP / "main-state"
 _FAKE = _TMP / "claude"
 # auth login: prints like the real 2.1.x CLI, then reads codes. "good#s" saves and succeeds, "nosave#s" says

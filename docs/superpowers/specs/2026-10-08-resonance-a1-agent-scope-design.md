@@ -91,7 +91,7 @@ Review chỉ ra: sổ `luot_dang_chay.doan_luot(vault)` đoán "lượt duy nh�
   - `session_id` và `message_id` của tin người dùng;
   - khối `agent = {"key", "slug", "config_version"}`, chỉ khi phiên có kênh `agent:<slug>` của đúng brain, file agent còn đó, và mã GHIM của phiên (mục 1) còn `active`. Ngược lại `agent = None`.
 - Host phân giải các giá trị này từ dòng phiên đã lưu và sổ đăng ký, không lấy gì từ lời model.
-- Tool `javis_goal` lấy danh tính từ `turn_context.current()` ngay lúc gọi, không nhận `agent_id` trong tham số.
+- Tool `jeevi_goal` lấy danh tính từ `turn_context.current()` ngay lúc gọi, không nhận `agent_id` trong tham số.
   - Thiếu ngữ cảnh, `agent = None`, agent không còn `active` hay đang tắt, hay `config_version` lệch: từ chối TRƯỚC mọi lần ghi kho, không gọi model.
 - Lời người dùng dùng làm căn cứ được đọc từ kho phiên theo đúng `(session_id, message_id)` và phải là tin của người dùng. Không lấy từ sổ lượt.
 - Hai lượt đồng thời có hai ngữ cảnh riêng, không mượn quyền nhau.
@@ -117,7 +117,7 @@ Review chỉ ra: sổ `luot_dang_chay.doan_luot(vault)` đoán "lượt duy nh�
 - `POST /resonance/agents/toggle` với `{slug, enabled}` bật hay tắt; lần bật đầu thì cấp mã.
 - `POST /resonance/agents/confirm` với `{agent_key, same: true|false}` xử lý agent `missing`.
 
-Mọi API đi qua lớp bảo vệ web hiện có: kiểm Origin và CSRF, và phiên đăng nhập khi `JAVIS_REQUIRE_LOGIN` bật.
+Mọi API đi qua lớp bảo vệ web hiện có: kiểm Origin và CSRF, và phiên đăng nhập khi `JEEVI_REQUIRE_LOGIN` bật.
 
 **Công tắc theo brain cũ** (`<brain>/Jeevi/resonance.json`): sau A1 KHÔNG còn cấp quyền nào.
 - Không tự suy thành "mọi agent đều bật".
@@ -135,7 +135,7 @@ Cổng là một hàm của host, `agent_gate(goal hay ngữ cảnh lượt)`, g
 
 | Đường | Hiện nay | A1 |
 |---|---|---|
-| Tool `javis_goal` create, update, list | công tắc brain + `doan_luot` | ngữ cảnh lượt có agent `active`, `enabled`, version khớp; list chỉ trả mục tiêu của đúng agent |
+| Tool `jeevi_goal` create, update, list | công tắc brain + `doan_luot` | ngữ cảnh lượt có agent `active`, `enabled`, version khớp; list chỉ trả mục tiêu của đúng agent |
 | `POST /goal-requests` | chủ dự án, brain bật | chủ dự án; tin phải thuộc một phiên mà mã GHIM (mục 1, cùng hàm với `run_turn`) là agent đang bật; mục tiêu thuộc mã đó. Không phân giải tin cũ theo slug hiện tại |
 | Scheduler (`tick` → `advance` → `_gate`) | công tắc brain | mã ở `goal_agents` của mục tiêu: không có thì `blocked/unassigned`; agent không `active` hay tắt thì `blocked/agent_off`. Kiểm lại bằng code, không gọi model. Không cần lượt chat nào đang sống |
 | Bàn giao bản viết trong lượt (`finish_handoff`) | công tắc brain, pause, guard | thêm: agent của mục tiêu còn bật và version bằng version ghi lúc lập hay sửa trong lượt |
@@ -143,7 +143,7 @@ Cổng là một hàm của host, `agent_gate(goal hay ngữ cảnh lượt)`, g
 | Phép thử và áp dụng cách làm (M5) | `_trial_gate` gọi `_gate` | như trên; `apply_method` kiểm lại cổng agent trong cùng giao dịch |
 | Xem, tạm dừng, huỷ, bỏ chỉ dẫn, xác nhận | không đòi công tắc | giữ nguyên: chủ dự án luôn xem, dừng, huỷ được, kể cả khi agent tắt hay `missing` |
 | Dòng gợi ý trong system prompt | brain bật | chỉ có trong phiên của agent đang bật |
-| Hiện tool `javis_goal` | `visible_fn` theo brain | trong lượt (plugin dựng theo lượt): chỉ hiện cho agent đang bật; không có lượt (danh sách hub dùng chung): hiện nếu brain có ít nhất một agent bật. Chỉ để gợi ý, cổng thật nằm ở handler |
+| Hiện tool `jeevi_goal` | `visible_fn` theo brain | trong lượt (plugin dựng theo lượt): chỉ hiện cho agent đang bật; không có lượt (danh sách hub dùng chung): hiện nếu brain có ít nhất một agent bật. Chỉ để gợi ý, cổng thật nằm ở handler |
 
 **Ngữ nghĩa khi tắt agent:**
 - **Bật:** nhận và tiếp tục mục tiêu hợp lệ. Không mở lại pause, guard hay mục tiêu đã huỷ hay kết thúc. Host đặt lịch thức cho mục tiêu `active`, không pause, của agent đó; lần thức đầu là kiểm bằng code.
@@ -225,8 +225,8 @@ Mọi chuỗi giao diện qua i18n `vi.json` và `en.json`.
 
 ## 7. Không đổi ngoài Resonance
 
-- Chat thường không thấy dòng gợi ý mục tiêu. Gọi `javis_goal` (nếu model vẫn thấy qua hub) bị từ chối với câu hướng dẫn "trả lời bình thường".
-- `javis_task`, `javis_schedule`, loop, nhắc lịch, kênh ngoài, chatbot: không đổi.
+- Chat thường không thấy dòng gợi ý mục tiêu. Gọi `jeevi_goal` (nếu model vẫn thấy qua hub) bị từ chối với câu hướng dẫn "trả lời bình thường".
+- `jeevi_task`, `javis_schedule`, loop, nhắc lịch, kênh ngoài, chatbot: không đổi.
 - Ngữ cảnh lượt thêm khoá `agent`, `session_id`, `message_id`. Các hook plugin hiện có đọc `turn` bằng khoá cũ nên không ảnh hưởng.
 
 ## 8. Ma trận hành vi và kiểm thử
@@ -235,7 +235,7 @@ Kiểm bằng engine giả, SQLite thật, mapper SDK thật khi cần, chạy t
 
 | # | Ca | Kỳ vọng |
 |---|---|---|
-| 1 | Chat thường gọi `javis_goal` create, hay `POST /goal-requests` trên tin của chat thường | Từ chối trước khi ghi kho, không gọi model; hỏi đáp, việc một lần, Kanban vẫn chạy |
+| 1 | Chat thường gọi `jeevi_goal` create, hay `POST /goal-requests` trên tin của chat thường | Từ chối trước khi ghi kho, không gọi model; hỏi đáp, việc một lần, Kanban vẫn chạy |
 | 2 | Agent A bật, B tắt, cùng brain | A lập được; B bị từ chối; list của A không thấy mục tiêu của B và ngược lại |
 | 3 | Hai agent cùng chạy lượt đồng thời | Mỗi tool call lấy đúng agent của lượt mình; không mượn quyền |
 | 4 | Hai brain cùng slug | Mã khác, mục tiêu, sản phẩm, nguồn tin không lẫn |
@@ -272,7 +272,7 @@ Kiểm bằng engine giả, SQLite thật, mapper SDK thật khi cần, chạy t
   - `_resonance_after_turn` dùng agent của lượt.
 - `server/resonance_api.py`: `/resonance/agents`, `/resonance/agents/toggle`, `/resonance/agents/confirm`, `/goals/{id}/assign`; cổng của `/goal-requests`; `?agent_key=` cho danh sách.
 - `server/turn_context.py`: cho phép thêm khoá vào ngữ cảnh lượt, giữ hợp đồng cũ.
-- `system/plugins/javis-goal/plugin.py`: danh tính từ ngữ cảnh lượt; `visible_fn` theo lượt.
+- `system/plugins/jeevi-goal/plugin.py`: danh tính từ ngữ cảnh lượt; `visible_fn` theo lượt.
 - `dashboard/`:
   - công tắc và khung tiến độ trong trang Cộng sự (`workspace.js`, hoặc file mới `resonance-agent.js`);
   - khối cài đặt;
@@ -333,5 +333,5 @@ Review vòng 1 đồng ý cả năm quyết định. Bổ sung theo review:
 5. **Pilot** chạy trong phiên trợ lý; có chặng kiểm ba cửa không gọi model (`docs/dev/resonance-mvp-e2e-pilot-plan.md`, mục A1).
 
 **Giới hạn còn lại:**
-- Danh sách tool của hub được đệm theo brain, nên `javis_search_tools` có thể vẫn trả `javis_goal` trong lượt của trợ lý đã tắt.
+- Danh sách tool của hub được đệm theo brain, nên `jeevi_search_tools` có thể vẫn trả `jeevi_goal` trong lượt của trợ lý đã tắt.
 - Lời gọi khi đó bị hàm xử lý từ chối (`agent_off`), không ghi gì. Danh sách tool chỉ là gợi ý (mục 4).

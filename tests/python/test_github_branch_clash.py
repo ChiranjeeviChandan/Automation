@@ -3,8 +3,8 @@
     python tests/run.py github_branch_clash      (no network: local fake GitHub and bare repos; needs git and bash)
 
 What happened (blogminhquy/javisos-blog): every request in the chat began with "[NGỮ CẢNH GIAO DIỆN: trang=workspace]",
-so every job's branch was named from that line. The first job took `javis/ngu-canh-giao-dien-trang-workspace-<id>`.
-A later job's rename to the same name failed, Jeevi fell back to `javis/<id>`, which GitHub still held from an
+so every job's branch was named from that line. The first job took `jeevi/ngu-canh-giao-dien-trang-workspace-<id>`.
+A later job's rename to the same name failed, Jeevi fell back to `jeevi/<id>`, which GitHub still held from an
 old squashed PR, and the push stopped with "has commits this machine lacks, Jeevi does not overwrite them".
 
 Covered: the PR title and branch come from the person's own words, not the bracketed blocks; a name taken locally
@@ -17,7 +17,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ghbc-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ghbc-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -26,7 +26,7 @@ except Exception:
 from _fake_github import FakeGitHub, GOOD_TOKEN  # noqa: E402
 
 fake = FakeGitHub()
-os.environ["JAVIS_GITHUB_API"] = fake.url
+os.environ["JEEVI_GITHUB_API"] = fake.url
 
 import github_repos  # noqa: E402
 import github_store  # noqa: E402
@@ -77,7 +77,7 @@ github_repos.set_checks(BRAIN, "acme/app", [{"run": "true"}])
 github_repos.set_auto_merge(BRAIN, "acme/app", False)
 S = github_store.store
 short = github_repos.session_branch(SID)
-slugged = f"javis/{w._slug('thêm huy hiệu Hostinger Partner lên web')}-{short.split('/', 1)[1][:6]}"
+slugged = f"jeevi/{w._slug('thêm huy hiệu Hostinger Partner lên web')}-{short.split('/', 1)[1][:6]}"
 
 # The state the owner hit: GitHub keeps the session branch from an old squashed PR, and the slugged name is
 # already a local branch from an earlier job.
@@ -85,7 +85,7 @@ fake.add_branch("acme/app", short, "OLD.md", "old squashed job\n")
 fake.add_branch("acme/app", slugged, "OLD2.md", "another old job\n")
 github_repos.git(["branch", slugged], str(wt))
 # ...and the first job of the chat, named from the dashboard's block before this fix, kept its branch here too.
-github_repos.git(["branch", f"javis/ngu-canh-giao-dien-trang-workspace-{short.split('/', 1)[1][:6]}"], str(wt))
+github_repos.git(["branch", f"jeevi/ngu-canh-giao-dien-trang-workspace-{short.split('/', 1)[1][:6]}"], str(wt))
 
 (wt / "src/a.py").write_text("a = 2\n", encoding="utf-8")
 run(w.after_turn(SID, BRAIN, task["text"]))
@@ -109,7 +109,7 @@ check("the next push of the same job stays on the same branch",
 
 
 # ---- a job stuck BEFORE this fix: its row already holds the clashing name (owner, 14/11/2026) ----
-# The javisos-blog card kept "has commits this machine lacks" with a warning mark after the fix shipped: the branch
+# The jeevios-blog card kept "has commits this machine lacks" with a warning mark after the fix shipped: the branch
 # is decided once and stored, so every retry and the "Push again" button pushed to the same taken name again.
 SID2 = "51c0ffee07a943d3"
 github_repos.attach(SID2, BRAIN, BRAIN, ["acme/app"])

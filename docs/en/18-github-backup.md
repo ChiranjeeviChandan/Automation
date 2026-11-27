@@ -27,16 +27,16 @@ The brain is all the knowledge Jeevi has accumulated about you and your work. It
 ### Step 1 - Create a private GitHub repo
 
 1. Go to https://github.com/new
-2. Give it a name, for example `javis-brain-backup`.
+2. Give it a name, for example `jeevi-brain-backup`.
 3. Choose **Private** (MANDATORY: the brain holds personal and business data, never make it Public).
 4. Do **NOT** tick "Add a README file" (leave the repo empty to avoid a conflict on the first push).
-5. Click **Create repository**. Copy the URL, shaped `https://github.com/<your-name>/javis-brain-backup`.
+5. Click **Create repository**. Copy the URL, shaped `https://github.com/<your-name>/jeevi-brain-backup`.
 
 ### Step 2 - Create a token (fine-grained)
 
 1. Go to https://github.com/settings/tokens?type=beta (Settings → Developer settings → **Fine-grained tokens** → Generate new token).
 2. Name the token and choose an expiry.
-3. **Repository access** → Only select repositories → pick exactly the `javis-brain-backup` repo.
+3. **Repository access** → Only select repositories → pick exactly the `jeevi-brain-backup` repo.
 4. **Permissions** → Repository permissions → **Contents** → choose **Read and write**.
 5. Click Generate and **copy the token** (shaped `github_pat_...`). The token is shown once only, so copy it immediately.
 
@@ -112,7 +112,7 @@ After every **⇅ Sync now**, if media was skipped Jeevi states it right under t
 
 Some people genuinely need the images in their brain (screenshots, product photos of a few hundred KB) to follow the knowledge to another machine. Since version 0.46.0, the sync block has an extra **Sync images too** switch (off by default). Turning it on means:
 
-- **jpg / png / gif / webp** images, each up to **10 MB** (change it with the `JAVIS_SYNC_ANH_MAX_MB` environment variable), also reach the repo and sync two ways like text files. Video, audio, PDFs and images over the ceiling still never go; nor does `inbox/`, which is a one-chat transit area.
+- **jpg / png / gif / webp** images, each up to **10 MB** (change it with the `JEEVI_SYNC_ANH_MAX_MB` environment variable), also reach the repo and sync two ways like text files. Video, audio, PDFs and images over the ceiling still never go; nor does `inbox/`, which is a one-chat transit area.
 - Jeevi **stops clearing `attachments/`** on that machine (it still clears `inbox/`): if backed-up images were cleared by the age rule, the deletion would propagate to every machine and the backup images would vanish, so the two must go together.
 
 Three things to weigh BEFORE turning it on:

@@ -24,7 +24,7 @@ function worker(net) {
   const store = {};
   const handlers = {};
   const self = {
-    location: { origin: "https://javis.example" },
+    location: { origin: "https://jeevi.example" },
     addEventListener: (n, fn) => { handlers[n] = fn; },
     skipWaiting() {}, clients: { claim: async () => {} },
     registration: {},
@@ -51,7 +51,7 @@ const bad = (status) => ({ ok: false, status, redirected: false, clone() { retur
   let online = true, status = 200;
   const net = async (req) => { if (!online) throw new TypeError("Failed to fetch"); return status === 200 ? ok("fresh " + req.url) : bad(status); };
   const W = worker(net);
-  const O = "https://javis.example";
+  const O = "https://jeevi.example";
 
   check("an API call is not touched by the worker", (await W.go(O + "/settings")) === "untouched");
   check("a static script is not touched either", (await W.go(O + "/static/app.js?v=1")) === "untouched");

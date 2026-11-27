@@ -23,7 +23,7 @@ from typing import Callable, Dict, List, Optional
 MAX_PENDING = 10
 MAX_CHARS = 8000
 
-_CURRENT: contextvars.ContextVar[str] = contextvars.ContextVar("javis_steer_sid", default="")
+_CURRENT: contextvars.ContextVar[str] = contextvars.ContextVar("jeevi_steer_sid", default="")
 
 
 def note_for(texts: List[str], goal: bool = False) -> str:
@@ -34,7 +34,7 @@ def note_for(texts: List[str], goal: bool = False) -> str:
         return ""
     body = "\n\n".join(f"<<<\n{t}\n>>>" for t in texts)
     goal_line = ("Đây là lời bổ sung cho mục tiêu đang theo đuổi (khối [MỤC TIÊU:] của lượt này): gộp nó vào điều "
-                 "kiện mục tiêu, làm tiếp mục tiêu theo hướng đã chỉnh, và khi báo dòng JAVIS_GOAL thì tính cả phần "
+                 "kiện mục tiêu, làm tiếp mục tiêu theo hướng đã chỉnh, và khi báo dòng JEEVI_GOAL thì tính cả phần "
                  "bổ sung này.\n") if goal else ""
     return ("\n\n[Jeevi] Người dùng vừa gửi thêm "
             + ("một tin" if len(texts) == 1 else f"{len(texts)} tin")

@@ -82,7 +82,7 @@ bằng transcript, `--resume` lỗi mà không có chữ nào thì xoá id.
   H1. `agy` trên máy là bản cũ, chưa biết model mới.
       Đo:
         agy --version
-        cat "$JAVIS_STATE_DIR/agy-update.json"     (hoặc gọi GET /antigravity/status, xem cap_nhat)
+        cat "$JEEVI_STATE_DIR/agy-update.json"     (hoặc gọi GET /antigravity/status, xem cap_nhat)
         agy update && agy --version
       Dấu hiệu: `agy-update.json` có `error`, hoặc `ts` cũ hơn 24 giờ, hoặc bản sau `agy update`
       khác bản trước. Trong Docker, `agy` nằm ở `~/.local/bin` của user chạy Jeevi: kiểm tra
@@ -214,7 +214,7 @@ bằng transcript, `--resume` lỗi mà không có chữ nào thì xoá id.
      giữ nguyên một lượt một mạch. Chỉ chat chính (dashboard, Telegram nếu dùng chung nhánh) nối
      mạch. Ghi rõ trong PR.
 
-  d) Công tắc: biến môi trường `JAVIS_AGY_RESUME=0` tắt nối mạch, quay về cách cũ. Mặc định bật
+  d) Công tắc: biến môi trường `JEEVI_AGY_RESUME=0` tắt nối mạch, quay về cách cũ. Mặc định bật
      khi M1-M3 đã đo đúng.
 
   e) `CLAUDE.md` dòng 20 đang viết "Antigravity CLI has shell and its own tools, but Jeevi does not
@@ -228,7 +228,7 @@ bằng transcript, `--resume` lỗi mà không có chữ nào thì xoá id.
   - Sự kiện `init` của lượt nối mạch trả id mới thì id mới được lưu.
   - Lượt nối mạch lỗi rỗng: id bị xoá và lượt chạy lại bằng bootstrap trong cùng lượt.
   - Đổi engine giữa chừng: `clear_native_threads` dọn `agy_conversation_id`.
-  - `JAVIS_AGY_RESUME=0`: không bao giờ truyền `--conversation`.
+  - `JEEVI_AGY_RESUME=0`: không bao giờ truyền `--conversation`.
   - Mẫu vàng: dùng đúng các dòng stream đo được ở M1, M2, M3.
 
 3.5 Kết quả cần đạt
@@ -271,7 +271,7 @@ Antigravity dùng đúng mẫu đó, kèm test.
       mạch (chữ đầu 5,30 s so với 4,82 s) và phình mạch từ 27k lên 47,5k token. System prompt đi một lần ở
       tin đầu của mạch; lượt sau chỉ gửi header ngắn (`_turn_facts_header`) cộng câu mới.
     - Đi thẳng tiến trình ấm `--input-format stream-json` trong warm_pool (`server/agy_warm.py`) thay vì
-      chỉ nối mạch trên tiến trình nguội. Công tắc là `JAVIS_AGY_RESUME=0` như 3.3 d.
+      chỉ nối mạch trên tiến trình nguội. Công tắc là `JEEVI_AGY_RESUME=0` như 3.3 d.
     - KHÔNG thêm cột `agy_conversation_id` (trái 3.3 a): bộ kiểm schema của tự cải tiến
       (`improvement_trial_sql_context._schema`) từ chối bảng `sessions` có cột ngoài danh sách, mà danh
       sách đó nằm trong file bị ghim hash bởi bằng chứng native qualification. Id mạch dùng lại cột
@@ -294,7 +294,7 @@ Antigravity dùng đúng mẫu đó, kèm test.
       2,19-2,87 s, cache 92%. Máy chủ repo, đường code mới với agy thật: lượt 1 (mạch mới) 5,39 s, lượt 2
       ấm 3,41 s, lượt 3 nối mạch trên tiến trình mới 4,08 s (vẫn nhớ), lượt 4 ấm 2,39 s.
   Tên tool MCP trong stream (mục 4): mọi tool MCP đi qua MỘT tool native `call_mcp_tool` với tham số
-      `ServerName`, `ToolName`, `Arguments` (hub Jeevi bọc thêm `javis_run_tool` {name, args}); không có
+      `ServerName`, `ToolName`, `Arguments` (hub Jeevi bọc thêm `jeevi_run_tool` {name, args}); không có
       tên dạng `<server>_<tool>`. Khung chat nay bóc ra tên tool thật (antigravity_cli.unwrap_mcp_call).
 
   Máy: (Linux / Docker / VPS)        Bản agy:            Gói Google:

@@ -59,7 +59,7 @@ check("the line and the button stay short (the long text is in the (i))",
 
 const events = [];
 global.window = { dispatchEvent: function (e) { events.push(e.type); },
-  JavisSessions: { brain: function () { return "brain"; } } };
+  JeeviSessions: { brain: function () { return "brain"; } } };
 global.CustomEvent = function (type) { this.type = type; };
 let reply = { status: 200, body: { ok: true, confirmed: 2 } };
 const sent = [];
@@ -72,17 +72,17 @@ global.fetch = function (url, init) {
   check("200: ok, the existing confirm route, the pack id and same=true, no list of keys from the client", r.ok
         && r.confirmed === 2 && sent[0][0].indexOf("/resonance/agents/confirm?brain=brain") === 0
         && sent[0][1].pack === ECC && sent[0][1].same === true && !("agent_key" in sent[0][1]), JSON.stringify(sent));
-  check("200: fires the reload event", events.indexOf("javis:resonance-agents-changed") >= 0);
+  check("200: fires the reload event", events.indexOf("jeevi:resonance-agents-changed") >= 0);
   events.length = 0;
   reply = { status: 409, body: { ok: false, error: "no" } };
   r = await RA.confirmPack(ECC);
   check("an error: not ok, carries the reason, STILL reloads the real state", !r.ok && r.error === "no"
-        && events.indexOf("javis:resonance-agents-changed") >= 0);
+        && events.indexOf("jeevi:resonance-agents-changed") >= 0);
   events.length = 0;
   global.fetch = function () { return Promise.reject(new Error("net")); };
   r = await RA.confirmPack(ECC);
   check("network down: not ok, does not throw, still reloads", !r.ok && !!r.error
-        && events.indexOf("javis:resonance-agents-changed") >= 0);
+        && events.indexOf("jeevi:resonance-agents-changed") >= 0);
 
   const WS = fs.readFileSync(path.join(ROOT, "dashboard", "workspace.js"), "utf8");
   check("the Partners page draws the line under the filter bar and wires its button",

@@ -14,7 +14,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-assetpages-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-assetpages-"))
 
 from fastapi.testclient import TestClient  # noqa: E402
 import main  # noqa: E402
@@ -29,9 +29,9 @@ def check(name, cond, extra=""):
         fails.append(name)
 
 
-BRAIN = tempfile.mkdtemp(prefix="javis-brain-assetpages-")
+BRAIN = tempfile.mkdtemp(prefix="jeevi-brain-assetpages-")
 broot = Path(BRAIN)
-os.environ["JAVIS_FILES_ROOT"] = BRAIN       # the browse ceiling is the brain itself (see test_tai_san_gan_tay)
+os.environ["JEEVI_FILES_ROOT"] = BRAIN       # the browse ceiling is the brain itself (see test_tai_san_gan_tay)
 docs = broot / "docs"
 docs.mkdir(parents=True, exist_ok=True)
 N_DOCS, N_IMGS, N_LINKS = 230, 7, 215

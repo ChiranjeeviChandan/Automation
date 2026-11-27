@@ -12,7 +12,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-pack-multi-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-pack-multi-"))
 
 import improvement_assets  # noqa: E402
 import pack_vault  # noqa: E402
@@ -37,7 +37,7 @@ def make_pack(root: Path, version: str) -> Path:
     return pack
 
 
-tmp = Path(tempfile.mkdtemp(prefix="javis-pack-multi-fs-"))
+tmp = Path(tempfile.mkdtemp(prefix="jeevi-pack-multi-fs-"))
 saved_dir = pack_vault.HIEU_UNG_DIR
 pack_vault.HIEU_UNG_DIR = tmp / "packs-state"
 pack_vault.HIEU_UNG_DIR.mkdir(parents=True)

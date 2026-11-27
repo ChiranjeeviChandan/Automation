@@ -3,7 +3,7 @@
 
     python tests/python/test_usage_api_cost.py
 
-Self-contained: JAVIS_STATE_DIR and the Claude/Codex log folders point at temp dirs. No network, no model.
+Self-contained: JEEVI_STATE_DIR and the Claude/Codex log folders point at temp dirs. No network, no model.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
 import asyncio
@@ -13,10 +13,10 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-_TMP = Path(tempfile.mkdtemp(prefix="javis-usage-cost-"))
-os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
-os.environ["JAVIS_CLAUDE_PROJECTS_DIR"] = str(_TMP / "claude")
-os.environ["JAVIS_CODEX_SESSIONS_DIR"] = str(_TMP / "codex")
+_TMP = Path(tempfile.mkdtemp(prefix="jeevi-usage-cost-"))
+os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+os.environ["JEEVI_CLAUDE_PROJECTS_DIR"] = str(_TMP / "claude")
+os.environ["JEEVI_CODEX_SESSIONS_DIR"] = str(_TMP / "codex")
 (_TMP / "state").mkdir(parents=True, exist_ok=True)
 
 import usage_index as ui  # noqa: E402
@@ -139,7 +139,7 @@ def section_outcome():
 
 
 def section_team():
-    os.environ.setdefault("JAVIS_NO_REAL_TEAM_ENGINE", "1")
+    os.environ.setdefault("JEEVI_NO_REAL_TEAM_ENGINE", "1")
     import main
     import team_engine
 

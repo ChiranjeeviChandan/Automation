@@ -52,7 +52,7 @@ function nap({ trinhDuyet = [], luu = "", tuDien = { vi: VI, en: EN }, treVi = 0
   };
   delete require.cache[require.resolve(INDEX)];
   require(INDEX);
-  return { I: global.window.JavisI18n, kho };
+  return { I: global.window.JeeviI18n, kho };
 }
 const cho = (ms = 30) => new Promise((r) => setTimeout(r, ms));
 

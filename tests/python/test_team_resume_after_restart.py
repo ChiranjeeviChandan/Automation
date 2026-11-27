@@ -14,9 +14,9 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-team-resume-")
-os.environ.pop("JAVIS_RESUME_AFTER_RESTART", None)
-STATE = Path(os.environ["JAVIS_STATE_DIR"])
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-team-resume-")
+os.environ.pop("JEEVI_RESUME_AFTER_RESTART", None)
+STATE = Path(os.environ["JEEVI_STATE_DIR"])
 
 import once_ledger  # noqa: E402
 import sessions  # noqa: E402
@@ -164,12 +164,12 @@ check("Continue still works on such a job", r.unblock(task, "retry") and ts.get_
 # ---------- switched off: the old behaviour ----------
 ss, ts, tm, fake, r, T = world("off")
 task, st, tu = cut_job(ts, tm, r, T, "Soạn email", 5)
-os.environ["JAVIS_RESUME_AFTER_RESTART"] = "0"
+os.environ["JEEVI_RESUME_AFTER_RESTART"] = "0"
 try:
     rep = r.recover()
 finally:
-    os.environ.pop("JAVIS_RESUME_AFTER_RESTART", None)
-check("JAVIS_RESUME_AFTER_RESTART=0: the job waits for the owner as before", task in rep["blocked"] and rep["replies"] == []
+    os.environ.pop("JEEVI_RESUME_AFTER_RESTART", None)
+check("JEEVI_RESUME_AFTER_RESTART=0: the job waits for the owner as before", task in rep["blocked"] and rep["replies"] == []
       and ts.get_task(task)["block_kind"] == "interrupted" and not [s for s in tm.steps(task) if s["status"] == "queued"], rep)
 
 # ---------- a chat reply cut by the restart answers again ----------

@@ -39,14 +39,14 @@ if str(SERVER) not in sys.path:
 # Từ 0.156.0 mỗi tin nhóm có thể mở một lô phán xử chạy model việc nền; harness đi qua main.py chỉ thay engine của lượt
 # nhóm, nên thiếu chốt này thì lô phán xử sẽ dựng model thật. Test cần phán xử tự tiêm engine giả.
 import os as _os  # noqa: E402
-_os.environ["JAVIS_NO_REAL_JUDGE_ENGINE"] = "1"
-_os.environ["JAVIS_NO_REAL_REVIEW_ENGINE"] = "1"
+_os.environ["JEEVI_NO_REAL_JUDGE_ENGINE"] = "1"
+_os.environ["JEEVI_NO_REAL_REVIEW_ENGINE"] = "1"
 # Lượt nhóm, lượt quét, lượt học (`main._team_engine_for`): test quên thay `team_engine.build` thì dừng, không dựng CLI thật.
-_os.environ["JAVIS_NO_REAL_TEAM_ENGINE"] = "1"
+_os.environ["JEEVI_NO_REAL_TEAM_ENGINE"] = "1"
 # A test that boots the real server must not download a real browser on startup (0.375.0).
-_os.environ["JAVIS_SKIP_BROWSER"] = "1"
+_os.environ["JEEVI_SKIP_BROWSER"] = "1"
 # No test asks Groq, OpenAI or Google for their model lists (server/stt_models.py, 2026-11-08).
-_os.environ["JAVIS_NO_STT_MODEL_DISCOVERY"] = "1"
+_os.environ["JEEVI_NO_STT_MODEL_DISCOVERY"] = "1"
 
 # A test started inside a live Jeevi container must not see its state folder, brains or admin password (owner incident
 # 2026-11-22, see _live_env.py). Before the temp folder below moves, so a folder a test made earlier in the system temp
@@ -66,7 +66,7 @@ _live_env.scrub()
 #
 # - Đặt cả `tempfile.tempdir` lẫn env TMP/TEMP/TMPDIR: tiến trình con (server dựng thật, git,
 #   node, CLI giả) thừa hưởng env nên file tạm của chúng cũng rơi vào đây.
-# - Đã có JAVIS_TEST_TMP (tiến trình con của một test, hoặc tests/run.py tạo sẵn cho từng file)
+# - Đã có JEEVI_TEST_TMP (tiến trình con của một test, hoặc tests/run.py tạo sẵn cho từng file)
 #   thì DÙNG LẠI, không lồng thêm tầng và không xoá - bên nào tạo ra thì bên đó xoá.
 # - atexit chạy cả khi test gọi `sys.exit()` ở mức module. File thoát bằng `os._exit` phải gọi
 #   `don_thu_muc_tam()` ngay trước đó.
@@ -133,7 +133,7 @@ def _con_song(pid: int) -> bool:
 
 
 def _quet_rac_cu(goc: str) -> None:
-    """Dọn `javis-test-<pid>-*` mà atexit của tiến trình đó không xoá hết: trên Windows, sqlite
+    """Dọn `jeevi-test-<pid>-*` mà atexit của tiến trình đó không xoá hết: trên Windows, sqlite
     còn mở ở biến module lúc atexit chạy nên không xoá được, nhưng tiến trình chết là file nhả.
     Tiến trình đã chết thì xoá ngay; không đọc được pid thì chỉ xoá khi cũ hơn 12 giờ."""
     han = time.time() - _TAM_CU_GIAY
@@ -157,13 +157,13 @@ def _quet_rac_cu(goc: str) -> None:
 
 
 def _dat_thu_muc_tam():
-    p = os.environ.get("JAVIS_TEST_TMP", "")
+    p = os.environ.get("JEEVI_TEST_TMP", "")
     cua_minh = not (p and os.path.isdir(p))
     if cua_minh:
         goc = tempfile.gettempdir()
         _quet_rac_cu(goc)
         p = tempfile.mkdtemp(prefix=f"{_TAM_TIEN_TO}{os.getpid()}-", dir=goc)
-    for k in ("TMP", "TEMP", "TMPDIR", "JAVIS_TEST_TMP"):
+    for k in ("TMP", "TEMP", "TMPDIR", "JEEVI_TEST_TMP"):
         os.environ[k] = p
     tempfile.tempdir = p
     return p, cua_minh

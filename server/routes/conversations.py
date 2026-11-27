@@ -259,7 +259,7 @@ async def owner_reply(conv_id: int, text: str, sender_name: str = "Bạn", via: 
     ok, loi = await _gui_tin(c, txt, tieng_vong=True)
     if not ok:
         return {"ok": False, "code": "send_failed", "error": loi or localefmt.chu("không gửi được", "could not send")}
-    meta = {"tu_javis": True}
+    meta = {"tu_jeevi": True}
     if via:
         meta["via"] = via
     r = conversations.ghi_su_kien({
@@ -315,7 +315,7 @@ async def owner_send_file(conv_id: int, name: str, data: bytes, caption: str = "
         await run_in_threadpool(dest.unlink, True)
         return {"ok": False, "code": "send_failed", "error": err or localefmt.chu("không gửi được", "could not send")}
     _mark_owner_answered(c)
-    meta = {"tu_javis": True, "sent_file": {"p": str(dest), "name": name, "size": len(data)}}
+    meta = {"tu_jeevi": True, "sent_file": {"p": str(dest), "name": name, "size": len(data)}}
     if via:
         meta["via"] = via
     r = conversations.ghi_su_kien({
@@ -850,7 +850,7 @@ def register(app, deps: ConversationsDeps):
                 "bot_id": c.get("bot_id") or "", "sender_type": "human", "sender_name": "Bạn", "message_type": "text",
                 "text": txt}
         conversations.ghi_su_kien({**base, "external_chat_id": chat, "chat_type": c.get("chat_type") or "private",
-                                   "metadata": {"tu_javis": True, "private_reply_to": cid}})
+                                   "metadata": {"tu_jeevi": True, "private_reply_to": cid}})
         dm_id = 0
         psid = r.get("recipient_id") or ""
         if psid and instagram:
@@ -860,7 +860,7 @@ def register(app, deps: ConversationsDeps):
             who = str(c.get("customer_name") or target.get("sender_name") or "")
             d = conversations.ghi_su_kien({**base, "external_chat_id": psid, "chat_type": "private", "chat_title": who,
                                            "external_message_id": r.get("message_id") or "",
-                                           "metadata": {"tu_javis": True, "from_comment": cid}}, dem_chua_doc=False)
+                                           "metadata": {"tu_jeevi": True, "from_comment": cid}}, dem_chua_doc=False)
             dm_id = int(d.get("conversation_id") or 0)
             if dm_id and c.get("bot_id"):
                 dm = conversations.chi_tiet(dm_id) or {}
@@ -1155,7 +1155,7 @@ def register(app, deps: ConversationsDeps):
                 "bot_id": c.get("bot_id") or "", "external_chat_id": c.get("external_chat_id"), "chat_type": c.get("chat_type"),
                 "chat_title": c.get("title") if c.get("chat_type") == "group" else "",
                 "sender_type": "ai", "sender_name": "Bot", "message_type": "text", "text": txt,
-                "metadata": {"tu_javis": True, "draft": True},
+                "metadata": {"tu_jeevi": True, "draft": True},
             })
         learned = False
         if str(learn).strip().lower() in ("1", "true", "on") and c.get("bot_id") and _DEPS.learn_owner:

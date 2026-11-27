@@ -9,17 +9,17 @@
 # HOW TO USE
 #   1) Docker Manager > Compose > URL > paste:
 #      https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hostinger.yml
-#   2) Environment box, four useful fields: DOMAIN_NAME, JAVIS_ADMIN_USER, JAVIS_ADMIN_PASSWORD,
-#      JAVIS_AUTO_UPDATE (true = Jeevi updates itself daily; empty = "Update now" in the app).
+#   2) Environment box, four useful fields: DOMAIN_NAME, JEEVI_ADMIN_USER, JEEVI_ADMIN_PASSWORD,
+#      JEEVI_AUTO_UPDATE (true = Jeevi updates itself daily; empty = "Update now" in the app).
 #      DOMAIN_NAME, to get HTTPS:
-#        - free link, no domain to buy:  DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud
-#          (the hostname is under hPanel > VPS, e.g. DOMAIN_NAME=javis.srv1782015.hstgr.cloud)
+#        - free link, no domain to buy:  DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud
+#          (the hostname is under hPanel > VPS, e.g. DOMAIN_NAME=jeevi.srv1782015.hstgr.cloud)
 #        - your own domain:  DOMAIN_NAME=example.com  (point its DNS A record at the VPS IP first)
 #   3) Deploy, wait 1-3 minutes for the certificate, open  https://<DOMAIN_NAME>.
 #
 # No Environment box? Press Manage, edit the .yaml, change the labels traefik.enable and ...rule to:
 #      - traefik.enable=true
-#      - traefik.http.routers.javis.rule=Host(`javis.srv1782015.hstgr.cloud`)   (your VPS hostname)
+#      - traefik.http.routers.jeevi.rule=Host(`jeevi.srv1782015.hstgr.cloud`)   (your VPS hostname)
 # VPS hostname unknown? Open http://<ip>:7777 > Settings > Domain: Jeevi shows the DOMAIN_NAME=... line.
 #
 # NOTES
@@ -35,28 +35,28 @@
 #     (tests/python/test_hostinger_compose_size.py guards the size).
 # ============================================================================
 services:
-  javis:
+  jeevi:
     image: ghcr.io/blogminhquy/javis-os:latest
-    # Container, Traefik router and service are all named after JAVIS_NAME (empty = "javis").
-    # A second instance on the same VPS needs another name, e.g. javis-shop.
-    container_name: ${JAVIS_NAME:-javis}
+    # Container, Traefik router and service are all named after JEEVI_NAME (empty = "jeevi").
+    # A second instance on the same VPS needs another name, e.g. jeevi-shop.
+    container_name: ${JEEVI_NAME:-jeevi}
     restart: unless-stopped
     pull_policy: always
     # The Hostinger target is set inside the command so it does not become an Environment field.
-    command: ["sh", "-c", "JAVIS_DEPLOY_TARGET=hostinger exec python -m uvicorn main:app --app-dir server --host 0.0.0.0 --port 7777"]
+    command: ["sh", "-c", "JEEVI_DEPLOY_TARGET=hostinger exec python -m uvicorn main:app --app-dir server --host 0.0.0.0 --port 7777"]
     environment:
       # Only what the installer needs. Port, paths, state and brain have defaults in the image.
       DOMAIN_NAME: ${DOMAIN_NAME:-localhost}
-      JAVIS_ADMIN_USER: ${JAVIS_ADMIN_USER:-admin}
-      JAVIS_ADMIN_PASSWORD: ${JAVIS_ADMIN_PASSWORD:-}
+      JEEVI_ADMIN_USER: ${JEEVI_ADMIN_USER:-admin}
+      JEEVI_ADMIN_PASSWORD: ${JEEVI_ADMIN_PASSWORD:-}
       # Same token as the watchtower service below, so "Update now" can call it. Hard-coded on
       # purpose: every ${...} adds a field to the Environment form, and port 8080 is never published.
-      WATCHTOWER_TOKEN: javis-update
+      WATCHTOWER_TOKEN: jeevi-update
     ports:
       # Fallback entry (Open button, http://<ip>:7777). A second instance must change the port
-      # (JAVIS_HOST_PORT=7778). With DOMAIN_NAME set it listens on 127.0.0.1 only, so the password
+      # (JEEVI_HOST_PORT=7778). With DOMAIN_NAME set it listens on 127.0.0.1 only, so the password
       # never travels over plain http. Locked out? Clear DOMAIN_NAME and Redeploy: it opens again.
-      - "${DOMAIN_NAME:+127.0.0.1:}${JAVIS_HOST_PORT:-7777}:7777"
+      - "${DOMAIN_NAME:+127.0.0.1:}${JEEVI_HOST_PORT:-7777}:7777"
     labels:
       # Guide links shown in Docker Manager.
       - org.opencontainers.image.documentation=https://github.com/blogminhquy/javis-os/blob/main/docs/README.md
@@ -67,19 +67,19 @@ services:
       # DOMAIN_NAME empty the two labels below are empty, so Traefik skips the container and hPanel's
       # Open button falls back to http://<ip>:7777 instead of localhost.
       - traefik.enable=${DOMAIN_NAME:+true}
-      - traefik.http.routers.${JAVIS_NAME:-javis}.rule=${DOMAIN_NAME:+Host(`}${DOMAIN_NAME:-}${DOMAIN_NAME:+`)}
-      - traefik.http.routers.${JAVIS_NAME:-javis}.entrypoints=websecure
-      - traefik.http.routers.${JAVIS_NAME:-javis}.tls.certresolver=letsencrypt
-      - traefik.http.routers.${JAVIS_NAME:-javis}.service=${JAVIS_NAME:-javis}
-      - traefik.http.services.${JAVIS_NAME:-javis}.loadbalancer.server.port=7777
+      - traefik.http.routers.${JEEVI_NAME:-jeevi}.rule=${DOMAIN_NAME:+Host(`}${DOMAIN_NAME:-}${DOMAIN_NAME:+`)}
+      - traefik.http.routers.${JEEVI_NAME:-jeevi}.entrypoints=websecure
+      - traefik.http.routers.${JEEVI_NAME:-jeevi}.tls.certresolver=letsencrypt
+      - traefik.http.routers.${JEEVI_NAME:-jeevi}.service=${JEEVI_NAME:-jeevi}
+      - traefik.http.services.${JEEVI_NAME:-jeevi}.loadbalancer.server.port=7777
     volumes:
-      - javis-data:/data
-      - javis-brains:/brains
-      - claude-auth:/home/javis/.claude
-      - codex-auth:/home/javis/.codex
+      - jeevi-data:/data
+      - jeevi-brains:/brains
+      - claude-auth:/home/jeevi/.claude
+      - codex-auth:/home/jeevi/.codex
       - gateway-status:/gateway:ro   # what the gateway service is doing (read only)
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request,os,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:'+os.getenv('JAVIS_PORT','7777')+'/health',timeout=4).status==200 else 1)"]
+      test: ["CMD", "python", "-c", "import urllib.request,os,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:'+os.getenv('JEEVI_PORT','7777')+'/health',timeout=4).status==200 else 1)"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -88,19 +88,19 @@ services:
   # ------------------------------------------------------------------------
   # One-click update from the app ("Update now"). Uses the maintained fork nicholas-fedor/watchtower,
   # pinned to major 1: the old containrrr image speaks Docker API 1.25, which current Docker refuses.
-  # Jeevi keeps running if this container fails: then update with Redeploy. Logs: `javis-watchtower`.
+  # Jeevi keeps running if this container fails: then update with Redeploy. Logs: `jeevi-watchtower`.
   watchtower:
     image: ghcr.io/nicholas-fedor/watchtower:1
-    container_name: ${JAVIS_NAME:-javis}-watchtower
+    container_name: ${JEEVI_NAME:-jeevi}-watchtower
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       WATCHTOWER_HTTP_API_ENDPOINTS: update                 # takes the update call from the button
-      WATCHTOWER_HTTP_API_TOKEN: javis-update               # matches WATCHTOWER_TOKEN above
+      WATCHTOWER_HTTP_API_TOKEN: jeevi-update               # matches WATCHTOWER_TOKEN above
       # Updates on its own, without the button. The installer's choice (fourth Environment field):
       # Jeevi then restarts whenever a new version exists, cutting running work. Empty = off.
-      WATCHTOWER_HTTP_API_PERIODIC_POLLS: ${JAVIS_AUTO_UPDATE:-false}
+      WATCHTOWER_HTTP_API_PERIODIC_POLLS: ${JEEVI_AUTO_UPDATE:-false}
       WATCHTOWER_POLL_INTERVAL: 86400                       # 24h, only when the line above is on
       WATCHTOWER_CLEANUP: "true"                            # removes the old image after an update
       # Pull + removal of the old container; the default 10m ran out on a slow disk (see `guard`).
@@ -108,25 +108,25 @@ services:
     # Internal container: nothing to expose.
     labels:
       - traefik.enable=false
-    # Watches THIS instance's container only (a fixed "javis" would restart another instance).
-    command: ${JAVIS_NAME:-javis}
+    # Watches THIS instance's container only (a fixed "jeevi" would restart another instance).
+    command: ${JEEVI_NAME:-jeevi}
 
   # ------------------------------------------------------------------------
   # Brings Jeevi back when an update leaves it gone (404) or stopped, after 2 minutes; a Jeevi you stop
-  # by hand is left alone. Docker socket only, no network. Logs: container `javis-guard`. Below is a
+  # by hand is left alone. Docker socket only, no network. Logs: container `jeevi-guard`. Below is a
   # compact copy of docker/guard.py (explained there), written by tools/sync_guard.py: edit that file.
   guard:
     image: python:3.12-alpine
-    container_name: ${JAVIS_NAME:-javis}-guard
+    container_name: ${JEEVI_NAME:-jeevi}-guard
     restart: unless-stopped
     network_mode: none
     depends_on:
-      - javis          # deleting the stack stops the guard first, so it never sees Jeevi "vanish"
+      - jeevi          # deleting the stack stops the guard first, so it never sees Jeevi "vanish"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - guard-data:/guard
     environment:
-      JAVIS_NAME: ${JAVIS_NAME:-javis}
+      JEEVI_NAME: ${JEEVI_NAME:-jeevi}
     labels:
       - traefik.enable=false
     entrypoint: ["python", "-u", "-c"]
@@ -140,11 +140,11 @@ services:
         import sys
         import time
         import urllib.parse
-        NAME = os.environ.get("JAVIS_NAME") or "javis"
-        SOCKET = os.environ.get("JAVIS_GUARD_SOCKET") or "/var/run/docker.sock"
-        STORE = os.environ.get("JAVIS_GUARD_DIR") or "/guard"
-        EVERY = float(os.environ.get("JAVIS_GUARD_EVERY") or 15)
-        GRACE = float(os.environ.get("JAVIS_GUARD_GRACE") or 120)
+        NAME = os.environ.get("JEEVI_NAME") or "jeevi"
+        SOCKET = os.environ.get("JEEVI_GUARD_SOCKET") or "/var/run/docker.sock"
+        STORE = os.environ.get("JEEVI_GUARD_DIR") or "/guard"
+        EVERY = float(os.environ.get("JEEVI_GUARD_EVERY") or 15)
+        GRACE = float(os.environ.get("JEEVI_GUARD_GRACE") or 120)
         def log(msg):
           print(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "[guard]", msg, flush=True)
         class DockerConnection(http.client.HTTPConnection):
@@ -356,28 +356,28 @@ services:
   # without Traefik: the first gateway holds 80/443, later ones use docker-compose.proxy.yml (DEPLOY.md).
   gateway:
     image: caddy:2-alpine
-    container_name: ${JAVIS_NAME:-javis}-gateway
+    container_name: ${JEEVI_NAME:-jeevi}-gateway
     restart: unless-stopped
     network_mode: host
     # 0.302.0: the VPS's own hostname (srv<id>.hstgr.cloud) is visible here, so with DOMAIN_NAME empty the gateway
-    # still gets a link: javis.srv<id>.hstgr.cloud. Hostinger never tells a pasted compose that name at install time.
+    # still gets a link: jeevi.srv<id>.hstgr.cloud. Hostinger never tells a pasted compose that name at install time.
     uts: host
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME:-localhost}
-      JAVIS_HOST_PORT: ${JAVIS_HOST_PORT:-7777}
-      JAVIS_NAME: ${JAVIS_NAME:-javis}
+      JEEVI_HOST_PORT: ${JEEVI_HOST_PORT:-7777}
+      JEEVI_NAME: ${JEEVI_NAME:-jeevi}
     entrypoint:
       - /bin/sh
       - -c
       - |
         D="$${DOMAIN_NAME:-localhost}"
-        P="$${JAVIS_HOST_PORT:-7777}"
+        P="$${JEEVI_HOST_PORT:-7777}"
         nghi() { while :; do sleep 3600; done; }
         S="/status/gateway.txt"
         ghi() { mkdir -p /status 2>/dev/null; printf 'state=%s\nnames=%s\n' "$$1" "$$2" > "$$S" 2>/dev/null || true; }
         # Chua dat DOMAIN_NAME: lay ten VPS Hostinger (srv<so>.hstgr.cloud) lam link. 0.304.0: KHONG doan qua DNS nua.
         # Ban 0.302.0 so dia chi bang getent, ma getent doc /etc/hosts cua VPS truoc (Ubuntu ghi ten may -> 127.0.1.1),
-        # nen Caddy xin cert cho srv<so>.hstgr.cloud con Jeevi lai cho javis.srv<so>.hstgr.cloud: lech nhau, khong ai
+        # nen Caddy xin cert cho srv<so>.hstgr.cloud con Jeevi lai cho jeevi.srv<so>.hstgr.cloud: lech nhau, khong ai
         # duoc chuyen sang https (chu repo bao 24/10/2026). Gio Caddy phuc vu CA HAI ten (<ten-ban>.<may> va, voi ban
         # mac dinh, chinh ten may); ten nao DNS tro ve may thi co cert. Danh sach ghi vao $$S de Jeevi thu dung cac ten nay.
         if [ "$$D" = "localhost" ] || [ -z "$$D" ]; then
@@ -387,10 +387,10 @@ services:
             srv[0-9]*) case "$$M" in *.*) M="";; *) M="$$M.hstgr.cloud";; esac;;
             *) M="";;
           esac
-          N="$$(echo "$${JAVIS_NAME:-javis}" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9-\n' '-')"
+          N="$$(echo "$${JEEVI_NAME:-jeevi}" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9-\n' '-')"
           if [ -n "$$M" ]; then
             D="$$N.$$M"
-            [ "$$N" = "javis" ] && D="$$D $$M"
+            [ "$$N" = "jeevi" ] && D="$$D $$M"
             echo "[gateway] Chua dat DOMAIN_NAME: dung link cua VPS $$D"
           fi
         fi
@@ -428,9 +428,9 @@ services:
 # ============================================================================
 # SEVERAL JEEVI INSTANCES ON ONE HOSTINGER VPS
 # Deploy this compose once more (a new stack in Docker Manager) and change ALL THREE:
-#   Stack 1:  DOMAIN_NAME=shop.srv1782015.hstgr.cloud  JAVIS_NAME=(empty)     JAVIS_HOST_PORT=(empty)
-#   Stack 2:  DOMAIN_NAME=home.srv1782015.hstgr.cloud  JAVIS_NAME=javis-home  JAVIS_HOST_PORT=7778
-# Same JAVIS_NAME -> Docker says the container name is in use; same JAVIS_HOST_PORT -> port taken;
+#   Stack 1:  DOMAIN_NAME=shop.srv1782015.hstgr.cloud  JEEVI_NAME=(empty)     JEEVI_HOST_PORT=(empty)
+#   Stack 2:  DOMAIN_NAME=home.srv1782015.hstgr.cloud  JEEVI_NAME=jeevi-home  JEEVI_HOST_PORT=7778
+# Same JEEVI_NAME -> Docker says the container name is in use; same JEEVI_HOST_PORT -> port taken;
 # same DOMAIN_NAME -> two instances fight over one link. Any *.hstgr.cloud subdomain resolves at once.
 # Each stack has its own volumes: state, brain, admin account and Claude sign-in are separate, so
 # sign in to Claude once per instance (that stack's App terminal).
@@ -441,7 +441,7 @@ volumes:
   gateway-status:
   gateway-data:
   gateway-config:
-  javis-data:
-  javis-brains:
+  jeevi-data:
+  jeevi-brains:
   claude-auth:
   codex-auth:

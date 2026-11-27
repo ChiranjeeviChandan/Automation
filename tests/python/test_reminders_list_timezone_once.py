@@ -22,7 +22,7 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-reminders-tz-state-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-reminders-tz-state-")
 
 from fastapi import FastAPI  # noqa: E402
 from starlette.testclient import TestClient  # noqa: E402
@@ -31,7 +31,7 @@ import localefmt  # noqa: E402
 import reminders  # noqa: E402
 
 fails = []
-brain = Path(tempfile.mkdtemp(prefix="javis-reminders-tz-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="jeevi-reminders-tz-brain-"))
 B = str(brain)
 
 

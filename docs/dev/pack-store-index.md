@@ -48,7 +48,7 @@ cứng vào đó) vẫn xem và cài được. Đừng thêm gì vào đó nữa
       "homepage": "https://github.com/...",
       "icon": "packs/javis.pricing/assets/pricing.png",
       "download": {
-        "url": "https://github.com/.../releases/download/v1.0.0/javis-tinh-gia.zip",
+        "url": "https://github.com/.../releases/download/v1.0.0/jeevi-tinh-gia.zip",
         "sha256": "abc123...",
         "size": 3052
       },
@@ -131,7 +131,7 @@ Làm trong repo kho, không phải repo này.
    Lệnh tự đặt tệp vào `dist/` với tên kèm phiên bản và in sẵn khối JSON để dán.
 
 2. Thêm một mục vào `packs[]` trong `index.json`, khai `download.url` **tương đối**
-   (`dist/javis-tinh-gia-1.0.0.zip`). Jeevi ghép nó với địa chỉ của chính file index.
+   (`dist/jeevi-tinh-gia-1.0.0.zip`). Jeevi ghép nó với địa chỉ của chính file index.
 
    Tệp và mục danh mục nằm trong CÙNG một commit, nên không bao giờ có cảnh index đã trỏ sang
    bản mới mà tệp thì chưa lên. Gói lớn thì dùng Release và khai địa chỉ tuyệt đối.

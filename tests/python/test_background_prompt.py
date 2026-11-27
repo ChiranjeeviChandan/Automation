@@ -17,8 +17,8 @@ import os
 import tempfile
 from unittest.mock import patch
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-bgp-")
-os.environ.pop("JAVIS_BG_LEAN_PROMPT", None)
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-bgp-")
+os.environ.pop("JEEVI_BG_LEAN_PROMPT", None)
 
 import config as cfg  # noqa: E402
 import background_prompt as bp  # noqa: E402
@@ -50,7 +50,7 @@ check("a prompt not starting with CLAUDE.md is left alone", bp.lean("You are Lan
 check("an empty prompt is left alone", bp.lean("") is None)
 
 # ───────────────────────── 3. which jobs ─────────────────────────
-with patch.dict(os.environ, {"JAVIS_BG_LEAN_PROMPT": "1"}):
+with patch.dict(os.environ, {"JEEVI_BG_LEAN_PROMPT": "1"}):
     for tag in ("dispatch:t_1:execute", "dispatch:t_1:specifier", "reminder", "reminder:r_9", "loop", "loop-main"):
         check(f"job '{tag}' gets the short rules", bp.for_api(full, tag, "job text") == bp.CONTRACT + TAIL)
     for tag in ("learn", "curator", "workflow", "team", "next-prompt", "reply-policy", "ingest", "habit-coach",
@@ -73,13 +73,13 @@ def set_bps(bps):
 
 
 set_level("max")
-with patch.dict(os.environ, {"JAVIS_BG_LEAN_PROMPT": "0"}):
-    check("JAVIS_BG_LEAN_PROMPT=0 keeps the full prompt", bp.for_api(full, "loop") == full)
+with patch.dict(os.environ, {"JEEVI_BG_LEAN_PROMPT": "0"}):
+    check("JEEVI_BG_LEAN_PROMPT=0 keeps the full prompt", bp.for_api(full, "loop") == full)
 set_level("off")
-with patch.dict(os.environ, {"JAVIS_BG_LEAN_PROMPT": "1"}):
+with patch.dict(os.environ, {"JEEVI_BG_LEAN_PROMPT": "1"}):
     check("the Off saving level keeps the full prompt, even with the env on", bp.for_api(full, "loop") == full)
 set_level("off", source="auto")
-with patch.dict(os.environ, {"JAVIS_BG_LEAN_PROMPT": "1"}):
+with patch.dict(os.environ, {"JEEVI_BG_LEAN_PROMPT": "1"}):
     check("only the owner's own choice of Off counts", bp.for_api(full, "loop") != full)
 set_level("saving")
 set_bps(0)
@@ -104,15 +104,15 @@ for need, why in [
     ("cannot be undone", "outside actions are final"),
     ("never invent numbers", "real data only"), ("only after the tool returned success", "confirm only on success"),
     ("[[NEEDS_INPUT]]", "a Kanban job's own way to ask"), ("does not ask", "a full reminder does not ask"),
-    ("Jeevi/index.md", "duplicate check"), ("javis-builder", "templates from the skill"),
+    ("Jeevi/index.md", "duplicate check"), ("jeevi-builder", "templates from the skill"),
     ("`agents/<slug>.md`", "flat agent path"), ("never `Jeevi/agents|workflows`", "old path banned"),
     ("150 characters", "description cap"), ("`enabled: false`", "new loop and plugin off"),
-    ("`javis_plugin`", "plugins through the tool"), ("`min_mode`", "plugin permission"),
+    ("`jeevi_plugin`", "plugins through the tool"), ("`min_mode`", "plugin permission"),
     ("`owner_chat`", "loop result recipient"), ("`chat_id`", "job result recipient"),
     ("Data Cache", "cache rules"), ("zalo_send_message", "Zalo tools"), ("`threadId`", "Zalo thread check"),
-    ("javis_zalo_send", "the old Zalo tool named as banned"), ("javis_generate_image", "images"),
-    ("javis_job", "long shell work"), ("I will report back", "no empty promises"),
-    ("orchestration is", "queued is not running"), ("JAVIS_LESSON", "agent lessons"),
+    ("jeevi_zalo_send", "the old Zalo tool named as banned"), ("javis_generate_image", "images"),
+    ("jeevi_job", "long shell work"), ("I will report back", "no empty promises"),
+    ("orchestration is", "queued is not running"), ("JEEVI_LESSON", "agent lessons"),
     ("memory/facts/", "memory rules"), ("U+2014", "the em dash ban"), ("NGÔN NGỮ", "language follows the block"),
 ]:
     check(f"the contract keeps: {why}", need in C, need)

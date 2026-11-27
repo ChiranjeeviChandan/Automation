@@ -41,7 +41,7 @@ TZ = timezone(timedelta(hours=7))
 now = time.time()
 today = datetime.now(TZ).date()
 d = lambda n: (today + timedelta(days=n)).isoformat()  # noqa: E731
-brain = Path(tempfile.mkdtemp(prefix="javis-stats-"))
+brain = Path(tempfile.mkdtemp(prefix="jeevi-stats-"))
 root = str(brain.resolve())
 
 
@@ -51,7 +51,7 @@ def atomic_write(path, text):
 
 
 mt = my_tasks.MyTasks(my_tasks.MyTasksDeps(brain_root=lambda b: str(brain), atomic_write_text=atomic_write, tz=lambda: TZ))
-store = TaskStore(Path(tempfile.mkdtemp(prefix="javis-stats-kb-")) / "kanban.sqlite3")
+store = TaskStore(Path(tempfile.mkdtemp(prefix="jeevi-stats-kb-")) / "kanban.sqlite3")
 
 # ---- Jeevi: Kanban ----
 a = store.enqueue(root, "Tổng hợp đơn hôm qua", "x", status="ready")
@@ -100,7 +100,7 @@ mt.update("brain", {"id": r2["task"]["id"], "date": d(2)})  # moved twice
 mt.update("brain", {"id": r2["task"]["id"], "date": d(1)})  # moved back: not a move
 habit = mt.create("brain", {"title": "Đọc sách", "date": d(-3), "repeat": {"unit": "day", "n": 1}, "habit": {"start": d(-3)}})
 for n in (-3, -2, -1, 0):
-    mt.check("brain", habit["task"]["id"], d(n), "javis" if n == 0 else "me", True)
+    mt.check("brain", habit["task"]["id"], d(n), "jeevi" if n == 0 else "me", True)
 chore = mt.create("brain", {"title": "Chốt sổ quỹ", "date": d(-10), "repeat": {"unit": "day", "n": 1}})
 for n in (-6, -5, -4):
     mt.check("brain", chore["task"]["id"], d(n), "me", True)
@@ -131,7 +131,7 @@ check("the assistant that ran a job is named, the rest is Jeevi Core",
       ag["kho"]["name"] == "Trợ lý Kho" and ag["kho"]["n"] == 1 and ag["core"]["n"] == ai["done"] - 1, ag)
 check("average run time from the jobs that report it", ai["avg_seconds"] in (40, 73), ai["avg_seconds"])
 check("owner: one task, four habit ticks, three chore ticks, one appointment", me["done"] == 1 + 4 + 3 + 1, me["done"])
-check("a tick Jeevi made on the owner's word is counted apart", me["javis_ticks"] == 1)
+check("a tick Jeevi made on the owner's word is counted apart", me["jeevi_ticks"] == 1)
 check("on time: the task done a day late is late", me["on_time"] is not None and me["on_time"] < 100)
 check("Jeevi's share", ai["share"] == round(100 * ai["done"] / (ai["done"] + me["done"])))
 check("hand-offs are counted", ai["handoffs"] == 1)

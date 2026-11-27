@@ -272,6 +272,6 @@
 
   var API = { HEAD: HEAD, MAX_LOADS: MAX_LOADS, MARK: MARK, fold: fold, visible: visible, findSpan: findSpan,
               textMap: textMap, locate: locate, before: before, go: go, clear: clearMark, selecting: selecting };
-  if (typeof window !== "undefined") window.JavisQuoteJump = API;
+  if (typeof window !== "undefined") window.JeeviQuoteJump = API;
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 })();

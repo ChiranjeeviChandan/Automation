@@ -91,7 +91,7 @@ check("sidebar: Models is in the System group", /ids: \["models", "settings", "s
 check("sidebar: logins has the cookie icon", /logins: "cookie"/.test(cons));
 check("page is called Cookies in both languages", VI["page.logins.label"] === "Cookies" && EN["page.logins.label"] === "Cookies");
 check("cookie and file-up icons are vendored", /"cookie":/.test(D("vendor/lucide-icons.js")) && /"file-up":/.test(D("vendor/lucide-icons.js")));
-check("page delegates to login-vault.js", /id === "logins"[\s\S]{0,200}JavisLoginVault\.mount\(el\)/.test(cons));
+check("page delegates to login-vault.js", /id === "logins"[\s\S]{0,200}JeeviLoginVault\.mount\(el\)/.test(cons));
 check("voice commands know the page", /"logins", "pet", "share"\]/.test(D("ui-actions.js")) && /"logins", "pet", "share",/.test(R("server/ui_targets.py")));
 check("index.html loads the module", /login-vault\.js\?v=\d+/.test(D("index.html")));
 const ww = D("web-watch.js");

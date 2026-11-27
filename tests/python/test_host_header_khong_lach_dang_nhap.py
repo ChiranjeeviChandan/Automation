@@ -25,8 +25,8 @@ import os
 import re
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-hosthdr-")
-os.environ["JAVIS_REQUIRE_LOGIN"] = "1"   # bật cổng đăng nhập mà không cần đặt mật khẩu
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-hosthdr-")
+os.environ["JEEVI_REQUIRE_LOGIN"] = "1"   # bật cổng đăng nhập mà không cần đặt mật khẩu
 
 from fastapi.testclient import TestClient   # noqa: E402
 import main            # noqa: E402
@@ -73,7 +73,7 @@ for xau in ("127.0.0.1:7777/static", "a.com@evil.com", "a.com\\static", "a b.com
             "a.com?x=1", "a.com#f"):
     check(f"host_hop_le({xau!r}) là False", web_security.host_hop_le(xau) is False)
 
-for tot in ("127.0.0.1:7777", "localhost", "[::1]:7777", "javis.example.com", ""):
+for tot in ("127.0.0.1:7777", "localhost", "[::1]:7777", "jeevi.example.com", ""):
     check(f"host_hop_le({tot!r}) là True", web_security.host_hop_le(tot) is True)
 
 d = web_security.csrf_decision("GET", "127.0.0.1:7777/static", None, True)

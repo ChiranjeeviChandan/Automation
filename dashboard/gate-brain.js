@@ -62,8 +62,8 @@
 
   function tw(k, v) { return window.t ? window.t(k, v) : k; }
   function ic(n) { return typeof window.ic === "function" ? window.ic(n) : ""; }
-  function infoBtn() { return window.JavisInfo ? window.JavisInfo.btn(tw("info.more")) : ""; }
-  function infoBody(html) { return window.JavisInfo ? window.JavisInfo.body(html) : '<div class="info-body">' + html + "</div>"; }
+  function infoBtn() { return window.JeeviInfo ? window.JeeviInfo.btn(tw("info.more")) : ""; }
+  function infoBody(html) { return window.JeeviInfo ? window.JeeviInfo.body(html) : '<div class="info-body">' + html + "</div>"; }
   var HELPERS = { tr: tw, ic: ic, infoBtn: infoBtn, infoBody: infoBody };
 
   var host = null;
@@ -115,5 +115,5 @@
     if (host) load();
   }
 
-  window.JavisGateBrain = { mount: mount };
+  window.JeeviGateBrain = { mount: mount };
 })();

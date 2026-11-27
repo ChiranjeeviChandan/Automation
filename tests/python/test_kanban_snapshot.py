@@ -21,7 +21,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-kbsnap-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-kbsnap-"))
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -40,7 +40,7 @@ def check(name, cond):
         _fails.append(name)
 
 
-TMP = Path(tempfile.mkdtemp(prefix="javis-kbsnap-brain-"))
+TMP = Path(tempfile.mkdtemp(prefix="jeevi-kbsnap-brain-"))
 BRAIN = TMP / "Brain X"
 BRAIN.mkdir(parents=True, exist_ok=True)
 

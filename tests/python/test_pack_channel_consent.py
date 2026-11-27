@@ -17,7 +17,7 @@ import os
 import tempfile
 import zipfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-pack-consent-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-pack-consent-")
 
 import pack_install  # noqa: E402
 

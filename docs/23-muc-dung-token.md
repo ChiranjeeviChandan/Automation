@@ -202,12 +202,12 @@ Từ bản này, hub xử lý kết quả trước khi model đọc, giống nha
 - **Lỗi và kết quả nhỏ** được đưa nguyên văn.
 - **Kết quả vừa** chỉ bị bỏ thụt dòng, không mất trường nào. Lớn hơn một chút mà viết tên cột một lần là đủ chỗ thì mọi bản ghi được đưa dưới dạng bảng.
 - **Kết quả lớn** được cất nguyên vẹn (mã hoá, tự xoá sau 24 giờ). Model nhận phần gọn: tổng số, tên các trường, vài bản ghi trọn vẹn và một mã tham chiếu.
-- **Đọc lại hoặc tính toán** bằng tool `javis_query`: chọn trường, lật trang, hoặc chạy một câu SQL chỉ đọc trên toàn bộ bản ghi. Nó cũng tự lật nhiều trang của một tool đọc rồi tính, nên báo cáo cả tháng không còn phải đi qua ngữ cảnh.
+- **Đọc lại hoặc tính toán** bằng tool `jeevi_query`: chọn trường, lật trang, hoặc chạy một câu SQL chỉ đọc trên toàn bộ bản ghi. Nó cũng tự lật nhiều trang của một tool đọc rồi tính, nên báo cáo cả tháng không còn phải đi qua ngữ cảnh.
 
 Ba tính năng đi kèm:
 
-- **Trinh sát (`javis_scout`).** Việc đọc nhiều nguồn có thể được model chính giao cho **model việc nền** bạn đã chọn ở trang Models. Trinh sát chỉ được đọc, và chỉ kết luận quay về khung chat. Không chạy được thì model chính tự làm như trước.
-- **Chạy code đọc dữ liệu (`javis_code`).** Model viết một đoạn Python ngắn, gọi nhiều tool đọc nối tiếp nhau (lật trang, tra chi tiết từng đơn, ghép hai nguồn), tự tính rồi chỉ in ra kết quả. Dữ liệu thô không đi qua khung chat. Đoạn code chạy trong tiến trình riêng, không có khoá, không đọc file, không ra mạng, và chỉ gọi được tool đọc rõ ràng.
+- **Trinh sát (`jeevi_scout`).** Việc đọc nhiều nguồn có thể được model chính giao cho **model việc nền** bạn đã chọn ở trang Models. Trinh sát chỉ được đọc, và chỉ kết luận quay về khung chat. Không chạy được thì model chính tự làm như trước.
+- **Chạy code đọc dữ liệu (`jeevi_code`).** Model viết một đoạn Python ngắn, gọi nhiều tool đọc nối tiếp nhau (lật trang, tra chi tiết từng đơn, ghép hai nguồn), tự tính rồi chỉ in ra kết quả. Dữ liệu thô không đi qua khung chat. Đoạn code chạy trong tiến trình riêng, không có khoá, không đọc file, không ra mạng, và chỉ gọi được tool đọc rõ ràng.
 - **Công thức cho việc định kỳ.** Sau hai lần chạy giống nhau ở hai ngày khác nhau, Jeevi tự lấy sẵn dữ liệu trước khi model bắt đầu. Jeevi chỉ làm vậy khi mọi cách hiểu về ngày tháng đều cho cùng một kết quả trong hôm đó, còn không thì chạy như cũ. Chỉ các lệnh đọc rõ ràng mới được lặp lại, và việc nào dùng kỳ không ở dạng `YYYY-MM-DD` (tháng `2026-11`, số tuần, `01/11/2026`) thì không bao giờ được ghi thành công thức. Nếu model vẫn phải tự gọi lại nguồn sau khi đã có dữ liệu lấy sẵn, công thức bị loại sau hai lần. Mỗi công thức là một file trong `<brain>/Jeevi/recipes/`, xoá file là quên.
 
 Trong một lượt dài còn hai cách bớt nữa, không làm mất gì của model:
@@ -215,11 +215,11 @@ Trong một lượt dài còn hai cách bớt nữa, không làm mất gì của
 - **Kết quả lặp lại.** Model gọi lại đúng công cụ với đúng tham số mà kết quả y hệt lần trước (đọc lại một file, liệt kê lại cùng dữ liệu) thì nhận một dòng tham chiếu tới bản đã có, thay vì cả khối chữ lần nữa. Công cụ vẫn chạy lại thật, nên dữ liệu đã đổi thì model nhận bản mới đầy đủ. Khi lượt dài tới mức Jeevi phải rút gọn kết quả cũ, nội dung đầy đủ được đặt lại vào chỗ tham chiếu mới nhất. Với Claude Code và Codex, Jeevi không nhìn thấy hội thoại của chúng nên làm việc này ở cổng hub, cho công cụ và nguồn kết nối của Jeevi: model hỏi lại ngay sau một tham chiếu thì nhận bản đầy đủ, và khi chúng nén hội thoại thì Jeevi quên sổ của lượt đó. Claude Code tự lo việc đọc lại một file chưa đổi.
 - **JSON gọn.** Kết quả là JSON có thụt dòng, hoặc chữ Việt bị viết thành `\u1ec7`, được viết lại gọn với cùng nội dung. Kết quả đọc file, terminal, trang web và skill thì giữ nguyên từng ký tự, vì model có thể cần chép đúng để sửa.
 
-Skill dài kiểu "thực đơn" (mỗi yêu cầu chỉ cần một phần, như `javis-builder`: agent HOẶC loop HOẶC plugin) được nạp **có chọn lọc**. Jeevi tự chọn phần cần nạp trước khi nạp: chấm điểm từng mục theo câu yêu cầu, ở bất kỳ ngôn ngữ nào (chữ Latin, Nga, Ả Rập, Hindi, Trung, Nhật, Hàn, Thái...), luôn kèm các mục luật và quy trình, kèm cả phần mà phần được chọn dặn phải tạo trước (workflow kéo theo mẫu agent), và liệt kê phần còn lại để model lấy thêm bằng một lệnh. Không chắc là nạp cả skill như cũ. Skill dạng một quy trình liền mạch thì luôn nạp đủ, vì một yêu cầu chung cần mọi phần của nó. Jeevi học từ cách dùng: mục nào model hay phải lấy thêm thì lần sau nạp sẵn. Tính năng bật thử cho khoảng 10% phiên chat của chủ trước, tắt theo mức **Tắt**; xem biến `JAVIS_SKILL_SECTIONS` ở [Cấu hình .env](16-cau-hinh-env.md).
+Skill dài kiểu "thực đơn" (mỗi yêu cầu chỉ cần một phần, như `jeevi-builder`: agent HOẶC loop HOẶC plugin) được nạp **có chọn lọc**. Jeevi tự chọn phần cần nạp trước khi nạp: chấm điểm từng mục theo câu yêu cầu, ở bất kỳ ngôn ngữ nào (chữ Latin, Nga, Ả Rập, Hindi, Trung, Nhật, Hàn, Thái...), luôn kèm các mục luật và quy trình, kèm cả phần mà phần được chọn dặn phải tạo trước (workflow kéo theo mẫu agent), và liệt kê phần còn lại để model lấy thêm bằng một lệnh. Không chắc là nạp cả skill như cũ. Skill dạng một quy trình liền mạch thì luôn nạp đủ, vì một yêu cầu chung cần mọi phần của nó. Jeevi học từ cách dùng: mục nào model hay phải lấy thêm thì lần sau nạp sẵn. Tính năng bật thử cho khoảng 10% phiên chat của chủ trước, tắt theo mức **Tắt**; xem biến `JEEVI_SKILL_SECTIONS` ở [Cấu hình .env](16-cau-hinh-env.md).
 
-Việc chạy nền (việc Kanban, việc lặp, nhắc hẹn có làm việc) trên bộ não dùng **khóa API** mang **bộ luật việc nền ngắn** thay cho toàn bộ CLAUDE.md, nên phần cố định gửi ở mỗi lần gọi công cụ bớt khoảng 60%. Bộ luật này giữ mọi luật về hành động: làm đúng việc trong mức quyền, không bịa số, báo kết quả về đúng người giao, không hứa suông, không tự tạo thêm việc, plugin mới luôn tắt. Gói thuê bao (Claude Code, ChatGPT, Grok, Antigravity) vẫn mang bộ luật đầy đủ vì không tính tiền theo token. Bật thử cho khoảng 10% việc chạy nền trước, tắt theo mức **Tắt**; xem biến `JAVIS_BG_LEAN_PROMPT` ở [Cấu hình .env](16-cau-hinh-env.md).
+Việc chạy nền (việc Kanban, việc lặp, nhắc hẹn có làm việc) trên bộ não dùng **khóa API** mang **bộ luật việc nền ngắn** thay cho toàn bộ CLAUDE.md, nên phần cố định gửi ở mỗi lần gọi công cụ bớt khoảng 60%. Bộ luật này giữ mọi luật về hành động: làm đúng việc trong mức quyền, không bịa số, báo kết quả về đúng người giao, không hứa suông, không tự tạo thêm việc, plugin mới luôn tắt. Gói thuê bao (Claude Code, ChatGPT, Grok, Antigravity) vẫn mang bộ luật đầy đủ vì không tính tiền theo token. Bật thử cho khoảng 10% việc chạy nền trước, tắt theo mức **Tắt**; xem biến `JEEVI_BG_LEAN_PROMPT` ở [Cấu hình .env](16-cau-hinh-env.md).
 
-Mục **Đề xuất** cuối trang có một dòng cho biết 7 ngày qua kết quả tool đã giữ được bao nhiêu phần trăm ngoài hội thoại, tính cả hai cách trên. Muốn tắt: chọn mức tiết kiệm **Tắt**, hoặc xem các biến `JAVIS_TOOL_RESULT_*`, `JAVIS_RESULT_REPEAT_REFS`, `JAVIS_SCOUT`, `JAVIS_RECIPES` ở [Cấu hình .env](16-cau-hinh-env.md).
+Mục **Đề xuất** cuối trang có một dòng cho biết 7 ngày qua kết quả tool đã giữ được bao nhiêu phần trăm ngoài hội thoại, tính cả hai cách trên. Muốn tắt: chọn mức tiết kiệm **Tắt**, hoặc xem các biến `JEEVI_TOOL_RESULT_*`, `JEEVI_RESULT_REPEAT_REFS`, `JEEVI_SCOUT`, `JEEVI_RECIPES` ở [Cấu hình .env](16-cau-hinh-env.md).
 
 ## Số liệu này lấy từ đâu
 
@@ -232,7 +232,7 @@ Jeevi không gọi API nào của nhà cung cấp để lấy thống kê. Nó *
 | Nhật ký nội bộ | `usage-events.jsonl` trong thư mục state | Cột API, và là nguồn dự phòng cho Claude/ChatGPT |
 | Kho phiên hội thoại | `conversations.db` trong thư mục state | Dùng để biết lượt nào là chat thật, lượt nào là chạy nền |
 
-Kết quả gộp vào một cơ sở dữ liệu SQLite là `usage_index.db`, cũng trong thư mục state (đặt bằng biến `JAVIS_STATE_DIR`, xem [Cấu hình .env](16-cau-hinh-env.md)).
+Kết quả gộp vào một cơ sở dữ liệu SQLite là `usage_index.db`, cũng trong thư mục state (đặt bằng biến `JEEVI_STATE_DIR`, xem [Cấu hình .env](16-cau-hinh-env.md)).
 
 Việc quét là **quét tăng dần**: file nào không đổi kích thước và thời gian sửa thì bỏ qua hẳn. Vì thế lần quét đầu chậm còn các lần sau rất nhanh, kể cả khi bạn có hàng nghìn file log.
 
@@ -278,5 +278,5 @@ Nếu bản cài không đọc được log thô (điển hình là bản Docker
 - [Models & engine](10-models-va-engine.md) - đổi model, cắm key OpenRouter, hiểu từng engine ghi số vào đâu.
 - [Việc định kỳ & Nhắc hẹn](08-viec-dinh-ky.md) - nơi tắt bớt loop khi cột "Nền (loop/lịch)" phình to.
 - [Việc / Kanban](21-viec-kanban.md) - việc chạy nền cũng tính vào phần "Jeevi (tự chạy)".
-- [Cấu hình .env](16-cau-hinh-env.md) - biến `JAVIS_STATE_DIR` quyết định chỉ mục token nằm ở đâu.
+- [Cấu hình .env](16-cau-hinh-env.md) - biến `JEEVI_STATE_DIR` quyết định chỉ mục token nằm ở đâu.
 - [Khắc phục sự cố & FAQ](17-khac-phuc-su-co.md) - các lỗi chung của dashboard.

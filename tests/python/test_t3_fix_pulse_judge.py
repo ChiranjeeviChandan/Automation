@@ -14,9 +14,9 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-fix-pj-")
-os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
-TEMP = Path(tempfile.mkdtemp(prefix="javis-fix-pj-w-"))
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-fix-pj-")
+os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
+TEMP = Path(tempfile.mkdtemp(prefix="jeevi-fix-pj-w-"))
 
 import agent_judge as AJ  # noqa: E402
 import agent_judge_store as AJS  # noqa: E402

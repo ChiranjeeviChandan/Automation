@@ -12,7 +12,7 @@
    Where it sits: INSIDE #chatArea, sticky at the top, like the outline rail (chat-marks.js decision 2): #chatArea is the
    one chat node that Partners and Chat borrow from each other, so the bar travels with it and needs no path back. It is
    put in only when the chat has a pin: `.transcript:empty::after` is the "type to start" hint, and a standing child
-   would hide it (same trap as #newMsgBtn). app.js gives what it alone knows through window.JavisChatPinHost. */
+   would hide it (same trap as #newMsgBtn). app.js gives what it alone knows through window.JeeviChatPinHost. */
 (function () {
   "use strict";
 
@@ -21,27 +21,27 @@
 
   function tw(k, v) { return window.t ? window.t(k, v) : k; }
   function ic(n) { return window.ic ? window.ic(n) : ""; }
-  function host() { return window.JavisChatPinHost || null; }
+  function host() { return window.JeeviChatPinHost || null; }
   function area() { return document.getElementById("chatArea"); }
   function bar() { var a = area(); return a ? a.querySelector(":scope > .chat-pinbar") : null; }
 
   // Who wrote a pin: the partner open on the Partners page, else Jeevi.
   function who(p) {
     if (p.role === "user") return tw("ht.ban");
-    var W = window.JavisWorkspace;
+    var W = window.JeeviWorkspace;
     var n = W && W.currentName ? W.currentName() : "";
     return n || "Jeevi";
   }
-  function preview(p) { return { icon: "", text: window.JavisPinBar ? window.JavisPinBar.plain(p.text) : String(p.text || "") }; }
+  function preview(p) { return { icon: "", text: window.JeeviPinBar ? window.JeeviPinBar.plain(p.text) : String(p.text || "") }; }
 
   function sigNow() {
-    var P = window.JavisPinBar;
+    var P = window.JeeviPinBar;
     return (P ? P.sig(S.pins) : "") + "|" + (S.open ? 1 : 0) + "|" + S.menu + "|" + who({});
   }
 
   // Draw (or take away) the bar. A reader at the bottom of the chat stays at the bottom.
   function draw(force) {
-    var a = area(), P = window.JavisPinBar;
+    var a = area(), P = window.JeeviPinBar;
     if (!a || !P) return;
     var b = bar();
     if (!S.pins.length) { if (b) b.remove(); S.sig = null; return; }
@@ -197,5 +197,5 @@
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
     else start();
   }
-  if (typeof window !== "undefined") window.JavisChatPins = { reload: function () { return load(); } };
+  if (typeof window !== "undefined") window.JeeviChatPins = { reload: function () { return load(); } };
 })();

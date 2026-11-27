@@ -21,7 +21,7 @@ from fastapi.testclient import TestClient
 import my_tasks  # noqa: E402
 
 fails = []
-roots = {"brain": Path(tempfile.mkdtemp(prefix="javis-my-a-")), "other": Path(tempfile.mkdtemp(prefix="javis-my-b-"))}
+roots = {"brain": Path(tempfile.mkdtemp(prefix="jeevi-my-a-")), "other": Path(tempfile.mkdtemp(prefix="jeevi-my-b-"))}
 
 
 def check(name, cond):
@@ -63,12 +63,12 @@ check("and unchecked", c["task"]["status"] == "open" and c["task"]["done_at"] ==
 rep = feat.create("brain", {"title": "Read 30 minutes", "date": "2026-10-01", "time": "21:00",
                             "repeat": {"unit": "week", "n": 1, "days": [2, 4, 9, "x", 6]}})["task"]
 check("weekly repeat keeps only real weekdays", rep["repeat"] == {"unit": "week", "n": 1, "days": [2, 4, 6]})
-feat.check("brain", rep["id"], "2026-10-29", "javis")
+feat.check("brain", rep["id"], "2026-10-29", "jeevi")
 feat.check("brain", rep["id"], "2026-10-27")
 got = feat.load("brain")
 rr = next(x for x in got["tasks"] if x["id"] == rep["id"])
 check("a repeating task records each date and who ticked it",
-      rr["done_dates"]["2026-10-29"]["by"] == "javis" and rr["done_dates"]["2026-10-27"]["by"] == "me")
+      rr["done_dates"]["2026-10-29"]["by"] == "jeevi" and rr["done_dates"]["2026-10-27"]["by"] == "me")
 check("a repeating task stays open", rr["status"] == "open")
 feat.check("brain", rep["id"], "2026-10-27", done=False)
 check("unchecking one date removes only it", list(feat.load("brain")["tasks"][-1]["done_dates"]) == ["2026-10-29"])

@@ -38,7 +38,7 @@ def check(label, ok):
         FAIL.append(label)
 
 
-spec = importlib.util.spec_from_file_location("javis_guard", ROOT / "docker" / "guard.py")
+spec = importlib.util.spec_from_file_location("jeevi_guard", ROOT / "docker" / "guard.py")
 guard = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(guard)
 REAL_API = guard.api
@@ -49,53 +49,53 @@ guard.log = lambda msg: None
 OLD_IMAGE, NEW_IMAGE = "sha256:" + "1" * 64, "sha256:" + "2" * 64
 REF = "ghcr.io/blogminhquy/javis-os:latest"
 IMAGE_CONFIG = {   # what the old image itself sets (Dockerfile ENV, CMD, VOLUME, EXPOSE, LABEL)
-    "Env": ["PATH=/usr/local/bin:/usr/bin", "JAVIS_PORT=7777", "JAVIS_CODEX_SANDBOX=off"],
+    "Env": ["PATH=/usr/local/bin:/usr/bin", "JEEVI_PORT=7777", "JEEVI_CODEX_SANDBOX=off"],
     "Cmd": ["sh", "-c", "python -m uvicorn main:app"],
     "Entrypoint": ["/usr/bin/tini", "--", "/app/docker/entrypoint.sh"],
-    "WorkingDir": "/app", "User": "javis",
+    "WorkingDir": "/app", "User": "jeevi",
     "Labels": {"org.opencontainers.image.title": "Jeevi OS", "org.opencontainers.image.version": "0.556.2"},
-    "Volumes": {"/data": {}, "/brains": {}, "/home/javis/.claude": {}, "/home/javis/.codex": {}},
+    "Volumes": {"/data": {}, "/brains": {}, "/home/jeevi/.claude": {}, "/home/jeevi/.codex": {}},
     "ExposedPorts": {"7777/tcp": {}},
     "Healthcheck": {"Test": ["CMD-SHELL", "python -c probe || exit 1"]},
 }
 
 
-def javis_inspect(cid="a" * 64, image=OLD_IMAGE, state="running", cmd=None):
+def jeevi_inspect(cid="a" * 64, image=OLD_IMAGE, state="running", cmd=None):
     """A container the way Docker reports one created by docker-compose.multi.yml."""
     return {
-        "Id": cid, "Name": "/javis", "Image": image,
+        "Id": cid, "Name": "/jeevi", "Image": image,
         "State": {"Status": state},
         "Config": {
             "Hostname": cid[:12], "Image": REF, "MacAddress": "02:42:ac:11:00:02",
-            "Env": ["WATCHTOWER_TOKEN=javis-update", "JAVIS_ADMIN_USER=admin"] + IMAGE_CONFIG["Env"],
+            "Env": ["WATCHTOWER_TOKEN=jeevi-update", "JEEVI_ADMIN_USER=admin"] + IMAGE_CONFIG["Env"],
             "Cmd": cmd or IMAGE_CONFIG["Cmd"], "Entrypoint": IMAGE_CONFIG["Entrypoint"],
-            "WorkingDir": "/app", "User": "javis",
+            "WorkingDir": "/app", "User": "jeevi",
             "Labels": dict(IMAGE_CONFIG["Labels"], **{
-                "com.docker.compose.project": "javis", "com.docker.compose.service": "javis",
+                "com.docker.compose.project": "jeevi", "com.docker.compose.service": "jeevi",
                 "com.docker.compose.image": image, "traefik.enable": "true"}),
             "Volumes": IMAGE_CONFIG["Volumes"], "ExposedPorts": {"7777/tcp": {}},
             "Healthcheck": {"Test": ["CMD", "python", "-c", "compose probe"], "Interval": 30000000000},
         },
         "HostConfig": {
-            "NetworkMode": "javis_default",
+            "NetworkMode": "jeevi_default",
             "RestartPolicy": {"Name": "unless-stopped"},
             "PortBindings": {"7777/tcp": [{"HostIp": "0.0.0.0", "HostPort": "7777"}]},
             "Binds": None,
-            "Mounts": [{"Type": "volume", "Source": "javis_javis-data", "Target": "/data"},
-                       {"Type": "volume", "Source": "javis_claude-auth", "Target": "/home/javis/.claude"},
-                       {"Type": "volume", "Source": "javis_codex-auth", "Target": "/home/javis/.codex"}],
+            "Mounts": [{"Type": "volume", "Source": "jeevi_jeevi-data", "Target": "/data"},
+                       {"Type": "volume", "Source": "jeevi_claude-auth", "Target": "/home/jeevi/.claude"},
+                       {"Type": "volume", "Source": "jeevi_codex-auth", "Target": "/home/jeevi/.codex"}],
         },
         "Mounts": [
-            {"Type": "volume", "Name": "javis_javis-data", "Destination": "/data", "RW": True},
-            {"Type": "volume", "Name": "javis_claude-auth", "Destination": "/home/javis/.claude", "RW": True},
-            {"Type": "volume", "Name": "javis_codex-auth", "Destination": "/home/javis/.codex", "RW": True},
+            {"Type": "volume", "Name": "jeevi_jeevi-data", "Destination": "/data", "RW": True},
+            {"Type": "volume", "Name": "jeevi_claude-auth", "Destination": "/home/jeevi/.claude", "RW": True},
+            {"Type": "volume", "Name": "jeevi_codex-auth", "Destination": "/home/jeevi/.codex", "RW": True},
             # /brains has no volume in this stack: Docker made an anonymous one from the image's VOLUME.
             {"Type": "volume", "Name": "f" * 64, "Destination": "/brains", "RW": True},
         ],
         "NetworkSettings": {"Networks": {
-            "javis_default": {"Aliases": ["javis", cid[:12]], "IPAddress": "172.18.0.2",
+            "jeevi_default": {"Aliases": ["jeevi", cid[:12]], "IPAddress": "172.18.0.2",
                               "EndpointID": "e1", "NetworkID": "n1", "MacAddress": "02:42:ac:12:00:02"},
-            "javis-web": {"Aliases": ["javis"], "IPAddress": "172.19.0.3", "EndpointID": "e2",
+            "jeevi-web": {"Aliases": ["jeevi"], "IPAddress": "172.19.0.3", "EndpointID": "e2",
                           "NetworkID": "n2", "DriverOpts": {"x": "y"}},
         }},
     }
@@ -141,7 +141,7 @@ class FakeDocker:
                 return 404, {"message": "No such image: " + body["Image"]}
             self.counter += 1
             cid = str(self.counter) * 64
-            c = javis_inspect(cid=cid, image=self.images[body["Image"]], state="created")
+            c = jeevi_inspect(cid=cid, image=self.images[body["Image"]], state="created")
             c["Config"] = {k: v for k, v in body.items() if k not in ("HostConfig", "NetworkingConfig")}
             c["HostConfig"] = body["HostConfig"]
             self.containers[name] = c
@@ -191,18 +191,18 @@ def reset_store():
 # ------------------------------------------------------------------
 # 1. The create body: what the old image set gives way to the new one
 # ------------------------------------------------------------------
-snap = {"container": javis_inspect(cmd=["sh", "-c", "JAVIS_DEPLOY_TARGET=hostinger exec uvicorn"]),
+snap = {"container": jeevi_inspect(cmd=["sh", "-c", "JEEVI_DEPLOY_TARGET=hostinger exec uvicorn"]),
         "image": IMAGE_CONFIG}
 body, extra = guard.create_spec(snap)
 check("Env keeps what compose set and drops the old image's own values",
-      body["Env"] == ["WATCHTOWER_TOKEN=javis-update", "JAVIS_ADMIN_USER=admin"])
-check("a Cmd set by compose (Hostinger) is kept", body["Cmd"][2].startswith("JAVIS_DEPLOY_TARGET=hostinger"))
+      body["Env"] == ["WATCHTOWER_TOKEN=jeevi-update", "JEEVI_ADMIN_USER=admin"])
+check("a Cmd set by compose (Hostinger) is kept", body["Cmd"][2].startswith("JEEVI_DEPLOY_TARGET=hostinger"))
 check("Entrypoint, WorkingDir and User from the old image are cleared",
       body["Entrypoint"] is None and body["WorkingDir"] == "" and body["User"] == "")
 check("a compose healthcheck is kept", body["Healthcheck"]["Test"][3] == "compose probe")
 check("the old image's labels go, compose and Traefik labels stay",
       "org.opencontainers.image.version" not in body["Labels"]
-      and body["Labels"]["traefik.enable"] == "true" and body["Labels"]["com.docker.compose.project"] == "javis")
+      and body["Labels"]["traefik.enable"] == "true" and body["Labels"]["com.docker.compose.project"] == "jeevi")
 check("image VOLUME and EXPOSE entries are left to the new image",
       body["Volumes"] is None and body["ExposedPorts"] is None)
 check("hostname named after the old container ID is cleared", body["Hostname"] == "")
@@ -215,26 +215,26 @@ check("the anonymous /brains volume is reattached by name, so its data comes bac
       body["HostConfig"]["Binds"] == ["f" * 64 + ":/brains"])
 check("named volumes are not added twice", len(body["HostConfig"]["Mounts"]) == 3)
 check("created on the network compose named first",
-      list(body["NetworkingConfig"]["EndpointsConfig"]) == ["javis_default"])
-ep = body["NetworkingConfig"]["EndpointsConfig"]["javis_default"]
-check("aliases keep the service name and drop the old container ID", ep == {"Aliases": ["javis"]})
+      list(body["NetworkingConfig"]["EndpointsConfig"]) == ["jeevi_default"])
+ep = body["NetworkingConfig"]["EndpointsConfig"]["jeevi_default"]
+check("aliases keep the service name and drop the old container ID", ep == {"Aliases": ["jeevi"]})
 check("the second network (shared proxy) is connected after create",
-      extra == {"javis-web": {"Aliases": ["javis"], "DriverOpts": {"x": "y"}}})
+      extra == {"jeevi-web": {"Aliases": ["jeevi"], "DriverOpts": {"x": "y"}}})
 
 ro = copy.deepcopy(snap)
 ro["container"]["Mounts"][3]["RW"] = False
 check("a read-only anonymous volume stays read-only",
       guard.create_spec(ro)[0]["HostConfig"]["Binds"] == ["f" * 64 + ":/brains:ro"])
 hn = copy.deepcopy(snap)
-hn["container"]["Config"]["Hostname"] = "my-javis"
-check("a hostname the owner chose is kept", guard.create_spec(hn)[0]["Hostname"] == "my-javis")
+hn["container"]["Config"]["Hostname"] = "my-jeevi"
+check("a hostname the owner chose is kept", guard.create_spec(hn)[0]["Hostname"] == "my-jeevi")
 hm = copy.deepcopy(snap)
 hm["container"]["HostConfig"]["NetworkMode"] = "host"
 b, e = guard.create_spec(hm)
 check("host network mode: no endpoint settings at all", "NetworkingConfig" not in b and e == {})
 noimg = guard.create_spec({"container": snap["container"], "image": None})[0]
 check("without the old image's config nothing is dropped (safe fallback)",
-      "JAVIS_PORT=7777" in noimg["Env"])
+      "JEEVI_PORT=7777" in noimg["Env"])
 check("create_spec leaves the snapshot itself untouched",
       snap["container"]["Config"]["Hostname"] == "a" * 12 and snap["container"]["HostConfig"]["Binds"] is None)
 
@@ -243,28 +243,28 @@ check("create_spec leaves the snapshot itself untouched",
 # ------------------------------------------------------------------
 reset_store()
 d = FakeDocker()
-d.containers["javis"] = javis_inspect()
+d.containers["jeevi"] = jeevi_inspect()
 d.images[REF] = OLD_IMAGE
 g, clock = new_guard(d)
 check("a running Jeevi is fine", g.check() == "ok")
-check("its snapshot is saved to the guard volume", os.path.exists(os.path.join(guard.STORE, "javis.json")))
+check("its snapshot is saved to the guard volume", os.path.exists(os.path.join(guard.STORE, "jeevi.json")))
 d.images[REF] = NEW_IMAGE           # Watchtower pulled the new version...
-del d.containers["javis"]           # ...removed the old container, timed out, and gave up
+del d.containers["jeevi"]           # ...removed the old container, timed out, and gave up
 check("gone for less than the grace period: wait (Watchtower may still be creating it)", g.check() == "waiting")
 clock.t += 60
 check("still waiting at 60 s", g.check() == "waiting" and not d.made("/containers/create"))
 clock.t += 61
 check("gone for 2 minutes: recreated", g.check() == "recreated")
-check("Jeevi runs again", d.containers["javis"]["State"]["Status"] == "running")
-check("on the NEW version Watchtower already pulled", d.containers["javis"]["Image"] == NEW_IMAGE)
-check("under the same name", d.made("/containers/create")[0][1] == "/containers/create?name=javis")
+check("Jeevi runs again", d.containers["jeevi"]["State"]["Status"] == "running")
+check("on the NEW version Watchtower already pulled", d.containers["jeevi"]["Image"] == NEW_IMAGE)
+check("under the same name", d.made("/containers/create")[0][1] == "/containers/create?name=jeevi")
 check("compose's image label points at the new image (no needless recreate on the next `up`)",
-      d.containers["javis"]["Config"]["Labels"]["com.docker.compose.image"] == NEW_IMAGE)
-check("joined the second network", len(d.made("/networks/javis-web/connect")) == 1)
+      d.containers["jeevi"]["Config"]["Labels"]["com.docker.compose.image"] == NEW_IMAGE)
+check("joined the second network", len(d.made("/networks/jeevi-web/connect")) == 1)
 check("the new container is watched from now on", g.check() == "ok" and g.snap["container"]["Id"] == "1" * 64)
 
 # Another guard (after a restart of the guard itself) reads the snapshot from its volume.
-del d.containers["javis"]
+del d.containers["jeevi"]
 g2, clock2 = new_guard(d)
 clock2.t += 1
 g2.check()
@@ -276,18 +276,18 @@ check("a restarted guard still has the snapshot and recreates Jeevi", g2.check()
 # ------------------------------------------------------------------
 reset_store()
 d = FakeDocker()
-d.containers["javis"] = javis_inspect()
+d.containers["jeevi"] = jeevi_inspect()
 g, clock = new_guard(d)
 g.check()
-del d.containers["javis"]
+del d.containers["jeevi"]
 del d.images[REF]                   # the tag is not on this machine any more
 g.check()
 clock.t += 121
 check("image missing: pulled, then created", g.check() == "recreated" and d.made("/images/create"))
 check("pull asks for the repository and the tag separately",
-      d.made("/images/create")[0][1] == "/images/create?fromImage=ghcr.io%2Fblogminhquy%2Fjavis-os&tag=latest")
+      d.made("/images/create")[0][1] == "/images/create?fromImage=ghcr.io%2Fblogminhquy%2Fjeevi-os&tag=latest")
 
-del d.containers["javis"]
+del d.containers["jeevi"]
 g.check()
 clock.t += 121
 d.create_status = 409               # Watchtower created it in the same second
@@ -306,11 +306,11 @@ check("...even much later", g.check() == "no-snapshot" and not d.made("/containe
 # ------------------------------------------------------------------
 reset_store()
 d = FakeDocker()
-d.containers["javis"] = javis_inspect()
+d.containers["jeevi"] = jeevi_inspect()
 d.images[REF] = OLD_IMAGE
 g, clock = new_guard(d)
 g.check()
-d.containers["javis"]["State"]["Status"] = "exited"     # the owner pressed Stop in Docker Manager
+d.containers["jeevi"]["State"]["Status"] = "exited"     # the owner pressed Stop in Docker Manager
 check("stopped by the owner (tag still on its image): left alone", g.check() == "owner-stopped")
 clock.t += 3600
 d.images[REF] = NEW_IMAGE           # even if a new image arrives later
@@ -318,63 +318,63 @@ check("...an hour later, with a newer image around, still left alone", g.check()
 g3, clock3 = new_guard(d)
 check("...and a restarted guard remembers it", g3.check() == "owner-stopped")
 check("nothing was started", not d.made("/containers/" + "a" * 64 + "/start"))
-d.containers["javis"]["State"]["Status"] = "running"    # the owner starts it again
+d.containers["jeevi"]["State"]["Status"] = "running"    # the owner starts it again
 check("running again: watched as usual", g3.check() == "ok" and not g3.snap.get("owner_stopped"))
 
 reset_store()
 d = FakeDocker()
-d.containers["javis"] = javis_inspect()
+d.containers["jeevi"] = jeevi_inspect()
 d.images[REF] = OLD_IMAGE
 g, clock = new_guard(d)
 g.check()
 d.images[REF] = NEW_IMAGE                               # Watchtower pulled, then...
-d.containers["javis"]["State"]["Status"] = "exited"     # ...the stop failed half way and it gave up
+d.containers["jeevi"]["State"]["Status"] = "exited"     # ...the stop failed half way and it gave up
 check("stopped by an update: waits first", g.check() == "waiting")
 clock.t += 121
 check("then starts the old container again (old version comes back)", g.check() == "started")
-check("the same container, no removal", d.containers["javis"]["Id"] == "a" * 64
-      and d.containers["javis"]["State"]["Status"] == "running")
+check("the same container, no removal", d.containers["jeevi"]["Id"] == "a" * 64
+      and d.containers["jeevi"]["State"]["Status"] == "running")
 
 reset_store()
 d = FakeDocker()
-d.containers["javis"] = javis_inspect()
+d.containers["jeevi"] = jeevi_inspect()
 g, clock = new_guard(d)
 g.check()
-d.containers["javis"]["State"]["Status"] = "dead"       # a removal that broke half way
+d.containers["jeevi"]["State"]["Status"] = "dead"       # a removal that broke half way
 g.check()
 clock.t += 121
 check("dead: removed and created again", g.check() == "recreated"
-      and d.containers["javis"]["Id"] == "1" * 64 and d.containers["javis"]["State"]["Status"] == "running")
+      and d.containers["jeevi"]["Id"] == "1" * 64 and d.containers["jeevi"]["State"]["Status"] == "running")
 
 reset_store()
 d = FakeDocker()
-d.containers["javis"] = javis_inspect()
+d.containers["jeevi"] = jeevi_inspect()
 g, clock = new_guard(d)
 g.check()
-d.containers["javis"] = javis_inspect(cid="b" * 64, image=NEW_IMAGE, state="created")   # created, start failed
+d.containers["jeevi"] = jeevi_inspect(cid="b" * 64, image=NEW_IMAGE, state="created")   # created, start failed
 check("created but not started: waits first", g.check() == "waiting")
 clock.t += 121
-check("then starts it", g.check() == "started" and d.containers["javis"]["State"]["Status"] == "running")
+check("then starts it", g.check() == "started" and d.containers["jeevi"]["State"]["Status"] == "running")
 
 for state in ("restarting", "removing", "paused"):
-    d.containers["javis"]["State"]["Status"] = state
+    d.containers["jeevi"]["State"]["Status"] = state
     clock.t += 500
     check(f"{state}: never touched", g.check() == "ok")
 
 # A normal update: the old one goes and the new one runs within seconds. The guard only follows.
 reset_store()
 d = FakeDocker()
-d.containers["javis"] = javis_inspect()
+d.containers["jeevi"] = jeevi_inspect()
 g, clock = new_guard(d)
 g.check()
-d.containers["javis"]["State"]["Status"] = "exited"
+d.containers["jeevi"]["State"]["Status"] = "exited"
 d.images[REF] = NEW_IMAGE
 g.check()
 clock.t += 3
-del d.containers["javis"]
+del d.containers["jeevi"]
 g.check()
 clock.t += 3
-d.containers["javis"] = javis_inspect(cid="c" * 64, image=NEW_IMAGE)
+d.containers["jeevi"] = jeevi_inspect(cid="c" * 64, image=NEW_IMAGE)
 check("normal update: the guard creates and starts nothing", g.check() == "ok"
       and not d.made("/containers/create") and not [c for c in d.calls if c[1].endswith("/start")])
 check("and watches the new container", g.snap["container"]["Id"] == "c" * 64)
@@ -413,7 +413,7 @@ class UnixServer(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
 server = UnixServer(sock_path, Handler)
 threading.Thread(target=server.serve_forever, daemon=True).start()
 guard.api, guard.SOCKET = REAL_API, sock_path
-status, body = guard.api("GET", "/containers/javis/json")
+status, body = guard.api("GET", "/containers/jeevi/json")
 check("talks HTTP over the unix socket and decodes JSON", status == 200 and body["State"]["Status"] == "running")
 status, body = guard.api("POST", "/containers/x/start", {"a": 1})
 check("POST sends a JSON body; an empty 204 answer decodes to None", status == 204 and body is None
@@ -465,12 +465,12 @@ for name in ("docker-compose.yml", "docker-compose.hostinger.yml"):
     check(f"{name}: guard reaches the Docker socket and keeps its snapshot on a volume",
           "/var/run/docker.sock:/var/run/docker.sock" in svc.get("volumes", [])
           and "guard-data:/guard" in svc.get("volumes", []))
-    check(f"{name}: guard watches THIS stack's Jeevi", svc.get("environment", {}).get("JAVIS_NAME") == "${JAVIS_NAME:-javis}"
-          and svc.get("container_name") == "${JAVIS_NAME:-javis}-guard")
+    check(f"{name}: guard watches THIS stack's Jeevi", svc.get("environment", {}).get("JEEVI_NAME") == "${JEEVI_NAME:-jeevi}"
+          and svc.get("container_name") == "${JEEVI_NAME:-jeevi}-guard")
     check(f"{name}: guard comes back after a reboot", svc.get("restart") == "unless-stopped")
-    check(f"{name}: guard is stopped before Jeevi on `down`", svc.get("depends_on") == ["javis"])
+    check(f"{name}: guard is stopped before Jeevi on `down`", svc.get("depends_on") == ["jeevi"])
     # Watchtower must never update the guard: it watches only the Jeevi container by exact name.
-    check(f"{name}: Watchtower watches Jeevi only", str(services["watchtower"]["command"]).strip() == "${JAVIS_NAME:-javis}")
+    check(f"{name}: Watchtower watches Jeevi only", str(services["watchtower"]["command"]).strip() == "${JEEVI_NAME:-jeevi}")
     wt_env = services["watchtower"]["environment"]
     check(f"{name}: an update from the button gets 30 minutes, not Watchtower's 10",
           wt_env.get("WATCHTOWER_HTTP_API_UPDATE_TIMEOUT") == "30m")

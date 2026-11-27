@@ -9,12 +9,12 @@
 //
 // Gộp một danh sách thì một kết quả công việc thật bị chôn dưới mấy dòng changelog.
 (function () {
-  var READ_KEY = "javis.notifications.read";
-  var INIT_KEY = "javis.notifications.initialized";
-  var TAB_KEY = "javis.notifications.tab";
+  var READ_KEY = "jeevi.notifications.read";
+  var INIT_KEY = "jeevi.notifications.initialized";
+  var TAB_KEY = "jeevi.notifications.tab";
   // News items removed with their X (0.408.0). News comes from the changelog feed, so it cannot be deleted at the
   // source: this device remembers the ids and never shows them again, not even under "Show read".
-  var HIDE_KEY = "javis.notifications.hidden";
+  var HIDE_KEY = "jeevi.notifications.hidden";
   var MAX_ITEMS = 30;
   var PAGE_SIZE = 5;
   var state = { items: [], read: new Set(), loadedAt: 0, loading: false, visibleCount: PAGE_SIZE,
@@ -22,7 +22,7 @@
                 // 0.408.0 (owner: "read notices must hide, Mark all read must clear them"): both tabs list unread only;
                 // `xemDaDoc` is the "Show N read" link at the bottom, for this opening of the panel only.
                 xemDaDoc: false, an: new Set(), flash: "" };
-  // 0.403.0, Jeevi Core as the notification commander (docs/dev/2026-10-javis-core-chi-huy-thong-bao.md): notices
+  // 0.403.0, Jeevi Core as the notification commander (docs/dev/2026-10-jeevi-core-chi-huy-thong-bao.md): notices
   // its rules kept quiet are `filtered` and live under "Filtered"; every card takes the owner's feedback in the
   // two buttons, "Needed" / "Not needed" (owner, 2026-10-29: emoji go on the notice once it is opened in Jeevi Core's
   // chat, where every answer already takes the six reactions); the "Filter" view sets each group's mode, undoes changes.
@@ -58,7 +58,7 @@
   }
   // Ngày giờ đi theo NGÔN NGỮ đang chọn, không viết cứng "vi-VN": người đọc bản tiếng Anh
   // mà thấy định dạng ngày kiểu Việt là lạc quẻ. Cả dashboard lấy locale từ đúng chỗ này.
-  function LOC() { return (window.JavisI18n && JavisI18n.locale()) || "vi-VN"; }
+  function LOC() { return (window.JeeviI18n && JeeviI18n.locale()) || "vi-VN"; }
 
   function byId(id) { return document.getElementById(id); }
   function esc(value) {
@@ -241,12 +241,12 @@
     // 0.191.0 (owner, 16/10/2026): a notice with no chat of its own opens in Jeevi Core (copied there with its source
     // and time, once); a notice that answers a chat opens that chat. No separate "Ask Jeevi Core" button.
     // 0.335.0: "Store has updates" opens the Jeevi Store, whose banner lists what can be updated.
-    if (item.channel === "store:updates" && (window.JavisPacks || window.JavisNapCham)) {
+    if (item.channel === "store:updates" && (window.JeeviPacks || window.JeeviNapCham)) {
       closePanel();
       // packs.js nạp chậm (nap-cham.js, 0.417.0).
       // 2026-11-23: straight to the "has an update" group, so the packs to update are all that shows.
-      var moStore = function () { if (window.JavisPacks && window.JavisPacks.moKho) window.JavisPacks.moKho("all", "", "", "", true); };
-      if (window.JavisNapCham) window.JavisNapCham.goi("packs", moStore); else moStore();
+      var moStore = function () { if (window.JeeviPacks && window.JeeviPacks.moKho) window.JeeviPacks.moKho("all", "", "", "", true); };
+      if (window.JeeviNapCham) window.JeeviNapCham.goi("packs", moStore); else moStore();
       return;
     }
     if (!item.session_id) { closePanel(); hoiCore("inbox", item.id); return; }
@@ -264,16 +264,16 @@
     // Đổ vào khung chat chính thì tin gõ tiếp thành tin không tác giả trong phiên nhóm.
     var mNhom = /^team:(.+)$/.exec(String(item.channel || ""));
     // teams.js nạp chậm từ 0.417.0 (nap-cham.js): chưa có thì nạp rồi mở, đừng rơi sang mở nhầm khung chat chính.
-    if (mNhom && !window.JavisTeams && window.JavisNapCham) {
+    if (mNhom && !window.JeeviTeams && window.JeeviNapCham) {
       var nhomCho = mNhom[1];
-      window.JavisNapCham.goi(["congviec", "teams"], function () {
-        if (window.JavisTeams && window.JavisTeams.open) window.JavisTeams.open(nhomCho);
+      window.JeeviNapCham.goi(["congviec", "teams"], function () {
+        if (window.JeeviTeams && window.JeeviTeams.open) window.JeeviTeams.open(nhomCho);
       });
       return;
     }
-    if (mNhom && window.JavisTeams && window.JavisTeams.open) {
+    if (mNhom && window.JeeviTeams && window.JeeviTeams.open) {
       var nhom = mNhom[1];
-      try { window.JavisTeams.open(nhom); return; } catch (e) {}
+      try { window.JeeviTeams.open(nhom); return; } catch (e) {}
     }
     var cs = congSuCuaThu(item);
     // 2026-11-23: workspace.js is a lazy file. Load its group, then open the partner; if it still is not there, open
@@ -283,19 +283,19 @@
         if (window.Alpine && Alpine.store("nav") && Alpine.store("nav").active !== "home"
             && Alpine.store("nav").active !== "chat") Alpine.store("nav").go("home");
       } catch (e) {}
-      try { if (window.JavisSessions) window.JavisSessions.open(item.session_id); } catch (e) {}
+      try { if (window.JeeviSessions) window.JeeviSessions.open(item.session_id); } catch (e) {}
     };
-    if (cs && (window.JavisWorkspace || window.JavisNapCham)) {
+    if (cs && (window.JeeviWorkspace || window.JeeviNapCham)) {
       var openPartner = function () {
         try {
-          if (window.JavisWorkspace && window.JavisWorkspace.openCommand) {
-            window.JavisWorkspace.openCommand(cs.loai, cs.slug, item.session_id);
+          if (window.JeeviWorkspace && window.JeeviWorkspace.openCommand) {
+            window.JeeviWorkspace.openCommand(cs.loai, cs.slug, item.session_id);
             return;
           }
         } catch (e) {}
         openInChat();
       };
-      if (window.JavisNapCham) window.JavisNapCham.goi("congviec", openPartner); else openPartner();
+      if (window.JeeviNapCham) window.JeeviNapCham.goi("congviec", openPartner); else openPartner();
       return;
     }
     openInChat();
@@ -304,16 +304,16 @@
   // and the chat opens there. The shared notice itself never changes.
   async function hoiCore(src, id) {
     var brain = "brain";
-    try { if (window.JavisSessions && window.JavisSessions.brain) brain = window.JavisSessions.brain() || "brain"; } catch (e) {}
+    try { if (window.JeeviSessions && window.JeeviSessions.brain) brain = window.JeeviSessions.brain() || "brain"; } catch (e) {}
     try {
-      var r = await (await fetch("/javis-core/cite", { method: "POST", headers: { "Content-Type": "application/json" },
+      var r = await (await fetch("/jeevi-core/cite", { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ source: src, id: id, brain: brain }) })).json();
       if (!r || !r.id) return;
       closePanel();
       var openCore = function () {
-        if (window.JavisWorkspace && window.JavisWorkspace.openCommand) window.JavisWorkspace.openCommand("agent", "javis-core", r.id);
+        if (window.JeeviWorkspace && window.JeeviWorkspace.openCommand) window.JeeviWorkspace.openCommand("agent", "jeevi-core", r.id);
       };
-      if (window.JavisNapCham) window.JavisNapCham.goi("congviec", openCore); else openCore();
+      if (window.JeeviNapCham) window.JeeviNapCham.goi("congviec", openCore); else openCore();
     } catch (e) {}
   }
   function phanHoiHtml(item) {
@@ -383,7 +383,7 @@
     var why = item.filtered ? (item.why === "repeat" ? "noti.why_repeat" : item.why === "muted" ? "noti.why_muted" : "noti.why_mode") : "";
     // Where a press takes you: the chat it answers, or Jeevi Core for a notice with no chat of its own (0.191.0).
     var phu = window.t(item.channel === "store:updates" ? "noti.open_store"
-      : !item.session_id || item.channel === "agent:javis-core" ? "noti.open_core" : "noti.reopen_chat");
+      : !item.session_id || item.channel === "agent:jeevi-core" ? "noti.open_core" : "noti.reopen_chat");
     return '<article class="noti-card' + chua + '" tabindex="0" role="button" data-thu-id="' + esc(item.id) + '">' +
       '<div class="noti-card-top"><span class="noti-kind ' + esc(item.kind || "answer") + '">' +
       esc(nhanLoai(item.kind)) + '</span><span class="noti-top-r"><span class="noti-time">' + esc(thoiGian(item.ts)) +
@@ -514,7 +514,7 @@
   function veBoLoc(list) {
     var p = state.policy;
     var head = dauMuc("noti.filter_title");
-    var info = window.JavisInfo ? window.JavisInfo.pair(esc(window.t("noti.filter_info")), window.t("noti.filter_info_l")) : "";
+    var info = window.JeeviInfo ? window.JeeviInfo.pair(esc(window.t("noti.filter_info")), window.t("noti.filter_info_l")) : "";
     if (!p) { list.innerHTML = head + '<div class="noti-loading pg-loading">' + esc(window.t("noti.loading")) + "</div>"; taiBoLoc(); noiDanhSach(list); return; }
     if (!p.ok) { list.innerHTML = head + '<div class="noti-empty">' + esc(window.t("noti.load_fail")) + "</div>"; noiDanhSach(list); return; }
     var byG = {};
@@ -717,16 +717,16 @@
   async function veNutPush(loi) {
     var hop = byId("notificationPush"), nut = byId("notificationPushToggle");
     var ghi = byId("notificationPushNote"), thu = byId("notificationPushTest");
-    if (!hop || !nut || !window.JavisPush) return;
+    if (!hop || !nut || !window.JeeviPush) return;
     hop.hidden = false;
-    if (!JavisPush.batDuoc()) {
+    if (!JeeviPush.batDuoc()) {
       // Không bấm được thì nói LÝ DO. Một cái nút bấm mãi không lên còn tệ hơn không có nút.
       nut.hidden = true; if (thu) thu.hidden = true;
-      if (ghi) ghi.textContent = loi || JavisPush.lyDo();
+      if (ghi) ghi.textContent = loi || JeeviPush.lyDo();
       return;
     }
     nut.hidden = false;
-    var on = await JavisPush.dangBat();
+    var on = await JeeviPush.dangBat();
     // 0.187.0: privacy of the push preview (the setting is per account, on the server).
     var anRow = byId("notificationPushHideRow"), an = byId("notificationPushHide");
     if (anRow && an) {
@@ -763,7 +763,7 @@
     if (loi || !on) return;
     // Bật/tắt là việc của TỪNG máy, nên "đang bật ở đây" chưa trả lời được "máy kia có nhận
     // không". Nói luôn số thiết bị máy chủ đang đẩy tới, và nêu đích danh máy nào đang hỏng.
-    var tb = await JavisPush.thietBi();
+    var tb = await JeeviPush.thietBi();
     if (!ghi || !tb.length) return;
     var hong = tb.filter(function (x) { return x.lan_cuoi && !x.ok_lan_cuoi; });
     if (hong.length) {
@@ -779,16 +779,16 @@
     var nut = byId("notificationPushToggle"), ghi = byId("notificationPushNote");
     var thu = byId("notificationPushTest");
     if (nut) nut.addEventListener("click", async function () {
-      if (!window.JavisPush) return;
+      if (!window.JeeviPush) return;
       nut.disabled = true;
-      var dangBat = await JavisPush.dangBat();
-      var r = dangBat ? await JavisPush.tat() : await JavisPush.bat();
+      var dangBat = await JeeviPush.dangBat();
+      var r = dangBat ? await JeeviPush.tat() : await JeeviPush.bat();
       nut.disabled = false;
       await veNutPush(r.ok ? "" : (r.error || window.t("noti.push_err")));
     });
     if (thu) thu.addEventListener("click", async function () {
       thu.disabled = true;
-      var r = await JavisPush.thu();
+      var r = await JeeviPush.thu();
       thu.disabled = false;
       if (!ghi) return;
       // Nói rõ ĐỦ MẤY MÁY nhận được, chứ không phải "đã gửi" chung chung: gửi thử trên điện
@@ -845,8 +845,8 @@
   function moPhien(sid) {
     var lan = 0;
     (function thu() {
-      if (window.JavisSessions && window.JavisSessions.open) {
-        try { window.JavisSessions.open(sid); } catch (e) {}
+      if (window.JeeviSessions && window.JeeviSessions.open) {
+        try { window.JeeviSessions.open(sid); } catch (e) {}
         return;
       }
       if (++lan < 40) setTimeout(thu, 250);
@@ -861,7 +861,7 @@
 
   // API cho phần còn lại của app: app.js gọi refresh() khi WebSocket báo có thư mới, push.js
   // gọi moTu() khi người dùng bấm vào thông báo của hệ điều hành.
-  window.JavisInbox = {
+  window.JeeviInbox = {
     refresh: function () { taiThu(); },
     // Hội thoại đang mở thì thư của nó coi như đã đọc - không thì một kết quả bị đếm hai lần.
     docPhien: function (sid) {
@@ -880,10 +880,10 @@
     },
   };
 
-  // Từ điển về BẤT ĐỒNG BỘ (i18n/index.js fetch xong mới bắn "javis:i18n"). Hòm thư có thể
+  // Từ điển về BẤT ĐỒNG BỘ (i18n/index.js fetch xong mới bắn "jeevi:i18n"). Hòm thư có thể
   // đã vẽ xong trước lúc đó và in ra mã khoá; đổi ngôn ngữ giữa chừng cũng không ăn nếu
   // không nghe. Vẽ lại thẻ, và vẽ lại cả ô thông báo đẩy khi ô đó đang hiện.
-  window.addEventListener("javis:i18n", function () {
+  window.addEventListener("jeevi:i18n", function () {
     render();
     var hop = byId("notificationPush");
     if (hop && !hop.hidden) veNutPush();

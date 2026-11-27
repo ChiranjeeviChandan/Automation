@@ -27,13 +27,13 @@ check("fold of nothing is empty", J.fold("") === "" && J.fold(null) === "" && J.
 
 // ---- 2. The words a markdown quote shows on screen ----
 const md = "## Kết luận\n\n1. Giá **sỉ** là 45k\n- [x] Xem [bảng giá](https://x.vn/gia) ngay\n> trích\n" +
-  "![ảnh](a.png) ![[b.png]] [[Ghi chú|ghi chú hay]]\n```js\nlet a = 1;\n```\n<!-- JAVIS_CARD: {\"x\":1} -->";
+  "![ảnh](a.png) ![[b.png]] [[Ghi chú|ghi chú hay]]\n```js\nlet a = 1;\n```\n<!-- JEEVI_CARD: {\"x\":1} -->";
 const v = J.fold(J.visible(md));
 check("visible drops heading, list number, bullet, checkbox and quote marks", v.indexOf("ketluangiasila45kxembanggia") === 0, v);
 check("visible keeps a link's label and drops its target", v.includes("banggia") && !v.includes("https") && !v.includes("xvn"), v);
 check("visible drops pictures and keeps a wikilink's label", !v.includes("png") && v.includes("ghichuhay") && !v.includes("ghichughi"), v);
 check("visible drops code fence markers (the language label) but keeps the code", v.includes("leta1") && !v.includes("jsleta"), v);
-check("visible drops hidden blocks", !v.includes("javis") && !v.includes("card"), v);
+check("visible drops hidden blocks", !v.includes("jeevi") && !v.includes("card"), v);
 
 // ---- 3. Where the quote sits ----
 const hay = J.fold("Mở đầu. Giá sỉ là 45k một chai, lấy từ 100 chai giảm thêm 5%. Phí ship tính riêng theo tỉnh.");
@@ -75,7 +75,7 @@ function el(tag, cls, kids) {
 }
 const strong = txt("45k");
 const tail = txt(" một chai, lấy 100 chai giảm 5%.");
-const answer = el("div", "msg msg-javis", [el("div", "bubble", [
+const answer = el("div", "msg msg-jeevi", [el("div", "bubble", [
   el("p", "", [txt("Giá sỉ là "), el("strong", "", [strong]), tail]),
   el("div", "code-head", [txt("python")]),
   el("button", "code-copy", [txt("Copy")])
@@ -116,7 +116,7 @@ global.window = undefined;
   check("not found: stops as soon as there is nothing older", stopAt === false && loads === 1, loads);
 
   // Found after one older page: the list grows, the words are scrolled into the middle of the list and marked.
-  const older = el("div", "msg msg-javis", [el("div", "bubble", [txt("Ở trang cũ: chính sách đổi trả trong 7 ngày.")])]);
+  const older = el("div", "msg msg-jeevi", [el("div", "bubble", [txt("Ở trang cũ: chính sách đổi trả trong 7 ngày.")])]);
   older.querySelector = (sel) => sel === ".bubble" ? older.firstChild : null;
   older.classList = { set: new Set(), add(c) { this.set.add(c); }, remove(c) { this.set.delete(c); } };
   Object.defineProperty(older, "offsetWidth", { get() { return 1; } });

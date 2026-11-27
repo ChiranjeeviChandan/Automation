@@ -50,7 +50,7 @@ const fn = new Function(hang + "\n" + catHam("docDinhKem") + "\nreturn { docDinh
 // 1. Mở lại hội thoại: đọc lại đính kèm từ khối ngữ cảnh server đã lưu
 // ============================================================
 const tinAnh =
-  "[File đính kèm để ĐỌC (đường dẫn):\n- /root/.javis/upload/anh-san-pham.png\n"
+  "[File đính kèm để ĐỌC (đường dẫn):\n- /root/.jeevi/upload/anh-san-pham.png\n"
   + "Mặc định: chỉ đọc file rồi trả lời, KHÔNG tự lưu đi đâu.\n"
   + "CHỈ khi user yêu cầu rõ thì mới: chuyển thành .md lưu vào Sources=\"/x/Sources\", kèm frontmatter source.]\n\n"
   + "ảnh này là gì?";
@@ -63,8 +63,8 @@ check("url trỏ về /upload/raw?name=<tên> (đúng URL /upload đã trả lú
 check("dòng 'Mặc định:' và 'CHỈ khi...' KHÔNG bị hiểu thành file", a.length === 1);
 
 const tinNhieu =
-  "[File đính kèm để ĐỌC (đường dẫn):\n- C:\\Users\\quy\\.javis\\upload\\van-ban-dan-124933.txt\n"
-  + "- /root/.javis/upload/bao cao.pdf\nMặc định: chỉ đọc.]\n\nlên outline chi tiết cho tôi";
+  "[File đính kèm để ĐỌC (đường dẫn):\n- C:\\Users\\quy\\.jeevi\\upload\\van-ban-dan-124933.txt\n"
+  + "- /root/.jeevi/upload/bao cao.pdf\nMặc định: chỉ đọc.]\n\nlên outline chi tiết cho tôi";
 a = fn.docDinhKem(tinNhieu);
 check("nhiều file: đọc đủ 2", a.length === 2, JSON.stringify(a));
 check("đường dẫn Windows (dấu \\) vẫn lấy đúng tên", a[0] && a[0].name === "van-ban-dan-124933.txt", JSON.stringify(a));

@@ -22,8 +22,8 @@ import tempfile
 import time
 from pathlib import Path
 
-_TMP = Path(tempfile.mkdtemp(prefix="javis-live-quota-"))
-os.environ.setdefault("JAVIS_STATE_DIR", str(_TMP / "state"))
+_TMP = Path(tempfile.mkdtemp(prefix="jeevi-live-quota-"))
+os.environ.setdefault("JEEVI_STATE_DIR", str(_TMP / "state"))
 _FAKE_HOME = _TMP / "home"
 (_FAKE_HOME / ".codex").mkdir(parents=True, exist_ok=True)
 os.environ["HOME"] = str(_FAKE_HOME)

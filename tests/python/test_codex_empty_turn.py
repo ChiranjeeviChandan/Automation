@@ -18,8 +18,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-TMP = Path(tempfile.mkdtemp(prefix="javis-codex-empty-"))
-os.environ["JAVIS_STATE_DIR"] = str(TMP / "state")
+TMP = Path(tempfile.mkdtemp(prefix="jeevi-codex-empty-"))
+os.environ["JEEVI_STATE_DIR"] = str(TMP / "state")
 os.environ["CODEX_HOME"] = str(TMP / "codexhome")
 (TMP / "state").mkdir()
 (TMP / "codexhome").mkdir()

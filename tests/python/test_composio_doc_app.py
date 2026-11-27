@@ -18,7 +18,7 @@ import json
 import os
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-composio-doc-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-composio-doc-"))
 
 import config  # noqa: E402
 import mcp_catalog  # noqa: E402

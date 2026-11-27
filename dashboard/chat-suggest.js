@@ -441,7 +441,7 @@
       showing: function () { var el = input(); return el ? restOf(el.value, pick(el.value)) : ""; },
     };
     // The language switched while a suggestion showed: keep the newly translated placeholder for later.
-    window.addEventListener("javis:i18n", function () {
+    window.addEventListener("jeevi:i18n", function () {
       if (!shownOn) return;
       var ph = shownOn.getAttribute("data-i18n-ph");
       savedPh = ph ? tw(ph) : savedPh;
@@ -453,9 +453,9 @@
 
   // The switch in the composer "+" menu (one row, its hint says On or Off).
   function registerMenu() {
-    if (!window.JavisComposerMenu || !window.JavisComposerMenu.register) return false;
+    if (!window.JeeviComposerMenu || !window.JeeviComposerMenu.register) return false;
     load();
-    window.JavisComposerMenu.register({
+    window.JeeviComposerMenu.register({
       id: "suggest-next", order: 90, label: "sug.menu",
       icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h12M12 6l6 6-6 6M20 5v14"/></svg>',
       hint: function () { return tw(state.enabled ? "sug.on" : "sug.off"); },
@@ -465,7 +465,7 @@
   }
   if (!registerMenu()) document.addEventListener("DOMContentLoaded", registerMenu);
 
-  window.JavisSuggest = { attach: attach, setEnabled: setEnabled, enabled: function () { return state.enabled; },
+  window.JeeviSuggest = { attach: attach, setEnabled: setEnabled, enabled: function () { return state.enabled; },
                           acceptsKey: acceptsKey, acceptsWordKey: acceptsWordKey, shapeContext: shapeContext,
                           restOf: restOf };
 })();

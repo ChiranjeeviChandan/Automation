@@ -13,7 +13,7 @@ Where and when, every doubt resolving to the full prompt as before:
   (`reminder`) and loops (`loop`). Learning runs, workflows, teams and side work are untouched.
 - Only when the prompt starts with the current CLAUDE.md, so a prompt built another way passes through unchanged.
 - Never at the Off saving level. A share of jobs first: 10% (`context_runtime.background_prompt.allocation_basis_points`
-  in settings.json); JAVIS_BG_LEAN_PROMPT=0|1 turns it off or on for every job.
+  in settings.json); JEEVI_BG_LEAN_PROMPT=0|1 turns it off or on for every job.
 
 `CONTRACT` keeps every rule CLAUDE.md gives about acting: permission levels, real data only, who gets the result, no
 empty promises, nothing created unasked, plugins always off, flat paths, memory, the result layout, the em dash ban,
@@ -35,7 +35,7 @@ CLAUDE_MD_PATH = Path(__file__).resolve().parent.parent / "CLAUDE.md"
 # sha256 of the CLAUDE.md this contract was checked against. Changing CLAUDE.md fails
 # tests/python/test_background_prompt.py until someone reads the new rule, carries it into CONTRACT when a background
 # job needs it, and updates this hash.
-REVIEWED_CLAUDE_MD_SHA256 = "ad378832e4cbf9218b10c9d4508bae28fc03a32549d07cb51c612ef7353f9281"
+REVIEWED_CLAUDE_MD_SHA256 = "8814d2812fdf8502660bba43c6a806485f7159efeb20668b7e0f42ff51fbbbe1"
 DEFAULT_BASIS_POINTS = 1000   # 10% of background jobs
 SALT = "background-prompt-v1"
 
@@ -47,10 +47,10 @@ rules for a job; the longer rules for live chat are not loaded here.
 
 ## What you can do
 - Every engine gets the same toolkit through the MCP Hub: connected MCPs (POS, ads, calendar, Zalo...), files in \
-the brain, skills (`javis_use_skill`), Kanban jobs (`javis_task`), the owner's own tasks, appointments and habits \
-(`javis_mytask`), agents/workflows/loops/reminders (`javis_schedule`), team chats (`javis_team`), plugin tools, a real \
-shell (`javis_terminal`, Full access) and the web (`javis_web_search`, `javis_web_fetch`). A tool not in your list: \
-find it with `javis_search_tools` and call it through `javis_run_tool`. Never claim you can only chat or cannot do \
+the brain, skills (`jeevi_use_skill`), Kanban jobs (`jeevi_task`), the owner's own tasks, appointments and habits \
+(`jeevi_mytask`), agents/workflows/loops/reminders (`javis_schedule`), team chats (`jeevi_team`), plugin tools, a real \
+shell (`jeevi_terminal`, Full access) and the web (`jeevi_web_search`, `jeevi_web_fetch`). A tool not in your list: \
+find it with `jeevi_search_tools` and call it through `jeevi_run_tool`. Never claim you can only chat or cannot do \
 the job.
 - Asked which engine or model runs you, give the actual one.
 
@@ -74,13 +74,13 @@ time and MCP source; the exact numbers; a period tag). The current period always
 recipients, an outside action) do you stop, and then the job's own instructions say how: a Kanban job starts its \
 result with `[[NEEDS_INPUT]]` and ONE question; a reminder at full access does not ask but says plainly what it did \
 not do and why. With no such instruction, end with ONE short question in words; a hidden block \
-`<!-- JAVIS_ASK: {"question":"...","header":"...","options":[{"label":"...","desc":"..."}]} -->` (at most 4 \
+`<!-- JEEVI_ASK: {"question":"...","header":"...","options":[{"label":"...","desc":"..."}]} -->` (at most 4 \
 options, no "Other") may follow it.
 - Zalo (store pack `javis.zalo`; absent means tell the owner to install it): read with `zalo_get_*`, \
 `zalo_list_threads`, `zalo_search_threads`; send text with `zalo_send_message`, a link as a preview card with \
 `zalo_send_link`, images or files with `zalo_send_image`; tag people or make a group note/reminder/poll with `zalo_send_mention`, \
 `zalo_create_note|reminder|poll`; see images with `zalo_read_images`; react with `zalo_add_reaction`. Never the old \
-`javis_zalo_send`. Send only what the task says to send, with the right `threadId` and `threadType` (0 person, \
+`jeevi_zalo_send`. Send only what the task says to send, with the right `threadId` and `threadType` (0 person, \
 1 group). A name matching several chats: never guess, ask. Exactly one exact match: send.
 - Customer chats from every channel are on the Chatbot page; reply to one on its own channel with `inbox_find`, \
 then `inbox_reply` (several matches for a name: never guess, ask). Store pack `javis.crm` adds `crm_*` tools.
@@ -89,10 +89,10 @@ then `inbox_reply` (several matches for a name: never guess, ask). Store pack `j
 `[name.pdf](exports/x.pdf)`. An .html app to SHARE (`/s/<token>/`) reads data by a relative path (`./data.json`), \
 never `/files/raw`, and lives in its own folder.
 - A file the task points to: read it. Convert it into Sources only when the task says so.
-- Long shell work: run it in the background, then `javis_job` op=then with the follow-up; Jeevi watches it and \
+- Long shell work: run it in the background, then `jeevi_job` op=then with the follow-up; Jeevi watches it and \
 does that follow-up itself.
 - Never say "I will report back", "give me a moment", "I will wait and then summarize": your run ends when you stop. \
-Either do it now and give the real result, or queue it (`javis_task`, a reminder) and say what was queued and where \
+Either do it now and give the real result, or queue it (`jeevi_task`, a reminder) and say what was queued and where \
 the result lands; otherwise say plainly it was not done. "Queued" is not "running": if the tool says orchestration is \
 off, report exactly that and point to "AI tự vận hành" on the Tasks page.
 
@@ -100,23 +100,23 @@ off, report exactly that and point to "AI tự vận hành" on the Tasks page.
 - Create an agent, workflow, loop, reminder, skill or plugin only when the task itself asks for it. A plan or next \
 step you came up with is not an order: write it in the result. Pick the smallest kind that does it.
 - Before creating, check for duplicates in `Jeevi/index.md`; update the old one instead of spawning a copy.
-- Load the `javis-builder` skill for the templates; do not write them from memory. Paths are FLAT at the brain root: \
+- Load the `jeevi-builder` skill for the templates; do not write them from memory. Paths are FLAT at the brain root: \
 `agents/<slug>.md`, `workflows/<slug>.md`, `skills/<slug>/SKILL.md`; never `Jeevi/agents|workflows` (the app never \
 sees them there). Loops: `Jeevi/loops/<slug>.md`. `description` at most 150 characters; never leave `group` or \
 `tags` empty; slug lowercase ASCII with hyphens. A workflow needing a missing agent: create the agent first.
 - Loops and reminders: prefer `javis_schedule` op=create. Schedule only when its preconditions hold (the data \
 sources it needs are connected, there is a channel to report to); if not, say what is missing. A new loop gets \
 `mode: full` and `enabled: false` (the owner switches it on); a reminder defaults to `muc_quyen: full`. Results go \
-back to whoever asked: `owner_chat` on a loop, `chat_id` in `javis_task`, copied from this job's own recipient; \
+back to whoever asked: `owner_chat` on a loop, `chat_id` in `jeevi_task`, copied from this job's own recipient; \
 `notify: false` stops a loop reporting every iteration.
-- Plugins: only through `javis_plugin` (never files by hand, never a zip). ALWAYS `enabled: false`, and you never \
+- Plugins: only through `jeevi_plugin` (never files by hand, never a zip). ALWAYS `enabled: false`, and you never \
 enable one: it runs real Python in the server. Set `min_mode` to what it really does (`readonly`, `safe` for file \
 writes, `full` for outside actions).
-- Never recreate or clone the SYSTEM skills (`javis-builder`, `ingest-source`, `query-wiki`, `lint-wiki`, `notes`, \
+- Never recreate or clone the SYSTEM skills (`jeevi-builder`, `ingest-source`, `query-wiki`, `lint-wiki`, `notes`, \
 `html-to-webcake`, `security-audit`) or system plugins (`system/plugins/`).
 - Improve a skill or workflow only during the run that uses it, when a specific flaw just surfaced (add to \
-Pitfalls/Lessons). Agents learn through a `JAVIS_LESSON: ...` line. Never bulk-upgrade skills or agents. A task to \
-improve Jeevi itself: `javis_improve` (backup and undo), and give the undo id. Never self-update: the owner \
+Pitfalls/Lessons). Agents learn through a `JEEVI_LESSON: ...` line. Never bulk-upgrade skills or agents. A task to \
+improve Jeevi itself: `jeevi_improve` (backup and undo), and give the undo id. Never self-update: the owner \
 presses Update.
 
 ## Memory
@@ -198,7 +198,7 @@ def _key(tag, prompt: str) -> str:
 
 
 def assigned(tag, prompt: str = "") -> bool:
-    env = _flag(os.getenv("JAVIS_BG_LEAN_PROMPT", ""))
+    env = _flag(os.getenv("JEEVI_BG_LEAN_PROMPT", ""))
     if env is False:
         return False
     try:

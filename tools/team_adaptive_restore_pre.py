@@ -386,12 +386,12 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Khôi phục các kho team-adaptive về trước một mốc (chạy khi Jeevi đã tắt).")
     ap.add_argument("--to", required=True, choices=sorted(MILESTONES, key=_ver),
                     help="mốc cần về trước (vd 0.154.0)")
-    ap.add_argument("--state-dir", default=os.environ.get("JAVIS_STATE_DIR", ""),
-                    help="thư mục state của Jeevi (mặc định JAVIS_STATE_DIR)")
+    ap.add_argument("--state-dir", default=os.environ.get("JEEVI_STATE_DIR", ""),
+                    help="thư mục state của Jeevi (mặc định JEEVI_STATE_DIR)")
     ap.add_argument("--yes", action="store_true", help="xác nhận Jeevi đã tắt và chấp nhận mất thay đổi sau lúc nâng")
     a = ap.parse_args(argv)
     if not a.state_dir:
-        print("Thiếu --state-dir (hay biến JAVIS_STATE_DIR).", file=sys.stderr)
+        print("Thiếu --state-dir (hay biến JEEVI_STATE_DIR).", file=sys.stderr)
         return 2
     p = plan(a.state_dir, a.to)
     if not p["ok"]:

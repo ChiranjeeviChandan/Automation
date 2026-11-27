@@ -6,7 +6,7 @@ import os
 import tempfile
 import unittest
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="lazy-json-test-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="lazy-json-test-"))
 import mcp_hub
 
 
@@ -22,7 +22,7 @@ class LazyJsonArgumentTests(unittest.TestCase):
             [], {}, [tool], {"synthetic_tool": {"call": guarded}}, 8)
 
     def call(self, **kwargs):
-        return asyncio.run(self.route["javis_run_tool"]["call"]({"name": "synthetic_tool", **kwargs}))
+        return asyncio.run(self.route["jeevi_run_tool"]["call"]({"name": "synthetic_tool", **kwargs}))
 
     def test_encoded_nested_fields_reach_guard_unchanged(self):
         payload = {"op": "ingest", "event": {"sender_id": "123", "ocr": {"bill_amount": 600000}}}
@@ -41,7 +41,7 @@ class LazyJsonArgumentTests(unittest.TestCase):
         self.assertEqual(self.calls, [])
 
     def test_ungranted_tool_is_still_blocked(self):
-        result = asyncio.run(self.route["javis_run_tool"]["call"](
+        result = asyncio.run(self.route["jeevi_run_tool"]["call"](
             {"name": "not_granted", "args_json": '{"op":"pending"}'}))
         self.assertTrue(result.startswith("ERROR:"))
         self.assertEqual(self.calls, [])

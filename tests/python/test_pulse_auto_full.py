@@ -20,9 +20,9 @@ from contextlib import closing
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-pulse-auto-")
-os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
-TEMP = Path(tempfile.mkdtemp(prefix="javis-pulse-auto-w-"))
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-pulse-auto-")
+os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
+TEMP = Path(tempfile.mkdtemp(prefix="jeevi-pulse-auto-w-"))
 
 import agent_pulse as AP  # noqa: E402
 import agent_pulse_host as H  # noqa: E402
@@ -190,7 +190,7 @@ ctx = f"dm:{k}"
 AP.ensure_row(st, k, ctx, at=T0)
 clock.t = T0 + D + 1
 run(tick_all(host))
-check("tắt lượt có công cụ (JAVIS_PULSE_TOOLS=0): chat riêng về lượt chỉ chữ như T3", eng.calls == [], eng.calls)
+check("tắt lượt có công cụ (JEEVI_PULSE_TOOLS=0): chat riêng về lượt chỉ chữ như T3", eng.calls == [], eng.calls)
 
 # ═════ mốc tự hẹn ═════
 st, k, clock, eng, box, host, judge = world()
@@ -374,7 +374,7 @@ check("say_kind: chỉ nhắc nhở khi nói rõ", H.say_kind("reminder") == "re
       and H.say_kind("") == "suggestion" and H.say_kind(None) == "suggestion")
 
 # ═════ bộ điều phối thông báo: nhóm gợi ý ═════
-notify_policy.STORE = Path(os.environ["JAVIS_STATE_DIR"]) / "notify_policy_test.json"
+notify_policy.STORE = Path(os.environ["JEEVI_STATE_DIR"]) / "notify_policy_test.json"
 check("nhóm Gợi ý của trợ lý có trong danh sách nhóm", "suggest" in notify_policy.GROUPS
       and notify_policy.group_name("suggest") in ("Gợi ý của trợ lý", "Assistant suggestions"))
 check("nhóm gợi ý mặc định rung từ mức đáng chú ý", notify_policy.mode_of("suggest")["mode"] == "important")

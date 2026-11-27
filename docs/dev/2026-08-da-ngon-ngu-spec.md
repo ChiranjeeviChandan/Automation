@@ -172,8 +172,8 @@ là tiếng Anh hôm nay được phục vụ **một nửa** - đủ để tư�
 
 - **Múi giờ UTC+7 nhúng cứng 6 chỗ**: `usage_index.py:28`, `usage_parsers.py:19`,
   `system_sync.py:67`, `main.py:555`, `main.py:3470`, `context_compiler._bay_gio`.
-- **Plugin `datetime-vn`** (`system/plugins/datetime-vn/plugin.yaml`) cấp tool `javis_now` và
-  `javis_date_add` cho MỌI bộ não, mô tả ghi thẳng "theo múi giờ Việt Nam (UTC+7)".
+- **Plugin `datetime-vn`** (`system/plugins/datetime-vn/plugin.yaml`) cấp tool `jeevi_now` và
+  `jeevi_date_add` cho MỌI bộ não, mô tả ghi thẳng "theo múi giờ Việt Nam (UTC+7)".
 - **Tiền tệ VND [ĐÍNH CHÍNH]**: đã XONG SẴN ở thượng nguồn. Commit `5c59de7` (0.32.1) gỡ hết phần quy đổi USD sang đồng khỏi trang Mức dùng. Hạng mục này rơi khỏi phạm vi. Phần ĐỊNH DẠNG SỐ thì chưa: `toLocaleString("vi-VN")` vẫn còn ở `usage.js`.
 - **Định dạng số/ngày**: `toLocaleString("vi-VN")` ở `usage.js`, `console.js:1245,4045`,
   `sessions-ui.js:20`, `chatbots.js:368`, `studio.js:595`; `localeCompare(..., "vi")` ở
@@ -429,7 +429,7 @@ Thay 6 chỗ UTC+7 nhúng cứng bằng `localefmt.now()`.
 múi giờ là đổi ý nghĩa của dữ liệu cũ. Luật: dữ liệu mới theo múi giờ đã cấu hình, dữ liệu cũ để
 nguyên, và đóng dấu múi giờ vào bản ghi. Không viết lại lịch sử.
 
-Plugin `datetime-vn` giữ nguyên slug và giữ nguyên tên tool `javis_now` / `javis_date_add` (hai
+Plugin `datetime-vn` giữ nguyên slug và giữ nguyên tên tool `jeevi_now` / `jeevi_date_add` (hai
 tên này đã nằm trong prompt và trong thói quen dùng). Chỉ đổi: đọc múi giờ từ cấu hình, và mô tả
 plugin thôi ghi cứng "Việt Nam".
 
@@ -471,7 +471,7 @@ description:
 
 Dạng chuỗi phẳng vẫn hợp lệ và vẫn là dạng khuyến nghị cho skill người dùng tự viết. Router đọc
 `description[lang]`, không có thì rơi về `description[vi]`, rồi tới chuỗi phẳng. **Chỉ 4 skill
-hệ thống** (`javis-builder`, `ingest-source`, `query-wiki`, `lint-wiki`) khai map; skill người
+hệ thống** (`jeevi-builder`, `ingest-source`, `query-wiki`, `lint-wiki`) khai map; skill người
 dùng không đụng tới.
 
 ## 5. Thêm một ngôn ngữ mới: sổ tay
@@ -637,7 +637,7 @@ lexicon tiếng Nhật là phạt người dùng vì một thiếu sót của ch
 **Nền của Đợt 3 đã dựng, giao diện chưa dịch xong.**
 
 - `dashboard/i18n/index.js` - `t()`, suy biến `<đã chọn> -> vi -> key`, quét DOM qua
-  `data-i18n*`, số nhiều bằng `.one`/`.other`, tự nạp lúc khởi động rồi phát `javis:i18n`.
+  `data-i18n*`, số nhiều bằng `.one`/`.other`, tự nạp lúc khởi động rồi phát `jeevi:i18n`.
 - `dashboard/i18n/{vi,en}.json` - tầng điều hướng (rail, tiêu đề trang) và ô cài đặt ngôn ngữ.
 - `console.js` - `RAIL_ITEMS`, `RAIL_GROUPS`, `VIEW_META` lấy nhãn từ từ điển qua getter, cộng
   biến đếm `i18nTick` để Alpine vẽ lại khi từ điển về hoặc khi user đổi ngôn ngữ.
@@ -672,7 +672,7 @@ Bẫy này đã ghi trong spec từ mục 4.6 và lần này tránh được.
 |------|-------|------------------------|
 | Chỉ cần "bây giờ mấy giờ" | main, system_sync, self_improve, share_bundle, usage_store, learn, context_compiler | đổi thẳng, không có hệ quả gì |
 | **Cắt ranh giới NGÀY** | usage_index, usage_parsers, usage_saving | dữ liệu đã ghi GIỮ NGUYÊN chuỗi ngày; chỉ dữ liệu mới theo múi mới |
-| **Giờ nhắc hẹn** | reminders, plugin javis-schedule | "7h sáng" thành 7h sáng ở nơi người dùng ngồi |
+| **Giờ nhắc hẹn** | reminders, plugin jeevi-schedule | "7h sáng" thành 7h sáng ở nơi người dùng ngồi |
 
 Chỗ `reminders` là chỗ thấy hiệu lực rõ nhất: trước đó người dùng ở múi giờ khác bị đánh thức
 lệch vài tiếng mỗi ngày, và không có gì trên màn hình nói cho họ biết vì sao.
@@ -691,7 +691,7 @@ thực tế người dùng trả. Có một test canh chuyện này không quay 
 một vòng, và quên đổi thì mọi lịch "thứ hai hằng tuần" hiện thành "chủ nhật" - sai im lặng,
 người dùng chỉ phát hiện khi việc chạy nhầm ngày. Có hai test canh đúng hai đầu.
 
-**Dashboard** thôi khoá `toLocaleString("vi-VN")` ở 10 chỗ; locale lấy từ `JavisI18n.locale()`.
+**Dashboard** thôi khoá `toLocaleString("vi-VN")` ở 10 chỗ; locale lấy từ `JeeviI18n.locale()`.
 
 **Plugin `datetime-vn`** đọc múi giờ và tên thứ từ cấu hình. Slug và tên tool giữ nguyên: đổi
 slug là bắt mọi brain đang chạy di trú, đổi lấy đúng một cái tên đẹp hơn.

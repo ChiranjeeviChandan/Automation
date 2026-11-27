@@ -14,7 +14,7 @@ Pasang Jeevi seperti aplikasi biasa: unduh satu file, buka, lalu Anda punya ikon
 - **Windows 10/11:** unduh [JeeviOS-Setup.exe](https://github.com/blogminhquy/javis-os/releases/download/desktop/JeeviOS-Setup.exe), klik dua kali, lalu tekan Next sampai selesai. Kemajuan pemasangan tampil di dalam jendela Setup itu sendiri, langkah demi langkah (beberapa menit), tanpa jendela hitam terpisah. Setelah selesai ada ikon JEEVI OS di Desktop dan menu Start.
 - **macOS 11 atau lebih baru:** buka **Terminal** (Launchpad, ketik Terminal), tempel baris ini lalu tekan Enter. Dengan cara ini macOS tidak menampilkan peringatan:
   ```
-  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-javis.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-jeevi.sh | bash
   ```
   Perintah ini mengunduh Jeevi, menyalin **JEEVI OS** ke **Applications**, dan memasangnya langsung di jendela Terminal itu (mungkin meminta Anda membuat akun admin Jeevi dan kata sandi Mac sekali). Setelah itu, buka JEEVI OS dari Launchpad.
 
@@ -24,7 +24,7 @@ Mengklik ikon membuka Jeevi di jendelanya sendiri (tanpa bilah alamat), Jeevi be
 
 **Windows: pasang tanpa layar peringatan (disarankan).** Penginstal Windows belum ditandatangani kode, jadi unduhan lewat browser diblokir pada kali pertama. Tempel satu baris saja dan Anda mendapat penginstal yang sama dengan logo Jeevi, tanpa diblokir: tekan Start, ketik `PowerShell`, buka, tempel baris ini lalu tekan Enter:
 ```
-irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-javis.ps1 | iex
+irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-jeevi.ps1 | iex
 ```
 
 Apa yang diubah penginstal di komputer Anda, siapa yang menandatanganinya, dan apa yang dikirim Jeevi ke mana: [Code signing policy](../../../docs/code-signing-policy.md) · [Privacy policy](../../../PRIVACY.md) (dalam bahasa Inggris).
@@ -49,9 +49,9 @@ Jika Anda sudah mengunduh file lewat browser dan diblokir:
    ```
 3. (Opsional, untuk HTTPS + domain) isi ini di kotak **Environment**:
    ```
-   DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud
+   DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud
    ```
-   (Hostname ada di hPanel → VPS, contoh `javis.srv1782015.hstgr.cloud`.)
+   (Hostname ada di hPanel → VPS, contoh `jeevi.srv1782015.hstgr.cloud`.)
 4. **Deploy**. Tunggu 1-3 menit. Buka aplikasi dengan tombol **Open** (atau `https://<DOMAIN_NAME>`).
 5. Saat pertama dijalankan, layar akan meminta Anda membuat akun admin. Setelah itu, login ke Claude Code sekali saja dari terminal container: `claude auth login --claudeai`.
 
@@ -70,7 +70,7 @@ Buka http://localhost:7777. Untuk HTTPS lewat Caddy, tambahkan `-f docker-compos
 
 1. Instal Python 3.12 + Node 22.
 2. Di folder proyek, jalankan `setup.bat` sekali: script ini membuat .venv, menginstal dependency, dan menginstalkan dua engine CLI (Claude Code, Codex) untuk Anda.
-3. `start-javis.bat` untuk menjalankan di background (`stop-javis.bat` untuk menghentikan).
+3. `start-jeevi.bat` untuk menjalankan di background (`stop-jeevi.bat` untuk menghentikan).
 4. Buka http://localhost:7777.
 
 ## Setelah berjalan

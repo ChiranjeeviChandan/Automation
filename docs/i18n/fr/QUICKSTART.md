@@ -14,7 +14,7 @@ Installez Jeevi comme n'importe quelle application : téléchargez un fichier, o
 - **Windows 10/11 :** téléchargez [JeeviOS-Setup.exe](https://github.com/blogminhquy/javis-os/releases/download/desktop/JeeviOS-Setup.exe), double-cliquez et appuyez sur Next jusqu'au bout. La progression s'affiche dans la fenêtre Setup elle-même, étape par étape (quelques minutes), sans fenêtre noire séparée. À la fin, une icône JEEVI OS apparaît sur le Bureau et dans le menu Démarrer.
 - **macOS 11 ou plus récent :** ouvrez le **Terminal** (Launchpad, tapez Terminal), collez cette ligne et appuyez sur Entrée. Installé ainsi, macOS n'affiche aucun avertissement :
   ```
-  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-javis.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-jeevi.sh | bash
   ```
   La commande télécharge Jeevi, copie **JEEVI OS** dans **Applications** et l'installe directement dans cette fenêtre du Terminal (elle peut demander une fois de créer un compte administrateur Jeevi et le mot de passe du Mac). Ensuite, ouvrez JEEVI OS depuis le Launchpad.
 
@@ -24,7 +24,7 @@ Un clic sur l'icône ouvre Jeevi dans sa propre fenêtre (sans barre d'adresse),
 
 **Windows : installer sans l'écran d'avertissement (recommandé).** L'installeur Windows n'est pas encore signé, un téléchargement par le navigateur est donc bloqué la première fois. Collez plutôt une ligne et vous obtenez le même installeur avec le logo Jeevi, sans blocage : appuyez sur Démarrer, tapez `PowerShell`, ouvrez-le, collez cette ligne et appuyez sur Entrée :
 ```
-irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-javis.ps1 | iex
+irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-jeevi.ps1 | iex
 ```
 
 Ce que les installeurs modifient sur votre ordinateur, qui les signe et ce que Jeevi envoie et où : [Code signing policy](../../../docs/code-signing-policy.md) · [Privacy policy](../../../PRIVACY.md) (en anglais).
@@ -49,9 +49,9 @@ Si vous avez déjà téléchargé le fichier avec le navigateur et qu'il a été
    ```
 3. (Facultatif, pour le HTTPS + un domaine) définissez ceci dans le champ **Environment** :
    ```
-   DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud
+   DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud
    ```
-   (Le hostname se trouve dans hPanel → VPS, par ex. `javis.srv1782015.hstgr.cloud`.)
+   (Le hostname se trouve dans hPanel → VPS, par ex. `jeevi.srv1782015.hstgr.cloud`.)
 4. **Deploy**. Attendez 1-3 minutes. Ouvrez l'application avec le bouton **Open** (ou via `https://<DOMAIN_NAME>`).
 5. Au premier lancement, l'écran vous demande de créer un compte administrateur. Ensuite, connectez-vous une fois à Claude Code depuis le terminal du conteneur : `claude auth login --claudeai`.
 
@@ -70,7 +70,7 @@ Ouvrez http://localhost:7777. Pour le HTTPS via Caddy, ajoutez `-f docker-compos
 
 1. Installez Python 3.12 + Node 22.
 2. Dans le dossier du projet, lancez `setup.bat` une fois : il crée .venv, installe les dépendances et installe pour vous les deux moteurs CLI (Claude Code, Codex).
-3. `start-javis.bat` pour le lancer en arrière-plan (`stop-javis.bat` pour l'arrêter).
+3. `start-jeevi.bat` pour le lancer en arrière-plan (`stop-jeevi.bat` pour l'arrêter).
 4. Ouvrez http://localhost:7777.
 
 ## Une fois lancé

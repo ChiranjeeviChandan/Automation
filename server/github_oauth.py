@@ -21,7 +21,7 @@ it. If GitHub still sends `expires_in` and a `refresh_token` (the setting was fl
 `refresh()` tries to renew; when that fails the connection reads as signed out and the card asks to sign in again.
 
 Pending sign-ins live in memory: a code expires in 15 minutes and a restart simply means pressing the button again.
-Endpoints are configurable (`JAVIS_GITHUB_WEB`) so tests run against a local fake. Stdlib plus httpx, no FastAPI.
+Endpoints are configurable (`JEEVI_GITHUB_WEB`) so tests run against a local fake. Stdlib plus httpx, no FastAPI.
 """
 from __future__ import annotations
 
@@ -53,15 +53,15 @@ def _c(vi: str, en: str) -> str:
 
 
 def client_id() -> str:
-    return (os.environ.get("JAVIS_GITHUB_CLIENT_ID") or CLIENT_ID).strip()
+    return (os.environ.get("JEEVI_GITHUB_CLIENT_ID") or CLIENT_ID).strip()
 
 
 def app_slug() -> str:
-    return (os.environ.get("JAVIS_GITHUB_APP_SLUG") or APP_SLUG).strip()
+    return (os.environ.get("JEEVI_GITHUB_APP_SLUG") or APP_SLUG).strip()
 
 
 def _web() -> str:
-    return (os.environ.get("JAVIS_GITHUB_WEB") or "https://github.com").rstrip("/")
+    return (os.environ.get("JEEVI_GITHUB_WEB") or "https://github.com").rstrip("/")
 
 
 def install_url() -> str:

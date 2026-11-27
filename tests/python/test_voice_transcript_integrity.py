@@ -72,7 +72,7 @@ class ModelCorrections(unittest.TestCase):
 
     def test_open_file_block_is_not_speech(self):
         # 0.65.29: đang mở file trong trình sửa thì dashboard chèn khối FILE ĐANG MỞ trước khối
-        # NGỮ CẢNH GIAO DIỆN. Khối đó bị coi là lời nói, nên dòng JAVIS_NGHE (chỉ có lời nói)
+        # NGỮ CẢNH GIAO DIỆN. Khối đó bị coi là lời nói, nên dòng JEEVI_NGHE (chỉ có lời nói)
         # trông như "cắt mất chữ", bị từ chối, và cả lượt lặng lẽ sang bộ não chính (chủ dự án
         # báo 02/10: chọn Antigravity mà lượt nói vẫn do Claude trả lời).
         file_block = ("[FILE ĐANG MỞ trong trình sửa của Jeevi: /data/brain/ghi-chu.md\n"
@@ -92,8 +92,8 @@ class ModelCorrections(unittest.TestCase):
     def test_model_cannot_rewrite_literal_identifiers(self):
         for original, proposed in [
             ("mở David.txt", "mở Jeevi.txt"),
-            ("xem https://david.com", "xem https://javis.com"),
-            ("email david@example.com", "email javis@example.com"),
+            ("xem https://david.com", "xem https://jeevi.com"),
+            ("email david@example.com", "email jeevi@example.com"),
         ]:
             with self.subTest(original=original):
                 self.assertEqual(voice_brain.safe_transcript_rewrite(original, proposed), original)

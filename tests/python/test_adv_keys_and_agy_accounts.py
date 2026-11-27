@@ -19,7 +19,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-adv-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-adv-")
 
 import config as cfgmod  # noqa: E402
 import model_routing  # noqa: E402

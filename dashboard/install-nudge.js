@@ -33,10 +33,10 @@
 */
 (function () {
   "use strict";
-  var KEY_LUC = "javis.install.nhac_luc";     // lần nhắc gần nhất (epoch ms)
-  var KEY_TAT = "javis.install.tat_nhac";     // "1" = người dùng bảo đừng nhắc nữa
+  var KEY_LUC = "jeevi.install.nhac_luc";     // lần nhắc gần nhất (epoch ms)
+  var KEY_TAT = "jeevi.install.tat_nhac";     // "1" = người dùng bảo đừng nhắc nữa
   var MOT_NGAY = 24 * 60 * 60 * 1000;
-  var KEY_DUNG = "javis.install.da_dung_ms";  // thời gian đã dùng thật, cộng dồn (ms) - xem luật 2
+  var KEY_DUNG = "jeevi.install.da_dung_ms";  // thời gian đã dùng thật, cộng dồn (ms) - xem luật 2
   var CAN_DUNG_MS = 3 * 60 * 1000;            // dùng đủ 3 phút mới nhắc
   var NHIP_MS = 5000;                         // mỗi 5 giây xem một lần
   var CON_DUNG_MS = 60 * 1000;                // chạm hay gõ trong 1 phút qua thì còn tính là đang dùng
@@ -75,7 +75,7 @@
 
   function ve(tuMenu) {
     var ios = laIOS();
-    var coNutCai = !!(window.JavisInstall && window.JavisInstall.coHopCai());
+    var coNutCai = !!(window.JeeviInstall && window.JeeviInstall.coHopCai());
     var than = ios
       ? '<ol class="inud-buoc">'
         + '<li>' + window.t("instl.ios1_a") + ' <b>' + window.t("instl.ios1_b") + '</b> ' + window.t("instl.ios1_c") + '</li>'
@@ -124,7 +124,7 @@
     if (tat) tat.onclick = function () { ghi(KEY_TAT, "1"); dong(el); };
     if (cai) cai.onclick = async function () {
       cai.disabled = true;
-      var xong = await window.JavisInstall.moHopCai();
+      var xong = await window.JeeviInstall.moHopCai();
       dong(el);
       // Cài xong thì thôi hẳn; từ chối thì mai nhắc lại như thường.
       if (xong) { ghi(KEY_TAT, "1"); goNutMenu(); }
@@ -200,7 +200,7 @@
 
   // Cài xong thì không bao giờ nhắc nữa, kể cả khi lần sau lỡ mở lại bằng tab trình duyệt.
   window.addEventListener("appinstalled", function () { ghi(KEY_TAT, "1"); goNutMenu(); });
-  window.addEventListener("javis:i18n", function () {
+  window.addEventListener("jeevi:i18n", function () {
     var b = document.querySelector(".rail-foot .rf-install");
     if (b) veNutMenu(b);
   });
@@ -216,6 +216,6 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", batDau);
   else batDau();
 
-  window.JavisInstallNudge = { thu: thu, nhip: nhip, moHuongDan: moHuongDan, denHen: denHen, laIOS: laIOS,
+  window.JeeviInstallNudge = { thu: thu, nhip: nhip, moHuongDan: moHuongDan, denHen: denHen, laIOS: laIOS,
     laDienThoai: laDienThoai, dangBiChe: dangBiChe };
 })();

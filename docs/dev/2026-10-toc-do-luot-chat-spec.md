@@ -40,10 +40,10 @@ Một kho dùng chung cho cả Claude và Codex, theo hội thoại:
 - **Khoá ô** = id hội thoại. Mỗi ô ghi **dấu vân tay cấu hình** (binary và mtime của nó, cwd, model, mức suy nghĩ, fast,
   MCP đã đấu, tài khoản, tag). Lượt sau có dấu vân tay khác thì bỏ ô cũ, mở tiến trình mới.
 - **Trần theo RAM**: ngân sách = một phần tư RAM trống, tối đa 1.200 MB. Ô Claude tính 300 MB, ô Codex 80 MB (đo:
-  228 MB và 57 MB). `JAVIS_WARM_BUDGET_MB` đặt tay, `0` là tắt hẳn.
+  228 MB và 57 MB). `JEEVI_WARM_BUDGET_MB` đặt tay, `0` là tắt hẳn.
 - **Hết chỗ** thì đuổi ô RẢNH lâu nhất (LRU). Không bao giờ đuổi ô đang chạy lượt. Không còn ô rảnh nào để đuổi thì lượt
   đó chạy đường cũ, không chờ.
-- **Rảnh quá 300 s** (`JAVIS_WARM_IDLE_S`) thì tự đóng. 300 s khớp thời hạn đệm prompt 5 phút của nhà cung cấp: quá
+- **Rảnh quá 300 s** (`JEEVI_WARM_IDLE_S`) thì tự đóng. 300 s khớp thời hạn đệm prompt 5 phút của nhà cung cấp: quá
   mốc đó lượt sau vẫn phải nạp lại ngữ cảnh, giữ tiến trình chỉ còn đỡ phần khởi động.
 - **Lỗi bất kỳ** (tiến trình chết, hết giờ, ngắt giữa chừng mà không chốt được) thì bỏ ô.
 - **Mở sẵn không bao giờ đuổi ai và không bao giờ thay ô có sẵn**: lượt thật nào đã tìm ô của hội thoại trong lúc đang mở
@@ -113,7 +113,7 @@ dò lại đồng bộ). Đổi kết nối vẫn làm `mtime` đổi nên khôn
 
 ## 6. Bản vá 0.387.0 (29/10/2026)
 
-Thử lại trên dashboard thật (server thử cổng 7788, `JAVIS_WARM_IDLE_S=15`) thì 0.382.0 **không dùng lại tiến trình nào**:
+Thử lại trên dashboard thật (server thử cổng 7788, `JEEVI_WARM_IDLE_S=15`) thì 0.382.0 **không dùng lại tiến trình nào**:
 ba lượt liền nhau đều `warm=False`. Phép thử hôm trước chạy trên mã trước vòng sửa review, nên không bắt được. Dòng log
 mới `[claude warm] ...: config changed (...)` chỉ đúng thủ phạm: `credentials`.
 

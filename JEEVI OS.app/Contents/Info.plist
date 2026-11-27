@@ -15,9 +15,9 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleExecutable</key>
-    <string>javis</string>
+    <string>jeevi</string>
     <key>CFBundleIconFile</key>
-    <string>javis</string>
+    <string>jeevi</string>
     <key>LSMinimumSystemVersion</key>
     <string>11.0</string>
     <key>LSUIElement</key>

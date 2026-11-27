@@ -27,10 +27,10 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zpnhom-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zpnhom-")
 # Từ 0.65.1 chế độ Tự đánh giá do BỘ PHÁN XỬ quyết. File này khoá LUẬT CŨ (cửa từ khoá, hạn mức, mã bỏ qua) mà
 # người vận hành còn dùng ở chế độ Chạy thử, nên ép chế độ đó: luật cũ quyết, bộ phán xử chỉ ghi.
-os.environ["JAVIS_REPLY_POLICY_SHADOW"] = "1"
+os.environ["JEEVI_REPLY_POLICY_SHADOW"] = "1"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -109,7 +109,7 @@ BRAIN = Path(tempfile.mkdtemp(prefix="brain-zpnhom-"))
     "# Hướng dẫn cài đặt Jeevi\n\n"
     "## Lỗi cổng 7777 đang được dùng\n\n"
     "Nếu Jeevi báo lỗi cổng 7777 đang được dùng, hãy tắt tiến trình Jeevi cũ rồi khởi động lại "
-    "bằng file start-javis.bat.\n\n"
+    "bằng file start-jeevi.bat.\n\n"
     "## Đổi bộ não của Jeevi\n\n"
     "Vào trang Models, chọn bộ não mới ở mục Model chính rồi bấm Lưu. Đổi bộ não không làm mất "
     "bộ nhớ của Jeevi.\n",

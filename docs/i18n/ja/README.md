@@ -1,7 +1,7 @@
 <!-- translated-from: README.md sha256:2e10ad3d2a86 -->
 <div align="center">
 
-<a href="https://javisos.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
+<a href="https://jeevios.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
 
 # Jeevi OS
 
@@ -9,7 +9,7 @@
 
 Jeevi OS は **Claude、ChatGPT、Gemini、Grok** やあなたが選んだモデルを、自分のマシンやサーバー上で 24 時間 365 日働くチームに変えます。各メンバーは役割を持ち、同じ記憶とツールを共有し、バックグラウンドで働き続けます。より良いモデルが出たら切り替えるだけ。チームが学んだことはすべて残ります。
 
-**🌐 ウェブサイト: [javisos.com](https://javisos.com)** · オープンソース · セルフホスト · 14 の AI プロバイダー
+**🌐 ウェブサイト: [jeevios.com](https://jeevios.com)** · オープンソース · セルフホスト · 14 の AI プロバイダー
 
 [![GitHub stars](https://img.shields.io/github/stars/blogminhquy/javis-os?style=flat&logo=github&label=stars)](https://github.com/blogminhquy/javis-os/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](../../../LICENSE)
@@ -38,7 +38,7 @@ Jeevi OS は **Claude、ChatGPT、Gemini、Grok** やあなたが選んだモデ
 
 [🇬🇧 English](../../../README.md) · [🇻🇳 Tiếng Việt](../vi/README.md) · [🇨🇳 简体中文](../zh/README.md) · [🇪🇸 Español](../es/README.md) · 🇯🇵 **日本語** · [🇮🇳 हिन्दी](../hi/README.md) · [🇧🇷 Português](../pt-BR/README.md) · [🇰🇷 한국어](../ko/README.md) · [🇷🇺 Русский](../ru/README.md) · [🇩🇪 Deutsch](../de/README.md) · [🇫🇷 Français](../fr/README.md) · [🇮🇩 Bahasa Indonesia](../id/README.md) · [🌍 翻訳に協力する](../../../CONTRIBUTING.md#translations)
 
-[クイックスタート](#-クイックスタート) · [Jeevi を選ぶ理由](#-javis-を選ぶ理由) · [頭脳](#-12-の頭脳ひとつのツールキット) · [機能](#-機能) · [インストール](#-インストール) · [ドキュメント](../../../docs/en/README.md) · [支援](#-javis-os-を支援する)
+[クイックスタート](#-クイックスタート) · [Jeevi を選ぶ理由](#-jeevi-を選ぶ理由) · [頭脳](#-12-の頭脳ひとつのツールキット) · [機能](#-機能) · [インストール](#-インストール) · [ドキュメント](../../../docs/en/README.md) · [支援](#-jeevi-os-を支援する)
 
 <br>
 
@@ -56,8 +56,8 @@ Jeevi OS は **Claude、ChatGPT、Gemini、Grok** やあなたが選んだモデ
 
 | マシン | コマンドひとつで全部インストール |
 |---|---|
-| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git javis && cd javis && chmod +x install.sh && ./install.sh` |
-| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git javis; cd javis; powershell -ExecutionPolicy Bypass -File install.ps1` |
+| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi && chmod +x install.sh && ./install.sh` |
+| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi; powershell -ExecutionPolicy Bypass -File install.ps1` |
 | **Docker** | `curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml && docker compose up -d` |
 
 あとは **http://localhost:7777** を開くだけです。インストーラーは Python、サブスクリプションで動く 4 つの CLI 頭脳（`claude`、`codex`、`agy`、`grok`）と `.env` をセットアップし、サーバーを起動します。各頭脳へのサインインは **ダッシュボードの Models ページ** で行えるので、もうコマンドを打つ必要はありません。
@@ -257,17 +257,17 @@ Hostinger VPS → **Docker Manager → Compose → URL** → Hostinger 用のフ
 https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hostinger.yml
 ```
 
-**Environment** 欄に必要なのは `DOMAIN_NAME`、`JAVIS_ADMIN_USER`、`JAVIS_ADMIN_PASSWORD` の 3 項目だけです。任意で `JAVIS_AUTO_UPDATE` も指定できます（`true` にすると Jeevi が毎日自動でアップデートします）。
+**Environment** 欄に必要なのは `DOMAIN_NAME`、`JEEVI_ADMIN_USER`、`JEEVI_ADMIN_PASSWORD` の 3 項目だけです。任意で `JEEVI_AUTO_UPDATE` も指定できます（`true` にすると Jeevi が毎日自動でアップデートします）。
 
 Hostinger の Traefik が HTTPS 証明書を発行できるよう、`DOMAIN_NAME` を設定します。
-- **無料のリンク**（ドメイン購入不要）：`DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud`（ホスト名は hPanel → VPS で確認できます。例：`javis.srv1562015.hstgr.cloud`）。
+- **無料のリンク**（ドメイン購入不要）：`DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud`（ホスト名は hPanel → VPS で確認できます。例：`jeevi.srv1562015.hstgr.cloud`）。
 - **独自ドメイン：** `DOMAIN_NAME=example.com` とし、A レコードを VPS の IP に向けます。
 
 証明書の発行を 1-3 分待ってから、`https://<DOMAIN_NAME>` を開きます。
 
 **最初に一度だけ行う 3 つの手順：**
 1. **GHCR イメージを Public にする：** GitHub → リポジトリ → **Packages** → `javis-os` → *Package settings* → Visibility = **Public**。
-2. **管理者アカウントを作成する：** `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` を入力するか（推奨）、デプロイ直後にアプリを開いて自分で設定します。管理者が存在しない間は、最初にリンクを開いた人が作成できてしまいます。そのあと **2FA を有効にしてください**（[セキュリティとアカウント](../../../docs/en/14-security-and-accounts.md)）。
+2. **管理者アカウントを作成する：** `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` を入力するか（推奨）、デプロイ直後にアプリを開いて自分で設定します。管理者が存在しない間は、最初にリンクを開いた人が作成できてしまいます。そのあと **2FA を有効にしてください**（[セキュリティとアカウント](../../../docs/en/14-security-and-accounts.md)）。
 3. **Models** ページで **頭脳にサインインします**。
 
 詳細とトラブルシューティング：[DEPLOY.en.md](../../../DEPLOY.en.md)。
@@ -281,14 +281,14 @@ Hostinger の Traefik が HTTPS 証明書を発行できるよう、`DOMAIN_NAME
 
 ```bash
 # Docker required (don't have it?  curl -fsSL https://get.docker.com | sh)
-mkdir javis && cd javis
+mkdir jeevi && cd jeevi
 curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml
 
-docker compose run --rm javis claude auth login --claudeai   # sign in to Claude once (optional)
+docker compose run --rm jeevi claude auth login --claudeai   # sign in to Claude once (optional)
 docker compose up -d                                          # pull the image and run
 ```
 
-`http://<vps-ip>:7777` を開き、すぐに管理者のユーザー名とパスワード（8 文字以上）を設定します。または、環境変数に `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` をあらかじめ設定しておきます。そのあと 2FA を有効にしてください。
+`http://<vps-ip>:7777` を開き、すぐに管理者のユーザー名とパスワード（8 文字以上）を設定します。または、環境変数に `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` をあらかじめ設定しておきます。そのあと 2FA を有効にしてください。
 
 ドメインなしでリモートアクセスするには：`docker compose --profile tunnel up -d` を実行し、`docker compose logs tunnel | grep trycloudflare` で HTTPS のリンクが表示されます。
 
@@ -298,13 +298,13 @@ docker compose up -d                                          # pull the image a
 <summary><b>方法 3：Linux または macOS、Docker なし</b></summary>
 
 ```bash
-git clone https://github.com/blogminhquy/javis-os.git javis && cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi
 chmod +x install.sh && ./install.sh
 ```
 
 スクリプトが Python、Node、CLI 頭脳をインストールし、venv を作成し、起動時に立ち上がるサービスを登録して、アクセス先のアドレスを表示します。
 
-🍎 **macOS でアプリのように開く：** `JEEVI OS.app`（または `Start JEEVI OS.command`）をダブルクリックします。ログイン時に起動するには：`./bin/javis-autostart.sh install`。詳細：[bin/README.md](../../../bin/README.md)。
+🍎 **macOS でアプリのように開く：** `JEEVI OS.app`（または `Start JEEVI OS.command`）をダブルクリックします。ログイン時に起動するには：`./bin/jeevi-autostart.sh install`。詳細：[bin/README.md](../../../bin/README.md)。
 
 </details>
 
@@ -312,7 +312,7 @@ chmod +x install.sh && ./install.sh
 <summary><b>方法 4：Windows（個人のマシン）</b></summary>
 
 ```powershell
-git clone https://github.com/blogminhquy/javis-os.git javis; cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
@@ -320,23 +320,23 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 
 ```
 Run with a visible window (live log):  setup.bat
-Run silently from then on:             start-javis.vbs   (log at server\javis.log)
-Stop:                                  stop-javis.bat
+Run silently from then on:             start-jeevi.vbs   (log at server\jeevi.log)
+Stop:                                  stop-jeevi.bat
 Dashboard:                             http://localhost:7777
 ```
 
-🪟 **アプリのように開く：** 初回の実行後は **`JEEVI OS.bat`** をダブルクリックします。サーバーがバックグラウンドで起動し、ダッシュボードが **専用のウィンドウ** で、タスクバーにも独立して表示されます。ログイン時に起動するには：`javis-autostart.bat install`（解除は `uninstall`）。
+🪟 **アプリのように開く：** 初回の実行後は **`JEEVI OS.bat`** をダブルクリックします。サーバーがバックグラウンドで起動し、ダッシュボードが **専用のウィンドウ** で、タスクバーにも独立して表示されます。ログイン時に起動するには：`jeevi-autostart.bat install`（解除は `uninstall`）。
 
 </details>
 
 <details>
 <summary><b>1 台の VPS で複数の Jeevi を動かす</b></summary>
 
-Brain、設定、アカウントはインスタンスごとに完全に分離されます。インスタンス間で異なるのは `JAVIS_NAME`、`JAVIS_HOST_PORT`、`DOMAIN_NAME` の 3 つの値だけです。
+Brain、設定、アカウントはインスタンスごとに完全に分離されます。インスタンス間で異なるのは `JEEVI_NAME`、`JEEVI_HOST_PORT`、`DOMAIN_NAME` の 3 つの値だけです。
 
 - **Hostinger：** `docker-compose.hostinger.yml` を 2 つ目のスタックとしてもう一度デプロイし、この 3 項目を入力します。
 - **自前で管理する VPS：** マシン全体で共有するプロキシ `docker-compose.proxy.yml` を一度だけ起動し、各インスタンスには `docker-compose.multi.yml` で専用のフォルダを用意します。プロキシが新しいインスタンスを検出し、SSL 証明書も自動で取得します。
-- **ネイティブ：** `JAVIS_NAME=javis-shop JAVIS_PORT=7778 ./install.sh`。
+- **ネイティブ：** `JEEVI_NAME=jeevi-shop JEEVI_PORT=7778 ./install.sh`。
 
 手順の詳細：[DEPLOY.en.md](../../../DEPLOY.en.md)。
 
@@ -389,14 +389,14 @@ Jeevi を開くと、セットアップウィザードがブラウザの言語�
 
 | 変数 | 意味 | デフォルト |
 |---|---|---|
-| `JAVIS_HOST` | 待ち受けアドレス。`127.0.0.1` = このマシンのみ、`0.0.0.0` = 公開 | `127.0.0.1` |
-| `JAVIS_PORT` | ポート | `7777` |
-| `JAVIS_REQUIRE_LOGIN` | `1`/`0` でログイン必須を強制的にオン／オフ（デフォルト：公開アドレスにバインドしたときはオン） | *（自動）* |
-| `JAVIS_ADMIN_USER` / `JAVIS_ADMIN_PASSWORD` | デプロイ時に管理者を作成 | - |
-| `JAVIS_ALLOWED_HOSTS` | 許可リストに追加するホスト名（CSRF と DNS リバインディング対策） | localhost + あなたのドメイン |
-| `JAVIS_STATE_DIR` | 設定、セッション、暗号化キーの保存先 | `server/`（Docker：`/data/state`） |
+| `JEEVI_HOST` | 待ち受けアドレス。`127.0.0.1` = このマシンのみ、`0.0.0.0` = 公開 | `127.0.0.1` |
+| `JEEVI_PORT` | ポート | `7777` |
+| `JEEVI_REQUIRE_LOGIN` | `1`/`0` でログイン必須を強制的にオン／オフ（デフォルト：公開アドレスにバインドしたときはオン） | *（自動）* |
+| `JEEVI_ADMIN_USER` / `JEEVI_ADMIN_PASSWORD` | デプロイ時に管理者を作成 | - |
+| `JEEVI_ALLOWED_HOSTS` | 許可リストに追加するホスト名（CSRF と DNS リバインディング対策） | localhost + あなたのドメイン |
+| `JEEVI_STATE_DIR` | 設定、セッション、暗号化キーの保存先 | `server/`（Docker：`/data/state`） |
 | `BRAINS_DIR` | すべての Brain を収める親フォルダ | `brains/`（Docker：`/brains`） |
-| `JAVIS_ENABLE_USER_PLUGINS` | `false` で自作 Plugin をオフにします（サーバー内で本物の Python が動きます） | *（オン）* |
+| `JEEVI_ENABLE_USER_PLUGINS` | `false` で自作 Plugin をオフにします（サーバー内で本物の Python が動きます） | *（オン）* |
 | `TTS_VOICE` / `TTS_RATE` | Edge TTS の声と速度 | `en-US-EmmaMultilingualNeural` / `+5%` |
 
 ---
@@ -407,7 +407,7 @@ Jeevi を開くと、セットアップウィザードがブラウザの言語�
 - **2FA（TOTP）**、ログイン試行回数の制限、8 文字以上のパスワード、HTTPS 下での `Secure` Cookie、30 日で期限切れになるセッション。
 - **CSRF と DNS リバインディング対策**：不明なオリジンからの書き込みリクエストはすべて拒否されます。
 - **シークレットは暗号化** して `settings.json` に保存されます（API キー、OAuth トークン、ボットトークン）。暗号化キーはマシンごとに異なります。
-- **自作 Plugin はデフォルトで読み込まれますが、アプリでオンにするまで各 Plugin はオフのまま** です。すべて止めるには `JAVIS_ENABLE_USER_PLUGINS=false` を設定します。
+- **自作 Plugin はデフォルトで読み込まれますが、アプリでオンにするまで各 Plugin はオフのまま** です。すべて止めるには `JEEVI_ENABLE_USER_PLUGINS=false` を設定します。
 - **接続の権限はモデルではなくハブが強制します**：読み取り専用のアカウントを使って送信、支払い、公開を行うことはできません。
 
 脆弱性を見つけた場合は、公開の Issue を立てるのではなく [SECURITY.md](../../../SECURITY.md) の手順に従ってください。
@@ -416,7 +416,7 @@ Jeevi を開くと、セットアップウィザードがブラウザの言語�
 
 ## 🔄 アップデート
 
-アプリ内では **Settings → Updates → Update now** から。進行状況バーが表示され、新しいビルドが壊れていたときのためのロールバックボタンもあります。VPS では `cd javis && ./update.sh` を実行します（新しいイメージを取得して再起動します。ボリューム内のデータは保持されます）。
+アプリ内では **Settings → Updates → Update now** から。進行状況バーが表示され、新しいビルドが壊れていたときのためのロールバックボタンもあります。VPS では `cd jeevi && ./update.sh` を実行します（新しいイメージを取得して再起動します。ボリューム内のデータは保持されます）。
 
 ---
 
@@ -425,7 +425,7 @@ Jeevi を開くと、セットアップウィザードがブラウザの言語�
 | 症状 | 対処 |
 |---|---|
 | CLI はインストール済みなのに、Models ページに未インストールと表示される | **Jeevi を再起動してください**：実行中のプロセスは起動時の PATH を保持しています。 |
-| ポート 7777 が使用中で、新しいビルドが起動しない | 先に古いプロセスを停止し（`stop-javis.bat`、または PID を kill）、もう一度起動します。 |
+| ポート 7777 が使用中で、新しいビルドが起動しない | 先に古いプロセスを停止し（`stop-jeevi.bat`、または PID を kill）、もう一度起動します。 |
 | Hostinger がイメージを取得できない | GHCR パッケージを **Public** にし、GitHub Action のビルド完了を待ちます。 |
 | 頭脳がサインインしていないと言う | **Models** → そのプロバイダーのカード → サインイン。 |
 
@@ -510,6 +510,6 @@ Jeevi OS は無料のオープンソースですが、いまもコードを書�
 <div align="center">
 <br>
 <a href="https://nguyenminhquy.com"><img src="../../assets/author.webp" width="96" height="96" alt="Minh Quý"></a><br>
-<b><a href="https://javisos.com">javisos.com</a></b><br>
+<b><a href="https://jeevios.com">jeevios.com</a></b><br>
 <b><a href="https://nguyenminhquy.com">Minh Quý</a></b> がベトナムで ☕ とともに制作
 </div>

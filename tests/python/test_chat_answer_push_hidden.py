@@ -16,7 +16,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-chat-answer-push-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-chat-answer-push-")
 
 import inbox  # noqa: E402
 import main  # noqa: E402

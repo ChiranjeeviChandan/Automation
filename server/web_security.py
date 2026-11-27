@@ -18,7 +18,7 @@ Lớp phòng thủ (tách khỏi main.py để test được mà không nạp c�
     miền lạ (dấu hiệu DNS-rebinding) bị chặn. Khi ĐÃ bật auth thì bỏ qua bước Host (tránh khoá nhầm
     deploy sau reverse-proxy tên miền chưa khai) - lúc đó cookie + Origin-check đã đủ.
 
-Allowlist: localhost/127.0.0.1/::1 + tên miền custom (settings.domain.custom) + env JAVIS_ALLOWED_HOSTS.
+Allowlist: localhost/127.0.0.1/::1 + tên miền custom (settings.domain.custom) + env JEEVI_ALLOWED_HOSTS.
 """
 from __future__ import annotations
 
@@ -143,7 +143,7 @@ def _compute_hosts() -> set:
             hosts.add(dom)
     except Exception:
         pass
-    for h in (os.getenv("JAVIS_ALLOWED_HOSTS", "") or "").split(","):
+    for h in (os.getenv("JEEVI_ALLOWED_HOSTS", "") or "").split(","):
         h = host_only(h)
         if h:
             hosts.add(h)

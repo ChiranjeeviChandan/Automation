@@ -29,11 +29,11 @@ import tempfile
 import time
 from pathlib import Path
 
-STATE = Path(tempfile.mkdtemp(prefix="javis-wh-m4-"))
-os.environ["JAVIS_STATE_DIR"] = str(STATE)
-os.environ["JAVIS_NO_REAL_JUDGE_ENGINE"] = "1"
-os.environ["JAVIS_WH_NO_NETWORK"] = "1"
-os.environ.pop("JAVIS_WH_MASTER_KEY", None)
+STATE = Path(tempfile.mkdtemp(prefix="jeevi-wh-m4-"))
+os.environ["JEEVI_STATE_DIR"] = str(STATE)
+os.environ["JEEVI_NO_REAL_JUDGE_ENGINE"] = "1"
+os.environ["JEEVI_WH_NO_NETWORK"] = "1"
+os.environ.pop("JEEVI_WH_MASTER_KEY", None)
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -96,17 +96,17 @@ try:
 except wsec.SecretError as e:
     lost_ok = "missing" in str(e)
 check("a lost key gives a clear error, never a wrong value", lost_ok)
-os.environ["JAVIS_WH_MASTER_KEY"] = base64.b64encode(b"k" * 32).decode()
+os.environ["JEEVI_WH_MASTER_KEY"] = base64.b64encode(b"k" * 32).decode()
 ve = wsec.Vault(Path(tempfile.mkdtemp(prefix="m4-env-")))
 ve.put("a/b", "v1")
-check("JAVIS_WH_MASTER_KEY: used instead of a key file", ve.get("a/b") == "v1" and not (ve.dir / "webhook_keys.json").exists())
+check("JEEVI_WH_MASTER_KEY: used instead of a key file", ve.get("a/b") == "v1" and not (ve.dir / "webhook_keys.json").exists())
 try:
     ve.rotate()
     env_rot = False
 except wsec.SecretError as e:
     env_rot = "rotate it there" in str(e)
-check("JAVIS_WH_MASTER_KEY: rotation refused (rotate the variable)", env_rot)
-del os.environ["JAVIS_WH_MASTER_KEY"]
+check("JEEVI_WH_MASTER_KEY: rotation refused (rotate the variable)", env_rot)
+del os.environ["JEEVI_WH_MASTER_KEY"]
 check("secret names are restricted (no spaces or newlines)", wsec.NAME_RE.match("a b") is None and wsec.NAME_RE.match("a\nb") is None)
 
 # ---- 2. signatures ----

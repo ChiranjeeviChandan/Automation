@@ -50,9 +50,9 @@ check("the ring sits right after the Effort chip, hidden until a plan brain is c
 check("the popover lives next to the Effort popover", /id="effPop"[^>]*><\/div>\s*<div class="eff-pop lim-pop" id="limitPop"/.test(html));
 check("plan-limit.js is loaded", /<script src="\/static\/plan-limit\.js\?v=\d+"><\/script>/.test(html));
 check("the picker tells the ring which brain and model are in use",
-  picker.indexOf("JavisPlanLimit.setProvider(eff.provider, eff.model)") !== -1);
+  picker.indexOf("JeeviPlanLimit.setProvider(eff.provider, eff.model)") !== -1);
 // Owner's report 20/11/2026: red at 66% and 58% after a refusal on one model, still red after switching to another.
-check("picking a model re-reads the meters at once", /renderBar\(\);[^\n]*\n[^\n]*\n\s*try \{ if \(window\.JavisPlanLimit\) window\.JavisPlanLimit\.refresh\(\)/.test(picker));
+check("picking a model re-reads the meters at once", /renderBar\(\);[^\n]*\n[^\n]*\n\s*try \{ if \(window\.JeeviPlanLimit\) window\.JeeviPlanLimit\.refresh\(\)/.test(picker));
 check("a new model makes the ring fetch again", /var changed = [^;]*\(m \|\| ""\) !== model/.test(src) && src.indexOf("(!data || changed)) refresh(true)") !== -1);
 check("an alias matches every version of its family", L.sameModel("opus", "claude-opus-5-5") && L.sameModel("fable", "fable-5-1")
   && L.sameModel("claude-opus-5-5[1m]", "opus-5-5"));
@@ -62,7 +62,7 @@ check("another model's refusal is not", !L.hetApplies({ model: "fable-5-1" }, "o
 check("a narrowed refusal needs the same model", !L.hetApplies({ model: "fable", scoped: true }, "")
   && L.hetApplies({ model: "fable", scoped: true }, "fable-5-1"));
 check("another model's refusal falls back to the meters", src.indexOf("own ? d.meter_max : d.max") !== -1);
-check("each finished turn re-reads the meters", app.indexOf("window.JavisPlanLimit.refresh()") !== -1);
+check("each finished turn re-reads the meters", app.indexOf("window.JeeviPlanLimit.refresh()") !== -1);
 check("numbers come from GET /plan-limits", src.indexOf('fetch("/plan-limits"') !== -1);
 check("CSS colours the ring green, amber, red", ['[data-muc="ok"]', '[data-muc="warn"]', '[data-muc="bad"]'].every(k => css.indexOf(".cp-limit" + k) !== -1));
 const keys = ["lim.title", "lim.session", "lim.week", "lim.used", "lim.reset_hm", "lim.reset_m", "lim.reset_at", "lim.fresh",

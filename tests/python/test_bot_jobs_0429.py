@@ -4,7 +4,7 @@ Owner, 31/10/2026: the Tasks page listed every job under Jeevi Core, while most 
 bot. Expected:
   - a dedicated bot's turn carries `bot_id` in turn_context (a string, so a hook cannot edit it for the next reader);
   - javis_schedule stamps the bot on a reminder (bot_id in POST /reminders) and on a loop (bot_id: in frontmatter),
-    javis_task stamps a Kanban job created_by "bot:<id>"; the owner's own turns stamp nothing;
+    jeevi_task stamps a Kanban job created_by "bot:<id>"; the owner's own turns stamp nothing;
   - reminders keep and show bot_id; loops keep it across a save; repeat hints still see bot jobs;
   - older jobs are guessed from the bot's turn log: created during exactly one bot turn (same chat when the job names
     one), a loop by the chat it reports to on the day it was saved; two bots at once or no turn = Jeevi Core; a guess
@@ -63,7 +63,7 @@ cur["bot_id"] = "bot_evil"
 check("the bot of the turn is readable, and a reader cannot edit it", turn_context.current()["bot_id"] == "bot_vu")
 
 # ---- javis_schedule ----
-sched = load_plugin("javis-schedule")
+sched = load_plugin("jeevi-schedule")
 check("javis_schedule reads the bot of the turn", sched._turn_bot() == "bot_vu")
 sent = {}
 
@@ -74,7 +74,7 @@ async def fake_post(payload, brain_name=""):
 
 
 sched._post_reminder = fake_post
-vault = Path(tempfile.mkdtemp(prefix="javis-botjobs-"))
+vault = Path(tempfile.mkdtemp(prefix="jeevi-botjobs-"))
 asyncio.run(sched._do_create(str(vault), {"name": "Báo cáo", "prompt": "Gửi báo cáo", "schedule": "0 7 * * *"}))
 check("a reminder made in a bot turn carries bot_id", sent.get("bot_id") == "bot_vu", sent)
 asyncio.run(sched._do_create(str(vault), {"name": "Soi đơn", "prompt": "Soi đơn mới", "schedule": "2 tiếng",
@@ -82,8 +82,8 @@ asyncio.run(sched._do_create(str(vault), {"name": "Soi đơn", "prompt": "Soi đ
 lp_text = (vault / "Jeevi" / "loops" / "soi-don.md").read_text(encoding="utf-8")
 check("a loop made in a bot turn carries bot_id in its frontmatter", "bot_id: \"bot_vu\"" in lp_text, lp_text)
 
-# ---- javis_task ----
-task_pl = load_plugin("javis-task")
+# ---- jeevi_task ----
+task_pl = load_plugin("jeevi-task")
 got = {}
 
 
@@ -141,9 +141,9 @@ for i in range(3):
 check("repeat hints still see jobs a bot made", bool(store_hint.repeat_hints(hint_root)), store_hint.repeat_hints(hint_root))
 
 # ---- guessing older jobs from the turn log ----
-brain = Path(tempfile.mkdtemp(prefix="javis-botjobs-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="jeevi-botjobs-brain-"))
 root = str(brain.resolve())
-other = Path(tempfile.mkdtemp(prefix="javis-botjobs-other-"))
+other = Path(tempfile.mkdtemp(prefix="jeevi-botjobs-other-"))
 roots = {"main": root, "other": str(other.resolve())}
 bots = [{"id": "bot_vu", "name": "Jeevi Vũ", "icon": "headset", "brain": "main", "agent": {"brain": "main", "slug": "vu"}},
         {"id": "bot_shop", "name": "Shop", "brain": "main", "agent": {"brain": "main", "slug": "ghost"}},

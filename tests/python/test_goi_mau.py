@@ -146,7 +146,7 @@ with tempfile.TemporaryDirectory() as td:
         du = dung_zip()
 
         # --------------- 1. Soi: nói đúng gói có gì, TRƯỚC khi cài gì ---------------
-        r = pack_install.soi(du, "javis-tinh-gia.zip")
+        r = pack_install.soi(du, "jeevi-tinh-gia.zip")
         check("gói đọc được bằng bản Jeevi hiện tại", r.get("ok") is True)
         check("id khớp tên khai trong manifest", r.get("id") == PACK_ID)
         check("xếp đúng bậc code vì có tệp .py", r.get("tier") == "code")
@@ -195,7 +195,7 @@ with tempfile.TemporaryDirectory() as td:
 
         # --------------- 5. Cài lại rồi gỡ khi CHƯA sửa: phải sạch bong ---------------
         shutil.rmtree(brain / "skills" / "dat-gia-ban")
-        r2 = pack_install.soi(du, "javis-tinh-gia.zip")
+        r2 = pack_install.soi(du, "jeevi-tinh-gia.zip")
         pack_install.cai(r2["staging_id"], r2["sha256"], enable=True, brain_root=str(brain))
         check("cài lại lần hai được", sk.is_file())
         asyncio.run(pack_install.go(PACK_ID))

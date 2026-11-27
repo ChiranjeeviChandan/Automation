@@ -10,7 +10,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zalo-self-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zalo-self-")
 import zalo_personal_channel as zc  # noqa: E402
 
 _fails = []
@@ -22,7 +22,7 @@ def check(name, ok):
         _fails.append(name)
 
 
-root = Path(tempfile.mkdtemp(prefix="javis-self-id-test-"))
+root = Path(tempfile.mkdtemp(prefix="jeevi-self-id-test-"))
 zc._SELF_ID_PATH = root / "self-ids.json"
 conn = "conn-lynx"
 own = "912345678901234567"

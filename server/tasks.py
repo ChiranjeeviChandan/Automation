@@ -151,7 +151,7 @@ def workflow_stops_for_owner(event: dict) -> bool:
 
 
 EXECUTION_MODES = {"suggest", "auto", "full"}
-# Metadata key for done-criteria handed in with the job (issue 1481, `javis_task` op=add `acceptance`).
+# Metadata key for done-criteria handed in with the job (issue 1481, `jeevi_task` op=add `acceptance`).
 FIXED_ACCEPTANCE = "acceptance_fixed"
 MAX_FIXED_ACCEPTANCE = 20
 # Steps set aside for a person (field report 2026-11-21 on 0.408, still on main at 0.617.1): the specifier wrote
@@ -318,7 +318,7 @@ class TasksFeature:
         self.store = TaskStore(state_dir / "kanban.sqlite3")
         # Sổ "làm đúng một lần" (0.238.0) nằm cạnh kho việc: cùng thư mục trạng thái, sao lưu cùng nhau.
         once_ledger.configure(state_dir / "once_ledger.sqlite3")
-        self.max_workers = max(1, min(8, int(os.getenv("JAVIS_KANBAN_MAX_WORKERS", "2"))))
+        self.max_workers = max(1, min(8, int(os.getenv("JEEVI_KANBAN_MAX_WORKERS", "2"))))
         self._workers: dict[str, asyncio.Task] = {}
         self._worker_ids: dict[str, str] = {}
         self._worker_brains: dict[str, str] = {}
@@ -496,7 +496,7 @@ class TasksFeature:
                     print(f"[kanban boot reclaim] {type(ex).__name__}: {ex}", file=sys.stderr)
         self._closing = False
         self._dispatcher_task = asyncio.create_task(
-            self._dispatcher_loop(), name="javis-kanban-dispatcher"
+            self._dispatcher_loop(), name="jeevi-kanban-dispatcher"
         )
         self.wake()
 
@@ -632,7 +632,7 @@ class TasksFeature:
         root = str(claimed["brain_root"])
         worker = asyncio.create_task(
             self._run_worker(claimed, worker_id),
-            name=f"javis-task-{task_id}",
+            name=f"jeevi-task-{task_id}",
         )
         self._workers[task_id] = worker
         self._worker_ids[task_id] = worker_id
@@ -667,7 +667,7 @@ class TasksFeature:
         tid = str(task["id"])
         root = str(task["brain_root"])
         heartbeat = asyncio.create_task(
-            self._heartbeat(tid, worker_id), name=f"javis-heartbeat-{tid}"
+            self._heartbeat(tid, worker_id), name=f"jeevi-heartbeat-{tid}"
         )
         final_task: Optional[dict] = None
         try:
@@ -940,8 +940,8 @@ class TasksFeature:
             tag=f"dispatch:{task['id']}:{tag_suffix}",
             allowed_tools=allowed_tools,
         )
-        cli.javis_vault = root
-        cli.javis_mode = mode
+        cli.jeevi_vault = root
+        cli.jeevi_mode = mode
         if self.deps.apply_mcp and mode in ("auto", "full"):
             try:
                 self.deps.apply_mcp(cli, mode=mode, brain=root)
@@ -959,13 +959,13 @@ class TasksFeature:
         if spec:
             cli = self.deps.aux_swap_spec(cli, mode, cli.tag, spec)
             try:
-                cli.javis_agent_spec = spec
+                cli.jeevi_agent_spec = spec
             except Exception:
                 pass
         else:
             cli = aux_engine.apply(self.deps, cli, mode=mode, tag=cli.tag)
         try:
-            # Trần chung cho fork nền (mặc định không giới hạn từ 2026-11-07, env JAVIS_BG_MAX_WALL_S) - việc Kanban
+            # Trần chung cho fork nền (mặc định không giới hạn từ 2026-11-07, env JEEVI_BG_MAX_WALL_S) - việc Kanban
             # thật có thể chạy 30-60 phút, 600s cũ chặt ngang giữa chừng.
             cli.max_wall_s = aux_engine.bg_max_wall_s()
         except Exception:
@@ -1149,14 +1149,14 @@ plainly that acting on its own is allowed; otherwise auto, so the kernel stops i
 
         Vì sao phải kẹp, và đây là hai lỗi tách rời nhau:
 
-        1. NÓI MỘT ĐẰNG CHẠY MỘT NẺO. `javis_task` tạo việc mức `suggest` rồi báo lại với
+        1. NÓI MỘT ĐẰNG CHẠY MỘT NẺO. `jeevi_task` tạo việc mức `suggest` rồi báo lại với
            người dùng đúng chữ "chỉ đọc và đề xuất". Nhưng `prepared()` ghi đè execution_mode
            bằng thứ specifier trả về, mà prompt của specifier lại dặn "files/research/mcp-read/
            code dùng auto" - nên gần như MỌI việc tạo từ chat đều lặng lẽ chạy ở mức auto (được
            ghi file trong brain). Người dùng được hứa một mức và nhận một mức khác.
 
         2. MỘT MODEL TỰ CẤP `full`. `full` là mức tháo sạch rào (`_lane_tools` trả None) để
-           việc tự thao tác thật ra ngoài. `javis_task` cố ý TỪ CHỐI tạo mức đó, và CLAUDE.md
+           việc tự thao tác thật ra ngoài. `jeevi_task` cố ý TỪ CHỐI tạo mức đó, và CLAUDE.md
            ghi rõ full "phải do chính người dùng đặt ở trang Việc". Vậy mà specifier - cũng là
            một model - chỉ cần trả về chuỗi "full" là có, chốt chặn duy nhất là một câu dặn
            trong prompt cộng một bộ lọc từ khoá. Kẹp trần biến luật đó thành luật của MÃ.
@@ -1408,7 +1408,7 @@ plainly that acting on its own is allowed; otherwise auto, so the kernel stops i
             )
 
         cli = self._base_cli(task, tools, mode, "execute")
-        if (task.get("metadata") or {}).get("effort") == "light" and not getattr(cli, "javis_agent_spec", None):
+        if (task.get("metadata") or {}).get("effort") == "light" and not getattr(cli, "jeevi_agent_spec", None):
             # An assistant's job keeps the assistant's own level (25/11/2026); only a plain job is made lighter.
             self._lighten(cli)
         # `disallowed` rỗng ở mức full: gán một danh sách rỗng vẫn khác gán None ở chỗ khác
@@ -1477,7 +1477,7 @@ and how you verified it. Write the report in the language of the goal.
 
     @staticmethod
     def _muc_chay(tran, xin) -> str:
-        """Mức quyền việc chạy thật. Người dùng đã đặt `full` lúc giao việc (qua javis_task
+        """Mức quyền việc chạy thật. Người dùng đã đặt `full` lúc giao việc (qua jeevi_task
         hay trang Việc) thì GIỮ full: specifier là một model, nó không bao giờ đề xuất full,
         nên kẹp theo nó là việc "toàn quyền, tự gửi" lặng lẽ tụt xuống auto rồi dừng lại xin
         phép ở bước ra ngoài - đúng ngược lời đã hứa với người dùng. Mọi mức khác vẫn kẹp
@@ -1994,7 +1994,7 @@ Return ONLY one line of JSON, no markdown:
 
     async def resolve_acceptance(self, task_id: str, decision: str, brain: str = "", note: str = "") -> dict:
         """The owner's button on a job the acceptance check failed: "fix" (run again with the checker's reason) or
-        "accept" (keep the result as done). `note` (fix only, from `javis_task` op=fix): the owner's extra
+        "accept" (keep the result as done). `note` (fix only, from `jeevi_task` op=fix): the owner's extra
         instruction, read by the redo as a follow-up."""
         task = await asyncio.to_thread(self.store.get_task, task_id)
         if not task or (brain and task.get("brain_root") != self._ensure(brain)):
@@ -2273,7 +2273,7 @@ Return ONLY one line of JSON, no markdown:
 
     async def cancel(self, task_id: str, brain: str = "", reason: str = "", by: str = "owner") -> dict:
         """Cancel a job: a running one has its worker stopped (the worker records `cancelled` as it stops), any other
-        is moved to `cancelled`. One path for the Tasks page (`POST /kanban/task/cancel`) and `javis_task`
+        is moved to `cancelled`. One path for the Tasks page (`POST /kanban/task/cancel`) and `jeevi_task`
         op=cancel. `brain` empty skips the brain check. `reason` and `by` only extend the cancel line in the job's log
         (and a stopped job's reason); without them the line is exactly the page's.
         Errors carry `code`: "not_found", "finished" (done, cancelled or archived) or "refused"."""
@@ -2352,7 +2352,7 @@ Return ONLY one line of JSON, no markdown:
                 self._verifying.discard(task_id)
                 await self._asnapshot(str(task.get("brain_root") or ""))
 
-        job = asyncio.create_task(run(), name=f"javis-verify-{task_id}")
+        job = asyncio.create_task(run(), name=f"jeevi-verify-{task_id}")
         self._verify_jobs.add(job)                      # a bare create_task can be garbage-collected mid-run
         job.add_done_callback(self._verify_jobs.discard)
         return {"ok": True, "started": True}
@@ -2360,7 +2360,7 @@ Return ONLY one line of JSON, no markdown:
     async def answer(self, task_id: str, text: str, brain: str = "", by: str = "owner") -> dict:
         """Chủ trả lời câu hỏi của một việc đang chờ: việc về hàng đợi và chạy tiếp với câu trả lời.
 
-        Một cửa cho cả trang Việc (`POST /kanban/task/answer`) lẫn tool `javis_task` op=answer,
+        Một cửa cho cả trang Việc (`POST /kanban/task/answer`) lẫn tool `jeevi_task` op=answer,
         nên chat web, Telegram hay Zalo đi cùng một đường. `brain` rỗng thì không kiểm brain
         (tool đã tự kiểm theo vault của nó)."""
         task = await asyncio.to_thread(self.store.get_task, task_id)
@@ -2662,9 +2662,9 @@ Return ONLY one line of JSON, no markdown:
 
 
 # Bản đang chạy, để CODE TRONG CÙNG TIẾN TRÌNH gọi tới hàng đợi mà không phải đi vòng qua HTTP.
-# Người dùng đầu tiên: plugin `javis-task` - nó chạy in-process nên gọi thẳng `enqueue()` được.
+# Người dùng đầu tiên: plugin `jeevi-task` - nó chạy in-process nên gọi thẳng `enqueue()` được.
 #
-# Vì sao không cho plugin POST /kanban/task như javis-schedule vẫn POST /reminders: đường đó đòi
+# Vì sao không cho plugin POST /kanban/task như jeevi-schedule vẫn POST /reminders: đường đó đòi
 # đăng nhập, và cách duy nhất để mở là thêm nó vào `_AUTH_LOCAL_EXACT` (danh sách miễn auth cho
 # localhost). Làm vậy nghĩa là BẤT KỲ tiến trình nào trên cùng máy chủ cũng giao được việc cho
 # Jeevi mà không cần credential - một lỗ hổng thật, chỉ để tránh ba dòng code này.

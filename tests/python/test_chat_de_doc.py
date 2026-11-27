@@ -28,7 +28,7 @@ import os
 import re
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-dedoc-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-dedoc-"))
 
 import channel_context  # noqa: E402
 import context_compiler  # noqa: E402

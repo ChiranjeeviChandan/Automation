@@ -103,7 +103,7 @@ số hạn mức, và trang Giá gói lẫn FAQ đang trả HTTP 500 tại thờ
 2. **Không có nút bấm inline, không có callback.** Bảng chọn provider và lưới model của
    `/model`, bảng chọn brain của `/brain` đều dựa vào `callback_query`. Trên Zalo phải hạ
    xuống **danh sách đánh số** rồi đọc con số ở lượt sau. Jeevi đã có sẵn đường này cho
-   khối `JAVIS_ASK`, tái dùng chứ đừng viết bản thứ hai.
+   khối `JEEVI_ASK`, tái dùng chứ đừng viết bản thứ hai.
 3. **Trần chữ 2000 chứ không phải 4096.** Hằng số chia tin phải theo kênh.
 4. **Không có `sendDocument`.** PDF, xlsx, docx không có cửa gửi ra. Đây là khoảng hụt
    chức năng lớn nhất so với Telegram, phải nói thẳng trong tài liệu người dùng chứ
@@ -273,7 +273,7 @@ Hết phase này là chủ nhắn cho bot Zalo và Jeevi trả lời bằng đú
 
 Bộ lệnh cho Zalo: `/help`, `/status`, `/stop`, `/reset`, `/retry`, `/model`, `/brain`,
 `/notes`, `/skills`. `/model` và `/brain` vẽ danh sách đánh số thay cho lưới nút, đọc
-con số ở lượt kế. Khối `JAVIS_ASK` dùng lại đường hạ cấp sẵn có.
+con số ở lượt kế. Khối `JEEVI_ASK` dùng lại đường hạ cấp sẵn có.
 
 Phần Telegram của chuyện này **đã làm trước, ở v0.26.4** vì nó độc lập với Zalo: tin
 trạng thái gửi im lặng, không xoá, chốt thành dòng vết công cụ. Hàm dựng dòng vết

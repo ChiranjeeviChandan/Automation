@@ -34,7 +34,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-tgsid-test-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-tgsid-test-")
 
 import main                     # noqa: E402
 from sessions import get_store  # noqa: E402
@@ -49,8 +49,8 @@ def check(name, cond, them=""):
         _fails.append(name)
 
 
-BRAIN = tempfile.mkdtemp(prefix="javis-tgsid-brain-")
-BRAIN2 = tempfile.mkdtemp(prefix="javis-tgsid-brain2-")
+BRAIN = tempfile.mkdtemp(prefix="jeevi-tgsid-brain-")
+BRAIN2 = tempfile.mkdtemp(prefix="jeevi-tgsid-brain2-")
 CHAT = "999000111"
 store = get_store()
 

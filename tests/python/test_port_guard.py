@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "server"))
 import _paths  # noqa: E402,F401
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-port-guard-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-port-guard-")
 import port_guard as pg  # noqa: E402
 import updater  # noqa: E402
 
@@ -46,11 +46,11 @@ check("a test script is not", pg.server_launch(["tests/python/test_x.py"]) is No
 
 # --- who is an orphan ---
 check("uvicorn from this folder is a Jeevi server",
-      pg.is_javis_server("/v/bin/python -m uvicorn main:app --port 7777", SRV))
-check("uvicorn from another checkout is not", not pg.is_javis_server("python -m uvicorn main:app", "/elsewhere"))
-check("another program is not", not pg.is_javis_server("cloudflared tunnel run", SRV))
-check("launchd copy is recognised", pg.managed_by_launchd({"XPC_SERVICE_NAME": "com.javis.os"}))
-check("custom label", pg.managed_by_launchd({"XPC_SERVICE_NAME": "x.j", "JAVIS_LAUNCHD_LABEL": "x.j"}))
+      pg.is_jeevi_server("/v/bin/python -m uvicorn main:app --port 7777", SRV))
+check("uvicorn from another checkout is not", not pg.is_jeevi_server("python -m uvicorn main:app", "/elsewhere"))
+check("another program is not", not pg.is_jeevi_server("cloudflared tunnel run", SRV))
+check("launchd copy is recognised", pg.managed_by_launchd({"XPC_SERVICE_NAME": "com.jeevi.os"}))
+check("custom label", pg.managed_by_launchd({"XPC_SERVICE_NAME": "x.j", "JEEVI_LAUNCHD_LABEL": "x.j"}))
 check("terminal copy is not managed", not pg.managed_by_launchd({}))
 
 orphan = [(68134, "/v/bin/python -m uvicorn main:app --port 7777", SRV)]
@@ -78,7 +78,7 @@ with patch.object(pg, "listener_pids", return_value=[68134]), \
         patch.object(pg, "process_command", return_value="python -m uvicorn main:app"), \
         patch.object(pg, "process_cwd", return_value=SRV), \
         patch.object(pg, "_stop", side_effect=lambda pid: sock.close()) as stop:
-    r = pg.claim_port(argv, {"XPC_SERVICE_NAME": "com.javis.os"}, lines.append)
+    r = pg.claim_port(argv, {"XPC_SERVICE_NAME": "com.jeevi.os"}, lines.append)
 check("managed copy takes the port over from an orphan", r == "took-over" and stop.call_args[0][0] == 68134, r)
 
 free = socket.socket()
@@ -90,13 +90,13 @@ env = {}
 pg.claim_port(["uvicorn", "main:app", "--port", str(fport)], env)
 check("second import in the same process is skipped",
       pg.claim_port(["uvicorn", "main:app", "--port", str(busy)], env) == "skipped")
-check("JAVIS_PORT_GUARD=0 turns it off", pg.claim_port(argv, {"JAVIS_PORT_GUARD": "0"}) == "skipped")
+check("JEEVI_PORT_GUARD=0 turns it off", pg.claim_port(argv, {"JEEVI_PORT_GUARD": "0"}) == "skipped")
 check("main.py calls the guard before its first other import",
       (ROOT / "server" / "main.py").read_text(encoding="utf-8").split("import brain_seed_i18n")[0]
       .rstrip().endswith("port_guard.claim_port()"))
 
 # --- updater: our plist on disk means launchd mode ---
-home = Path(tempfile.mkdtemp(prefix="javis-home-"))
+home = Path(tempfile.mkdtemp(prefix="jeevi-home-"))
 agents = home / "Library" / "LaunchAgents"
 agents.mkdir(parents=True)
 plist = agents / f"{updater.LAUNCHD_LABEL}.plist"

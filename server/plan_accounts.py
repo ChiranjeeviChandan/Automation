@@ -50,11 +50,11 @@ _SHARED = {"codex": ("*.toml",), "grok": ("config.toml",), "claude": ("settings.
            "agy": (".gemini/config/mcp_config.json", ".gemini/antigravity-cli/mcp_config.json")}
 # Claude keeps user-scope MCP servers (added through Claude Code's own MCP, `--scope user`) in `.claude.json` NEXT TO the
 # config folder, together with that login's account data. Only its `mcpServers` list is carried over (0.355.0).
-_MARK = ".javis-signed-in"
+_MARK = ".jeevi-signed-in"
 # 2026-11-22 (owner): an extra Claude account signs in with a long-lived token from `claude setup-token`, like account 1
 # (claude_auth.TOKEN), so its sign-in never runs out midway. The token lives in the account's own folder, encrypted, so
 # it goes with the folder when the account is removed.
-_CLAUDE_TOKEN = ".javis-claude-token.json"
+_CLAUDE_TOKEN = ".jeevi-claude-token.json"
 
 
 def supported(provider: str) -> bool:
@@ -538,7 +538,7 @@ def _claude_use(engine, folder) -> None:
     engine.claude_account_token = claude_token(folder) if folder else ""
     # Wrapped once PER INSTANCE: background work copies the chat's engine (copy.copy) for a second account, and the
     # copy must build options from its own attributes, not through the original's closure.
-    if getattr(engine, "_javis_wrap_owner", None) is engine:
+    if getattr(engine, "_jeevi_wrap_owner", None) is engine:
         return
     cls_opts = getattr(type(engine), "_options", None)
     if cls_opts is None:
@@ -562,4 +562,4 @@ def _claude_use(engine, folder) -> None:
         return o
 
     engine._options = _options
-    engine._javis_wrap_owner = engine
+    engine._jeevi_wrap_owner = engine

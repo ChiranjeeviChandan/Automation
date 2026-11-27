@@ -103,7 +103,7 @@ async def _hear(url: str) -> dict:
         return {"error": _why({"ly_do": "thieu_key"})}
     name = url.split("?", 1)[0].rsplit("/", 1)[-1] or "voice.aac"
     try:
-        with tempfile.TemporaryDirectory(prefix="javis-zvoice-") as d:
+        with tempfile.TemporaryDirectory(prefix="jeevi-zvoice-") as d:
             saved, why = await zalo_attachments.fetch_file({"url": url, "name": name}, Path(d), MAX_BYTES)
             if not saved:
                 return {"error": f"không tải được tin thoại: {why}"}

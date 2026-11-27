@@ -64,7 +64,7 @@ __init__(system_prompt, cwd, tag,       giữ nguyên chữ ký
 cancel_all(tag)                         registry client theo tag -> client.interrupt()
 ```
 
-Chọn engine bằng env `JAVIS_CLAUDE_ENGINE=sdk|cli` (mặc định `cli`). `find_claude_cli()` vẫn
+Chọn engine bằng env `JEEVI_CLAUDE_ENGINE=sdk|cli` (mặc định `cli`). `find_claude_cli()` vẫn
 là điều kiện khả dụng chung; SDK không thấy CLI thì fallback `cli` và log rõ.
 
 Quyền 3 mức map vào `can_use_tool` (thay cho allowedTools tĩnh khi chạy SDK):
@@ -139,12 +139,12 @@ Hub HTTP giữ nguyên cho Codex + engine API.
   không WinError 206; (7) first-text SDK 3.6s NHANH HƠN CLI Popen 4.0s.
 - **Phase 1**: `server/claude_sdk_engine.py` (ClaudeSDK cùng hợp đồng ClaudeCLI, map_message
   pure test được offline, watchdog idle + max_wall_s parity, registry cancel theo họ tag).
-  Factory `claude_cli.claude_engine()` + env `JAVIS_CLAUDE_ENGINE=sdk|cli` (mặc định cli);
+  Factory `claude_cli.claude_engine()` + env `JEEVI_CLAUDE_ENGINE=sdk|cli` (mặc định cli);
   12 call site (main/learn/tasks/reminders/self_improve) đã qua factory. `cancel_all` ngắt
   cả hai engine.
 - **Phase 2**: fork nền có `allowed_tools` chạy `permission_mode=default` + callback
   `can_use_tool`: tool ngoài whitelist bị TỪ CHỐI per-call (pattern fnmatch cho
-  `mcp__javis__*`), audit JSONL tại `STATE_DIR/logs/sdk_tool_audit.jsonl`. Smoke thật:
+  `mcp__jeevi__*`), audit JSONL tại `STATE_DIR/logs/sdk_tool_audit.jsonl`. Smoke thật:
   fork chỉ-đọc được lệnh "tạo file bằng mọi cách" → file KHÔNG được tạo; cancel 0.6s.
 - **Dependency**: package `mcp` (dep của SDK) kéo starlette 1.x gãy fastapi 0.115 → ghim
   `starlette>=0.37.2,<0.39` + `sse-starlette>=1.6.1,<3` trong requirements.txt (pip check sạch).
@@ -152,19 +152,19 @@ Hub HTTP giữ nguyên cho Codex + engine API.
 
 **2026-07-12 (v0.9.36) - Phase 3-4 xong, thêm sdk-loops + e2e bake:**
 
-- **sdk-loops** (bước chuyển tiếp thận trọng của Phase 2): `JAVIS_CLAUDE_ENGINE=sdk-loops`
+- **sdk-loops** (bước chuyển tiếp thận trọng của Phase 2): `JEEVI_CLAUDE_ENGINE=sdk-loops`
   → chỉ họ tag nền (loop/dispatch/reminder/learn/lint/metrics/routines/workflow) dùng SDK,
   chat + telegram giữ CLI.
 - **Phase 3 - plugin in-process:** giải bài dedup bằng header: engine SDK (không gated) đọc
   file mcp_config thành dict, gắn `X-Jeevi-No-Plugins: 1` vào entry hub (hub bỏ nhóm plugin
   khi thấy header - `discover_all(include_plugins=)`) rồi đấu server in-process
-  `javis-plugins` dựng từ plugins_host (min_mode enforce theo `javis_mode` do _apply_mcp đặt,
+  `jeevi-plugins` dựng từ plugins_host (min_mode enforce theo `jeevi_mode` do _apply_mcp đặt,
   hook pre/post bọc như hub). Fork GATED giữ cô lập cũ - KHÔNG plugin in-process. Không có
   hub (0 connection) plugin vẫn chạy - engine SDK dùng được plugin cả khi chưa đấu MCP nào.
-  Smoke thật: model gọi `mcp__javis-plugins__javis_now` trả đúng giờ VN.
+  Smoke thật: model gọi `mcp__jeevi-plugins__jeevi_now` trả đúng giờ VN.
 - **Parity settings:** chat/full nạp `setting_sources=[user,project,local]` như CLI (ambient
   MCP + CLAUDE.md máy); fork gated KHÔNG nạp - allow-rule trong settings user không che được gate.
-- **Phase 4 - flip:** mặc định factory đổi `cli` → `sdk`. Lối thoát `JAVIS_CLAUDE_ENGINE=cli`
+- **Phase 4 - flip:** mặc định factory đổi `cli` → `sdk`. Lối thoát `JEEVI_CLAUDE_ENGINE=cli`
   giữ tối thiểu 1 bản phát hành; docs/16 ghi biến. Code Popen CHƯA xoá (đúng kế hoạch - xoá ở
   bản sau khi user xác nhận chạy êm; lúc đó claude_cli.py gọn ~300 dòng).
 - **E2E bake (mục 1, bản nén):** server THẬT cô lập (state + brains tạm, port 7999, mặc định
@@ -181,7 +181,7 @@ Hub HTTP giữ nguyên cho Codex + engine API.
 - User yêu cầu xoá luôn nhánh Popen (bỏ giai đoạn giữ 1 bản phát hành). Đã xoá class
   ClaudeCLI (~219 dòng) khỏi claude_cli.py; giữ nguyên hạ tầng Popen dùng chung
   (CodexCLI, _kill_tree, registry cancel theo tag, auth Claude Code, _empty_mcp_file).
-- Factory `claude_engine()` giờ luôn trả ClaudeSDK; env `JAVIS_CLAUDE_ENGINE=cli|sdk-loops`
+- Factory `claude_engine()` giờ luôn trả ClaudeSDK; env `JEEVI_CLAUDE_ENGINE=cli|sdk-loops`
   chỉ còn giá trị lịch sử (bỏ qua kèm log 1 lần). SDK chưa cài → ClaudeSDK.query() tự báo
   lỗi hướng dẫn cài, không crash.
 - Tiêu chí thành công mục 6 chốt sổ: (1) mọi luồng chạy SDK không sửa call site - đạt (e2e

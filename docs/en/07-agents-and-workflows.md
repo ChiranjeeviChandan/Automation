@@ -45,7 +45,7 @@ From 0.403.0 Jeevi Core decides which notices ring (red dot on the bell, phone p
 - Every notice has two buttons, **Needed** and **Not needed**. To rate it with an emoji, press **Open in Jeevi Core**: the notice becomes a message in the Jeevi Core chat, and you put a Resonance emoji (👍 ❤️ 😂 😮 😢 😡) on it like on any answer, with "Should have spoken" or "Should stay quiet" if you like. Jeevi Core adjusts itself from it: Not needed filters that kind; Needed on a filtered notice makes that kind always ring; a group that gets many bad reactions moves one notch down. Each time, Jeevi Core says so in its chat.
 - A kind that rings a 3rd time within 6 hours is filtered as "repeated" for the rest of those 6 hours.
 - Jeevi Core **never hides an urgent notice by itself**. Only you can, with Off or Not needed.
-- You can also say it in the Jeevi Core chat, for example "turn off Zalo sign-in notices" or "tell me everything": Jeevi Core uses the `javis_notify` tool and gives you a code to undo it.
+- You can also say it in the Jeevi Core chat, for example "turn off Zalo sign-in notices" or "tell me everything": Jeevi Core uses the `jeevi_notify` tool and gives you a code to undo it.
 
 ### Auto: assistants that suggest and remind on their own
 
@@ -58,18 +58,18 @@ Turning **Auto** on for an assistant gives it **full access**. Jeevi asks once w
 - **Two kinds of message.** Reminders with a time go to **Reminders** (always ring). Suggestions go to **Assistant suggestions** (ring by default; lower or turn off in the bell's Filter tab).
 - **It learns from your feedback.** ❤️ or 👍 on a useful message makes it look around more often (up to hourly); ignoring or disliking slows it down. Each look counts toward the assistant's daily limit of self-started turns.
 
-Auto works this way in the **private chat** only. In a Team, permissions still follow the Team's **Full access**. A server admin can set `JAVIS_PULSE_TOOLS=0` to bring every assistant back to the text-only wake-up of before.
+Auto works this way in the **private chat** only. In a Team, permissions still follow the Team's **Full access**. A server admin can set `JEEVI_PULSE_TOOLS=0` to bring every assistant back to the text-only wake-up of before.
 
 ### Improving itself when you ask
 
-Tell Jeevi or an assistant "improve yourself", "rework the email skill", "improve the whole system"... and it does it with the `javis_improve` tool:
+Tell Jeevi or an assistant "improve yourself", "rework the email skill", "improve the whole system"... and it does it with the `jeevi_improve` tool:
 
 - **Changes in the brain, with a backup.** The assistant's own role, instructions, skills and model (`agents/<slug>.md`), other assistants, skills, workflows, loops, memory and the brain's `CLAUDE.md`. Every change gets an id and a few lines showing what changed.
 - **Undo by saying so.** "Undo #12" puts the file back as it was; a file it created is removed. The undo has an id too, so it can be undone.
 - **Jeevi's own code too.** Needs the GitHub card connected with a token that can reach `blogminhquy/javis-os`. The assistant attaches the repo to the chat and works on its own branch; after the turn Jeevi checks locally, opens a PR, follows CI and merges on green (see [GitHub in chat](34-github-in-chat.md)). The Release workflow numbers the new version.
 - **You press Update.** Jeevi never updates itself. Once a new version is released, Jeevi only tells you its number and points you to **Settings → Updates**, where you press Update yourself; if the new version does not come up, the machine rolls back as always.
 
-Only **you** can order it: your own chat, or a Kanban job or reminder you set up. Auto's own wake-ups and customer-facing bots never change themselves; they only suggest. Plugins keep their own path (`javis_plugin`, always off until you turn them on).
+Only **you** can order it: your own chat, or a Kanban job or reminder you set up. Auto's own wake-ups and customer-facing bots never change themselves; they only suggest. Plugins keep their own path (`jeevi_plugin`, always off until you turn them on).
 
 ### Unread messages and muting
 
@@ -255,7 +255,7 @@ Note: an exported package only contains definition files. **An agent's memory an
 
 ## Share a whole Team
 
-On the Teams page, a team's **⋯** menu has **Share team**: it downloads one `.team.javis.zip` file with the team's partners, their skills, the leader and the pinned messages (as shared instructions). The file holds **no** chat history, keys, passwords, models or Auto switches; text that looks like an API key, a bot token or a `password: ...` line is replaced with `[REDACTED]` before writing.
+On the Teams page, a team's **⋯** menu has **Share team**: it downloads one `.team.jeevi.zip` file with the team's partners, their skills, the leader and the pinned messages (as shared instructions). The file holds **no** chat history, keys, passwords, models or Auto switches; text that looks like an API key, a bot token or a `password: ...` line is replaced with `[REDACTED]` before writing.
 
 The person who receives it presses **Import team** at the top of the team list, picks the file, sees which partners and how many skills come in, and confirms. A partner already in the brain under the same name keeps the receiver's version; models and Auto are the receiver's choice afterwards. An older Jeevi can still open the file with the Import button on the Partners page (it then adds the partners without building the team).
 
@@ -276,7 +276,7 @@ Editing or cancelling the job voids its old cards. Words in the chat (yours or a
 - **Needs your approval** (default, older teams too): members read, search, write files in the brain and the team folder, and run read-only commands on their own. Sending, posting, paying, ordering, deleting data or other machine commands are stopped BEFORE they run and become an approval card.
 - **The team acts without asking**: the same rights as your private chat with each member (how Teams ran from 0.194.0 to 0.206.0).
 
-With Needs your approval, Claude Code, Codex (with its own sandbox) and the API-key brains stop an action before it runs. The Docker image turns Codex's sandbox off (`JAVIS_CODEX_SANDBOX=off`), so there a member on ChatGPT is refused; how to turn it back on is in [Env configuration](16-env-configuration.md). Grok Build only does the in-scope part (an approved action cannot run on Grok). Antigravity cannot stop its own tools, so that step is refused with an explanation: move the member to another brain or turn on "The team acts without asking".
+With Needs your approval, Claude Code, Codex (with its own sandbox) and the API-key brains stop an action before it runs. The Docker image turns Codex's sandbox off (`JEEVI_CODEX_SANDBOX=off`), so there a member on ChatGPT is refused; how to turn it back on is in [Env configuration](16-env-configuration.md). Grok Build only does the in-scope part (an approved action cannot run on Grok). Antigravity cannot stop its own tools, so that step is refused with an explanation: move the member to another brain or turn on "The team acts without asking".
 
 ## A Team's department mandate (from 0.208.0)
 

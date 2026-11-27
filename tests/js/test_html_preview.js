@@ -37,10 +37,10 @@ check("the preview never shares Jeevi's origin", () => {
 });
 check("both file viewers open .html on the preview", () => {
   const fe = read("file-editor.js");
-  assert.ok(fe.includes("JavisHtmlPreview.isHtmlPath(ceil)) renderHtmlEditor(b, ceil, d)"));
+  assert.ok(fe.includes("JeeviHtmlPreview.isHtmlPath(ceil)) renderHtmlEditor(b, ceil, d)"));
   assert.ok(fe.includes('<div class="jvfe-html mode-preview">'));
   const cs = read("console.js");
-  assert.ok(cs.includes("JavisHtmlPreview.isHtmlPath(rel)) _neHtmlTabs(body, actions, ta, rel)"));
+  assert.ok(cs.includes("JeeviHtmlPreview.isHtmlPath(rel)) _neHtmlTabs(body, actions, ta, rel)"));
   assert.ok(cs.includes('body.className = "ne-body mode-preview"'));
 });
 check("html-preview.js loads before the viewers", () => {

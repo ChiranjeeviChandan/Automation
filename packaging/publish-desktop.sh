@@ -40,13 +40,13 @@ else
 fi
 v="$(tr -d ' \r\n' < VERSION)"
 
-# Git blob ids of everything javis-setup.iss packs: the same on every runner, whatever the
+# Git blob ids of everything jeevi-setup.iss packs: the same on every runner, whatever the
 # line endings or the checkout time (an Inno build is not byte-for-byte repeatable).
-inputs=(packaging/windows/javis-setup.iss packaging/windows/bootstrap.ps1
+inputs=(packaging/windows/jeevi-setup.iss packaging/windows/bootstrap.ps1
         packaging/windows/before-install.en.txt packaging/windows/before-install.vi.txt)
 listing="$(git ls-tree -r HEAD -- "${inputs[@]}" packaging/assets | grep -v '\.icns$')"
 tab=$'\t'
-for need in "${inputs[@]}" packaging/assets/javis.ico; do
+for need in "${inputs[@]}" packaging/assets/jeevi.ico; do
   # A moved file must not turn the fingerprint into a constant that never republishes.
   grep -q "${tab}${need}\$" <<< "$listing" || { echo "installer input not found in git: $need" >&2; exit 1; }
 done

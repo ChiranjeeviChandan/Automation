@@ -7,7 +7,7 @@ Account page reveals the right one in Explorer / Finder.
 What it clears:
   - the whole `auth` block of settings.json: username, password and 2FA. The old password is simply gone; the owner
     opens Jeevi and sets a new one on the Account page (or in the account form Jeevi shows when login is required);
-  - JAVIS_ADMIN_PASSWORD / JAVIS_ADMIN_USER in the install's .env. install.sh writes them on macOS and Linux, and Jeevi
+  - JEEVI_ADMIN_PASSWORD / JEEVI_ADMIN_USER in the install's .env. install.sh writes them on macOS and Linux, and Jeevi
     re-applies them at boot when the account has no marker of them, so leaving them would bring the old password back
     on the next start.
 
@@ -22,7 +22,7 @@ and the first account created closes it.
 It writes the file directly and leaves .auth_stamp.json alone on purpose: a running Jeevi sees the account block
 change outside the app and ends every signed-in session (config.auth_guard_check). Nothing needs a restart.
 
-    python tools/reset_auth.py                  # settings.json in server/, or $JAVIS_STATE_DIR
+    python tools/reset_auth.py                  # settings.json in server/, or $JEEVI_STATE_DIR
     python tools/reset_auth.py --state-dir /data/state
 """
 from __future__ import annotations
@@ -35,11 +35,11 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-ENV_KEYS = ("JAVIS_ADMIN_PASSWORD", "JAVIS_ADMIN_USER")
+ENV_KEYS = ("JEEVI_ADMIN_PASSWORD", "JEEVI_ADMIN_USER")
 
 
 def settings_path(state_dir: str = "") -> Path:
-    base = state_dir or os.environ.get("JAVIS_STATE_DIR", "") or str(ROOT / "server")
+    base = state_dir or os.environ.get("JEEVI_STATE_DIR", "") or str(ROOT / "server")
     return Path(base) / "settings.json"
 
 
@@ -118,8 +118,8 @@ def main(argv=None) -> int:
             if removed:
                 write_atomic(env, text)
         except Exception as e:  # noqa: BLE001 - the account is already cleared; say what is left to do
-            say(f"Chưa xoá được mật khẩu cũ trong {env} ({e}). Hãy xoá dòng JAVIS_ADMIN_PASSWORD bằng tay.",
-                f"Could not remove the old password from {env} ({e}). Delete the JAVIS_ADMIN_PASSWORD line by hand.")
+            say(f"Chưa xoá được mật khẩu cũ trong {env} ({e}). Hãy xoá dòng JEEVI_ADMIN_PASSWORD bằng tay.",
+                f"Could not remove the old password from {env} ({e}). Delete the JEEVI_ADMIN_PASSWORD line by hand.")
     say("Xong, mật khẩu cũ đã bị xoá. Mọi thiết bị đang đăng nhập bị đăng xuất.",
         "Done, the old password is gone. Every signed-in device is signed out.")
     say("Mở lại Jeevi rồi đặt mật khẩu mới trong vòng 24 giờ.",

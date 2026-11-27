@@ -5,7 +5,7 @@
 Chủ repo báo 2026-08-13, kèm mô tả rất đúng triệu chứng: "thi thoảng chuyển tab nó lại nháy đen
 màn hình terminal xong tắt luôn".
 
-Cơ chế: Jeevi trên Windows khởi động qua `start-javis.vbs`, tức tiến trình server chạy KHÔNG CÓ
+Cơ chế: Jeevi trên Windows khởi động qua `start-jeevi.vbs`, tức tiến trình server chạy KHÔNG CÓ
 console. Trong Windows, một tiến trình không console mà sinh ra chương trình dạng console (git,
 curl, node, python, npx...) thì hệ điều hành TỰ CẤP cho đứa con một cửa sổ console mới. Nó chớp
 lên rồi tắt cùng lúc với lệnh con. Không hỏng gì, nhưng cướp tiêu điểm bàn phím và trông hệt như
@@ -45,7 +45,7 @@ _CO_Y = {
     # Khởi động lại Jeevi sau khi cập nhật: tiến trình mới phải sống lâu hơn tiến trình sinh ra
     # nó, nên đi bằng DETACHED_PROCESS chứ không phải CREATE_NO_WINDOW. Chính là lệnh mở
     # updater.py trong _update_core() (thân của POST /update, tách khỏi do_update() 2026-11-15 để tool
-    # javis_improve dùng chung); trước 0.65.27 mục này ghi "_trigger" chỉ vì một hàm lồng tên
+    # jeevi_improve dùng chung); trước 0.65.27 mục này ghi "_trigger" chỉ vì một hàm lồng tên
     # đó (gọi Watchtower) nằm ngay phía trên, và _ham_chua lấy nhầm tên hàm lồng.
     ("main.py", "_update_core"),
     ("updater.py", "start_server"),

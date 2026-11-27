@@ -375,7 +375,7 @@ def register_agents(app, deps: ResonanceApiDeps):
         on = str(body.get("enabled", "")).strip().lower() in ("1", "true", "on", "yes")
         if not slug:
             return _err(400, "Thiếu trợ lý", "Missing assistant")
-        if slug.lower() == "javis-core" and not on:
+        if slug.lower() == "jeevi-core" and not on:
             # Jeevi Core (owner, 05/11/2026): Auto is always on for the system assistant and cannot be switched off.
             return _err(403, "Jeevi Core luôn bật Auto, không tắt được",
                         "Auto is always on for Jeevi Core and cannot be switched off")

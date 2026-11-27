@@ -70,7 +70,7 @@ const cut = (src, head) => {
   const mk = (page) => {
     const log = [];
     const c = {
-      window: { JavisTasks: page }, log,
+      window: { JeeviTasks: page }, log,
       Alpine: { store: () => ({ go: (id) => log.push("go:" + id) }) },
       toast: (m, err) => log.push("toast:" + m + ":" + err), t: (k) => k,
       setTimeout: (f) => setTimeout(f, 0), Promise,
@@ -94,7 +94,7 @@ const cut = (src, head) => {
   const oiSrc = cut(TASKS, "  async function openItem(id) {");
   const showSrc = (/ {2}function show\(ref\) \{[^\n]*\}\n/.exec(TASKS) || [""])[0];
   check("tasks.js has openItem, and show() goes through it", !!oiSrc && /openItem\("k:"/.test(showSrc));
-  check("tasks.js exports openItem", /window\.JavisTasks = \{[^\n]*openItem: openItem/.test(TASKS));
+  check("tasks.js exports openItem", /window\.JeeviTasks = \{[^\n]*openItem: openItem/.test(TASKS));
   const tk = (state, have, afterLoad) => {
     const log = [];
     const t = {

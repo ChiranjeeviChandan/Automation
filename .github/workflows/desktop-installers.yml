@@ -16,20 +16,20 @@ on:
       - "packaging/**"
       - "install.ps1"
       - "install.sh"
-      - "open-javis.vbs"
-      - "start-javis.vbs"
-      - "bin/javis-start.sh"
-      - "bin/javis-autostart.sh"
+      - "open-jeevi.vbs"
+      - "start-jeevi.vbs"
+      - "bin/jeevi-start.sh"
+      - "bin/jeevi-autostart.sh"
       - ".github/workflows/desktop-installers.yml"
   pull_request:
     paths:
       - "packaging/**"
       - "install.ps1"
       - "install.sh"
-      - "open-javis.vbs"
-      - "start-javis.vbs"
-      - "bin/javis-start.sh"
-      - "bin/javis-autostart.sh"
+      - "open-jeevi.vbs"
+      - "start-jeevi.vbs"
+      - "bin/jeevi-start.sh"
+      - "bin/jeevi-autostart.sh"
       - ".github/workflows/desktop-installers.yml"
   workflow_dispatch:
 
@@ -60,7 +60,7 @@ jobs:
         shell: powershell
         run: |
           $bad = 0
-          foreach ($f in @("install.ps1", "stop-javis.ps1", "javis-autostart.ps1", "packaging\windows\bootstrap.ps1", "packaging\windows\get-javis.ps1")) {
+          foreach ($f in @("install.ps1", "stop-jeevi.ps1", "jeevi-autostart.ps1", "packaging\windows\bootstrap.ps1", "packaging\windows\get-jeevi.ps1")) {
             $errs = $null
             [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $f), [ref]$null, [ref]$errs)
             if ($errs) { $bad++; $errs | ForEach-Object { Write-Host "::error file=$f::$($_.Message) (line $($_.Extent.StartLineNumber))" } }
@@ -80,8 +80,8 @@ jobs:
       # two repository secrets (the free route through SignPath is the sign-windows job below):
       #   WINDOWS_CERT_PFX_BASE64  the code signing certificate (.pfx) as base64
       #   WINDOWS_CERT_PASSWORD    its password
-      # With them, Inno Setup signs both the setup .exe and its uninstaller (SignTool=javis in
-      # javis-setup.iss), so Windows shows the publisher name instead of "Unknown publisher".
+      # With them, Inno Setup signs both the setup .exe and its uninstaller (SignTool=jeevi in
+      # jeevi-setup.iss), so Windows shows the publisher name instead of "Unknown publisher".
       # Without them the build is unsigned, exactly as before. Fork PRs never see secrets.
       - name: Build JeeviOS-Setup.exe
         shell: pwsh
@@ -92,23 +92,23 @@ jobs:
           $v = (Get-Content VERSION -Raw).Trim()
           $sign = @()
           if ($env:CERT_B64) {
-            $pfx = Join-Path $env:RUNNER_TEMP "javis-sign.pfx"
+            $pfx = Join-Path $env:RUNNER_TEMP "jeevi-sign.pfx"
             [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:CERT_B64))
             $tool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" | Sort-Object FullName -Descending | Select-Object -First 1
             if (-not $tool) { throw "signtool.exe not found" }
             # Inno replaces $f with the file to sign and $q with a double quote.
-            $sign = @("/DSign", "/Sjavis=`$q$($tool.FullName)`$q sign /f `$q$pfx`$q /p `$q$($env:CERT_PWD)`$q /fd sha256 /tr http://timestamp.digicert.com /td sha256 `$f")
+            $sign = @("/DSign", "/Sjeevi=`$q$($tool.FullName)`$q sign /f `$q$pfx`$q /p `$q$($env:CERT_PWD)`$q /fd sha256 /tr http://timestamp.digicert.com /td sha256 `$f")
             Write-Host "Signing enabled"
           } else {
             Write-Host "No WINDOWS_CERT_PFX_BASE64 secret: building unsigned"
           }
-          & $env:ISCC "/DAppVersion=$v" @sign packaging\windows\javis-setup.iss
+          & $env:ISCC "/DAppVersion=$v" @sign packaging\windows\jeevi-setup.iss
           if ($LASTEXITCODE -ne 0 -and (Test-Path packaging/windows/Vietnamese.isl)) {
             # A translation written for a newer Inno can carry messages this compiler rejects:
             # ship English rather than no installer at all.
             Write-Host "::warning::Build with Vietnamese.isl failed, retrying English only"
             Remove-Item packaging/windows/Vietnamese.isl
-            & $env:ISCC "/DAppVersion=$v" @sign packaging\windows\javis-setup.iss
+            & $env:ISCC "/DAppVersion=$v" @sign packaging\windows\jeevi-setup.iss
           }
           if ($LASTEXITCODE -ne 0) { exit 1 }
           if ($env:CERT_B64) {
@@ -134,18 +134,18 @@ jobs:
           if ($LASTEXITCODE -ne 0) { Get-Content (Join-Path $env:RUNNER_TEMP "install.log") -Tail 80; exit 1 }
           $vpy = Join-Path $dir ".venv\Scripts\python.exe"
           if (-not (Test-Path $vpy)) { throw "venv missing" }
-          if (-not (Test-Path (Join-Path $dir "open-javis.vbs"))) { throw "open-javis.vbs missing" }
+          if (-not (Test-Path (Join-Path $dir "open-jeevi.vbs"))) { throw "open-jeevi.vbs missing" }
           & $vpy (Join-Path $dir "packaging\check_brains.py")
           if ($LASTEXITCODE -ne 0) { throw "a brain CLI is missing after install" }
-          Start-Process wscript.exe -ArgumentList "//nologo `"$dir\start-javis.vbs`"" -WorkingDirectory $dir
+          Start-Process wscript.exe -ArgumentList "//nologo `"$dir\start-jeevi.vbs`"" -WorkingDirectory $dir
           $ok = $false
           for ($i = 0; $i -lt 90; $i++) {
             Start-Sleep -Seconds 2
             try { if ((Invoke-WebRequest http://127.0.0.1:7777/health -UseBasicParsing -TimeoutSec 3).StatusCode -eq 200) { $ok = $true; break } } catch { }
           }
-          if (-not $ok) { Get-Content (Join-Path $dir "server\javis.log") -Tail 80 -ErrorAction SilentlyContinue; throw "Jeevi did not answer /health" }
+          if (-not $ok) { Get-Content (Join-Path $dir "server\jeevi.log") -Tail 80 -ErrorAction SilentlyContinue; throw "Jeevi did not answer /health" }
           Write-Host "Jeevi is up after a fresh install"
-          & (Join-Path $dir "stop-javis.bat")
+          & (Join-Path $dir "stop-jeevi.bat")
 
       # The wizard itself: JeeviOS-Setup.exe runs bootstrap.ps1 HIDDEN and shows its lines in the
       # Setup window (no black console). Silent mode runs the same [Code], so this proves on a real
@@ -193,14 +193,14 @@ jobs:
           set -e
           mnt="$(hdiutil attach -nobrowse -readonly dist/JeeviOS-macOS.dmg | awk -F'\t' '/\/Volumes\//{print $NF}')"
           app="$mnt/JEEVI OS.app"
-          test -x "$app/Contents/MacOS/javis"
+          test -x "$app/Contents/MacOS/jeevi"
           test -f "$app/Contents/Resources/bootstrap.sh"
-          test -f "$app/Contents/Resources/javis.icns"
+          test -f "$app/Contents/Resources/jeevi.icns"
           test -L "$mnt/Applications"
           plutil -lint "$app/Contents/Info.plist"
-          bash -n "$app/Contents/MacOS/javis"
+          bash -n "$app/Contents/MacOS/jeevi"
           bash -n "$app/Contents/Resources/bootstrap.sh"
-          bash -n packaging/macos/get-javis.sh
+          bash -n packaging/macos/get-jeevi.sh
           test -f "$mnt/.VolumeIcon.icns"
           GetFileInfo -a "$mnt" | grep -q C && echo "volume has the Jeevi icon" || echo "::warning::volume custom-icon flag not set"
           hdiutil detach "$mnt"
@@ -213,15 +213,15 @@ jobs:
         run: |
           set -e
           git branch -f smoke-install HEAD
-          export JAVIS_HOME="$RUNNER_TEMP/JeeviOS" JAVIS_REPO="$GITHUB_WORKSPACE" JAVIS_BRANCH=smoke-install
+          export JEEVI_HOME="$RUNNER_TEMP/JeeviOS" JEEVI_REPO="$GITHUB_WORKSPACE" JEEVI_BRANCH=smoke-install
           bash packaging/macos/bootstrap.sh < /dev/null
-          export PATH="$HOME/.local/bin:$HOME/.javis/node/bin:$PATH"
-          "$JAVIS_HOME/.venv/bin/python" "$JAVIS_HOME/packaging/check_brains.py"
+          export PATH="$HOME/.local/bin:$HOME/.jeevi/node/bin:$PATH"
+          "$JEEVI_HOME/.venv/bin/python" "$JEEVI_HOME/packaging/check_brains.py"
           for i in $(seq 1 60); do
             curl -sf -m 3 -o /dev/null http://127.0.0.1:7777/health && { echo "Jeevi is up after a fresh install"; exit 0; }
             sleep 2
           done
-          tail -80 "$JAVIS_HOME/server/javis.log" 2>/dev/null || true
+          tail -80 "$JEEVI_HOME/server/jeevi.log" 2>/dev/null || true
           echo "Jeevi did not answer /health"; exit 1
 
       - uses: actions/upload-artifact@v4

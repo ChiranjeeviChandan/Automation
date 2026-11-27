@@ -3,7 +3,7 @@
  * Owner: "in every chat box, when the line above carries a number, Enter at the end of the line jumps to the next
  * number, like in Claude". So a NEW LINE typed under "1. first" opens with "2. ":
  *   - the new line is whatever key makes one in that box: Enter on a phone, Shift+Enter on a computer (plain Enter
- *     still sends there, see JavisActs.enterSends in chat-acts.js);
+ *     still sends there, see JeeviActs.enterSends in chat-acts.js);
  *   - a new line on an item that is still empty ("2. " and nothing else) takes the number away, which ends the list;
  *   - a new line in the middle of a list pushes the numbers below it up by one.
  * It works AFTER the browser has put the line break in (the `input` event), not on keydown: a phone keyboard and an IME
@@ -92,5 +92,5 @@
     if (edit) apply(box, edit);
   });
 
-  window.JavisChatList = pure;
+  window.JeeviChatList = pure;
 })();

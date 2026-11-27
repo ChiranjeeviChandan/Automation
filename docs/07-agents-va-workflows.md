@@ -45,7 +45,7 @@ Từ 0.403.0 Jeevi Core quyết định thông báo nào được báo (chấm �
 - Mỗi thông báo có hai nút **Nên báo** và **Không cần báo**. Muốn chấm bằng emoji thì bấm **Mở trong Jeevi Core**: thông báo thành một tin trong chat Jeevi Core, thả emoji của Cộng hưởng (👍 ❤️ 😂 😮 😢 😡) lên tin đó như mọi câu trả lời, kèm "Đáng lẽ nên nói" hoặc "Nên im" nếu muốn. Jeevi Core tự chỉnh theo phản hồi: bấm Không cần báo là loại tin đó bị lọc; bấm Nên báo lên một tin đã lọc là loại đó luôn được báo; một nhóm bị chê nhiều thì hạ một nấc. Mỗi lần chỉnh, Jeevi Core nói một câu trong chat của nó.
 - Một loại tin báo tới lần thứ 3 trong 6 tiếng thì các lần sau trong 6 tiếng đó bị lọc là "lặp lại".
 - Jeevi Core **không bao giờ tự giấu tin khẩn**. Chỉ bạn làm được, bằng chế độ Tắt hoặc nút Không cần báo.
-- Nói trong chat Jeevi Core cũng được, ví dụ "tắt thông báo đăng nhập Zalo" hay "báo hết cho tôi": Jeevi Core dùng công cụ `javis_notify` và trả kèm mã để hoàn tác.
+- Nói trong chat Jeevi Core cũng được, ví dụ "tắt thông báo đăng nhập Zalo" hay "báo hết cho tôi": Jeevi Core dùng công cụ `jeevi_notify` và trả kèm mã để hoàn tác.
 
 ### Auto: trợ lý tự gợi ý và nhắc nhở
 
@@ -58,18 +58,18 @@ Bật **Auto** trên thẻ trợ lý là trao **toàn quyền** cho trợ lý đ
 - **Hai loại tin.** Lời nhắc có giờ giấc vào nhóm **Nhắc lịch** (luôn báo). Gợi ý vào nhóm **Gợi ý của trợ lý** (mặc định báo, hạ hay tắt ở tab Bộ lọc của chuông).
 - **Học từ phản hồi.** Thả ❤️ hay 👍 lên tin hữu ích thì trợ lý nhìn quanh dày hơn (tới mỗi giờ); bỏ qua hay chê thì thưa dần. Mỗi lần nhìn quanh tính vào hạn mức lượt tự phát trong ngày của trợ lý.
 
-Auto chỉ chạy kiểu này ở **chat riêng**. Trong Team, quyền vẫn do **Toàn quyền** của Team quyết. Quản trị máy chủ đặt `JAVIS_PULSE_TOOLS=0` thì mọi trợ lý quay về lượt tự thức chỉ chữ như trước.
+Auto chỉ chạy kiểu này ở **chat riêng**. Trong Team, quyền vẫn do **Toàn quyền** của Team quyết. Quản trị máy chủ đặt `JEEVI_PULSE_TOOLS=0` thì mọi trợ lý quay về lượt tự thức chỉ chữ như trước.
 
 ### Tự cải tiến khi bạn yêu cầu
 
-Bảo Jeevi hay một trợ lý "cải tiến chính em", "sửa lại skill viết email", "cải tiến cả hệ thống"... là nó làm luôn bằng công cụ `javis_improve`:
+Bảo Jeevi hay một trợ lý "cải tiến chính em", "sửa lại skill viết email", "cải tiến cả hệ thống"... là nó làm luôn bằng công cụ `jeevi_improve`:
 
 - **Sửa trong brain có sao lưu.** Vai trò, hướng dẫn, skill, model của chính trợ lý (`agents/<slug>.md`), trợ lý khác, skill, workflow, vòng lặp, bộ nhớ và `CLAUDE.md` của brain. Mỗi lần sửa có một mã, kèm vài dòng cho thấy đổi gì.
 - **Hoàn tác bằng lời.** Nói "hoàn tác #12" là file về đúng bản trước; file vừa tạo thì bị xoá. Lần hoàn tác cũng có mã nên hoàn tác ngược lại được.
 - **Sửa cả mã nguồn Jeevi.** Cần thẻ GitHub đã kết nối với token có quyền vào repo `blogminhquy/javis-os`. Trợ lý tự gắn repo vào khung chat, sửa trên nhánh riêng; hết lượt Jeevi tự kiểm ở máy, mở PR, theo dõi CI và merge khi xanh (mục [GitHub ngay trong khung chat](34-github-trong-chat.md)). Workflow Release ra số phiên bản mới.
 - **Lên bản mới do bạn bấm.** Jeevi không tự cập nhật. Khi bản mới đã phát hành, Jeevi chỉ báo số phiên bản và nhắc bạn vào **Cài đặt → Cập nhật** để tự bấm nút Cập nhật; bản mới không lên thì máy tự lùi về bản cũ như mọi lần.
 
-Chỉ **bạn ra lệnh** mới sửa được: chat của bạn, hay việc Kanban và nhắc hẹn bạn đã giao. Lượt tự thức của Auto và bot nói với khách không tự sửa, chỉ đề xuất. Plugin vẫn đi đường riêng (`javis_plugin`, luôn tắt cho tới khi bạn bật).
+Chỉ **bạn ra lệnh** mới sửa được: chat của bạn, hay việc Kanban và nhắc hẹn bạn đã giao. Lượt tự thức của Auto và bot nói với khách không tự sửa, chỉ đề xuất. Plugin vẫn đi đường riêng (`jeevi_plugin`, luôn tắt cho tới khi bạn bật).
 
 ### Tin chưa đọc và tắt thông báo
 
@@ -272,7 +272,7 @@ Lưu ý: gói xuất chỉ chứa file định nghĩa. **Bộ nhớ riêng và n
 
 ## Chia sẻ cả một Team
 
-Ở trang Team, menu **⋯** của một team có **Chia sẻ team**: tải về một file `.team.javis.zip` gồm các cộng sự của team, kỹ năng của họ, trưởng nhóm và các tin đã ghim (thành hướng dẫn chung). File **không** có lịch sử chat, khoá, mật khẩu, model hay công tắc Auto; chữ trông giống khoá API, mã bot hay dòng `password: ...` bị thay bằng `[REDACTED]` trước khi ghi.
+Ở trang Team, menu **⋯** của một team có **Chia sẻ team**: tải về một file `.team.jeevi.zip` gồm các cộng sự của team, kỹ năng của họ, trưởng nhóm và các tin đã ghim (thành hướng dẫn chung). File **không** có lịch sử chat, khoá, mật khẩu, model hay công tắc Auto; chữ trông giống khoá API, mã bot hay dòng `password: ...` bị thay bằng `[REDACTED]` trước khi ghi.
 
 Người nhận bấm **Nhập team** ở đầu danh sách team, chọn file, xem trước có những cộng sự nào và bao nhiêu kỹ năng rồi xác nhận. Cộng sự trùng tên đã có trong brain thì giữ nguyên bản của người nhận; model và Auto người nhận tự chọn sau. File này vẫn mở được bằng nút Nhập ở trang Cộng sự của bản Jeevi cũ (khi đó chỉ nhập cộng sự, không dựng team).
 
@@ -293,7 +293,7 @@ Sửa yêu cầu của việc hay huỷ việc làm thẻ cũ hết hiệu lực
 - **Cần chủ duyệt** (mặc định, cả nhóm cũ): cộng sự tự đọc, tìm, ghi file trong bộ não và thư mục của nhóm, chạy lệnh chỉ đọc. Gửi, đăng, thanh toán, đặt hàng, xoá dữ liệu hay lệnh máy khác bị chặn TRƯỚC khi chạy và thành thẻ xin duyệt.
 - **Nhóm tự làm, không hỏi**: quyền như khi bạn chat riêng với từng cộng sự (cách Team chạy ở 0.194.0 tới 0.206.0).
 
-Ở chế độ Cần chủ duyệt, Claude Code, Codex (có sandbox riêng) và các bộ não dùng API key chặn được hành động trước khi chạy. Ảnh Docker tắt sandbox của Codex (`JAVIS_CODEX_SANDBOX=off`) nên ở đó thành viên chạy bằng ChatGPT bị từ chối; cách bật lại ở [Cấu hình env](16-cau-hinh-env.md). Grok Build chỉ làm phần trong phạm vi (hành động đã duyệt không chạy được trên Grok). Antigravity không chặn được công cụ của chính nó nên bước đó bị từ chối kèm lời giải thích: đổi trợ lý sang bộ não khác hoặc bật "Nhóm tự làm".
+Ở chế độ Cần chủ duyệt, Claude Code, Codex (có sandbox riêng) và các bộ não dùng API key chặn được hành động trước khi chạy. Ảnh Docker tắt sandbox của Codex (`JEEVI_CODEX_SANDBOX=off`) nên ở đó thành viên chạy bằng ChatGPT bị từ chối; cách bật lại ở [Cấu hình env](16-cau-hinh-env.md). Grok Build chỉ làm phần trong phạm vi (hành động đã duyệt không chạy được trên Grok). Antigravity không chặn được công cụ của chính nó nên bước đó bị từ chối kèm lời giải thích: đổi trợ lý sang bộ não khác hoặc bật "Nhóm tự làm".
 
 ## Mục tiêu phòng ban của Team (từ 0.208.0)
 

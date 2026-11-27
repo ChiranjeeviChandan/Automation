@@ -26,8 +26,8 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-effort-iso-")
-BR = Path(tempfile.mkdtemp(prefix="javis-effort-iso-brain-")).resolve()
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-effort-iso-")
+BR = Path(tempfile.mkdtemp(prefix="jeevi-effort-iso-brain-")).resolve()
 (BR / "agents").mkdir()
 (BR / "agents" / "lan.md").write_text("---\nname: Lan\nrole: Bán hàng\nreasoning: high\n---\nBạn là Lan.\n",
                                       encoding="utf-8", newline="\n")
@@ -249,7 +249,7 @@ check("the Kanban job reads its assistant from the owner's pick or the specifier
 src_t = (ROOT / "server" / "tasks.py").read_text(encoding="utf-8")
 check("only the work step takes the assistant's model; a 'light' job keeps the assistant's level",
       'spec = self._agent_spec(task) if tag_suffix == "execute" else None' in src_t
-      and 'not getattr(cli, "javis_agent_spec", None)' in src_t)
+      and 'not getattr(cli, "jeevi_agent_spec", None)' in src_t)
 
 # An assistant's chat follows the assistant's CURRENT model unless the owner picked one in that window.
 old_chat = store.create_session(brain=B, engine="cli", channel="agent:minh")

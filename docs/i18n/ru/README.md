@@ -1,7 +1,7 @@
 <!-- translated-from: README.md sha256:2e10ad3d2a86 -->
 <div align="center">
 
-<a href="https://javisos.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
+<a href="https://jeevios.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
 
 # Jeevi OS
 
@@ -9,7 +9,7 @@
 
 Jeevi OS превращает **Claude, ChatGPT, Gemini, Grok** и выбранные вами модели в команду, которая работает 24/7 на вашем компьютере или сервере. У каждого коллеги своя роль, общая память и инструменты, и он продолжает работать в фоне. Вышла модель лучше? Переключитесь и сохраните всё, чему команда научилась.
 
-**🌐 Сайт: [javisos.com](https://javisos.com)** · Открытый код · Self-hosted · 14 провайдеров ИИ
+**🌐 Сайт: [jeevios.com](https://jeevios.com)** · Открытый код · Self-hosted · 14 провайдеров ИИ
 
 [![GitHub stars](https://img.shields.io/github/stars/blogminhquy/javis-os?style=flat&logo=github&label=stars)](https://github.com/blogminhquy/javis-os/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](../../../LICENSE)
@@ -38,7 +38,7 @@ Jeevi OS превращает **Claude, ChatGPT, Gemini, Grok** и выбран�
 
 [🇬🇧 English](../../../README.md) · [🇻🇳 Tiếng Việt](../vi/README.md) · [🇨🇳 简体中文](../zh/README.md) · [🇪🇸 Español](../es/README.md) · [🇯🇵 日本語](../ja/README.md) · [🇮🇳 हिन्दी](../hi/README.md) · [🇧🇷 Português](../pt-BR/README.md) · [🇰🇷 한국어](../ko/README.md) · 🇷🇺 **Русский** · [🇩🇪 Deutsch](../de/README.md) · [🇫🇷 Français](../fr/README.md) · [🇮🇩 Bahasa Indonesia](../id/README.md) · [🌍 Помочь с переводом](../../../CONTRIBUTING.md#translations)
 
-[Быстрый старт](#-быстрый-старт) · [Почему Jeevi](#-почему-javis) · [Мозги](#-12-мозгов-один-набор-инструментов) · [Возможности](#-возможности) · [Установка](#-установка) · [Документация](../../../docs/en/README.md) · [Поддержка](#-поддержать-javis-os)
+[Быстрый старт](#-быстрый-старт) · [Почему Jeevi](#-почему-jeevi) · [Мозги](#-12-мозгов-один-набор-инструментов) · [Возможности](#-возможности) · [Установка](#-установка) · [Документация](../../../docs/en/README.md) · [Поддержка](#-поддержать-jeevi-os)
 
 <br>
 
@@ -56,8 +56,8 @@ Jeevi OS превращает **Claude, ChatGPT, Gemini, Grok** и выбран�
 
 | Машина | Одна команда ставит всё |
 |---|---|
-| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git javis && cd javis && chmod +x install.sh && ./install.sh` |
-| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git javis; cd javis; powershell -ExecutionPolicy Bypass -File install.ps1` |
+| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi && chmod +x install.sh && ./install.sh` |
+| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi; powershell -ExecutionPolicy Bypass -File install.ps1` |
 | **Docker** | `curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml && docker compose up -d` |
 
 Затем откройте **http://localhost:7777**. Установщик ставит Python, четыре CLI-мозга по подписке (`claude`, `codex`, `agy`, `grok`) и файл `.env`, после чего запускает сервер. Вход в каждый мозг выполняется **на странице Models в панели**, никаких команд вводить больше не нужно.
@@ -257,17 +257,17 @@ Hostinger VPS → **Docker Manager → Compose → URL** → вставьте ф
 https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hostinger.yml
 ```
 
-В поле **Environment** нужны всего три значения: `DOMAIN_NAME`, `JAVIS_ADMIN_USER`, `JAVIS_ADMIN_PASSWORD`, плюс необязательный `JAVIS_AUTO_UPDATE` (поставьте `true`, и Jeevi будет обновляться сам раз в день).
+В поле **Environment** нужны всего три значения: `DOMAIN_NAME`, `JEEVI_ADMIN_USER`, `JEEVI_ADMIN_PASSWORD`, плюс необязательный `JEEVI_AUTO_UPDATE` (поставьте `true`, и Jeevi будет обновляться сам раз в день).
 
 Задайте `DOMAIN_NAME`, чтобы Traefik от Hostinger выпустил HTTPS:
-- **Бесплатная ссылка** (без покупки домена): `DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud` (hostname смотрите в hPanel → VPS, например `javis.srv1562015.hstgr.cloud`).
+- **Бесплатная ссылка** (без покупки домена): `DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud` (hostname смотрите в hPanel → VPS, например `jeevi.srv1562015.hstgr.cloud`).
 - **Собственный домен:** `DOMAIN_NAME=example.com` и A-запись, указывающая на IP VPS.
 
 Подождите 1-3 минуты, пока выпустится сертификат, затем откройте `https://<DOMAIN_NAME>`.
 
 **Три разовых шага:**
 1. **Сделайте образ GHCR публичным:** GitHub → репозиторий → **Packages** → `javis-os` → *Package settings* → Visibility = **Public**.
-2. **Создайте аккаунт администратора:** заполните `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` (рекомендуется) или откройте приложение сразу после развёртывания и задайте его сами. Пока администратора нет, создать его может тот, кто первым откроет ссылку. Затем **включите 2FA** ([Безопасность и аккаунты](../../../docs/en/14-security-and-accounts.md)).
+2. **Создайте аккаунт администратора:** заполните `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` (рекомендуется) или откройте приложение сразу после развёртывания и задайте его сами. Пока администратора нет, создать его может тот, кто первым откроет ссылку. Затем **включите 2FA** ([Безопасность и аккаунты](../../../docs/en/14-security-and-accounts.md)).
 3. **Войдите в мозг** на странице **Models**.
 
 Подробности и решение проблем: [DEPLOY.en.md](../../../DEPLOY.en.md).
@@ -281,14 +281,14 @@ https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hosti
 
 ```bash
 # Docker required (don't have it?  curl -fsSL https://get.docker.com | sh)
-mkdir javis && cd javis
+mkdir jeevi && cd jeevi
 curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml
 
-docker compose run --rm javis claude auth login --claudeai   # sign in to Claude once (optional)
+docker compose run --rm jeevi claude auth login --claudeai   # sign in to Claude once (optional)
 docker compose up -d                                          # pull the image and run
 ```
 
-Откройте `http://<vps-ip>:7777` и сразу задайте имя и пароль администратора (не менее 8 символов) или заранее пропишите `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` в окружении. Затем включите 2FA.
+Откройте `http://<vps-ip>:7777` и сразу задайте имя и пароль администратора (не менее 8 символов) или заранее пропишите `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` в окружении. Затем включите 2FA.
 
 Удалённый доступ без домена: `docker compose --profile tunnel up -d`, после чего `docker compose logs tunnel | grep trycloudflare` выведет HTTPS-ссылку.
 
@@ -298,13 +298,13 @@ docker compose up -d                                          # pull the image a
 <summary><b>Вариант 3: Linux или macOS без Docker</b></summary>
 
 ```bash
-git clone https://github.com/blogminhquy/javis-os.git javis && cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi
 chmod +x install.sh && ./install.sh
 ```
 
 Скрипт ставит Python, Node и CLI-мозги, создаёт venv, регистрирует службу, которая стартует при загрузке системы, и выводит адрес.
 
-🍎 **macOS, запуск как приложения:** дважды щёлкните `JEEVI OS.app` (или `Start JEEVI OS.command`). Запуск при входе в систему: `./bin/javis-autostart.sh install`. Подробности: [bin/README.md](../../../bin/README.md).
+🍎 **macOS, запуск как приложения:** дважды щёлкните `JEEVI OS.app` (или `Start JEEVI OS.command`). Запуск при входе в систему: `./bin/jeevi-autostart.sh install`. Подробности: [bin/README.md](../../../bin/README.md).
 
 </details>
 
@@ -312,7 +312,7 @@ chmod +x install.sh && ./install.sh
 <summary><b>Вариант 4: Windows (личный компьютер)</b></summary>
 
 ```powershell
-git clone https://github.com/blogminhquy/javis-os.git javis; cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
@@ -320,23 +320,23 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 
 ```
 Run with a visible window (live log):  setup.bat
-Run silently from then on:             start-javis.vbs   (log at server\javis.log)
-Stop:                                  stop-javis.bat
+Run silently from then on:             start-jeevi.vbs   (log at server\jeevi.log)
+Stop:                                  stop-jeevi.bat
 Dashboard:                             http://localhost:7777
 ```
 
-🪟 **Запуск как приложения:** после первого запуска дважды щёлкните **`JEEVI OS.bat`**. Сервер стартует в фоне, а панель открывается в **отдельном окне** со своим значком на панели задач. Запуск при входе в систему: `javis-autostart.bat install` (удалить: `uninstall`).
+🪟 **Запуск как приложения:** после первого запуска дважды щёлкните **`JEEVI OS.bat`**. Сервер стартует в фоне, а панель открывается в **отдельном окне** со своим значком на панели задач. Запуск при входе в систему: `jeevi-autostart.bat install` (удалить: `uninstall`).
 
 </details>
 
 <details>
 <summary><b>Несколько экземпляров Jeevi на одном VPS</b></summary>
 
-Мозги, настройки и аккаунты у каждого экземпляра полностью раздельные. Отличаются только три значения: `JAVIS_NAME`, `JAVIS_HOST_PORT`, `DOMAIN_NAME`.
+Мозги, настройки и аккаунты у каждого экземпляра полностью раздельные. Отличаются только три значения: `JEEVI_NAME`, `JEEVI_HOST_PORT`, `DOMAIN_NAME`.
 
 - **Hostinger:** разверните `docker-compose.hostinger.yml` ещё раз как второй стек и заполните эти три поля.
 - **Собственный VPS:** один раз на всю машину запустите общий прокси `docker-compose.proxy.yml`, затем дайте каждому экземпляру свою папку с `docker-compose.multi.yml`. Прокси сам находит новые экземпляры и запрашивает SSL.
-- **Без Docker:** `JAVIS_NAME=javis-shop JAVIS_PORT=7778 ./install.sh`.
+- **Без Docker:** `JEEVI_NAME=jeevi-shop JEEVI_PORT=7778 ./install.sh`.
 
 Пошагово: [DEPLOY.en.md](../../../DEPLOY.en.md).
 
@@ -389,14 +389,14 @@ Dashboard:                             http://localhost:7777
 
 | Переменная | Назначение | По умолчанию |
 |---|---|---|
-| `JAVIS_HOST` | Адрес прослушивания. `127.0.0.1` = только эта машина, `0.0.0.0` = публично | `127.0.0.1` |
-| `JAVIS_PORT` | Порт | `7777` |
-| `JAVIS_REQUIRE_LOGIN` | `1`/`0`, чтобы принудительно включить или выключить вход (по умолчанию включён при публичном адресе) | *(авто)* |
-| `JAVIS_ADMIN_USER` / `JAVIS_ADMIN_PASSWORD` | Создать администратора при развёртывании | - |
-| `JAVIS_ALLOWED_HOSTS` | Дополнительные имена хостов в списке разрешённых (защита от CSRF и DNS rebinding) | localhost + ваш домен |
-| `JAVIS_STATE_DIR` | Где хранятся настройки, сессии и ключ шифрования | `server/` (Docker: `/data/state`) |
+| `JEEVI_HOST` | Адрес прослушивания. `127.0.0.1` = только эта машина, `0.0.0.0` = публично | `127.0.0.1` |
+| `JEEVI_PORT` | Порт | `7777` |
+| `JEEVI_REQUIRE_LOGIN` | `1`/`0`, чтобы принудительно включить или выключить вход (по умолчанию включён при публичном адресе) | *(авто)* |
+| `JEEVI_ADMIN_USER` / `JEEVI_ADMIN_PASSWORD` | Создать администратора при развёртывании | - |
+| `JEEVI_ALLOWED_HOSTS` | Дополнительные имена хостов в списке разрешённых (защита от CSRF и DNS rebinding) | localhost + ваш домен |
+| `JEEVI_STATE_DIR` | Где хранятся настройки, сессии и ключ шифрования | `server/` (Docker: `/data/state`) |
 | `BRAINS_DIR` | Родительская папка со всеми Brain | `brains/` (Docker: `/brains`) |
-| `JAVIS_ENABLE_USER_PLUGINS` | `false` отключает ваши собственные плагины (они запускают настоящий Python внутри сервера) | *(вкл.)* |
+| `JEEVI_ENABLE_USER_PLUGINS` | `false` отключает ваши собственные плагины (они запускают настоящий Python внутри сервера) | *(вкл.)* |
 | `TTS_VOICE` / `TTS_RATE` | Голос и скорость для Edge TTS | `en-US-EmmaMultilingualNeural` / `+5%` |
 
 ---
@@ -407,7 +407,7 @@ Dashboard:                             http://localhost:7777
 - **2FA (TOTP)**, ограничение частоты попыток входа, пароли не короче 8 символов, cookie с флагом `Secure` под HTTPS, сессии истекают через 30 дней.
 - **Защита от CSRF и DNS rebinding**: любой запрос на запись с неизвестного источника отклоняется.
 - **Секреты зашифрованы** в `settings.json` (API-ключи, OAuth-токены, токены ботов) ключом, уникальным для каждой машины.
-- **Ваши собственные плагины загружаются по умолчанию, но каждый остаётся выключенным, пока вы не включите его** в приложении; чтобы отключить все, задайте `JAVIS_ENABLE_USER_PLUGINS=false`.
+- **Ваши собственные плагины загружаются по умолчанию, но каждый остаётся выключенным, пока вы не включите его** в приложении; чтобы отключить все, задайте `JEEVI_ENABLE_USER_PLUGINS=false`.
 - **Права подключений обеспечивает** хаб, а не модель: аккаунт только для чтения нельзя использовать для отправки, оплаты или публикации.
 
 Нашли уязвимость? Пожалуйста, следуйте [SECURITY.md](../../../SECURITY.md), а не открывайте публичный issue.
@@ -416,7 +416,7 @@ Dashboard:                             http://localhost:7777
 
 ## 🔄 Обновление
 
-В приложении: **Settings → Updates → Update now**, с индикатором прогресса и кнопкой отката, если новая сборка что-то сломает. На VPS: `cd javis && ./update.sh` (скачивает новый образ и перезапускает; ваши данные в томах сохраняются).
+В приложении: **Settings → Updates → Update now**, с индикатором прогресса и кнопкой отката, если новая сборка что-то сломает. На VPS: `cd jeevi && ./update.sh` (скачивает новый образ и перезапускает; ваши данные в томах сохраняются).
 
 ---
 
@@ -425,7 +425,7 @@ Dashboard:                             http://localhost:7777
 | Симптом | Что делать |
 |---|---|
 | Страница Models пишет, что CLI не установлен, хотя он установлен | **Перезапустите Jeevi**: работающий процесс хранит PATH на момент своего запуска. |
-| Порт 7777 занят, и новая сборка не стартует | Сначала остановите старый процесс (`stop-javis.bat` или завершите PID), затем запустите снова. |
+| Порт 7777 занят, и новая сборка не стартует | Сначала остановите старый процесс (`stop-jeevi.bat` или завершите PID), затем запустите снова. |
 | Hostinger не может скачать образ | Сделайте пакет GHCR **Public** и дождитесь окончания сборки в GitHub Action. |
 | Мозг сообщает, что вход не выполнен | **Models** → карточка этого провайдера → войти. |
 
@@ -510,6 +510,6 @@ Jeevi OS бесплатен и открыт, и пока что код пише�
 <div align="center">
 <br>
 <a href="https://nguyenminhquy.com"><img src="../../assets/author.webp" width="96" height="96" alt="Minh Quý"></a><br>
-<b><a href="https://javisos.com">javisos.com</a></b><br>
+<b><a href="https://jeevios.com">jeevios.com</a></b><br>
 Сделано с ☕ во Вьетнаме, автор <b><a href="https://nguyenminhquy.com">Minh Quý</a></b>
 </div>

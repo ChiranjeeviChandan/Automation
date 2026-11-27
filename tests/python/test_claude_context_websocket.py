@@ -4,7 +4,7 @@ import json
 import os
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-context-websocket-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-context-websocket-")
 
 import main  # noqa: E402
 from starlette.testclient import TestClient  # noqa: E402

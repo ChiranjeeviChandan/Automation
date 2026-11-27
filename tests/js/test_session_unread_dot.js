@@ -29,14 +29,14 @@ check("a chat still running shows its spinner, not a dot (owner 2026-11-20)",
   rl.includes("var chuaDoc = !!s.unread && !isRun;") && rl.includes("!!s.unread && !isRunning(s.id)"));
 const RAIL = fs.readFileSync(path.join(__dirname, "../../dashboard/rail-unread.js"), "utf8");
 check("the rail skips running chats and counts again when a run ends",
-  RAIL.includes("unreadSkipQuery()") && RAIL.includes('"javis:chat-turn"'));
+  RAIL.includes("unreadSkipQuery()") && RAIL.includes('"jeevi:chat-turn"'));
 
 // ---- the events ----
 check("every chat change marks the chat on screen read",
-  /window\.addEventListener\("javis:sessions-changed", function \(e\) \{[^}]*?markCurrentRead\(\);/.test(SRC));
+  /window\.addEventListener\("jeevi:sessions-changed", function \(e\) \{[^}]*?markCurrentRead\(\);/.test(SRC));
 check("coming back to the tab marks it read", SRC.includes('document.addEventListener("visibilitychange", markCurrentRead);'));
-check("a read in another tab clears the dot here", /window\.addEventListener\("javis:session-read", function \(e\) \{[\s\S]{0,120}clearDot\(sid\)/.test(SRC));
-check("app.js relays the session_read socket event", /data\.type === "session_read"[\s\S]{0,200}new CustomEvent\("javis:session-read", \{ detail: data \}\)/.test(APP));
+check("a read in another tab clears the dot here", /window\.addEventListener\("jeevi:session-read", function \(e\) \{[\s\S]{0,120}clearDot\(sid\)/.test(SRC));
+check("app.js relays the session_read socket event", /data\.type === "session_read"[\s\S]{0,200}new CustomEvent\("jeevi:session-read", \{ detail: data \}\)/.test(APP));
 
 // ---- the helpers, run for real ----
 const start = SRC.indexOf("  function chatOnScreen() {");
@@ -66,7 +66,7 @@ function harness(opts) {
     listEl: { querySelectorAll: () => rows },
     cached: { items: [{ id: "a", unread: true }, { id: "b", unread: true }] },
   };
-  env.window = { JavisRunning: new Set(opts.running || []) };
+  env.window = { JeeviRunning: new Set(opts.running || []) };
   const api = new Function("document", "fetch", "setTimeout", "env", "window",
     "var listEl = env.listEl, cached = env.cached; function currentId() { return env.current; }\n" + helpers +
     "\nreturn { chatOnScreen: chatOnScreen, markRead: markRead, markCurrentRead: markCurrentRead, clearDot: clearDot," +
@@ -111,7 +111,7 @@ const act = SRC.slice(SRC.indexOf('if (act === "unread") {'), SRC.indexOf('if (a
 check("marking the open chat unread holds it and drops a pending read",
   act.includes("if (s.id === currentId()) heldUnread = s.id;") && act.includes("clearTimeout(readTimers[s.id])"));
 check("the rail and project dots count again after marking unread",
-  act.includes("refreshProjects();") && act.includes("window.JavisRailUnread.refresh()"));
+  act.includes("refreshProjects();") && act.includes("window.JeeviRailUnread.refresh()"));
 
 h = harness({ visible: true, chatShown: true, current: "a" });
 h.api.hold("a");

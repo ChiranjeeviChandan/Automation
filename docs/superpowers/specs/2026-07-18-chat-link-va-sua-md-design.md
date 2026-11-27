@@ -56,7 +56,7 @@ vào placeholder (sentinel private-use), TRƯỚC khi parse block. Bước này 
 Module IIFE độc lập, tự chèn CSS, gắn modal vào `document.body`. Chạy được từ mọi trang vì
 `position: fixed` cấp body, không phụ thuộc layout HUD hay trang Tệp tin.
 
-Giao diện: `window.JavisEditFile(brainRelPath)`
+Giao diện: `window.JeeviEditFile(brainRelPath)`
 
 Luồng:
 
@@ -80,10 +80,10 @@ module.
 Handler click cho `a.jv-floc` (link file/thư mục vault):
 
 - Giữ nhánh Ctrl/Cmd/Shift/Alt/giữa-chuột → để trình duyệt mở deep-link `#open=` tab mới (như cũ).
-- Nếu anchor CHỨA `<img>` (ảnh inline) → giữ hành vi cũ (`JavisOpenFiles`).
-- Ngược lại xét path: có đuôi file (đoạn cuối chứa dấu chấm) → gọi `window.JavisEditFile(path)`;
-  không đuôi (thư mục) → `JavisOpenFiles(path)` như cũ.
-- Dự phòng: nếu `window.JavisEditFile` chưa nạp → rơi về `JavisOpenFiles`.
+- Nếu anchor CHỨA `<img>` (ảnh inline) → giữ hành vi cũ (`JeeviOpenFiles`).
+- Ngược lại xét path: có đuôi file (đoạn cuối chứa dấu chấm) → gọi `window.JeeviEditFile(path)`;
+  không đuôi (thư mục) → `JeeviOpenFiles(path)` như cũ.
+- Dự phòng: nếu `window.JeeviEditFile` chưa nạp → rơi về `JeeviOpenFiles`.
 
 ### Nạp script (sửa `dashboard/index.html`)
 
@@ -91,7 +91,7 @@ Thêm `<script src="file-editor.js"></script>` cạnh chỗ nạp `chat-render.j
 
 ## Luồng dữ liệu
 
-Bấm link .md → handler chat-render → `JavisEditFile(brainRel)` → (fetch home nếu chưa cache) →
+Bấm link .md → handler chat-render → `JeeviEditFile(brainRel)` → (fetch home nếu chưa cache) →
 `/files/read` → dựng textarea → sửa → Ctrl+S/Lưu → `/files/write` (path trần) → báo đã lưu.
 
 ## Xử lý lỗi
@@ -110,7 +110,7 @@ Bấm link .md → handler chat-render → `JavisEditFile(brainRel)` → (fetch 
 
 ## Danh sách file đụng tới
 
-- `dashboard/file-editor.js` (MỚI): khung sửa modal + `window.JavisEditFile`.
+- `dashboard/file-editor.js` (MỚI): khung sửa modal + `window.JeeviEditFile`.
 - `dashboard/chat-render.js` (SỬA): autolink URL trần; nối click file → editor.
 - `dashboard/index.html` (SỬA): nạp file-editor.js.
 - Test: thêm case autolink cho mdToHtml (file test cạnh chat-render).

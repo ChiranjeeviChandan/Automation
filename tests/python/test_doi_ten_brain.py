@@ -13,10 +13,10 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="javis-doiten-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-doiten-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 os.environ["BRAINS_DIR"] = str(Path(_STATE) / "brains")
-os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
+os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -110,7 +110,7 @@ check("đổi tên gọi đúng endpoint với địa chỉ của chính dòng �
       'post("/brains/label", { brain: value' in js)
 bp = (ROOT / "dashboard" / "brain-picker.js").read_text(encoding="utf-8")
 check("mỗi dòng trong khung chọn não có nút Đổi tên", 'actBtn("rename", "pencil"' in bp
-      and "root.JavisBrains.rename(edit.value, edit.text)" in bp)
+      and "root.JeeviBrains.rename(edit.value, edit.text)" in bp)
 import json  # noqa: E402
 
 for lang in ("vi", "en"):

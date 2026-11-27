@@ -16,7 +16,7 @@ import tempfile
 import urllib.parse
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-metagraph-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-metagraph-"))
 
 _fails = []
 def check(n, c):

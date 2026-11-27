@@ -1,6 +1,6 @@
 """Emoji reactions on personal Zalo (0.334.0): read the ones customers put on messages, and let the bot put one.
 
-Owner request 2026-10-26: "khách hàng đọc được emoji reaction trên zalo và javis thả được reaction vào". Decided the
+Owner request 2026-10-26: "khách hàng đọc được emoji reaction trên zalo và jeevi thả được reaction vào". Decided the
 same day: whether a reaction alone deserves an answer is learned by the judge, never hard-coded ("phần này tự học trong
 bộ phán xử, đừng fix cứng"), and the bot reacts on the judge's say too ("bot được tự thả dựa theo bộ phán xử luôn").
 

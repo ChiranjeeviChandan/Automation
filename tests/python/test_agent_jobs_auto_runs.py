@@ -16,9 +16,9 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-autoruns-")
-os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
-TEMP = Path(tempfile.mkdtemp(prefix="javis-autoruns-w-"))
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-autoruns-")
+os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
+TEMP = Path(tempfile.mkdtemp(prefix="jeevi-autoruns-w-"))
 
 import agent_budget as AB  # noqa: E402
 import agent_jobs  # noqa: E402

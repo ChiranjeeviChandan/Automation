@@ -8,5 +8,5 @@ author: Jeevi (bundled)
 enabled: true
 min_mode: safe
 tools:
-  - javis_voice_note
+  - jeevi_voice_note
 hooks: []

@@ -45,9 +45,9 @@ cli = (SERVER / "claude_cli.py").read_text(encoding="utf-8")
 # claude_sdk_engine.py is pinned byte for byte, so its source still names "3600" for the tool cap; main.py sets the
 # real default (0 = no cap, owner 2026-11-07) before any engine runs. See section 2b.
 for ten, nguon, tool_mac_dinh in (("engine Claude SDK", sdk, "3600"), ("engine Codex CLI", cli, "0")):
-    for bien, mac_dinh in (("JAVIS_CLAUDE_IDLE_TIMEOUT", "0"),
-                           ("JAVIS_CLAUDE_TOOL_TIMEOUT", tool_mac_dinh),
-                           ("JAVIS_CLAUDE_FIRST_TIMEOUT", "0")):
+    for bien, mac_dinh in (("JEEVI_CLAUDE_IDLE_TIMEOUT", "0"),
+                           ("JEEVI_CLAUDE_TOOL_TIMEOUT", tool_mac_dinh),
+                           ("JEEVI_CLAUDE_FIRST_TIMEOUT", "0")):
         check(f"{ten}: có trần {bien} (mặc định {mac_dinh})",
               re.search(rf'{bien}"\s*,\s*"{mac_dinh}"', nguon) is not None)
 
@@ -55,18 +55,18 @@ for ten, nguon, tool_mac_dinh in (("engine Claude SDK", sdk, "3600"), ("engine C
 from claude_sdk_engine import tran_watchdog  # noqa: E402
 
 for raw in ("0", "-1", "0.0"):
-    os.environ["JAVIS_TEST_TRAN"] = raw
+    os.environ["JEEVI_TEST_TRAN"] = raw
     check(f"đặt '{raw}' → không giới hạn (None)",
-          tran_watchdog("JAVIS_TEST_TRAN", "180") is None)
-os.environ["JAVIS_TEST_TRAN"] = "45"
-check("đặt số dương → giữ nguyên trần đó", tran_watchdog("JAVIS_TEST_TRAN", "180") == 45.0)
-os.environ["JAVIS_TEST_TRAN"] = "linh tinh"
+          tran_watchdog("JEEVI_TEST_TRAN", "180") is None)
+os.environ["JEEVI_TEST_TRAN"] = "45"
+check("đặt số dương → giữ nguyên trần đó", tran_watchdog("JEEVI_TEST_TRAN", "180") == 45.0)
+os.environ["JEEVI_TEST_TRAN"] = "linh tinh"
 check("giá trị rác → về mặc định chứ không làm nổ lượt chat",
-      tran_watchdog("JAVIS_TEST_TRAN", "180") == 180.0)
-os.environ.pop("JAVIS_TEST_TRAN", None)
+      tran_watchdog("JEEVI_TEST_TRAN", "180") == 180.0)
+os.environ.pop("JEEVI_TEST_TRAN", None)
 check("chưa đặt biến → dùng mặc định truyền vào",
-      tran_watchdog("JAVIS_TEST_TRAN", "0") is None
-      and tran_watchdog("JAVIS_TEST_TRAN", "3600") == 3600.0)
+      tran_watchdog("JEEVI_TEST_TRAN", "0") is None
+      and tran_watchdog("JEEVI_TEST_TRAN", "3600") == 3600.0)
 
 # ---- 2b. Hai trần đo SỰ IM LẶNG mặc định tắt, trần chờ TOOL thì không ----
 def _mac_dinh(nguon, bien):
@@ -76,18 +76,18 @@ def _mac_dinh(nguon, bien):
 
 for ten, nguon in (("engine Claude SDK", sdk), ("engine Codex CLI", cli)):
     check(f"{ten}: trần im-giữa-chừng mặc định KHÔNG giới hạn",
-          _mac_dinh(nguon, "JAVIS_CLAUDE_IDLE_TIMEOUT") == 0)
+          _mac_dinh(nguon, "JEEVI_CLAUDE_IDLE_TIMEOUT") == 0)
     check(f"{ten}: trần chờ-chữ-đầu mặc định KHÔNG giới hạn",
-          _mac_dinh(nguon, "JAVIS_CLAUDE_FIRST_TIMEOUT") == 0)
+          _mac_dinh(nguon, "JEEVI_CLAUDE_FIRST_TIMEOUT") == 0)
 
 # Owner 2026-11-07 ("bỏ hết các trần của các model"): the tool cap is off by default too, on every engine path.
 main_src = (SERVER / "main.py").read_text(encoding="utf-8")
 check("main.py: the tool cap defaults to no limit before any engine runs",
-      'os.environ.setdefault("JAVIS_CLAUDE_TOOL_TIMEOUT", "0")' in main_src
-      and main_src.index('os.environ.setdefault("JAVIS_CLAUDE_TOOL_TIMEOUT", "0")') < main_src.index("import claude_warm"))
+      'os.environ.setdefault("JEEVI_CLAUDE_TOOL_TIMEOUT", "0")' in main_src
+      and main_src.index('os.environ.setdefault("JEEVI_CLAUDE_TOOL_TIMEOUT", "0")') < main_src.index("import claude_warm"))
 for ten in ("claude_warm.py", "codex_steer.py"):
     check(f"{ten}: tool cap default is 0 (no limit)",
-          _mac_dinh((SERVER / ten).read_text(encoding="utf-8"), "JAVIS_CLAUDE_TOOL_TIMEOUT") == 0)
+          _mac_dinh((SERVER / ten).read_text(encoding="utf-8"), "JEEVI_CLAUDE_TOOL_TIMEOUT") == 0)
 
 # ---- 2c. Chốt trần và LÝ DO cùng lúc: suy ngược lý do lúc hết giờ là int(None) nổ ----
 than_query = sdk.split("async def query")[1]
@@ -122,7 +122,7 @@ for ten, nguon in (("engine Claude SDK", sdk), ("engine Codex CLI", cli)):
     check(f"{ten}: thông báo nói rõ vì sao (hội thoại dài, nạp lại ngữ cảnh)",
           "hội thoại đã rất dài" in nguon)
     check(f"{ten}: vẫn nêu biến môi trường cho người biết chỉnh",
-          "JAVIS_CLAUDE_FIRST_TIMEOUT" in nguon)
+          "JEEVI_CLAUDE_FIRST_TIMEOUT" in nguon)
 
 # ---- 5. Ba thông báo phải KHÁC nhau, nếu không thì lại không phân biệt được bệnh ----
 for ten, nguon in (("engine Claude SDK", sdk), ("engine Codex CLI", cli)):

@@ -16,7 +16,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ghr-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ghr-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -25,7 +25,7 @@ except Exception:
 from _fake_github import FakeGitHub, GOOD_TOKEN  # noqa: E402
 
 fake = FakeGitHub()
-os.environ["JAVIS_GITHUB_API"] = fake.url
+os.environ["JEEVI_GITHUB_API"] = fake.url
 
 import github_repos  # noqa: E402
 import github_store  # noqa: E402
@@ -360,10 +360,10 @@ git_before = {k: v for k, v in env_before.items() if k.startswith("GIT_")}
 check("criterion 11: no credential or identity leaks into the process environment",
       git_now == git_before and GOOD_TOKEN not in "".join(os.environ.values()))
 
-# ---- the javis_github tool: "review this PR" and "skip them" from the chat ----
+# ---- the jeevi_github tool: "review this PR" and "skip them" from the chat ----
 import importlib.util  # noqa: E402
 
-_spec = importlib.util.spec_from_file_location("javis_github_plugin", ROOT / "system/plugins/javis-github/plugin.py")
+_spec = importlib.util.spec_from_file_location("jeevi_github_plugin", ROOT / "system/plugins/jeevi-github/plugin.py")
 plug = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(plug)
 

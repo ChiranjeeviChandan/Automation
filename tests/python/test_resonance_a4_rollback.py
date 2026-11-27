@@ -23,9 +23,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="javis-resonance-a4rb-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
-os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
+_STATE = tempfile.mkdtemp(prefix="jeevi-resonance-a4rb-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
+os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
 
 import resonance as R  # noqa: E402
 import resonance_store as RS  # noqa: E402
@@ -131,7 +131,7 @@ async def _nt(goal, kind, text, card="", quiet=False):
 def deps(mod, store, eng, clock):
     return mod.GoalDeps(engine_factory=lambda s, t: (eng, {"provider": "fake", "model": "fake-1", "text_only": True}),
                         budget=mod.CallBudget(0), clock=lambda: clock[0], store=store,
-                        principal=mod_principal(store)("agent", "javis", BRAIN), brain_root=BRAIN,
+                        principal=mod_principal(store)("agent", "jeevi", BRAIN), brain_root=BRAIN,
                         evidence=Evidence(), notify=_nt)
 
 

@@ -14,7 +14,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-HOME = Path(tempfile.mkdtemp(prefix="javis-codex-home-"))
+HOME = Path(tempfile.mkdtemp(prefix="jeevi-codex-home-"))
 os.environ["CODEX_HOME"] = str(HOME)
 
 import codex_models as cm  # noqa: E402

@@ -2,7 +2,7 @@
 
     python tests/run.py pulse_auto_full_main -v
 
-- `_pulse_tool_scan`: chat riêng của trợ lý chạy lượt có công cụ; nhóm thì không; JAVIS_PULSE_TOOLS=0 tắt hẳn.
+- `_pulse_tool_scan`: chat riêng của trợ lý chạy lượt có công cụ; nhóm thì không; JEEVI_PULSE_TOOLS=0 tắt hẳn.
 - `_pulse_scan_context`: giờ của chủ (thứ, ngày, múi giờ), bộ nhớ về chủ, nhật ký hội thoại hôm nay, chat riêng gần đây
   (đánh dấu tin chủ động và phản hồi của chủ), mốc đang chờ.
 - `_pulse_post`: nhắc nhở vào nhóm Nhắc lịch (khẩn), gợi ý vào nhóm Gợi ý của trợ lý (đáng chú ý); tin không loại giữ đường
@@ -18,10 +18,10 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-auto-main-")
-os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
-os.environ.pop("JAVIS_PULSE_TOOLS", None)
-BR = Path(tempfile.mkdtemp(prefix="javis-auto-main-brain-"))
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-auto-main-")
+os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
+os.environ.pop("JEEVI_PULSE_TOOLS", None)
+BR = Path(tempfile.mkdtemp(prefix="jeevi-auto-main-brain-"))
 (BR / "agents").mkdir()
 (BR / "agents" / "lan.md").write_text("---\nname: Lan\nrole: Trợ lý\n---\nBạn là Lan.\n", encoding="utf-8", newline="\n")
 
@@ -62,9 +62,9 @@ ss = main.get_store()
 check("chat riêng của trợ lý: lượt có công cụ", main._pulse_tool_scan(KEY, DM) is True)
 check("nhóm: lượt chỉ chữ", main._pulse_tool_scan(KEY, "team:t1") is False)
 check("chat riêng của trợ lý khác: không", main._pulse_tool_scan(KEY, "dm:khac") is False)
-os.environ["JAVIS_PULSE_TOOLS"] = "0"
-check("JAVIS_PULSE_TOOLS=0: tắt lượt có công cụ", main._pulse_tool_scan(KEY, DM) is False)
-os.environ.pop("JAVIS_PULSE_TOOLS", None)
+os.environ["JEEVI_PULSE_TOOLS"] = "0"
+check("JEEVI_PULSE_TOOLS=0: tắt lượt có công cụ", main._pulse_tool_scan(KEY, DM) is False)
+os.environ.pop("JEEVI_PULSE_TOOLS", None)
 
 # ═════ khối ngữ cảnh ═════
 mem = main._brain_memory_dir(BK)

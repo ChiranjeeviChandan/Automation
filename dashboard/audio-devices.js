@@ -1,7 +1,7 @@
 /* audio-devices.js - which microphone and which speaker a voice call uses (Settings > Voice, 26/11/2026).
 
    The pickers sit in the voice card next to "Test mic" and "Test speaker". The choice lives in this browser only
-   (localStorage "javis.mic" / "javis.speaker", every access in try/catch: a private window simply keeps the defaults),
+   (localStorage "jeevi.mic" / "jeevi.speaker", every access in try/catch: a private window simply keeps the defaults),
    because a device id means nothing on another machine.
 
    - Microphone: getMic() opens the saved device with deviceId exact. When it is gone (headset unplugged, another app
@@ -11,14 +11,14 @@
    - Speaker: applySpeaker() calls setSinkId on an <audio> element (ChatGPT Live, read-aloud) or an AudioContext that
      has it (Live over an API key, the speaker test). A browser without HTMLMediaElement.setSinkId (Safari, iPhone)
      shows no speaker picker: the phone decides where sound goes. A changed speaker reaches a running call at once
-     (event "javis:audio-devices"); a changed mic is used from the next time the call opens the mic.
+     (event "jeevi:audio-devices"); a changed mic is used from the next time the call opens the mic.
 
    Pure helpers are exported for node tests (tests/js/test_audio_devices.js). */
 (function (root) {
   "use strict";
 
-  var MIC_KEY = "javis.mic", SPEAKER_KEY = "javis.speaker";
-  var EVENT = "javis:audio-devices";
+  var MIC_KEY = "jeevi.mic", SPEAKER_KEY = "jeevi.speaker";
+  var EVENT = "jeevi:audio-devices";
   // Chrome on Windows adds these two aliases of a real device; "System default" already stands for them.
   var ALIASES = { "default": true, communications: true };
 
@@ -107,7 +107,7 @@
     refresh: function () { return Promise.resolve(); },
   };
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.JavisAudioDevices = api;
+  root.JeeviAudioDevices = api;
   var doc = root.document;
   if (!doc || !doc.getElementById) return;
 
@@ -168,7 +168,7 @@
       api._watching = true;
       if (md && typeof md.addEventListener === "function") md.addEventListener("devicechange", refresh);
       // The option names come from the dictionary, which may arrive after this file ran.
-      try { root.addEventListener("javis:i18n", refresh); } catch (e) {}
+      try { root.addEventListener("jeevi:i18n", refresh); } catch (e) {}
     }
     refresh();
   }

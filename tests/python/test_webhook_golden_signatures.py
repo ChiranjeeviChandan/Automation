@@ -16,10 +16,10 @@ import sys
 import tempfile
 from pathlib import Path
 
-STATE = Path(tempfile.mkdtemp(prefix="javis-wh-golden-"))
-os.environ["JAVIS_STATE_DIR"] = str(STATE)
-os.environ["JAVIS_NO_REAL_JUDGE_ENGINE"] = "1"
-os.environ["JAVIS_WH_NO_NETWORK"] = "1"
+STATE = Path(tempfile.mkdtemp(prefix="jeevi-wh-golden-"))
+os.environ["JEEVI_STATE_DIR"] = str(STATE)
+os.environ["JEEVI_NO_REAL_JUDGE_ENGINE"] = "1"
+os.environ["JEEVI_WH_NO_NETWORK"] = "1"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

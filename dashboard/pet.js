@@ -2,10 +2,10 @@
 
    Đây KHÔNG phải đồ trang trí. Nó là "sự hiện diện" của Jeevi ở mọi trang: nhìn theo con trỏ,
    chớp mắt, và đổi biểu cảm theo đúng trạng thái thật của lượt trả lời (nghe / nghĩ / nói /
-   lỗi). Trạng thái không tự bịa: app.js gọi JavisPet.setState() ngay trong setOrbState(), tức
+   lỗi). Trạng thái không tự bịa: app.js gọi JeeviPet.setState() ngay trong setOrbState(), tức
    là pet và chữ trên orb luôn nói cùng một điều.
 
-   Hình học và bảng màu lấy nguyên từ bản mẫu javis-avatar-v3.html (chủ dự án chốt), rút gọn
+   Hình học và bảng màu lấy nguyên từ bản mẫu jeevi-avatar-v3.html (chủ dự án chốt), rút gọn
    cho cỡ nhỏ: vành quỹ đạo ở đây là MỘT path có dash xoay, không phải 144 mảnh như bản mẫu.
    Ở 56px thì vệt mờ dần của bản mẫu không ai nhìn thấy, mà 576 lượt ghi style mỗi khung hình
    thì máy nào cũng thấy.
@@ -18,7 +18,7 @@
 (function () {
   "use strict";
 
-  var KHOA = "javis.pet";
+  var KHOA = "jeevi.pet";
   var NGUONG_KEO = 16;   // px di chuyển tối thiểu mới coi là KÉO chứ không phải bấm
 
   // ---- Hình dáng (path trong viewBox 320x320, tâm 160/160) ----
@@ -43,7 +43,7 @@
   };
 
   // Mỗi bảng màu tự mang cả hai tông: [thân, vành quỹ đạo, dự phòng]. Tông theo giao diện đang bật
-  // (javisTheme), nên pet không bao giờ chói lên giữa nền tối.
+  // (jeeviTheme), nên pet không bao giờ chói lên giữa nền tối.
   //
   // TÔNG TỐI SUY TỪ TÔNG SÁNG, GIỮ NGUYÊN SẮC (0.59.36). Bản cũ đặt tay từng cặp, và tay thì
   // trôi: tông tối của `amber` rơi từ 30 độ (cam) sang 43 độ (vàng), nên chọn "Hổ phách" ở
@@ -359,7 +359,7 @@
     return (MAU_MAT[eye] || {}).mau || "";
   }
   function noiSuy(a, b, k) { return a + (b - a) * k; }
-  function sang() { try { return !!(window.javisTheme && window.javisTheme.isLight()); } catch (e) { return false; } }
+  function sang() { try { return !!(window.jeeviTheme && window.jeeviTheme.isLight()); } catch (e) { return false; } }
   // Mắt phải tương phản với THÂN, không với nền trang: thân sáng thì mắt than chì, thân tối
   // thì mắt trắng. Tính bằng độ chói tương đối (WCAG) chứ không đoán bằng mắt.
   // Đây là đường TỰ ĐỘNG, nay chỉ còn dùng cho avatar trợ lý; con pet đi theo cfg.eye.
@@ -445,20 +445,20 @@
   function dung() {
     if (el) return;
     el = document.createElement("div");
-    el.id = "javisPet";
+    el.id = "jeeviPet";
     el.className = "pet";
     el.dataset.out = "0";
     el.dataset.menu = "0";
     el.innerHTML =
       '<button type="button" class="pet-body" aria-label="Jeevi">' +
         '<svg viewBox="0 0 320 320" aria-hidden="true">' +
-          '<defs><clipPath id="javisPetClip"><path class="pet-clip"></path></clipPath></defs>' +
+          '<defs><clipPath id="jeeviPetClip"><path class="pet-clip"></path></clipPath></defs>' +
           '<g class="pet-rig">' +
             '<path class="pet-ring" pathLength="360"></path>' +
             '<path class="pet-face"></path>' +
             // The owner's own picture, cut to the chosen shape. Hidden while there is none.
             '<image class="pet-photo" x="54" y="54" width="212" height="212" preserveAspectRatio="xMidYMid slice" ' +
-              'clip-path="url(#javisPetClip)" display="none"></image>' +
+              'clip-path="url(#jeeviPetClip)" display="none"></image>' +
             '<g class="pet-eyes"></g>' +
           '</g>' +
         '</svg>' +
@@ -501,13 +501,13 @@
       { id: "mic", ic: icon("mic"), nhan: mic ? t("pet.menu.mic_off", "Turn mic off") : t("pet.menu.mic_on", "Turn mic on") },
       { id: "pet", ic: icon("settings"), nhan: t("pet.menu.settings", "Mascot settings") },
       // Team chat sits on the last row (issue #755). "teams" is a page id, so the default
-      // JavisNav.go branch of the click handler opens it with no extra case.
+      // JeeviNav.go branch of the click handler opens it with no extra case.
       { id: "teams", ic: icon("users"), nhan: t("pet.menu.teams", "Team chat") },
     ];
     // The owner's own menu (pet-menu.js, Settings > Mascot > Mascot menu): their order, plus the features they
     // added. The list above stays as the fallback when pet-menu.js did not load (an old cached index.html).
     // A feature that cannot run right now stays in its place, greyed out, with the reason under its name.
-    var PM = window.JavisPetMenu;
+    var PM = window.JeeviPetMenu;
     if (PM && PM.menuEntries) {
       try {
         // May be EMPTY: the owner can remove every item (2026-11-05), and then the pet opens no menu at all.
@@ -997,18 +997,18 @@
         return;
       }
       // Trợ lý và Quy trình là HAI TAB của cùng trang Cộng sự, không phải hai trang: đi qua
-      // openTab() để mở đúng tab, chứ JavisNav.go("workspace") thì rơi vào tab đang nhớ dở
+      // openTab() để mở đúng tab, chứ JeeviNav.go("workspace") thì rơi vào tab đang nhớ dở
       // từ lần trước và cú bấm "Quy trình" có khi mở ra danh sách trợ lý.
       if (id === "agent" || id === "workflow") {
         // 2026-11-23: workspace.js is a lazy file. Load its group, then open the tab; without it, the page itself.
         var openTab = function () {
-          try { if (window.JavisWorkspace) { window.JavisWorkspace.openTab(id); return; } } catch (err) {}
-          try { window.JavisNav && window.JavisNav.go("workspace"); } catch (err) {}
+          try { if (window.JeeviWorkspace) { window.JeeviWorkspace.openTab(id); return; } } catch (err) {}
+          try { window.JeeviNav && window.JeeviNav.go("workspace"); } catch (err) {}
         };
-        if (window.JavisNapCham) window.JavisNapCham.goi("congviec", openTab); else openTab();
+        if (window.JeeviNapCham) window.JeeviNapCham.goi("congviec", openTab); else openTab();
         return;
       }
-      try { window.JavisNav && window.JavisNav.go(id); } catch (err) {}
+      try { window.JeeviNav && window.JeeviNav.go(id); } catch (err) {}
     });
 
     // Bấm ra chỗ khác thì ĐÓNG MENU, và chỉ đóng menu. Pet đứng nguyên chỗ nó đang đứng.
@@ -1106,7 +1106,7 @@
     if (el) { apDung(); chay(); }
     veDauAn();
     apFavicon();
-    try { window.dispatchEvent(new CustomEvent("javis:pet", { detail: Object.assign({}, cfg) })); } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent("jeevi:pet", { detail: Object.assign({}, cfg) })); } catch (e) {}
   }
   function setEnabled(on) { setCfg({ enabled: !!on }); }
 
@@ -1124,11 +1124,11 @@
     chay();
     veDauAn();
     apFavicon();
-    try { window.javisTheme && window.javisTheme.on(function () { apDung(); veDauAn(); }); } catch (e) {}
-    window.addEventListener("javis:i18n", function () { veMenu(); });
+    try { window.jeeviTheme && window.jeeviTheme.on(function () { apDung(); veDauAn(); }); } catch (e) {}
+    window.addEventListener("jeevi:i18n", function () { veMenu(); });
     // The mascot menu was saved (here or in another window): close it if open, so no row moves under the pointer.
     // moMenu(true) builds it again from the new list the next time.
-    window.addEventListener("javis:pet-menu", function () { if (el && el.dataset.menu === "1") moMenu(false); });
+    window.addEventListener("jeevi:pet-menu", function () { if (el && el.dataset.menu === "1") moMenu(false); });
     // Logo riêng của người dùng thắng linh vật, nên phải hỏi máy chủ một lượt. Hỏi SAU khi
     // đã vẽ bằng localStorage: chờ mạng xong mới vẽ thì thanh bên nháy một nhịp lúc mở trang.
     fetch("/settings").then(function (r) { return r.json(); }).then(function (j) {
@@ -1298,7 +1298,7 @@
     return h;
   }
   // ---- OWN PICTURE (mascot page only, opts.image) ----
-  // Upload goes through the same store as partner avatars (JavisAvatar.uploadImage: cropped square, 256px, EXIF
+  // Upload goes through the same store as partner avatars (JeeviAvatar.uploadImage: cropped square, 256px, EXIF
   // dropped in the browser). The drawn face stays underneath, so "Use the Jeevi face" brings it straight back.
   // The tab-icon switch shows only while a picture is in use: with none there is nothing to put on the tab.
   function anhHtml(v) {
@@ -1405,7 +1405,7 @@
       inp.value = "";
       if (!f) return;
       var nut = host.querySelector("[data-pet-upload]"), msg = host.querySelector(".pet-upload-msg");
-      var A = window.JavisAvatar;
+      var A = window.JeeviAvatar;
       var bao = function (k, loi) { if (msg) { msg.textContent = k; msg.classList.toggle("loi", !!loi); } };
       if (!A || !A.uploadImage) { bao(t("settings.pet_image_fail", "Could not upload the picture."), true); return; }
       if (nut) nut.disabled = true;
@@ -1484,7 +1484,7 @@
     } catch (e) {}
   }
 
-  window.JavisPet = {
+  window.JeeviPet = {
     setState: setState,
     react: react,
     setCfg: setCfg,

@@ -1,4 +1,4 @@
-"""Improve on the owner's request (2026-11-15): `server/self_upgrade.py` and the bundled tool `javis_improve`.
+"""Improve on the owner's request (2026-11-15): `server/self_upgrade.py` and the bundled tool `jeevi_improve`.
 
     python tests/run.py self_upgrade -v
 
@@ -23,7 +23,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-self-upgrade-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-self-upgrade-")
 
 import mcp_hub  # noqa: E402
 import plugins_host  # noqa: E402
@@ -47,13 +47,13 @@ def raises(fn, *a, **kw):
     return ""
 
 
-BR = Path(tempfile.mkdtemp(prefix="javis-self-upgrade-brain-"))
+BR = Path(tempfile.mkdtemp(prefix="jeevi-self-upgrade-brain-"))
 (BR / "agents").mkdir()
 AGENT = "---\nname: Lan\nrole: Trợ lý chạy bộ\n---\nBạn là Lan.\n"
 (BR / "agents" / "lan.md").write_text(AGENT, encoding="utf-8")
 (BR / "plugins" / "x").mkdir(parents=True)
 (BR / "memory").mkdir()
-OUT = Path(tempfile.mkdtemp(prefix="javis-self-upgrade-out-"))
+OUT = Path(tempfile.mkdtemp(prefix="jeevi-self-upgrade-out-"))
 root = str(BR)
 
 # ═════ ai được sửa ═════
@@ -126,9 +126,9 @@ check("mã thay đổi lạ: báo rõ", bool(raises(SU.undo, root, 999)) and boo
 # Skill hệ thống: sửa được khi chủ bảo, có câu nói rõ hệ quả.
 import system_sync  # noqa: E402
 _orig = system_sync.is_system_skill
-system_sync.is_system_skill = lambda slug: slug == "javis-builder"
+system_sync.is_system_skill = lambda slug: slug == "jeevi-builder"
 try:
-    c5 = SU.save(root, "skills/javis-builder/SKILL.md", content="---\nname: B\ndescription: Dựng năng lực\n---\nx\n")
+    c5 = SU.save(root, "skills/jeevi-builder/SKILL.md", content="---\nname: B\ndescription: Dựng năng lực\n---\nx\n")
 finally:
     system_sync.is_system_skill = _orig
 check("skill hệ thống: sửa được, kèm ghi chú không còn tự cập nhật theo app", "note" in c5, c5)
@@ -151,7 +151,7 @@ class _Client:
 
 
 def _session_repos(sid, brain=""):
-    return [dict(r, worktree=f"/wt/{r['full_name']}", branch="javis/abc", can_push=True) for r in state["repos"]]
+    return [dict(r, worktree=f"/wt/{r['full_name']}", branch="jeevi/abc", can_push=True) for r in state["repos"]]
 
 
 def _attach(sid, brain, brain_root, names):
@@ -228,14 +228,14 @@ check("self_upgrade không còn đường tự chạy cập nhật",
 check("so phiên bản theo số", SU._newer("0.563.0", "0.562.9") and not SU._newer("0.562.0", "0.562.0")
       and SU._newer("1.0.0", "0.999.9"))
 
-# ═════ công cụ javis_improve ═════
-spec = importlib.util.spec_from_file_location("javis_improve_plugin", ROOT / "system/plugins/javis-improve/plugin.py")
+# ═════ công cụ jeevi_improve ═════
+spec = importlib.util.spec_from_file_location("jeevi_improve_plugin", ROOT / "system/plugins/jeevi-improve/plugin.py")
 mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
-ctx = plugins_host.PluginContext("javis-improve", "bundled", ROOT / "system/plugins/javis-improve", root)
+ctx = plugins_host.PluginContext("jeevi-improve", "bundled", ROOT / "system/plugins/jeevi-improve", root)
 mod.register(ctx)
 tool = ctx._tools[0]
-check("tool javis_improve đăng ký", tool["name"] == "javis_improve")
+check("tool jeevi_improve đăng ký", tool["name"] == "jeevi_improve")
 check("đọc trạng thái và xem bản mới chạy ở mọi mức; sửa brain cần safe; mã nguồn chỉ Full",
       plugins_host._required_mode(tool, {"op": "status"}) == "readonly"
       and plugins_host._required_mode(tool, {"op": "save"}) == "safe"
@@ -243,7 +243,7 @@ check("đọc trạng thái và xem bản mới chạy ở mọi mức; sửa br
       and plugins_host._required_mode(tool, {"op": "update"}) == "readonly"
       and plugins_host._required_mode(tool, {"op": "report"}) == "readonly"
       and not plugins_host._min_mode_ok(plugins_host._required_mode(tool, {"op": "save"}), "suggest"))
-check("chỉ phiên của chủ thấy tool (bot khách không)", "javis_improve" in mcp_hub.OWNER_ONLY_TOOLS)
+check("chỉ phiên của chủ thấy tool (bot khách không)", "jeevi_improve" in mcp_hub.OWNER_ONLY_TOOLS)
 
 
 def call(args, turn):
@@ -272,7 +272,7 @@ out = call({"op": "undo", "id": cid}, owner)
 check("tool: hoàn tác", f"Đã hoàn tác #{cid}" in out and (BR / "agents" / "lan.md").read_text(encoding="utf-8")
       == before, out)
 out = call({"op": "save", "path": "plugins/x/plugin.py", "content": "x"}, owner)
-check("tool: ngoài vùng thì báo lỗi rõ", out.startswith("ERROR") and "javis_plugin" in out, out)
+check("tool: ngoài vùng thì báo lỗi rõ", out.startswith("ERROR") and "jeevi_plugin" in out, out)
 SU.wire(versions=lambda: _v("0.562.0", "0.562.0"))
 out = call({"op": "status"}, owner)
 check("tool: trạng thái chỉ đúng file của chính trợ lý, thay đổi gần đây, phiên bản",
@@ -306,18 +306,18 @@ src = (ROOT / "server" / "main.py").read_text(encoding="utf-8")
 check("main: chỉ nối phiên bản, không nối đường chạy cập nhật; /update chỉ nút bấm gọi",
       "self_upgrade.wire(versions=_self_upgrade_versions)" in src and "_self_upgrade_start" not in src
       and src.count("await _update_core()") == 1)
-check("prompt trợ lý: chủ bảo cải tiến thì dùng javis_improve, không ai bảo thì chỉ đề xuất",
-      "CHỦ bảo cải tiến" in src and "`javis_improve`" in src)
+check("prompt trợ lý: chủ bảo cải tiến thì dùng jeevi_improve, không ai bảo thì chỉ đề xuất",
+      "CHỦ bảo cải tiến" in src and "`jeevi_improve`" in src)
 check("prompt trợ lý: không tự cập nhật, chỉ sang trang Cập nhật", "Jeevi KHÔNG tự cập nhật" in src
       and "op=update để máy lên bản mới" not in src)
-plugin_src = (ROOT / "system/plugins/javis-improve/plugin.py").read_text(encoding="utf-8")
+plugin_src = (ROOT / "system/plugins/jeevi-improve/plugin.py").read_text(encoding="utf-8")
 check("op=source không còn dặn gọi op=update sau merge", "op=update để máy này cập nhật" not in plugin_src
       and "KHÔNG tự lên bản" in plugin_src)
 claude_md = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
-core = (ROOT / "system" / "agents" / "javis-core.md").read_text(encoding="utf-8")
-check("CLAUDE.md và vai Jeevi Core: cải tiến khi chủ yêu cầu qua javis_improve",
-      "`javis_improve`" in claude_md and "`javis_improve`" in core)
-for f in ("server/self_upgrade.py", "system/plugins/javis-improve/plugin.py", "system/plugins/javis-improve/plugin.yaml"):
+core = (ROOT / "system" / "agents" / "jeevi-core.md").read_text(encoding="utf-8")
+check("CLAUDE.md và vai Jeevi Core: cải tiến khi chủ yêu cầu qua jeevi_improve",
+      "`jeevi_improve`" in claude_md and "`jeevi_improve`" in core)
+for f in ("server/self_upgrade.py", "system/plugins/jeevi-improve/plugin.py", "system/plugins/jeevi-improve/plugin.yaml"):
     text = (ROOT / f).read_text(encoding="utf-8")
     check(f"không ký tự gạch ngang dài: {f}", "—" not in text and "–" not in text)
 

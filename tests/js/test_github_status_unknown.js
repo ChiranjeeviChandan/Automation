@@ -65,8 +65,8 @@ check("the backup box draws the unknown state with a retry", /ph === "unknown"/.
 check("the Connections card goes through the rule", /statusState\(st\) === "unknown"/.test(ghJs.slice(ghJs.indexOf("async function loadCard"))));
 check("the composer panel goes through the rule",
   /statusState\(st\)/.test(ghJs.slice(ghJs.indexOf("function panel(box, menuApi)"), ghJs.indexOf("var ghStatus = null"))));
-check("the team panel goes through the same rule", /statusState\(st\)/.test(tgJs) && /G\.statusState|JavisGithubRepos\.statusState/.test(tgJs));
-check("the rule is shared with other screens", /statusState: statusState/.test(ghJs.slice(ghJs.indexOf("window.JavisGithubRepos ="))));
+check("the team panel goes through the same rule", /statusState\(st\)/.test(tgJs) && /G\.statusState|JeeviGithubRepos\.statusState/.test(tgJs));
+check("the rule is shared with other screens", /statusState: statusState/.test(ghJs.slice(ghJs.indexOf("window.JeeviGithubRepos ="))));
 check("no screen maps a missing answer straight to \"not connected\"",
   ![ghJs, tgJs].some(s => /if \(!st \|\| !st\.connected\)/.test(s)));
 check("a retry asks the server again, past the kept copy", /github\/status\?refresh=1/.test(ghJs) && /github\/status\?refresh=1/.test(tgJs));

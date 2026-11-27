@@ -13,10 +13,10 @@ import asyncio
 import os
 # 0.438.5: vòng tool mặc định gọi model dạng stream. File này thử logic vòng tool trên đường non-stream
 # (giả lập client.post / máy chủ trả JSON), đường đó vẫn là đường lui. Đường stream: test_api_stream_vong.py.
-os.environ["JAVIS_API_STREAM_TOOLS"] = "0"
+os.environ["JEEVI_API_STREAM_TOOLS"] = "0"
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-steer-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-steer-")
 
 import steer_inbox as si  # noqa: E402
 
@@ -171,7 +171,7 @@ tok = gi.open("g1", "chat:g1")
 it = gi.put("g1", "tính cả kênh Shopee", goal=True)
 check("a goal message is held like any other", it is not None and it.get("goal") is True)
 note = gi.take_note("g1")
-check("the round reads it as part of the goal", "Shopee" in note and "mục tiêu đang theo đuổi" in note and "JAVIS_GOAL" in note)
+check("the round reads it as part of the goal", "Shopee" in note and "mục tiêu đang theo đuổi" in note and "JEEVI_GOAL" in note)
 gi.put("g1", "gửi qua email", goal=True)
 gi.put("g1", "một việc khác")
 left = gi.close("g1", "chat:g1", tok)

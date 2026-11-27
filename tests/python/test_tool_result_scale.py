@@ -8,7 +8,7 @@ machine and tight enough to catch a change that makes the cost grow with the wro
   1. one result of 150 KB, 1.3 MB and 6.4 MB: shaping time grows with the size, the view does not;
   2. a store holding far more than its ceiling: writes stay quick, the oldest copies leave;
   3. a dataset near the size limit (40,000 records): load, a grouped SQL query, and the follow-up question;
-  4. 200 pages read by javis_query in one call;
+  4. 200 pages read by jeevi_query in one call;
   5. 24 large results at once: the event loop keeps answering while they are parsed and stored;
   6. a tool search over 600 tools.
 """
@@ -21,7 +21,7 @@ import tempfile
 import time
 import tracemalloc
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-scale-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-scale-"))
 
 import config  # noqa: E402
 import engine  # noqa: E402
@@ -57,7 +57,7 @@ def payload(n, pad=40):
 
 config.read_settings = lambda: {"mcp": {"lazy_tools": "off"}}
 shaper.settings(force=True)
-store.configure(os.path.join(os.environ["JAVIS_STATE_DIR"], "scale.sqlite3"))
+store.configure(os.path.join(os.environ["JEEVI_STATE_DIR"], "scale.sqlite3"))
 
 # ============================================================
 # 1. One result, growing
@@ -91,7 +91,7 @@ check("shaping time grows in step with the size, not faster", per_mb[2] < per_mb
 # 2. A store far over its ceiling
 # ============================================================
 print("\n-- store --")
-os.environ["JAVIS_TOOL_RESULT_STORE_MB"] = "16"
+os.environ["JEEVI_TOOL_RESULT_STORE_MB"] = "16"
 noise = "".join(random.choice("abcdefghijklmnopqrstuvwxyz0123456789 ") for _ in range(400_000))   # does not compress
 t0 = time.time()
 refs = [store.put(noise + str(i), scope="/scale") for i in range(150)]                                # about 60 MB raw
@@ -108,7 +108,7 @@ check("the store never passes its ceiling", st["stored_bytes"] <= 16 * 1024 * 10
 check("the newest copies are the ones kept", store.get(refs[-1], "/scale") is not None and store.get(refs[0], "/scale") is None)
 check("a write stays quick however full the store is", put_ms < 400, put_ms)
 check("a read stays quick", get_ms < 200, get_ms)
-os.environ.pop("JAVIS_TOOL_RESULT_STORE_MB")
+os.environ.pop("JEEVI_TOOL_RESULT_STORE_MB")
 
 # ============================================================
 # 3. A dataset at the size limit
@@ -205,15 +205,15 @@ async def hub_cases():
     tools, route = await mcp_hub.discover_all("full", vault_root=BRAIN, include_plugins=False, force_refresh=True)
     raw_pages = sum(len(p) for p in PAGE.values())
     t0 = time.time()
-    ans = await engine._call_tool_for_model(route, "javis_query", {
+    ans = await engine._call_tool_for_model(route, "jeevi_query", {
         "tool": "pos__list_orders", "args": {}, "pages": 200,
         "sql": "SELECT COUNT(*), COUNT(DISTINCT id), SUM(total) FROM records"})
     t_pages = time.time() - t0
     doc = json.loads(ans)
-    print(f"   200 pages ({raw_pages / 1e6:.1f} MB raw) in one javis_query call: {t_pages:.1f} s, "
+    print(f"   200 pages ({raw_pages / 1e6:.1f} MB raw) in one jeevi_query call: {t_pages:.1f} s, "
           f"{_n_calls[0]} source calls, answer {len(ans)} chars")
     check("200 pages become one exact answer",
-          doc["rows"] == [[2000, 2000, sum((i % 97) * 1000 for i in range(2000))]] and doc["javis_query"]["source"]["complete"] is True,
+          doc["rows"] == [[2000, 2000, sum((i % 97) * 1000 for i in range(2000))]] and doc["jeevi_query"]["source"]["complete"] is True,
           doc.get("rows"))
     check("the answer is a few hundred characters for megabytes read", len(ans) < 800 and raw_pages > 4_000_000, len(ans))
     check("200 pages are gathered in well under the fetch time limit", t_pages < 120, t_pages)
@@ -238,7 +238,7 @@ async def hub_cases():
     worst = max(lags) * 1000
     print(f"   24 results of {len(BIG) / 1000:.0f} KB at once: {t_many:.2f} s in all, worst event-loop stall {worst:.0f} ms")
     check("every one of the 24 got its own view and reference",
-          len({json.loads(o)["javis_stored_result"]["ref"] for o in outs}) == 24)
+          len({json.loads(o)["jeevi_stored_result"]["ref"] for o in outs}) == 24)
     check("the event loop is never held for long while results are shaped", worst < 250, worst)
     check("24 large results are served in a few seconds", t_many < 30, t_many)
 

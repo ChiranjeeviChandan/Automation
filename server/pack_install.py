@@ -351,7 +351,7 @@ def soi(du_lieu: bytes, ten_tep: str = "") -> dict:
     py = sorted(str(p.relative_to(tam)).replace("\\", "/") for p in tam.rglob("*.py"))
 
     # Plugin trong gói: liệt kê để hiện lên màn hình xác nhận, và TỪ CHỐI nếu trùng tên một
-    # plugin đi kèm app. Chặn ở đây chứ không lúc nạp, vì một gói lặng lẽ thay `javis_task`
+    # plugin đi kèm app. Chặn ở đây chứ không lúc nạp, vì một gói lặng lẽ thay `jeevi_task`
     # hay `javis_schedule` dưới một màn hình chỉ nói "gói này chạy mã" là đúng kiểu bất ngờ
     # không nên có - người dùng phải thấy lý do TRƯỚC khi có gì rơi xuống đĩa.
     plugin_slugs = []

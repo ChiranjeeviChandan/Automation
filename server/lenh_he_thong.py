@@ -25,10 +25,10 @@ import localefmt
 # Dấu hiệu nhận diện. PHẢI khớp từng chữ với dashboard/chat-lenh.js (có test khoá hai bên).
 PLAN_MARK = "[CHẾ ĐỘ KẾ HOẠCH:"
 GOAL_MARK = "[MỤC TIÊU:"
-GOAL_TAG = "JAVIS_GOAL"
+GOAL_TAG = "JEEVI_GOAL"
 # 0.173.1: hidden line inside the /goal block of an automatic round (v >= 2), so the dashboard can draw that
 # round as a collapsible "nudged to continue" line with a Stop goal button, also after a reload.
-GOAL_ROUND_TAG = "JAVIS_GOAL_ROUND"
+GOAL_ROUND_TAG = "JEEVI_GOAL_ROUND"
 GOAL_MAX_ROUNDS = 5
 
 # Neo đầu DÒNG chứ không phải đầu tin: trước khối này dashboard còn chèn khối "file đang ghim" và
@@ -98,8 +98,8 @@ def _dong_bo_sung(them) -> str:
 def khoi_muc_tieu(dieu_kien: str, vong: int = 1, toi_da: int = GOAL_MAX_ROUNDS, left: str = "", them=None) -> str:
     """Khối chỉ dẫn `/goal`: làm tiếp cho tới khi điều kiện đúng, tự báo trạng thái ở cuối.
 
-    Trình duyệt đọc dòng ẩn `<!-- JAVIS_GOAL: {...} -->` để quyết định có tự gửi vòng tiếp
-    không. Cách này giống JAVIS_ASK/JAVIS_LESSON: MODEL đề xuất, CODE quyết định (trần vòng,
+    Trình duyệt đọc dòng ẩn `<!-- JEEVI_GOAL: {...} -->` để quyết định có tự gửi vòng tiếp
+    không. Cách này giống JEEVI_ASK/JEEVI_LESSON: MODEL đề xuất, CODE quyết định (trần vòng,
     dừng khi không tiến triển, dừng khi người dùng chen vào).
     """
     import json
@@ -130,7 +130,7 @@ _GOAL_RE = re.compile(r"<!--\s*" + GOAL_TAG + r":\s*([\s\S]*?)\s*-->")
 
 
 def doc_muc_tieu(text: str):
-    """Đọc dòng ẩn JAVIS_GOAL CUỐI CÙNG trong câu trả lời -> {'done': bool, 'left': str} hoặc None.
+    """Đọc dòng ẩn JEEVI_GOAL CUỐI CÙNG trong câu trả lời -> {'done': bool, 'left': str} hoặc None.
 
     None = model không báo (hoặc báo hỏng). Bên gọi coi đó là "không rõ" và DỪNG, không đoán
     là chưa xong: đoán sai chiều đó là tự chạy vòng lặp đốt token.

@@ -23,8 +23,8 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-chat-jobs-")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-chat-jobs-brains-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-chat-jobs-")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-chat-jobs-brains-")
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -180,7 +180,7 @@ with TestClient(main.app, base_url="http://localhost:7777") as cl:
     main.cfgmod.gate_active = lambda: True
 
 # ---------------------------------------------------------------- 7. restart and expiry
-store_path = Path(tempfile.mkdtemp(prefix="javis-chat-jobs-store-")) / "chat_jobs.json"
+store_path = Path(tempfile.mkdtemp(prefix="jeevi-chat-jobs-store-")) / "chat_jobs.json"
 now = time.time()
 store_path.write_text(json.dumps({
     "cj_cut": {"owner": "owner", "lane": "cli:x", "status": "running", "boot": "old-process",

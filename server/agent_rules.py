@@ -5,15 +5,15 @@ sent on Zalo must not use markdown" vanished after a few learning rounds). Two p
 
 1. The learn engine updated an agent by replacing its whole body with a fresh system prompt,
    written by a model that had only ever seen the agent's slug and a 100-character role.
-2. A rule the owner gave in chat could only be stored as a `JAVIS_LESSON`, and the lesson
+2. A rule the owner gave in chat could only be stored as a `JEEVI_LESSON`, and the lesson
    section keeps the 15 newest lines, so the rule was evicted 15 lessons later.
 
 This module holds the pieces both paths now share:
 
 - `merge_bullets`: add bullets to ONE `## ` section, dedupe, optionally keep only the newest N.
   Everything outside that section is copied through untouched.
-- `extract_rules`: pull `JAVIS_RULE: ...` lines out of an agent's output (the owner-rule twin
-  of `JAVIS_LESSON`). The model proposes, code writes.
+- `extract_rules`: pull `JEEVI_RULE: ...` lines out of an agent's output (the owner-rule twin
+  of `JEEVI_LESSON`). The model proposes, code writes.
 - `missing_owner_lines`: the guard. Every line the owner wrote (anything outside the sections
   Jeevi manages itself) must still be present after a write, or the write is refused.
 
@@ -32,7 +32,7 @@ OWNER_RULES_HEADER = "## Luật chủ dặn"
 LEARNED_ADDITIONS_HEADER = "## Bổ sung (tự học)"
 LEARNED_ADDITIONS_MAX = 20
 
-RULE_MARKER_RE = re.compile(r"^[ \t]*JAVIS_RULE:[ \t]*(.+?)[ \t]*$", re.MULTILINE)
+RULE_MARKER_RE = re.compile(r"^[ \t]*JEEVI_RULE:[ \t]*(.+?)[ \t]*$", re.MULTILINE)
 RULES_PER_TURN = 3
 RULE_MAX_CHARS = 300
 
@@ -112,12 +112,12 @@ def merge_bullets(text: str, header: str, items: Iterable[str],
 
 
 def extract_rules(out: str) -> Tuple[List[str], str]:
-    """Pull `JAVIS_RULE:` lines out of an agent's output. Returns (rules, cleaned output).
+    """Pull `JEEVI_RULE:` lines out of an agent's output. Returns (rules, cleaned output).
 
     The marker must leave the output: it flows on into `{{prev}}` of the next workflow step,
     into the chat bubble and into the voice.
     """
-    if not out or "JAVIS_RULE" not in out:
+    if not out or "JEEVI_RULE" not in out:
         return [], out
     rules = [m.group(1).strip()[:RULE_MAX_CHARS] for m in RULE_MARKER_RE.finditer(out)]
     cleaned = re.sub(r"\n{3,}", "\n\n", RULE_MARKER_RE.sub("", out)).strip()

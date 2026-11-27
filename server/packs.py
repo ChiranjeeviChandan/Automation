@@ -28,16 +28,16 @@ lần đó không phải di trú.
 
 Vì sao thả tay vào đây KHÔNG cần cổng env, còn `<brain>/plugins/` thì cần
 ---------------------------------------------------------------------
-(Since 0.161.0 that gate is open by default and `JAVIS_ENABLE_USER_PLUGINS=false` opts out; the
+(Since 0.161.0 that gate is open by default and `JEEVI_ENABLE_USER_PLUGINS=false` opts out; the
 reasoning below explains why packs never needed it.)
-`plugins_host` bắt `JAVIS_ENABLE_USER_PLUGINS` cho plugin trong vault vì **model ghi được vào
-vault**: `javis_write_file` mở đúng cây đó, nên "một thư mục ghi được" ở đấy nghĩa là code chạy
+`plugins_host` bắt `JEEVI_ENABLE_USER_PLUGINS` cho plugin trong vault vì **model ghi được vào
+vault**: `jeevi_write_file` mở đúng cây đó, nên "một thư mục ghi được" ở đấy nghĩa là code chạy
 mà không ai bấm gì. `STATE_DIR/packs/` thì không tool nào của Jeevi ghi tới; ghi được vào đây
 đòi quyền trên hệ tệp của máy chủ, tức đã tương đương quyền sửa mã nguồn - không còn gì để
 cổng đó bảo vệ thêm.
 
 Cổng thật sự cần nằm ở đường TẢI TỪ MẠNG (cài từ zip, URL, kho), và nó là màn hình đồng ý gắn
-digest ở giai đoạn sau, chứ không phải một biến môi trường bật-tắt-tất-cả. `JAVIS_DISABLE_PACKS`
+digest ở giai đoạn sau, chứ không phải một biến môi trường bật-tắt-tất-cả. `JEEVI_DISABLE_PACKS`
 là công tắc tắt sạch cho ai cần.
 
 Suy biến: hỏng thì THIẾU, không bao giờ THỪA
@@ -64,7 +64,7 @@ from config import STATE_DIR
 # Gốc CÂY MÃ NGUỒN, để đọc VERSION. Neo vào `__file__` y như `main`, `system_sync`,
 # `plugins_host` và `updater` - KHÔNG suy ra từ STATE_DIR.
 #
-# Bản cũ suy từ STATE_DIR và sai ở mọi bản cài đặt `JAVIS_STATE_DIR`: trên Docker thì
+# Bản cũ suy từ STATE_DIR và sai ở mọi bản cài đặt `JEEVI_STATE_DIR`: trên Docker thì
 # `/data/state` ra `/data`, chỗ không có VERSION. Hậu quả không nhẹ chút nào - `_app_version()`
 # trả rỗng, `_hop_compat` so với (0,0,0), nên MỌI gói có khai `compat.app` đều bị từ chối ở
 # bước validate với câu "cần Jeevi >=x, bản này là " (bỏ trống). Tức là cả kho không cài được
@@ -104,7 +104,7 @@ _cache: dict = {"sig": None, "packs": [], "connectors": {}}
 
 def tat_het() -> bool:
     """Công tắc tắt sạch mọi gói, đọc LIVE để dùng được khi không vào nổi dashboard."""
-    return str(os.getenv("JAVIS_DISABLE_PACKS", "")).strip().lower() in ("1", "true", "yes", "on")
+    return str(os.getenv("JEEVI_DISABLE_PACKS", "")).strip().lower() in ("1", "true", "yes", "on")
 
 
 def _app_version() -> str:

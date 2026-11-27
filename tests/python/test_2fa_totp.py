@@ -19,8 +19,8 @@ import os
 import sys
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-2fa-test-")
-os.environ["JAVIS_REQUIRE_LOGIN"] = "1"
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-2fa-test-")
+os.environ["JEEVI_REQUIRE_LOGIN"] = "1"
 
 from fastapi.testclient import TestClient   # noqa: E402
 import config as c   # noqa: E402
@@ -194,7 +194,7 @@ check("và bị TIÊU luôn, không dùng lại được",
 check("mã bịa thì không qua", c.totp_dung_ma_khoi_phuc("ZZZZ-ZZZZ") is False)
 
 _raw = (ROOT / "server" / "settings.json")
-_raw = (os.path.join(os.environ["JAVIS_STATE_DIR"], "settings.json"))
+_raw = (os.path.join(os.environ["JEEVI_STATE_DIR"], "settings.json"))
 _txt = open(_raw, encoding="utf-8").read()
 check("CANARY: secret TOTP được mã hoá trên đĩa, không nằm nguyên văn", S not in _txt)
 check("CANARY: mã khôi phục cũng không nằm nguyên văn",
@@ -287,9 +287,9 @@ check("CANARY: /auth/2fa/* KHÔNG nằm trong danh sách miễn đăng nhập",
 
 # install.sh chỉ ghi Ý ĐỊNH, không được tự bật 2FA (bật trước khi quét QR = tự khoá mình).
 _ins = (ROOT / "install.sh").read_text(encoding="utf-8")
-check("install.sh có hỏi bật 2FA", "JAVIS_SETUP_2FA" in _ins)
+check("install.sh có hỏi bật 2FA", "JEEVI_SETUP_2FA" in _ins)
 check("CANARY: install.sh KHÔNG tự bật, chỉ ghi cờ gợi ý",
-      "_env_set JAVIS_SETUP_2FA 1" in _ins and "totp" not in _ins.lower())
+      "_env_set JEEVI_SETUP_2FA 1" in _ins and "totp" not in _ins.lower())
 
 print()
 if _fails:

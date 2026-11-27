@@ -22,17 +22,17 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-reminder-retry-state-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-reminder-retry-state-")
 
 import once_ledger  # noqa: E402
 import reminders  # noqa: E402
 
-once_ledger.configure(Path(tempfile.mkdtemp(prefix="javis-reminder-retry-ledger-")) / "ledger.sqlite3")
+once_ledger.configure(Path(tempfile.mkdtemp(prefix="jeevi-reminder-retry-ledger-")) / "ledger.sqlite3")
 
 fails = []
 sent = []
 incidents = []
-brain = Path(tempfile.mkdtemp(prefix="javis-reminder-retry-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="jeevi-reminder-retry-brain-"))
 NET_ERR = "DeepSeek lỗi: getaddrinfo failed | Claude CLI exit code 3221226505"
 
 

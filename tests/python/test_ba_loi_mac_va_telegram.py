@@ -31,7 +31,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-mactest-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-mactest-")
 
 import claude_cli          # noqa: E402
 import config as c         # noqa: E402
@@ -85,7 +85,7 @@ _ly_do = main._why_no_models("openai-oauth", _m)
 check("đã kết nối + không thấy Codex CLI -> chỉ đúng việc phải làm",
       "Codex" in _ly_do and ("npm i -g @openai/codex" in _ly_do),
       _ly_do)
-check("và nhắc được cả lối thoát cho máy cài chỗ lạ", "JAVIS_CODEX_BIN" in _ly_do)
+check("và nhắc được cả lối thoát cho máy cài chỗ lạ", "JEEVI_CODEX_BIN" in _ly_do)
 
 _cu = main.openai_oauth.valid_creds
 try:
@@ -197,7 +197,7 @@ check("CANARY: menu truyền riêng vào không bị thay bằng menu quản tr�
 # 4. macOS: tìm binary ngoài PATH tối giản của tiến trình nền
 # ============================================================
 _path_cu = os.environ.get("PATH", "")
-_tmp = tempfile.mkdtemp(prefix="javis-brew-")
+_tmp = tempfile.mkdtemp(prefix="jeevi-brew-")
 try:
     # Giả lập đúng cảnh macOS: PATH của launchd, còn binary nằm ở thư mục Homebrew.
     os.environ["PATH"] = "/usr/bin:/bin:/usr/sbin:/sbin"

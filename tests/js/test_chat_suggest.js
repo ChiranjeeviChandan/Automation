@@ -1,7 +1,7 @@
 // The suggested next message in the chat box (chat-suggest.js, 2026-11-07, typing along 2026-11-13).
 //
 // Owner, 2026-11-07: after Claude answers, its empty box shows a likely next message in grey and Tab fills it in;
-// "em xem có thêm được vào javis không?". Pins: the suggestion is the placeholder of the empty box, never text in it
+// "em xem có thêm được vào jeevi không?". Pins: the suggestion is the placeholder of the empty box, never text in it
 // (nothing is sent by accident); the Tab key and a ">" right after the text fill it in, with no modifier and no IME
 // composition, and nothing is added to the button row under the box (owner, 2026-11-13: "không cần hiện chữ tab đâu
 // em, và nhớ phải giữ lại các nút khác"); a newer
@@ -65,9 +65,9 @@ check("Right Arrow with nothing on offer: no", P.acceptsWordKey(right(), boxAt("
 check("a draft worth finishing: one line, two letters or more, not a long text",
   P.liveDraft("ok") && P.liveDraft("ok làm ") && !P.liveDraft("a") && !P.liveDraft(" ") && !P.liveDraft("dòng 1\ndòng 2") &&
   !P.liveDraft("x".repeat(201)));
-const ctx = P.shapeContext([{ role: "user", text: "a" }, { role: "javis", text: " " }, null,
-  ...Array.from({ length: 9 }, (_, i) => ({ role: i % 2 ? "user" : "javis", text: "m" + i }))]);
-check("context: at most 6, empty dropped, javis read as assistant",
+const ctx = P.shapeContext([{ role: "user", text: "a" }, { role: "jeevi", text: " " }, null,
+  ...Array.from({ length: 9 }, (_, i) => ({ role: i % 2 ? "user" : "jeevi", text: "m" + i }))]);
+check("context: at most 6, empty dropped, jeevi read as assistant",
   ctx.length === 6 && ctx.every(m => m.text.trim()) && ctx[ctx.length - 1].role === "assistant");
 
 // ---- the controller in a small fake page ----
@@ -126,10 +126,10 @@ const sandbox = {
   Event: class { constructor(t) { this.type = t; } },
 };
 sandbox.window = { t: (k) => "T(" + k + ")", addEventListener: (t, f) => { winListeners[t] = f; },
-  JavisComposerMenu: { register: (it) => registered.push(it) } };
+  JeeviComposerMenu: { register: (it) => registered.push(it) } };
 vm.createContext(sandbox);
 vm.runInContext(SRC, sandbox);
-const S = sandbox.window.JavisSuggest;
+const S = sandbox.window.JeeviSuggest;
 const tick = () => new Promise((r) => setTimeout(r, 0));
 const pause = () => new Promise((r) => setTimeout(r, WAIT * 4));   // longer than the wait before a draft is sent
 
@@ -413,7 +413,7 @@ const pause = () => new Promise((r) => setTimeout(r, WAIT * 4));   // longer tha
   pending.shift()({ ok: true, text: "go" });
   await p;
   input.placeholder = "T(bar.input_ph)";   // applyLang wrote the translation over the suggestion
-  winListeners["javis:i18n"]();
+  winListeners["jeevi:i18n"]();
   check("after a language switch the suggestion shows again", input.placeholder === "go");
   c.clear();
   check("and clearing restores the TRANSLATED placeholder", input.placeholder === "T(bar.input_ph)");
@@ -435,7 +435,7 @@ const pause = () => new Promise((r) => setTimeout(r, WAIT * 4));   // longer tha
   check("index.html loads chat-suggest.js before app.js",
     html.indexOf("/static/chat-suggest.js") > 0 && html.indexOf("/static/chat-suggest.js") < html.indexOf("/static/app.js?v="));
   check("main chat: attached to #chatInput",
-    /JavisSuggest\.attach\(\{\s*input: \(\) => chatInput/.test(app));
+    /JeeviSuggest\.attach\(\{\s*input: \(\) => chatInput/.test(app));
   // Owner, 2026-11-13: on a phone "làm 1 mũi tên nhỏ theo kiểu > thôi, không cần cả nút", "đừng hiện cùng hàng với
   // voice và các nút hiện tại", "bôi đậm nút đấy lên một chút".
   const cssTab = fs.readFileSync(path.join(D, "style.css"), "utf8");
@@ -482,7 +482,7 @@ const pause = () => new Promise((r) => setTimeout(r, WAIT * 4));   // longer tha
     css.includes("textarea.sug-ghosted::placeholder { color: transparent; }"));
   check("no timer runs while a suggestion just sits there", !/setInterval|requestAnimationFrame/.test(SRC));
   check("Teams: attached to .tm-input, the mic row left alone",
-    /window\.JavisSuggest\.attach\(\{\s*input: function \(\) \{ return S && S\.el \? S\.el\.querySelector\("\.tm-input"\)/.test(teams));
+    /window\.JeeviSuggest\.attach\(\{\s*input: function \(\) \{ return S && S\.el \? S\.el\.querySelector\("\.tm-input"\)/.test(teams));
   check("Teams: Tab handled after the @mention list (which also uses Tab)",
     teams.indexOf("sugKey(e)) return;") < teams.indexOf("teamSuggest.onKeydown(e)"));
   check("Teams: asked after an assistant message", /author_kind === "agent"\) queueNextSug\(/.test(teams));

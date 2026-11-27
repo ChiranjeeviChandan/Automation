@@ -1,4 +1,4 @@
-"""The `javis_query` tool: hub glue around `tool_result_query`.
+"""The `jeevi_query` tool: hub glue around `tool_result_query`.
 
 One tool, two sources, three views:
 
@@ -30,7 +30,7 @@ import tool_result_shaper as shaper
 import tool_result_store as store
 
 TOOL = shaper.QUERY_TOOL
-_QUERY_POOL = ThreadPoolExecutor(max_workers=2, thread_name_prefix="javis-query")
+_QUERY_POOL = ThreadPoolExecutor(max_workers=2, thread_name_prefix="jeevi-query")
 PAGES_DEFAULT_MAX = 200           # measured: a shop source pages ten orders at a time, a month is hundreds of pages
 FETCH_SECONDS = 240
 DATASET_CHARS_MAX = 20_000_000
@@ -72,7 +72,7 @@ SCHEMA = {
 
 def max_pages() -> int:
     try:
-        return max(1, min(500, int(os.getenv("JAVIS_QUERY_MAX_PAGES", "") or PAGES_DEFAULT_MAX)))
+        return max(1, min(500, int(os.getenv("JEEVI_QUERY_MAX_PAGES", "") or PAGES_DEFAULT_MAX)))
     except (TypeError, ValueError):
         return PAGES_DEFAULT_MAX
 
@@ -313,7 +313,7 @@ def _view(loaded: dict, ref: str, args: dict, source: Optional[dict], scope: str
                                    "or read it without `sql`.")
         doc = loaded["data"]
         for depth, text_max in ((6, 2000), (4, 600), (3, 200), (2, 120), (1, 80)):
-            text = json.dumps({"javis_query": {"ref": ref, "shown_as": "document" if depth == 6 else "outline"},
+            text = json.dumps({"jeevi_query": {"ref": ref, "shown_as": "document" if depth == 6 else "outline"},
                                "document": shaper.outline(shaper.lean_copy(doc, True), 0, depth, text_max)},
                               ensure_ascii=False, separators=(",", ":"), default=str)
             if len(text) <= max_chars:
@@ -330,13 +330,13 @@ def _view(loaded: dict, ref: str, args: dict, source: Optional[dict], scope: str
                                   limit=args.get("limit") or 50, max_chars=max_chars)
     if source:
         doc = json.loads(out)
-        doc["javis_query"]["source"] = source
+        doc["jeevi_query"]["source"] = source
         out = json.dumps(doc, ensure_ascii=False, separators=(",", ":"), default=str)
     return out
 
 
 def build(route_ref: dict, specs_ref: dict, scope: str) -> tuple:
-    """(tool spec, route entry) of javis_query for one discovered tool list.
+    """(tool spec, route entry) of jeevi_query for one discovered tool list.
 
     `route_ref` / `specs_ref` are filled by the hub AFTER every other tool is in place, so the
     closure dispatches through the final guarded routes."""
@@ -396,8 +396,8 @@ def build(route_ref: dict, specs_ref: dict, scope: str) -> tuple:
         except Exception as e:  # noqa: BLE001 - a tool must answer, not raise
             return _err(f"{TOOL} failed: {type(e).__name__}: {e}")
 
-    spec = {"fn": TOOL, "server": "javis", "name": TOOL, "namespace": "javis", "description": DESCRIPTION,
+    spec = {"fn": TOOL, "server": "jeevi", "name": TOOL, "namespace": "jeevi", "description": DESCRIPTION,
             "schema": SCHEMA}
-    entry = {"call": _call, "hat_nhan": True, "source_type": "builtin", "source_id": "javis",
+    entry = {"call": _call, "hat_nhan": True, "source_type": "builtin", "source_id": "jeevi",
              "effect": "read", "required_mode": "readonly", "health": "healthy"}
     return spec, entry

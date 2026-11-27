@@ -10,7 +10,7 @@
 
 **Tech Stack:** Python/FastAPI/SQLite, engine adapters và workflow graph của Jeevi, JavaScript dashboard. Dùng clock và executor giả trong test.
 
-**Spec:** [Thiết kế tổng thể](../specs/2026-10-06-javis-resonance-design.md), mục 7 đến 10, 12 đến 17. Phụ thuộc [Foundation](2026-10-06-resonance-01-foundation.md).
+**Spec:** [Thiết kế tổng thể](../specs/2026-10-06-jeevi-resonance-design.md), mục 7 đến 10, 12 đến 17. Phụ thuộc [Foundation](2026-10-06-resonance-01-foundation.md).
 
 ## Global Constraints
 

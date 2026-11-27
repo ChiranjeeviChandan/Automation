@@ -22,7 +22,7 @@ def _clock(monkeypatch):
     RECHECK_S; a healthy read gets a generous WAIT_S; a stalled read blocks on a gate the test opens itself."""
     monkeypatch.setattr(kept, "RECHECK_S", 30.0)
     monkeypatch.setattr(kept, "WAIT_S", 5.0)
-    monkeypatch.delenv("JAVIS_KEPT_OFF", raising=False)
+    monkeypatch.delenv("JEEVI_KEPT_OFF", raising=False)
 
 
 @pytest.fixture
@@ -189,7 +189,7 @@ def test_the_kill_switch_makes_the_loop_read_for_itself(monkeypatch):
     disk = Disk()
     v = kept.Value(disk)
     v.get()
-    monkeypatch.setenv("JAVIS_KEPT_OFF", "1")
+    monkeypatch.setenv("JEEVI_KEPT_OFF", "1")
     assert on_loop(v.get)[0] == 2 and on_loop(v.get)[0] == 3
 
 
@@ -340,7 +340,7 @@ def test_plugin_signature_does_not_hold_the_loop_and_invalidate_drops_it(stalled
     stalled(plugins_host, "_signature_now")
     value = plugins_host._SIGS._values[(None, False)]
     assert not_held(lambda: plugins_host._signature(None, scope_vault=False), value) == first
-    plugins_host.invalidate()              # what the Plugins page and `javis_plugin` call after a change
+    plugins_host.invalidate()              # what the Plugins page and `jeevi_plugin` call after a change
     assert plugins_host._SIGS._values == {}
 
 
@@ -409,11 +409,11 @@ def test_engine_notice_reaches_the_loop_from_a_worker_thread():
 def test_startup_warm_pass_opens_few_sessions_at_once(monkeypatch):
     import mcp_client
     assert mcp_client.warm_parallel() == 3 < mcp_client._DIAL_SONG_SONG
-    monkeypatch.setenv("JAVIS_MCP_WARM_PARALLEL", "1")
+    monkeypatch.setenv("JEEVI_MCP_WARM_PARALLEL", "1")
     assert mcp_client.warm_parallel() == 1
-    monkeypatch.setenv("JAVIS_MCP_WARM_PARALLEL", "99")
+    monkeypatch.setenv("JEEVI_MCP_WARM_PARALLEL", "99")
     assert mcp_client.warm_parallel() == mcp_client._DIAL_SONG_SONG
-    monkeypatch.setenv("JAVIS_MCP_WARM_PARALLEL", "x")
+    monkeypatch.setenv("JEEVI_MCP_WARM_PARALLEL", "x")
     assert mcp_client.warm_parallel() == 3
     src = (SERVER / "mcp_client.py").read_text(encoding="utf-8")
     warm = src.split("async def warm_pool(conns):", 1)[1].split("\nasync def ", 1)[0]

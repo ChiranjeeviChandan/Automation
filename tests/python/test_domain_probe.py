@@ -18,9 +18,9 @@ import os
 import sys
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-domain-probe-test-")
-os.environ["JAVIS_REQUIRE_LOGIN"] = "0"
-os.environ.pop("JAVIS_ADMIN_PASSWORD", None)
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-domain-probe-test-")
+os.environ["JEEVI_REQUIRE_LOGIN"] = "0"
+os.environ.pop("JEEVI_ADMIN_PASSWORD", None)
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -43,7 +43,7 @@ def check(name, cond, detail=""):
 
 
 cl = TestClient(main.app, client=("127.0.0.1", 50000), base_url="http://localhost:7777")
-DOMAIN = "javis.tisavn.com"
+DOMAIN = "jeevi.tisavn.com"
 c.update_settings({"domain": {"custom": DOMAIN}})
 
 # The real answers, taken from the app itself rather than typed by hand.
@@ -61,7 +61,7 @@ cases = [
     ("this Jeevi behind a bad certificate -> cert_pending", (200, mine.text, False), "cert_pending"),
     ("Traefik 404 -> no_route (verified)", (404, TRAEFIK_404, True), "no_route"),
     ("Traefik 404 behind its default certificate -> no_route", (404, TRAEFIK_404, False), "no_route"),
-    ("another Jeevi (403 JSON) -> other_javis", (403, other.text, True), "other_javis"),
+    ("another Jeevi (403 JSON) -> other_jeevi", (403, other.text, True), "other_jeevi"),
     ("502 from the proxy -> bad_gateway", (502, "Bad Gateway", True), "bad_gateway"),
     ("some other web page -> other_site", (200, "<html>Welcome to nginx</html>", True), "other_site"),
     ("other page behind a bad certificate -> cert_invalid", (200, "<html>parked</html>", False), "cert_invalid"),
@@ -133,7 +133,7 @@ check("nothing on 443 -> unreachable, Caddy wording off Hostinger", code == "unr
 # ============================================================
 # 3. /domain/status on Hostinger
 # ============================================================
-os.environ["JAVIS_DEPLOY_TARGET"] = "hostinger"
+os.environ["JEEVI_DEPLOY_TARGET"] = "hostinger"
 os.environ["DOMAIN_NAME"] = "localhost"
 _real_probe = dom._probe_https
 

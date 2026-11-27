@@ -23,7 +23,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-kho-cai-lai-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-kho-cai-lai-")
 
 import pack_install  # noqa: E402
 import pack_vault  # noqa: E402
@@ -76,7 +76,7 @@ def store_says_installed() -> bool:
     return bool(hang) and not packs_route._gone_from_brain(PID, hang, CATALOG)
 
 
-brain = Path(tempfile.mkdtemp(prefix="javis-kho-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="jeevi-kho-brain-"))
 agents = brain / "agents"
 
 r = install(brain)

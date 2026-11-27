@@ -33,7 +33,7 @@ Jeevi also reads a `cookies.txt` file and a `name=value; ...` string (then also 
 
 ## Where Jeevi uses a sign-in
 
-- **In chat:** every engine has the `javis_login` tool. Say "check my Shopee orders page" with the link, and Jeevi opens the page with the stored sign-in and reads it. When the sign-in has expired Jeevi says so plainly and asks you to update it, instead of retrying.
+- **In chat:** every engine has the `jeevi_login` tool. Say "check my Shopee orders page" with the link, and Jeevi opens the page with the stored sign-in and reads it. When the sign-in has expired Jeevi says so plainly and asks you to update it, instead of retrying.
 - **Page watch:** the form on the Page watch tab (Recurring work page) has a **Sign-in** field. Pick one and Jeevi can watch a page that needs a sign-in. When the session expires the watch pauses itself and tells you once.
 - **Clicking and filling forms:** say "open my Shopee seller page and fill in the reply to this review". Jeevi puts the sign-in into the browser, opens the page and works on it like a user.
 
@@ -77,4 +77,4 @@ What Jeevi takes care of:
 
 ## Technical details
 
-Module `server/login_vault.py`, store `login_vault.sqlite3` in the data folder (mode 600), routes `/logins` and `/logins/action`, tool `javis_login` (plugin `javis-login`: `list` and `fetch` at level `readonly`, `browser` at level `full`; listed in `OWNER_ONLY_TOOLS`), page `dashboard/login-vault.js`. Page watches gain a `login_id` column. The browser part lives in `server/browser_login.py`: it adds, reads and clears cookies through the Playwright connection's code tool (`browser_run_code_unsafe`), the vault has two more columns (`allow_act`, `browser_at`), and `mcp_hub.discover_all` drops the browser connection from a customer chatbot's tools.
+Module `server/login_vault.py`, store `login_vault.sqlite3` in the data folder (mode 600), routes `/logins` and `/logins/action`, tool `jeevi_login` (plugin `jeevi-login`: `list` and `fetch` at level `readonly`, `browser` at level `full`; listed in `OWNER_ONLY_TOOLS`), page `dashboard/login-vault.js`. Page watches gain a `login_id` column. The browser part lives in `server/browser_login.py`: it adds, reads and clears cookies through the Playwright connection's code tool (`browser_run_code_unsafe`), the vault has two more columns (`allow_act`, `browser_at`), and `mcp_hub.discover_all` drops the browser connection from a customer chatbot's tools.

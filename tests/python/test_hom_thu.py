@@ -21,7 +21,7 @@ import tempfile
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-homthu-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-homthu-"))
 
 import inbox  # noqa: E402
 import main   # noqa: E402
@@ -106,7 +106,7 @@ inbox.STORE.unlink(missing_ok=True)
 n0 = len(inbox.danh_sach(10_000))
 gui = []
 # 0.186.0: a `web:` target is that chat only while the chat exists (a deleted one goes to the brain's Jeevi Core,
-# or stays in the bell when the brain is unknown, test_javis_core_routing.py). These two chats exist.
+# or stays in the bell when the brain is unknown, test_jeevi_core_routing.py). These two chats exist.
 for _sid in ("phien-abc", "phien-xyz"):
     main.get_store().create_session(session_id=_sid)
 

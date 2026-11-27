@@ -19,7 +19,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-rem-img-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-rem-img-")
 
 import reminders  # noqa: E402
 
@@ -32,7 +32,7 @@ def check(name, cond, extra=None):
         fails.append(name)
 
 
-brain = Path(tempfile.mkdtemp(prefix="javis-rem-img-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="jeevi-rem-img-brain-"))
 (brain / "attachments").mkdir()
 old = brain / "attachments" / "old.png"
 old.write_bytes(b"\x89PNG old")

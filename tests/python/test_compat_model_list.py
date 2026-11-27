@@ -22,7 +22,7 @@ import tempfile
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-compat-list-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-compat-list-")
 os.environ["NO_PROXY"] = os.environ["no_proxy"] = "127.0.0.1,localhost"
 
 import config as cfgmod  # noqa: E402

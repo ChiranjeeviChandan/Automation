@@ -22,7 +22,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-mocoi-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-mocoi-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -55,7 +55,7 @@ def _pid_da_chet():
     return p.pid
 
 
-NGU = "import time; time.sleep(600)  # javis-mcp-mo-coi-{}"
+NGU = "import time; time.sleep(600)  # jeevi-mcp-mo-coi-{}"
 
 
 async def _mo(key, tag):

@@ -7,7 +7,7 @@ brain nên đoán theo "phiên cập nhật gần nhất" của CẢ MÁY, và p
 Vì sao header không tới, đọc thẳng từ mã nguồn Codex:
   - `-c key=value`: khoá được tách bằng `path.split('.')` và giữ NGUYÊN dấu nháy
     (codex-rs/config/src/overrides.rs, apply_toml_override). Khoá cũ
-    `mcp_servers.javis.http_headers."X-Jeevi-Vault"` cho ra header tên `"X-Jeevi-Vault"`.
+    `mcp_servers.jeevi.http_headers."X-Jeevi-Vault"` cho ra header tên `"X-Jeevi-Vault"`.
   - rmcp-client dựng header bằng `HeaderName::from_bytes` và `HeaderValue::from_str`; tên có
     dấu nháy hay giá trị ngoài ASCII đều bị BỎ QUA kèm một dòng warn
     (codex-rs/rmcp-client/src/utils.rs, build_default_headers).
@@ -24,9 +24,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-_TMP = Path(tempfile.mkdtemp(prefix="javis-codex-vault-"))
-os.environ.setdefault("JAVIS_STATE_DIR", str(_TMP / "state"))
-os.environ.setdefault("JAVIS_SESSIONS_DB", str(_TMP / "conversations.db"))
+_TMP = Path(tempfile.mkdtemp(prefix="jeevi-codex-vault-"))
+os.environ.setdefault("JEEVI_STATE_DIR", str(_TMP / "state"))
+os.environ.setdefault("JEEVI_SESSIONS_DB", str(_TMP / "conversations.db"))
 os.environ.setdefault("BRAINS_DIR", str(_TMP / "brains"))
 (_TMP / "state").mkdir(parents=True, exist_ok=True)
 
@@ -58,7 +58,7 @@ def codex_doc_override(override):
 def header_toi_duoc_hub(override):
     """(tên, giá trị) nếu rmcp-client chịu gửi header này, None nếu nó bị bỏ qua."""
     duong, gia_tri = codex_doc_override(override)
-    if duong[:3] != ["mcp_servers", "javis", "http_headers"] or len(duong) != 4:
+    if duong[:3] != ["mcp_servers", "jeevi", "http_headers"] or len(duong) != 4:
         return None
     ten = duong[3]
     if not _TOKEN.match(ten) or not gia_tri.isascii():
@@ -73,7 +73,7 @@ for b in (co_dau, khong_dau):
     b.mkdir(parents=True, exist_ok=True)
 
 # ---- 1. Khoá cũ có dấu nháy thì header chết, khoá mới thì sống ------------------------
-cu = 'mcp_servers.javis.http_headers."X-Jeevi-Vault"="/x"'
+cu = 'mcp_servers.jeevi.http_headers."X-Jeevi-Vault"="/x"'
 check("CANARY: khoá có dấu nháy bị Codex đọc thành tên header không hợp lệ",
       header_toi_duoc_hub(cu) is None)
 for b in (khong_dau, co_dau):
@@ -96,7 +96,7 @@ check("byte UTF-8 thô bị giải thành latin-1 vẫn đọc ra đúng brain",
       nguon == "header" and Path(root).resolve() == co_dau.resolve(), (root, nguon))
 
 # ---- 3. Đổi brain qua lại trên CÙNG một CodexCLI thì chỉ còn đúng brain hiện tại --------
-extra = ["model_reasoning_effort=high", 'mcp_servers.javis.http_headers."X-Jeevi-Vault"="/cu"']
+extra = ["model_reasoning_effort=high", 'mcp_servers.jeevi.http_headers."X-Jeevi-Vault"="/cu"']
 for b in (khong_dau, co_dau, khong_dau):
     mcp_hub.dat_codex_vault(extra, str(b))
 vault = [x for x in extra if "X-Jeevi-Vault" in x]

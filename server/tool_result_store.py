@@ -3,7 +3,7 @@
 Why it exists: a connected source often answers with far more than a model should read (ten shop
 orders measured 99,000 to 183,000 characters). The old answer was to cut the text, which silently
 dropped the middle. The hub now keeps the whole answer here and hands the model a small view plus
-a reference (`tool_result_shaper`); `javis_query` reads the rest back by that reference, so
+a reference (`tool_result_shaper`); `jeevi_query` reads the rest back by that reference, so
 nothing is lost and no tool has to be called twice.
 
 Rules of this store:
@@ -14,7 +14,7 @@ Rules of this store:
   - Bounded. Every row has a time to live, one row has a size ceiling, and the whole store has a
     ceiling; the oldest rows leave first. Nothing here is a source of truth, only a copy.
 
-One SQLite file in JAVIS_STATE_DIR. Bodies are zlib-compressed before encryption (JSON shrinks by
+One SQLite file in JEEVI_STATE_DIR. Bodies are zlib-compressed before encryption (JSON shrinks by
 five to ten times), so a day of heavy reading stays in the tens of megabytes.
 """
 from __future__ import annotations
@@ -67,11 +67,11 @@ def _env_int(name: str, default: int, low: int, high: int) -> int:
 
 
 def ttl_seconds() -> int:
-    return _env_int("JAVIS_TOOL_RESULT_TTL_HOURS", DEFAULT_TTL_S // 3600, 1, 24 * 14) * 3600
+    return _env_int("JEEVI_TOOL_RESULT_TTL_HOURS", DEFAULT_TTL_S // 3600, 1, 24 * 14) * 3600
 
 
 def total_bytes_cap() -> int:
-    return _env_int("JAVIS_TOOL_RESULT_STORE_MB", DEFAULT_TOTAL_BYTES // (1024 * 1024), 8, 8192) * 1024 * 1024
+    return _env_int("JEEVI_TOOL_RESULT_STORE_MB", DEFAULT_TOTAL_BYTES // (1024 * 1024), 8, 8192) * 1024 * 1024
 
 
 def _conn() -> sqlite3.Connection:

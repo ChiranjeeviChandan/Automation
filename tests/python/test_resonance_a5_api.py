@@ -12,9 +12,9 @@ import os
 import tempfile
 from pathlib import Path
 
-_STATE = Path(tempfile.mkdtemp(prefix="javis-res-a5api-"))
-os.environ["JAVIS_STATE_DIR"] = str(_STATE)
-os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
+_STATE = Path(tempfile.mkdtemp(prefix="jeevi-res-a5api-"))
+os.environ["JEEVI_STATE_DIR"] = str(_STATE)
+os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
 
 from fastapi import FastAPI  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402

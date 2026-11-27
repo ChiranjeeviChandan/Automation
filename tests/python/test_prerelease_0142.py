@@ -11,8 +11,8 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-prerelease-0142-")
-TEMP = Path(tempfile.mkdtemp(prefix="javis-prerelease-0142-w-"))
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-prerelease-0142-")
+TEMP = Path(tempfile.mkdtemp(prefix="jeevi-prerelease-0142-w-"))
 
 import agent_jobs  # noqa: E402
 import resonance_store as RS  # noqa: E402
@@ -83,10 +83,10 @@ check("chưa có phiên nào: None (người gọi mở phiên mới)", agent_jo
 # Owner 2026-11-07: every model time cap is off by default (0 = no cap); the env vars still set one.
 check("default team caps: none (0) for both the chat turn and the team-job step",
       TR.TURN_TIMEOUT_S == 0.0 and TR.STEP_TIMEOUT_S == 0.0)
-os.environ["JAVIS_TEAM_TURN_TIMEOUT"], os.environ["JAVIS_TEAM_STEP_TIMEOUT"] = "10", "5000"
-check("a set cap keeps its floor", TR._team_cap("JAVIS_TEAM_TURN_TIMEOUT", 30.0) == 30.0
-      and TR._team_cap("JAVIS_TEAM_STEP_TIMEOUT", 60.0) == 5000.0)
-os.environ.pop("JAVIS_TEAM_TURN_TIMEOUT"); os.environ.pop("JAVIS_TEAM_STEP_TIMEOUT")
+os.environ["JEEVI_TEAM_TURN_TIMEOUT"], os.environ["JEEVI_TEAM_STEP_TIMEOUT"] = "10", "5000"
+check("a set cap keeps its floor", TR._team_cap("JEEVI_TEAM_TURN_TIMEOUT", 30.0) == 30.0
+      and TR._team_cap("JEEVI_TEAM_STEP_TIMEOUT", 60.0) == 5000.0)
+os.environ.pop("JEEVI_TEAM_TURN_TIMEOUT"); os.environ.pop("JEEVI_TEAM_STEP_TIMEOUT")
 seen = {}
 
 

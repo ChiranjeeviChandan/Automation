@@ -104,7 +104,7 @@ bạn nó họ các những cái việc người
 """.split())
 # Khối ngữ cảnh dashboard chèn TRƯỚC lời nói: FILE ĐANG MỞ (đang mở file trong trình sửa) rồi
 # NGỮ CẢNH GIAO DIỆN. Cả hai không phải lời nói. 0.65.29: trước chỉ nhận khối sau, nên khi đang mở
-# file thì khối FILE bị tính là lời nói; dòng JAVIS_NGHE (chỉ có lời nói) bị coi là cắt chữ, và
+# file thì khối FILE bị tính là lời nói; dòng JEEVI_NGHE (chỉ có lời nói) bị coi là cắt chữ, và
 # cả lượt lặng lẽ rơi sang bộ não chính dù đã chọn bộ não trả lời nhanh.
 _UI_CONTEXT = re.compile(r"\A(?:\s*\[(?:FILE ĐANG MỞ trong trình sửa của Jeevi:|NGỮ CẢNH GIAO DIỆN:)"
                          r"[^\]]*\]\s*)+")
@@ -146,7 +146,7 @@ def khoa_am(tu: str) -> str:
     for a, b in _AM_DOI:
         s = s.replace(a, b)
     s = s.translate(_AM_DON)
-    s = _R_TRUOC_PHU_AM.sub("", s)             # "jarvis" -> "javis": r trước phụ âm câm
+    s = _R_TRUOC_PHU_AM.sub("", s)             # "jeevi" -> "jeevi": r trước phụ âm câm
     s = re.sub(r"(.)\1+", r"\1", s)            # chữ kép -> đơn
     s = _DUOI_TAC.sub("t", s) if _DUOI_TAC.search(s) else s
     return s
@@ -293,8 +293,8 @@ def _ten_rieng_hai_chu(toks, i, n, s, term) -> bool:
 # Ca nghe nhầm ĐÃ BIẾT, sửa theo đúng chính tả, không cần so âm. Speech-to-text writes "Jeevi" as
 # Vietnamese syllables ("Gi vi", "Di vi") that the fuzzy layer skips, because "dì"/"gì" are everyday
 # words there, or as English look-alikes ("Gee vee", "Jeevie"). Longest first so "... OS" wins.
-KNOWN_MISHEARINGS = tuple((a + " OS", "Jeevi OS") for a in ("Gi vi", "Di vi", "Ji vi", "Gee vee", "Geevee", "Jeevie", "Jeevy")) + \
-    tuple((a, "Jeevi") for a in ("Gi vi", "Di vi", "Ji vi", "Gee vee", "Geevee", "Jeevie", "Jeevy"))
+_JEEVI_HEARD_AS = ("Gi vi", "Di vi", "Ji vi", "Gee vee", "Geevee", "Jeevie", "Jeevy")
+KNOWN_MISHEARINGS = tuple((a + " OS", "Jeevi OS") for a in _JEEVI_HEARD_AS) + tuple((a, "Jeevi") for a in _JEEVI_HEARD_AS)
 _KNOWN_MISHEARINGS_RE = [(re.compile(r"(?<!\w)" + re.escape(a) + r"(?!\w)", re.IGNORECASE), b)
                  for a, b in KNOWN_MISHEARINGS]
 

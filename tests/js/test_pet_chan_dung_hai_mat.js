@@ -66,7 +66,7 @@ global.CustomEvent = function () {};
 global.FormData = function () { this.append = function () {}; };
 
 require(path.join(root, "dashboard", "pet.js"));
-const P = window.JavisPet;
+const P = window.JeeviPet;
 check("pet.js nạp được với DOM giả", !!P && typeof P.previewSvg === "function");
 
 // Đọc từng con mắt trong một chân dung: trả về [{cx, cy, rx, ry}, ...].

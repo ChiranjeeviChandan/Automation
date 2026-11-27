@@ -6,7 +6,7 @@ import tempfile
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-zalo-mcp-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-zalo-mcp-"))
 
 import mcp_catalog  # noqa: E402
 import zalo_cli  # noqa: E402
@@ -75,7 +75,7 @@ check("doc nêu đủ mười một tool và link repo javis-zalo",
 check("prompt cho gửi trực tiếp, không phụ thuộc listener/tool cũ",
       "do NOT demand a listener be" in prompt
       and 'do NOT check any "currently listening"' in prompt
-      and "do NOT use the old `javis_zalo_send` tool" in prompt)
+      and "do NOT use the old `jeevi_zalo_send` tool" in prompt)
 
 
 # Đăng nhập QR: CLI báo hỏng bằng {"event": "login_error", "message": ...} (src/commands/login.js). Trước 0.83.0 Jeevi

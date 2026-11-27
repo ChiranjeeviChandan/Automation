@@ -16,7 +16,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-agy-upd-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-agy-upd-")
 
 import agy_update as au  # noqa: E402
 import antigravity_cli  # noqa: E402
@@ -102,9 +102,9 @@ try:
     check("không đổi bản thì giữ cache", "antigravity-cli" in main._PROV_MODELS_CACHE)
 
     # 7. Tắt được, và có vòng chạy lúc khởi động
-    os.environ["JAVIS_AGY_AUTO_UPDATE"] = "0"
-    check("JAVIS_AGY_AUTO_UPDATE=0 thì tắt", not au.bat())
-    os.environ.pop("JAVIS_AGY_AUTO_UPDATE", None)
+    os.environ["JEEVI_AGY_AUTO_UPDATE"] = "0"
+    check("JEEVI_AGY_AUTO_UPDATE=0 thì tắt", not au.bat())
+    os.environ.pop("JEEVI_AGY_AUTO_UPDATE", None)
     check("mặc định bật", au.bat())
     src = (SERVER / "main.py").read_text(encoding="utf-8")
     check("server có vòng tự cập nhật agy lúc khởi động, không chặn Docker",

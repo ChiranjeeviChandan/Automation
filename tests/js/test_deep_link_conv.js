@@ -54,8 +54,8 @@ const cut = (src, head) => {
 
   // chat-render.js turns [text](#ht=id) into an in-app link, and only for a plain number
   check("chat-render renders #ht= as a jv-ht link", /class="jv-ht" href="#ht=' \+ ht\[1\]/.test(RENDER));
-  check("chat-render click opens it through JavisOpenConv", /a\.jv-ht[\s\S]{0,400}JavisOpenConv/.test(RENDER));
-  check("console.js exposes JavisOpenConv", /window\.JavisOpenConv = openConvLink/.test(CONSOLE));
+  check("chat-render click opens it through JeeviOpenConv", /a\.jv-ht[\s\S]{0,400}JeeviOpenConv/.test(RENDER));
+  check("console.js exposes JeeviOpenConv", /window\.JeeviOpenConv = openConvLink/.test(CONSOLE));
 
   // conversations.js moTu with conv: selects that chat and clears the filters
   const moSrc = cut(CONV, "  function moTu(opts) {");

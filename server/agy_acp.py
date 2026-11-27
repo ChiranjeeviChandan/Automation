@@ -18,7 +18,7 @@ The protocol (JSON-RPC 2.0, one JSON object per line on stdin and stdout), as ag
   that file named, stream-json called it and ACP did not see it. So `mcp_servers` passes the workspace entries, and
   always the hub entry Jeevi wrote for THIS turn (cli.hub_entry): the HOME file is shared by every brain, and two
   brains starting at once could otherwise read each other's X-Jeevi-Vault. Both http and stdio entries work, and a
-  passed "javis" is the one used when HOME has one too. An MCP tool then runs as `mcp_<server>_<tool>` (not the
+  passed "jeevi" is the one used when HOME has one too. An MCP tool then runs as `mcp_<server>_<tool>` (not the
   `call_mcp_tool` of stream-json), and its step carries no output.
 - session/resume {sessionId, cwd, mcpServers: []} -> {} continues a stored conversation without replaying it. The
   store is shared with stream-json BOTH ways, so the ids in sessions.AGY_THREAD_COLUMN keep working and the stream
@@ -36,7 +36,7 @@ The protocol (JSON-RPC 2.0, one JSON object per line on stdin and stdout), as ag
 
 Same contract as agy_warm.run, so main.py does not know which one served the turn, plus one event: `thinking`. Only
 the owner's dashboard chat comes here (main sets `cli.stream_turns`). Anything that fails before the message is sent
-raises agy_warm.Fallback and AntigravityCLI.query tries the stream-json path, then one-shot. JAVIS_AGY_ACP=0 turns
+raises agy_warm.Fallback and AntigravityCLI.query tries the stream-json path, then one-shot. JEEVI_AGY_ACP=0 turns
 this path off.
 """
 from __future__ import annotations
@@ -53,7 +53,7 @@ import agy_warm
 import warm_pool
 from agy_warm import Fallback
 
-ENV_SWITCH = "JAVIS_AGY_ACP"
+ENV_SWITCH = "JEEVI_AGY_ACP"
 # One pool kind for both transports: a sign-in change drops either (main's drop_kind), and a slot of the other
 # transport is closed by its fingerprint ("config_changed").
 KIND = agy_warm.KIND
@@ -169,7 +169,7 @@ def acp_server(name: str, entry) -> Optional[dict]:
 
 def mcp_servers(cli) -> list:
     """The MCP servers Jeevi passes to the session (see the module docstring): the workspace mcp_config entries of
-    the turn's folder, then the hub entry of this turn, which replaces a workspace "javis"."""
+    the turn's folder, then the hub entry of this turn, which replaces a workspace "jeevi"."""
     out: dict = {}
     try:
         p = Path(str(cli.cwd)).expanduser() / ".agents" / "mcp_config.json"
@@ -182,9 +182,9 @@ def mcp_servers(cli) -> list:
         print(f"[antigravity acp] workspace mcp_config: {type(e).__name__}: {e}", file=sys.stderr)
     hub = getattr(cli, "hub_entry", None)
     if isinstance(hub, dict):
-        s = acp_server("javis", hub)
+        s = acp_server("jeevi", hub)
         if s:
-            out["javis"] = s
+            out["jeevi"] = s
     return list(out.values())
 
 
@@ -203,7 +203,7 @@ def server_names(cli, servers: list) -> list:
 
 
 def unwrap_mcp_name(name: str, args: dict, servers: list) -> tuple:
-    """`mcp_javis_javis_run_tool` {name: "javis_connections", args: {...}} -> ("javis_connections", {...}): the tool
+    """`mcp_jeevi_jeevi_run_tool` {name: "jeevi_connections", args: {...}} -> ("jeevi_connections", {...}): the tool
     really called, as antigravity_cli.unwrap_mcp_call does for stream-json's call_mcp_tool. A name that starts with
     no known server stays as it is."""
     import antigravity_cli

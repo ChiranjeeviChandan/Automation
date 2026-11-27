@@ -19,8 +19,8 @@ import sys
 import tempfile
 from datetime import datetime
 
-_STATE = tempfile.mkdtemp(prefix="javis-giotruc-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-giotruc-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

@@ -132,8 +132,8 @@ def _doc_json(p: Path):
 
 
 def find_grok_cli() -> Optional[str]:
-    """Tìm binary `grok`. Cửa thoát JAVIS_GROK_BIN cho máy cài chỗ lạ."""
-    envp = (os.environ.get("JAVIS_GROK_BIN") or "").strip()
+    """Tìm binary `grok`. Cửa thoát JEEVI_GROK_BIN cho máy cài chỗ lạ."""
+    envp = (os.environ.get("JEEVI_GROK_BIN") or "").strip()
     if envp:
         try:
             if Path(envp).exists():
@@ -293,9 +293,9 @@ NO_PERMISSION_FLAG_CAP = 900.0
 
 
 def turn_cap_seconds() -> float:
-    """JAVIS_GROK_TIMEOUT in seconds; unset, 0, negative or garbage = no cap (the default since 2026-11-07)."""
+    """JEEVI_GROK_TIMEOUT in seconds; unset, 0, negative or garbage = no cap (the default since 2026-11-07)."""
     try:
-        return max(0.0, float(os.environ.get("JAVIS_GROK_TIMEOUT") or 0))
+        return max(0.0, float(os.environ.get("JEEVI_GROK_TIMEOUT") or 0))
     except ValueError:
         return 0.0
 
@@ -316,7 +316,7 @@ def _toml_gia_tri(v) -> str:
 def _toml_khoa(k: str) -> str:
     """Khoá TOML: để trần nếu hợp lệ, quote nếu không.
 
-    Bare key của TOML nhận A-Za-z0-9_- nên `mcp_servers`, `javis` lẫn `X-Jeevi-Mode` đều để
+    Bare key của TOML nhận A-Za-z0-9_- nên `mcp_servers`, `jeevi` lẫn `X-Jeevi-Mode` đều để
     trần được. Quote hết thì vẫn ĐÚNG nhưng ra một file đầy dấu nháy mà người mở lên đọc phải
     dụi mắt - file này nằm trong brain, người dùng có mở ra xem.
     """
@@ -424,7 +424,7 @@ def ghi_mcp_settings(vault_root, hub: Optional[dict]) -> Optional[str]:
     thì brain nọ đọc header brain kia. Grok đọc cấu hình theo thư mục làm việc, mà Jeevi luôn
     chạy nó với cwd = gốc brain, nên đây vừa đúng chỗ vừa cô lập sẵn từng brain.
 
-    `hub=None` (chưa bật hub) → GỠ entry javis nếu có, giữ nguyên phần còn lại của file.
+    `hub=None` (chưa bật hub) → GỠ entry jeevi nếu có, giữ nguyên phần còn lại của file.
     Trả đường dẫn file đã ghi, hoặc None nếu không ghi được.
     """
     try:
@@ -432,16 +432,16 @@ def ghi_mcp_settings(vault_root, hub: Optional[dict]) -> Optional[str]:
         doc_duoc, cu = _doc_toml_ky(p)
         if not doc_duoc:
             # Thà chạy KHÔNG có tool của Jeevi còn hơn xoá cấu hình của người dùng. Lỗi đã in
-            # ra stderr ở `_doc_toml_ky`; `trang_thai_mcp` sẽ báo `co_javis=False` nên nút
+            # ra stderr ở `_doc_toml_ky`; `trang_thai_mcp` sẽ báo `co_jeevi=False` nên nút
             # "Kiểm tra lại" trên trang Models nói được là hub chưa vào.
             return None
         servers = cu.get("mcp_servers")
         if not isinstance(servers, dict):
             servers = {}
         if hub:
-            servers["javis"] = hub
+            servers["jeevi"] = hub
         else:
-            servers.pop("javis", None)
+            servers.pop("jeevi", None)
         if servers:
             cu["mcp_servers"] = servers
         else:
@@ -466,7 +466,7 @@ def trang_thai_mcp(vault_root) -> dict:
     ra. "Đã ghi xong" không phải bằng chứng; đọc lại mới là.
     """
     p = mcp_config_path(vault_root)
-    ra = {"file": str(p), "ton_tai": False, "co_javis": False, "url": "", "so_header": 0}
+    ra = {"file": str(p), "ton_tai": False, "co_jeevi": False, "url": "", "so_header": 0}
     try:
         ra["ton_tai"] = p.exists()
     except Exception:
@@ -474,9 +474,9 @@ def trang_thai_mcp(vault_root) -> dict:
     if not ra["ton_tai"]:
         return ra
     d = _doc_toml(p)
-    e = ((d.get("mcp_servers") or {}) or {}).get("javis")
+    e = ((d.get("mcp_servers") or {}) or {}).get("jeevi")
     if isinstance(e, dict):
-        ra["co_javis"] = True
+        ra["co_jeevi"] = True
         ra["url"] = str(e.get("url") or "")
         h = e.get("headers")
         ra["so_header"] = len(h) if isinstance(h, dict) else 0
@@ -832,7 +832,7 @@ def login_start(cho_giay: float = 30.0, home=None) -> dict:
     # Ghi luôn lệnh đã chạy: bản CLI không khai `--device-auth` thì Jeevi chạy `grok login`
     # trần, và hai đường đó hỏng theo hai kiểu khác nhau. Không ghi lại thì đoán mò.
     _ghi_nhat_ky("[Jeevi chạy] " + " ".join(args[1:]))
-    threading.Thread(target=_doc_luong, args=(proc,), name="javis-grok-login",
+    threading.Thread(target=_doc_luong, args=(proc,), name="jeevi-grok-login",
                      daemon=True).start()
     han = time.time() + cho_giay
     while time.time() < han:
@@ -1139,7 +1139,7 @@ class GrokCLI:
         full = (self.instructions.strip() + "\n\n" + prompt) if self.instructions else prompt
         tep = None
         try:
-            fd, tep = tempfile.mkstemp(prefix="javis-grok-", suffix=".txt")
+            fd, tep = tempfile.mkstemp(prefix="jeevi-grok-", suffix=".txt")
             with os.fdopen(fd, "w", encoding="utf-8") as f:
                 f.write(full)
         except Exception:
@@ -1287,9 +1287,9 @@ class GrokCLI:
                         {"_exit": -1, "_err": localefmt.chu(
                             f"Grok CLI chạy quá {int(cap)}s nên bị "
                             f"cắt. Nếu việc thật sự dài thì nâng biến môi "
-                            f"trường JAVIS_GROK_TIMEOUT, hoặc đặt 0 để bỏ trần.",
+                            f"trường JEEVI_GROK_TIMEOUT, hoặc đặt 0 để bỏ trần.",
                             f"Grok CLI ran over {int(cap)}s and was cut off. "
-                            f"If the job really is long, raise the environment variable JAVIS_GROK_TIMEOUT, "
+                            f"If the job really is long, raise the environment variable JEEVI_GROK_TIMEOUT, "
                             f"or set it to 0 for no cap.")})
                 elif ma != 0:
                     loop.call_soon_threadsafe(hang.put_nowait, {"_exit": ma, "_err": err})
@@ -1337,7 +1337,7 @@ class GrokCLI:
                         pass
                 loop.call_soon_threadsafe(hang.put_nowait, HET)
 
-        threading.Thread(target=doc_luong, name=f"javis-grok-{self.tag}", daemon=True).start()
+        threading.Thread(target=doc_luong, name=f"jeevi-grok-{self.tag}", daemon=True).start()
 
         import text_breaks
         sau_tool = False   # a tool call came since the last text: the next text starts a new paragraph

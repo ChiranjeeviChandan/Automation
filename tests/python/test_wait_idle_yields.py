@@ -23,9 +23,9 @@ import threading
 import time
 from pathlib import Path
 
-STATE = Path(tempfile.mkdtemp(prefix="javis-wait-idle-"))
-os.environ["JAVIS_STATE_DIR"] = str(STATE)
-os.environ["JAVIS_NO_REAL_JUDGE_ENGINE"] = "1"
+STATE = Path(tempfile.mkdtemp(prefix="jeevi-wait-idle-"))
+os.environ["JEEVI_STATE_DIR"] = str(STATE)
+os.environ["JEEVI_NO_REAL_JUDGE_ENGINE"] = "1"
 
 import incident_desk as idk  # noqa: E402
 import webhook_triggers as wt  # noqa: E402

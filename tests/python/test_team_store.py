@@ -9,7 +9,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-team-store-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-team-store-")
 
 import team_store as TS  # noqa: E402
 
@@ -22,7 +22,7 @@ def check(name, cond, extra=""):
         fails.append(name)
 
 
-st = TS.TeamStore(Path(os.environ["JAVIS_STATE_DIR"]) / "team.sqlite3")
+st = TS.TeamStore(Path(os.environ["JEEVI_STATE_DIR"]) / "team.sqlite3")
 B = "D:/brain-a"
 
 # ───────────── nhóm và thành viên ─────────────

@@ -205,7 +205,7 @@ for (const [ten, o] of [["vi.json", vi], ["en.json", en]]) {
 //
 // NGOAI_LE_DU_LIEU: file mà tiếng Việt còn lại là DỮ LIỆU chứ không phải chữ hiện ra - regex và
 // danh sách từ khớp câu người Việt GÕ hoặc NÓI, lời dặn gửi cho AI, tên nhóm dùng làm khoá lọc.
-// Dịch mấy thứ đó là làm hỏng tính năng: người dùng vẫn nói "javis ơi" dù giao diện đang tiếng
+// Dịch mấy thứ đó là làm hỏng tính năng: người dùng vẫn nói "jeevi ơi" dù giao diện đang tiếng
 // Anh. Mỗi file ghi kèm `tran` = số dòng mã chạy có dấu Việt ĐO ĐƯỢC hôm nay.
 //
 // Trần là bánh cóc HAI CHIỀU, không phải mức trần lỏng:
@@ -222,7 +222,7 @@ const NGOAI_LE_DU_LIEU = {
   "console.js": { tran: 8, vi_sao: "từ khoá xếp loại nhật ký thay đổi, đơn vị thời gian người dùng gõ, tên danh mục làm khoá lọc, gập dấu" },
   "packs.js": { tran: 11, vi_sao: "tên nhóm của kho gói là khoá lọc data-kho-nhom, nhãn hiện ra đã dịch qua tw()" },
   "ui-context.js": { tran: 4, vi_sao: "khối [NGỮ CẢNH GIAO DIỆN: ...] gửi cho AI, server đọc đúng các nhãn này" },
-  "voice-adaptive-ui.js": { tran: 1, vi_sao: "regex bóc lời gọi \"javis ơi\" người dùng nói" },
+  "voice-adaptive-ui.js": { tran: 1, vi_sao: "regex bóc lời gọi \"jeevi ơi\" người dùng nói" },
   "voice-attention.js": { tran: 1, vi_sao: "regex bắt lời gọi tên Jeevi nghe nhầm khi nói tiếng Việt" },
   "voice-chunker.js": { tran: 1, vi_sao: "liên từ tiếng Việt để cắt câu cho giọng đọc" },
   "voice-lang.js": { tran: 2, vi_sao: "Vietnamese letters used to recognise the language of the text being read" },

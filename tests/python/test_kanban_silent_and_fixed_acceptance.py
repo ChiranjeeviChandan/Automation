@@ -128,16 +128,16 @@ def test_without_fixed_acceptance_the_specifier_still_writes_them(tmp_path):
     assert t["intent"] == "Clear intent" and t["metadata"].get("acceptance") == ["Some file exists"]
 
 
-def _javis_task_plugin():
-    path = ROOT / "system" / "plugins" / "javis-task" / "plugin.py"
-    spec = importlib.util.spec_from_file_location("javis_task_plugin_1481", path)
+def _jeevi_task_plugin():
+    path = ROOT / "system" / "plugins" / "jeevi-task" / "plugin.py"
+    spec = importlib.util.spec_from_file_location("jeevi_task_plugin_1481", path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
 
 
-def test_javis_task_passes_acceptance_through(tmp_path, monkeypatch):
-    plugin = _javis_task_plugin()
+def test_jeevi_task_passes_acceptance_through(tmp_path, monkeypatch):
+    plugin = _jeevi_task_plugin()
     seen = {}
 
     class FakeFeature:

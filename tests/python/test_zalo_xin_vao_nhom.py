@@ -17,7 +17,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zpxin-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zpxin-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

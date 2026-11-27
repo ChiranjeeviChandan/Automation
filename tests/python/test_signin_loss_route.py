@@ -25,7 +25,7 @@ import time
 from pathlib import Path
 from types import SimpleNamespace
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-signin-loss-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-signin-loss-"))
 
 from fastapi import WebSocketDisconnect  # noqa: E402
 
@@ -479,7 +479,7 @@ if __name__ == "__main__":
                 setattr(obj, name, old)
 
     mp = _Patch()
-    tmp = Path(tempfile.mkdtemp(prefix="javis-signin-loss-run-"))
+    tmp = Path(tempfile.mkdtemp(prefix="jeevi-signin-loss-run-"))
     try:
         main_test(mp, tmp)
     finally:

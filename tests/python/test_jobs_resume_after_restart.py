@@ -18,9 +18,9 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-jobs-resume-")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-jobs-resume-brains-")
-TMP = Path(tempfile.mkdtemp(prefix="javis-jobs-resume-w-"))
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-jobs-resume-")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-jobs-resume-brains-")
+TMP = Path(tempfile.mkdtemp(prefix="jeevi-jobs-resume-w-"))
 
 from task_store import TaskStore  # noqa: E402
 import workflow_runs  # noqa: E402

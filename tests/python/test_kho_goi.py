@@ -300,11 +300,11 @@ src_con = (DASHBOARD / "console.js").read_text(encoding="utf-8")
 src_ws = (DASHBOARD / "workspace.js").read_text(encoding="utf-8")
 check("mọi loại năng lực có đường sang kho, trợ lý và quy trình đi qua Cộng sự",
       all(x in src_con for x in ('skills: "skill"', 'plugins: "tool"', 'mcp: "connector"'))
-      and 'window.JavisPacks.moKho(S.loai, "workspace",' in src_ws
+      and 'window.JeeviPacks.moKho(S.loai, "workspace",' in src_ws
       and 'data-loai="agent"' in src_ws and 'data-loai="workflow"' in src_ws)
 # Năm bản sao của lưới kho là năm thứ sẽ lệch nhau sau vài tháng. Tab chỉ ĐIỀU HƯỚNG.
 check("tab kho điều hướng sang kho chứ không nhúng bản sao lưới",
-      "JavisPacks.moKho(kind" in src_con and "veKho" not in src_con)
+      "JeeviPacks.moKho(kind" in src_con and "veKho" not in src_con)
 # Kho không nằm trên thanh bên, nên vào rồi mà không có nút quay lại là người dùng thấy mình
 # bị lạc. Tab phải truyền cả trang gốc, và kho phải vẽ nút đó.
 check("tab truyền cả trang gốc để kho vẽ được nút quay lại",

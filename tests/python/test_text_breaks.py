@@ -127,7 +127,7 @@ grok_lines = [
     json.dumps({"type": "text", "data": "Giờ em đọc file vai."}),
 ]
 g = grok_cli.GrokCLI(cwd="/tmp")
-g.cli_path = fake_binary("javis-fakegrok-", "grok", grok_lines)
+g.cli_path = fake_binary("jeevi-fakegrok-", "grok", grok_lines)
 
 
 async def _grok():
@@ -160,7 +160,7 @@ agy_lines = [
     json.dumps({"role": "assistant", "content": "Giờ em đọc file vai."}),
     json.dumps({"type": "result", "status": "success", "stats": {"input_tokens": 10, "output_tokens": 5}}),
 ]
-agy = fake_binary("javis-fakeagy-", "agy", agy_lines, HELP)
+agy = fake_binary("jeevi-fakeagy-", "agy", agy_lines, HELP)
 antigravity_cli._HELP_CACHE.update(path=None, text="", ts=0.0)
 antigravity_cli._AUTH_CACHE.update(ts=0.0, val=None)
 antigravity_cli.find_antigravity_cli = lambda: agy

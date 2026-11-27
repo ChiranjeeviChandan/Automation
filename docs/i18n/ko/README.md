@@ -1,7 +1,7 @@
 <!-- translated-from: README.md sha256:2e10ad3d2a86 -->
 <div align="center">
 
-<a href="https://javisos.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
+<a href="https://jeevios.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
 
 # Jeevi OS
 
@@ -9,7 +9,7 @@
 
 Jeevi OS는 **Claude, ChatGPT, Gemini, Grok** 그리고 직접 고른 모델을 내 컴퓨터나 서버에서 24시간 일하는 팀으로 만듭니다. 동료마다 역할이 있고, 같은 기억과 도구를 공유하며, 백그라운드에서 계속 일합니다. 더 좋은 모델이 나오면 바꾸기만 하면 되고, 팀이 배운 것은 모두 그대로 남습니다.
 
-**🌐 웹사이트: [javisos.com](https://javisos.com)** · 오픈 소스 · 셀프 호스팅 · 14개 AI 제공자
+**🌐 웹사이트: [jeevios.com](https://jeevios.com)** · 오픈 소스 · 셀프 호스팅 · 14개 AI 제공자
 
 [![GitHub stars](https://img.shields.io/github/stars/blogminhquy/javis-os?style=flat&logo=github&label=stars)](https://github.com/blogminhquy/javis-os/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](../../../LICENSE)
@@ -38,7 +38,7 @@ Jeevi OS는 **Claude, ChatGPT, Gemini, Grok** 그리고 직접 고른 모델을 
 
 [🇬🇧 English](../../../README.md) · [🇻🇳 Tiếng Việt](../vi/README.md) · [🇨🇳 简体中文](../zh/README.md) · [🇪🇸 Español](../es/README.md) · [🇯🇵 日本語](../ja/README.md) · [🇮🇳 हिन्दी](../hi/README.md) · [🇧🇷 Português](../pt-BR/README.md) · 🇰🇷 **한국어** · [🇷🇺 Русский](../ru/README.md) · [🇩🇪 Deutsch](../de/README.md) · [🇫🇷 Français](../fr/README.md) · [🇮🇩 Bahasa Indonesia](../id/README.md) · [🌍 번역 돕기](../../../CONTRIBUTING.md#translations)
 
-[빠른 시작](#-빠른-시작) · [왜 Jeevi인가](#-왜-javis인가요) · [브레인](#-12개의-브레인-하나의-툴킷) · [기능](#-기능) · [설치](#-설치) · [문서](../../../docs/en/README.md) · [후원](#-javis-os-후원하기)
+[빠른 시작](#-빠른-시작) · [왜 Jeevi인가](#-왜-jeevi인가요) · [브레인](#-12개의-브레인-하나의-툴킷) · [기능](#-기능) · [설치](#-설치) · [문서](../../../docs/en/README.md) · [후원](#-jeevi-os-후원하기)
 
 <br>
 
@@ -56,8 +56,8 @@ Jeevi OS는 **Claude, ChatGPT, Gemini, Grok** 그리고 직접 고른 모델을 
 
 | 환경 | 명령 하나로 전부 설치 |
 |---|---|
-| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git javis && cd javis && chmod +x install.sh && ./install.sh` |
-| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git javis; cd javis; powershell -ExecutionPolicy Bypass -File install.ps1` |
+| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi && chmod +x install.sh && ./install.sh` |
+| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi; powershell -ExecutionPolicy Bypass -File install.ps1` |
 | **Docker** | `curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml && docker compose up -d` |
 
 그런 다음 **http://localhost:7777** 을 엽니다. 설치 프로그램이 Python, 구독형 CLI 브레인 네 가지(`claude`, `codex`, `agy`, `grok`), `.env` 를 준비한 뒤 서버를 시작합니다. 각 브레인 로그인은 **대시보드의 Models 페이지에서** 하므로 더 이상 명령을 입력할 필요가 없습니다.
@@ -257,17 +257,17 @@ Hostinger VPS → **Docker Manager → Compose → URL** → Hostinger용 파일
 https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hostinger.yml
 ```
 
-**Environment** 상자에는 세 가지 항목만 있으면 됩니다: `DOMAIN_NAME`, `JAVIS_ADMIN_USER`, `JAVIS_ADMIN_PASSWORD`. 선택 항목으로 `JAVIS_AUTO_UPDATE` 가 있습니다(`true` 로 설정하면 Jeevi가 매일 스스로 업데이트합니다).
+**Environment** 상자에는 세 가지 항목만 있으면 됩니다: `DOMAIN_NAME`, `JEEVI_ADMIN_USER`, `JEEVI_ADMIN_PASSWORD`. 선택 항목으로 `JEEVI_AUTO_UPDATE` 가 있습니다(`true` 로 설정하면 Jeevi가 매일 스스로 업데이트합니다).
 
 Hostinger의 Traefik이 HTTPS 인증서를 발급하도록 `DOMAIN_NAME` 을 설정합니다.
-- **무료 링크**(도메인 구매 불필요): `DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud` (호스트 이름은 hPanel → VPS에서 확인, 예: `javis.srv1562015.hstgr.cloud`).
+- **무료 링크**(도메인 구매 불필요): `DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud` (호스트 이름은 hPanel → VPS에서 확인, 예: `jeevi.srv1562015.hstgr.cloud`).
 - **보유한 도메인:** `DOMAIN_NAME=example.com` 으로 설정하고 A 레코드를 VPS IP로 지정합니다.
 
 인증서 발급까지 1-3분 기다린 다음 `https://<DOMAIN_NAME>` 을 엽니다.
 
 **한 번만 하면 되는 세 단계:**
 1. **GHCR 이미지를 Public으로 설정:** GitHub → 저장소 → **Packages** → `javis-os` → *Package settings* → Visibility = **Public**.
-2. **관리자 계정 생성:** `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` 를 채우거나(권장), 배포 직후 앱을 열어 직접 만듭니다. 관리자가 없는 동안에는 링크를 먼저 연 사람이 관리자를 만들 수 있습니다. 그다음 **2FA를 켜세요**([보안과 계정](../../../docs/en/14-security-and-accounts.md)).
+2. **관리자 계정 생성:** `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` 를 채우거나(권장), 배포 직후 앱을 열어 직접 만듭니다. 관리자가 없는 동안에는 링크를 먼저 연 사람이 관리자를 만들 수 있습니다. 그다음 **2FA를 켜세요**([보안과 계정](../../../docs/en/14-security-and-accounts.md)).
 3. **Models** 페이지에서 **브레인에 로그인** 합니다.
 
 자세한 내용과 문제 해결: [DEPLOY.en.md](../../../DEPLOY.en.md).
@@ -281,14 +281,14 @@ Hostinger의 Traefik이 HTTPS 인증서를 발급하도록 `DOMAIN_NAME` 을 설
 
 ```bash
 # Docker required (don't have it?  curl -fsSL https://get.docker.com | sh)
-mkdir javis && cd javis
+mkdir jeevi && cd jeevi
 curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml
 
-docker compose run --rm javis claude auth login --claudeai   # sign in to Claude once (optional)
+docker compose run --rm jeevi claude auth login --claudeai   # sign in to Claude once (optional)
 docker compose up -d                                          # pull the image and run
 ```
 
-`http://<vps-ip>:7777` 을 열고 곧바로 관리자 사용자 이름과 비밀번호(8자 이상)를 설정하거나, 환경 변수에 `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` 를 미리 지정해 둡니다. 그다음 2FA를 켜세요.
+`http://<vps-ip>:7777` 을 열고 곧바로 관리자 사용자 이름과 비밀번호(8자 이상)를 설정하거나, 환경 변수에 `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` 를 미리 지정해 둡니다. 그다음 2FA를 켜세요.
 
 도메인 없이 원격 접속하려면: `docker compose --profile tunnel up -d` 를 실행한 뒤 `docker compose logs tunnel | grep trycloudflare` 를 실행하면 HTTPS 링크가 출력됩니다.
 
@@ -298,13 +298,13 @@ docker compose up -d                                          # pull the image a
 <summary><b>방법 3: Docker 없이 Linux 또는 macOS</b></summary>
 
 ```bash
-git clone https://github.com/blogminhquy/javis-os.git javis && cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi
 chmod +x install.sh && ./install.sh
 ```
 
 스크립트가 Python, Node, CLI 브레인을 설치하고, venv를 만들고, 부팅 시 시작되는 서비스를 등록한 뒤 접속 주소를 출력합니다.
 
-🍎 **macOS에서 앱처럼 열기:** `JEEVI OS.app`(또는 `Start JEEVI OS.command`)을 더블클릭합니다. 로그인 시 자동 시작: `./bin/javis-autostart.sh install`. 자세한 내용: [bin/README.md](../../../bin/README.md).
+🍎 **macOS에서 앱처럼 열기:** `JEEVI OS.app`(또는 `Start JEEVI OS.command`)을 더블클릭합니다. 로그인 시 자동 시작: `./bin/jeevi-autostart.sh install`. 자세한 내용: [bin/README.md](../../../bin/README.md).
 
 </details>
 
@@ -312,7 +312,7 @@ chmod +x install.sh && ./install.sh
 <summary><b>방법 4: Windows (개인 컴퓨터)</b></summary>
 
 ```powershell
-git clone https://github.com/blogminhquy/javis-os.git javis; cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
@@ -320,23 +320,23 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 
 ```
 Run with a visible window (live log):  setup.bat
-Run silently from then on:             start-javis.vbs   (log at server\javis.log)
-Stop:                                  stop-javis.bat
+Run silently from then on:             start-jeevi.vbs   (log at server\jeevi.log)
+Stop:                                  stop-jeevi.bat
 Dashboard:                             http://localhost:7777
 ```
 
-🪟 **앱처럼 열기:** 처음 실행한 뒤에는 **`JEEVI OS.bat`** 을 더블클릭합니다. 서버가 백그라운드에서 시작되고 대시보드가 작업 표시줄 항목을 가진 **별도 창** 으로 열립니다. 로그인 시 자동 시작: `javis-autostart.bat install`(제거: `uninstall`).
+🪟 **앱처럼 열기:** 처음 실행한 뒤에는 **`JEEVI OS.bat`** 을 더블클릭합니다. 서버가 백그라운드에서 시작되고 대시보드가 작업 표시줄 항목을 가진 **별도 창** 으로 열립니다. 로그인 시 자동 시작: `jeevi-autostart.bat install`(제거: `uninstall`).
 
 </details>
 
 <details>
 <summary><b>VPS 하나에 Jeevi 여러 개 실행하기</b></summary>
 
-Brain, 설정, 계정은 인스턴스마다 완전히 분리됩니다. 인스턴스끼리 다른 값은 `JAVIS_NAME`, `JAVIS_HOST_PORT`, `DOMAIN_NAME` 세 가지뿐입니다.
+Brain, 설정, 계정은 인스턴스마다 완전히 분리됩니다. 인스턴스끼리 다른 값은 `JEEVI_NAME`, `JEEVI_HOST_PORT`, `DOMAIN_NAME` 세 가지뿐입니다.
 
 - **Hostinger:** `docker-compose.hostinger.yml` 을 두 번째 스택으로 다시 배포하고 이 세 항목을 채웁니다.
 - **직접 관리하는 VPS:** 공유 프록시 `docker-compose.proxy.yml` 을 컴퓨터 전체에서 한 번만 실행한 뒤, 인스턴스마다 `docker-compose.multi.yml` 로 별도 폴더를 만듭니다. 프록시가 새 인스턴스를 찾아 SSL을 스스로 요청합니다.
-- **네이티브:** `JAVIS_NAME=javis-shop JAVIS_PORT=7778 ./install.sh`.
+- **네이티브:** `JEEVI_NAME=jeevi-shop JEEVI_PORT=7778 ./install.sh`.
 
 단계별 안내: [DEPLOY.en.md](../../../DEPLOY.en.md).
 
@@ -389,14 +389,14 @@ Jeevi를 열면 설정 마법사가 브라우저 언어로 차근차근 안내�
 
 | 변수 | 의미 | 기본값 |
 |---|---|---|
-| `JAVIS_HOST` | 수신 주소. `127.0.0.1` = 이 컴퓨터만, `0.0.0.0` = 공개 | `127.0.0.1` |
-| `JAVIS_PORT` | 포트 | `7777` |
-| `JAVIS_REQUIRE_LOGIN` | `1`/`0` 으로 로그인 강제를 켜거나 끔(기본: 공개 주소에 바인딩하면 켜짐) | *(자동)* |
-| `JAVIS_ADMIN_USER` / `JAVIS_ADMIN_PASSWORD` | 배포 시 관리자 생성 | - |
-| `JAVIS_ALLOWED_HOSTS` | 허용 목록에 추가할 호스트 이름(CSRF 및 DNS 리바인딩 방어) | localhost + 내 도메인 |
-| `JAVIS_STATE_DIR` | 설정, 세션, 암호화 키가 저장되는 위치 | `server/` (Docker: `/data/state`) |
+| `JEEVI_HOST` | 수신 주소. `127.0.0.1` = 이 컴퓨터만, `0.0.0.0` = 공개 | `127.0.0.1` |
+| `JEEVI_PORT` | 포트 | `7777` |
+| `JEEVI_REQUIRE_LOGIN` | `1`/`0` 으로 로그인 강제를 켜거나 끔(기본: 공개 주소에 바인딩하면 켜짐) | *(자동)* |
+| `JEEVI_ADMIN_USER` / `JEEVI_ADMIN_PASSWORD` | 배포 시 관리자 생성 | - |
+| `JEEVI_ALLOWED_HOSTS` | 허용 목록에 추가할 호스트 이름(CSRF 및 DNS 리바인딩 방어) | localhost + 내 도메인 |
+| `JEEVI_STATE_DIR` | 설정, 세션, 암호화 키가 저장되는 위치 | `server/` (Docker: `/data/state`) |
 | `BRAINS_DIR` | 모든 Brain을 담는 상위 폴더 | `brains/` (Docker: `/brains`) |
-| `JAVIS_ENABLE_USER_PLUGINS` | `false` 면 직접 만든 Plugin을 끕니다(서버 안에서 실제 Python이 실행됨) | *(켜짐)* |
+| `JEEVI_ENABLE_USER_PLUGINS` | `false` 면 직접 만든 Plugin을 끕니다(서버 안에서 실제 Python이 실행됨) | *(켜짐)* |
 | `TTS_VOICE` / `TTS_RATE` | Edge TTS의 음성과 속도 | `en-US-EmmaMultilingualNeural` / `+5%` |
 
 ---
@@ -407,7 +407,7 @@ Jeevi를 열면 설정 마법사가 브라우저 언어로 차근차근 안내�
 - **2FA (TOTP)**, 로그인 시도 횟수 제한, 8자 이상 비밀번호, HTTPS에서 `Secure` 쿠키, 30일 후 만료되는 세션.
 - **CSRF 및 DNS 리바인딩 방어**: 알 수 없는 출처에서 온 쓰기 요청은 모두 거부됩니다.
 - **비밀 정보는 암호화** 되어 `settings.json` 에 저장됩니다(API 키, OAuth 토큰, 봇 토큰). 암호화 키는 컴퓨터마다 다릅니다.
-- **직접 만든 Plugin은 기본적으로 로드되지만, 앱에서 켜기 전까지 각 Plugin은 꺼져 있습니다**. 모두 끄려면 `JAVIS_ENABLE_USER_PLUGINS=false` 를 설정하세요.
+- **직접 만든 Plugin은 기본적으로 로드되지만, 앱에서 켜기 전까지 각 Plugin은 꺼져 있습니다**. 모두 끄려면 `JEEVI_ENABLE_USER_PLUGINS=false` 를 설정하세요.
 - **연결 권한은 모델이 아니라 허브가 강제합니다**: 읽기 전용 계정으로는 전송, 결제, 게시를 할 수 없습니다.
 
 취약점을 발견하셨나요? 공개 이슈를 열지 말고 [SECURITY.md](../../../SECURITY.md) 의 절차를 따라 주세요.
@@ -416,7 +416,7 @@ Jeevi를 열면 설정 마법사가 브라우저 언어로 차근차근 안내�
 
 ## 🔄 업데이트
 
-앱에서: **Settings → Updates → Update now**. 진행률 표시줄이 있고, 새 빌드에 문제가 있으면 롤백 버튼으로 되돌릴 수 있습니다. VPS에서: `cd javis && ./update.sh` (새 이미지를 받아 재시작하며, 볼륨에 있는 데이터는 유지됩니다).
+앱에서: **Settings → Updates → Update now**. 진행률 표시줄이 있고, 새 빌드에 문제가 있으면 롤백 버튼으로 되돌릴 수 있습니다. VPS에서: `cd jeevi && ./update.sh` (새 이미지를 받아 재시작하며, 볼륨에 있는 데이터는 유지됩니다).
 
 ---
 
@@ -425,7 +425,7 @@ Jeevi를 열면 설정 마법사가 브라우저 언어로 차근차근 안내�
 | 증상 | 해결 방법 |
 |---|---|
 | CLI를 설치했는데 Models 페이지에 설치되지 않았다고 나옴 | **Jeevi를 재시작하세요**: 실행 중인 프로세스는 시작할 때의 PATH를 유지합니다. |
-| 7777 포트가 사용 중이라 새 빌드가 시작되지 않음 | 먼저 이전 프로세스를 멈추고(`stop-javis.bat`, 또는 PID 종료) 다시 시작하세요. |
+| 7777 포트가 사용 중이라 새 빌드가 시작되지 않음 | 먼저 이전 프로세스를 멈추고(`stop-jeevi.bat`, 또는 PID 종료) 다시 시작하세요. |
 | Hostinger가 이미지를 가져오지 못함 | GHCR 패키지를 **Public** 으로 설정하고 GitHub Action 빌드가 끝날 때까지 기다리세요. |
 | 브레인이 로그인되지 않았다고 함 | **Models** → 해당 제공자 카드 → 로그인. |
 
@@ -510,6 +510,6 @@ Jeevi OS는 무료 오픈 소스이며, 아직 한 사람이 코드를 쓰고 �
 <div align="center">
 <br>
 <a href="https://nguyenminhquy.com"><img src="../../assets/author.webp" width="96" height="96" alt="Minh Quý"></a><br>
-<b><a href="https://javisos.com">javisos.com</a></b><br>
+<b><a href="https://jeevios.com">jeevios.com</a></b><br>
 베트남에서 ☕ 와 함께 <b><a href="https://nguyenminhquy.com">Minh Quý</a></b> 가 만들었습니다
 </div>

@@ -22,7 +22,7 @@ Những điều cần biết:
 
 ## Nâng cấp từ 0.86.x
 
-- Không phải làm gì tay. Lần đầu mở kho, Jeevi chép `resonance.sqlite3` thành `resonance.sqlite3.pre-a1.bak` cạnh file gốc (thư mục `JAVIS_STATE_DIR`), chỉ một lần.
+- Không phải làm gì tay. Lần đầu mở kho, Jeevi chép `resonance.sqlite3` thành `resonance.sqlite3.pre-a1.bak` cạnh file gốc (thư mục `JEEVI_STATE_DIR`), chỉ một lần.
 - Kho chỉ có thêm bảng mới (`resonance_agents`, `resonance_agent_events`, `session_agents`, `goal_agents`, `handoff_agents`). Không bảng cũ nào đổi cột.
 - Công tắc theo brain cũ (`<brain>/Jeevi/resonance.json`) không còn cấp quyền gì. File không bị xoá.
 - Mục tiêu có từ trước (chưa thuộc trợ lý nào) chuyển sang trạng thái chờ gán:

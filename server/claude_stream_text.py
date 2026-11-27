@@ -14,7 +14,7 @@ it is not edited. This wraps its module-level `map_message` the same way the cac
 - sub-agent stream events (parent_tool_use_id set) are left alone: their AssistantMessage text passes as before.
 
 Nothing changes when the binary sends no StreamEvent (old CLI, the bundled one): there is nothing to drop.
-`JAVIS_CLAUDE_STREAM_TEXT=0` turns it off.
+`JEEVI_CLAUDE_STREAM_TEXT=0` turns it off.
 
 2026-11-16: a new text block after earlier text of the same turn starts a new paragraph (`text_breaks.lead`). The
 text written before a tool call and the text written after it used to reach the chat glued together ("... cần đăng
@@ -36,7 +36,7 @@ _MAX_SESSIONS = 256
 
 
 def bat() -> bool:
-    return (os.environ.get("JAVIS_CLAUDE_STREAM_TEXT") or "1").strip().lower() not in ("0", "false", "off", "no")
+    return (os.environ.get("JEEVI_CLAUDE_STREAM_TEXT") or "1").strip().lower() not in ("0", "false", "off", "no")
 
 
 def _state(sid: str) -> dict:
@@ -160,7 +160,7 @@ def cai_vao_claude_sdk() -> bool:
             if name == "SystemMessage":
                 _on_turn_start(msg)
             elif name == "StreamEvent":
-                # JAVIS_CLAUDE_STREAM_TEXT=0 stops the pieces; the paragraph breaks below still apply.
+                # JEEVI_CLAUDE_STREAM_TEXT=0 stops the pieces; the paragraph breaks below still apply.
                 return (out[0] + _on_stream(msg), out[1]) if bat() else out
             elif name == "AssistantMessage":
                 return _on_assistant(msg, out[0]), out[1]

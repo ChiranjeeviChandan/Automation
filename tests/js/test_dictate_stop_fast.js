@@ -51,7 +51,7 @@ global.fetch = (url, init) => {
   url = String(url);
   if (url.indexOf("/voice/ear") !== -1) return json({ kind: "upload" });
   if (url.indexOf("/stt/fix") !== -1) { calls.push("fix"); log.push("fix"); return json({ ok: true, text: "Jeevi OS đã nghe được rồi." }); }
-  if (url.indexOf("/stt") !== -1) { calls.push("stt"); log.push("stt"); return json({ ok: true, text: "javis os đã nghe được rồi" }); }
+  if (url.indexOf("/stt") !== -1) { calls.push("stt"); log.push("stt"); return json({ ok: true, text: "jeevi os đã nghe được rồi" }); }
   return json({});
 };
 function fresh() {

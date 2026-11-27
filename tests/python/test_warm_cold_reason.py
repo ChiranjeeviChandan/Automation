@@ -23,7 +23,7 @@ import tempfile
 import time
 import types
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-warm-why-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-warm-why-")
 
 import compaction  # noqa: E402
 import warm_pool  # noqa: E402
@@ -66,7 +66,7 @@ def miss(pool, key, kind="claude", fp="fp"):
 
 
 async def pool_reasons():
-    os.environ["JAVIS_WARM_BUDGET_MB"] = "400"
+    os.environ["JEEVI_WARM_BUDGET_MB"] = "400"
     pool = warm_pool.Pool()
     check("nothing was ever kept for this conversation", miss(pool, "new") == (None, "not_held"))
 
@@ -141,9 +141,9 @@ async def pool_reasons():
     for n in range(warm_pool.MAX_RECIPES + 20):
         pool._note_gone(f"k{n}", "evicted")
     check("the reasons kept are capped", len(pool._gone) <= warm_pool.MAX_RECIPES)
-    os.environ["JAVIS_WARM_BUDGET_MB"] = "0"
+    os.environ["JEEVI_WARM_BUDGET_MB"] = "0"
     check("pool switched off", miss(pool, "A", fp="fpA") == (None, "pool_off"))
-    os.environ["JAVIS_WARM_BUDGET_MB"] = "400"
+    os.environ["JEEVI_WARM_BUDGET_MB"] = "400"
     await pool.close_all()
 
 
@@ -151,7 +151,7 @@ asyncio.run(pool_reasons())
 
 
 async def swap_cases():
-    os.environ["JAVIS_WARM_BUDGET_MB"] = "400"      # room for ONE Claude process
+    os.environ["JEEVI_WARM_BUDGET_MB"] = "400"      # room for ONE Claude process
     pool = warm_pool.Pool()
     log = []
 
@@ -196,7 +196,7 @@ async def swap_cases():
     check("reopened from the swapped recipe", pool.take("S", "claude", "fp-new") is not None)
     check("no slot, nothing to swap", not pool.swap_recipe("none", "claude", "fp", new_thread))
     await pool.close_all()
-    del os.environ["JAVIS_WARM_BUDGET_MB"]
+    del os.environ["JEEVI_WARM_BUDGET_MB"]
 
 
 asyncio.run(swap_cases())
@@ -224,7 +224,7 @@ import turn_context  # noqa: E402
 import claude_warm  # noqa: E402
 from claude_cli import claude_engine  # noqa: E402
 
-os.environ["JAVIS_WARM_BUDGET_MB"] = "400"
+os.environ["JEEVI_WARM_BUDGET_MB"] = "400"
 eng = claude_engine(system_prompt="rules v1", cwd=tempfile.mkdtemp(), tag="chat:abc:1")
 if type(eng).__name__ == "ClaudeSDK":
     check("an eligible engine has no reason", claude_warm.ineligible_reason(eng) == "" and claude_warm.eligible(eng))
@@ -234,9 +234,9 @@ if type(eng).__name__ == "ClaudeSDK":
     eng.allowed_tools = ["Read"]
     check("a gated engine", claude_warm.ineligible_reason(eng) == "gated_engine")
     eng.allowed_tools = None
-    os.environ["JAVIS_WARM_BUDGET_MB"] = "0"
+    os.environ["JEEVI_WARM_BUDGET_MB"] = "0"
     check("budget 0", claude_warm.ineligible_reason(eng) == "pool_off")
-    os.environ["JAVIS_WARM_BUDGET_MB"] = "400"
+    os.environ["JEEVI_WARM_BUDGET_MB"] = "400"
 else:
     print("skip eligibility: claude-agent-sdk not installed")
 
@@ -245,7 +245,7 @@ def opts(**kw):
     base = dict(cli_path="", cwd=eng.cwd, model="sonnet", effort=None, settings="{}", permission_mode="x",
                 setting_sources=["user"], disallowed_tools=[], include_partial_messages=True,
                 include_hook_events=True, system_prompt={"type": "preset"}, env={}, hooks=None, resume="S1",
-                mcp_servers={"javis": {"type": "http", "url": "http://h/mcp",
+                mcp_servers={"jeevi": {"type": "http", "url": "http://h/mcp",
                                        "headers": {turn_context.HEADER: "k1"}}})
     base.update(kw)
     return types.SimpleNamespace(**base)
@@ -289,9 +289,9 @@ async def prepare_cases():
     check("a slot without a new-thread recipe is left alone", not await claude_warm.prepare_new_thread("conv-1")
           and not h.closed)
     h.new_thread = (ahead, recipe)
-    os.environ["JAVIS_WARM_NEW_THREAD"] = "0"
+    os.environ["JEEVI_WARM_NEW_THREAD"] = "0"
     check("switched off: nothing prepared", not await claude_warm.prepare_new_thread("conv-1") and not h.closed)
-    del os.environ["JAVIS_WARM_NEW_THREAD"]
+    del os.environ["JEEVI_WARM_NEW_THREAD"]
     check("a slot with one is swapped", await claude_warm.prepare_new_thread("conv-1"))
     await asyncio.sleep(0.05)
     got = pool.take("conv-1", "claude", claude_warm._hash_parts(new2))
@@ -301,7 +301,7 @@ async def prepare_cases():
 
 
 asyncio.run(prepare_cases())
-del os.environ["JAVIS_WARM_BUDGET_MB"]
+del os.environ["JEEVI_WARM_BUDGET_MB"]
 
 
 # ---- wiring ----

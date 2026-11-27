@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "server"))
 import _paths  # noqa: E402,F401  - thư mục tạm riêng, tự xoá khi thoát (xem _paths.py)
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-merge-state-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-merge-state-")
 import updater  # noqa: E402
 
 
@@ -20,13 +20,13 @@ def git(repo, *args):
     return result.stdout.strip()
 
 
-with tempfile.TemporaryDirectory(prefix="javis-updater-merge-") as tmp:
+with tempfile.TemporaryDirectory(prefix="jeevi-updater-merge-") as tmp:
     base = Path(tmp)
     remote = base / "release"
     remote.mkdir()
     git(remote, "init", "-b", "main")
     git(remote, "config", "user.name", "Jeevi Test")
-    git(remote, "config", "user.email", "javis-test@example.invalid")
+    git(remote, "config", "user.email", "jeevi-test@example.invalid")
     (remote / "VERSION").write_text("1.0.0\n", encoding="utf-8")
     (remote / "shared.txt").write_text("base\n", encoding="utf-8")
     git(remote, "add", ".")
@@ -35,7 +35,7 @@ with tempfile.TemporaryDirectory(prefix="javis-updater-merge-") as tmp:
     install = base / "install"
     git(base, "clone", remote, install)
     git(install, "config", "user.name", "Jeevi Test")
-    git(install, "config", "user.email", "javis-test@example.invalid")
+    git(install, "config", "user.email", "jeevi-test@example.invalid")
     git(install, "switch", "-c", "my-custom-branch")
     (install / "custom.txt").write_text("my own commit\n", encoding="utf-8")
     git(install, "add", "custom.txt")

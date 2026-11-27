@@ -8,7 +8,7 @@ import os
 import sys
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-fastcli-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-fastcli-"))
 import fast_mode  # noqa: E402
 import codex_models  # noqa: E402
 import main as srv  # noqa: E402
@@ -94,8 +94,8 @@ class _Base:
     cwd = "."
     tag = "loop"
     system_prompt = "x"
-    javis_vault = None
-    javis_mode = "auto"
+    jeevi_vault = None
+    jeevi_mode = "auto"
 
 
 bg = aux_engine._build_codex({"model": "gpt-x"}, _Base(), "auto", "loop")

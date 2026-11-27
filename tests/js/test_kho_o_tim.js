@@ -80,7 +80,7 @@ const DANH_MUC = {
   packs: [
     goi("javis.pancake-pos", "Pancake POS", "Don hang, doanh thu"),
     goi("javis.shopify", "Shopify", "Tra cuu san pham"),
-    goi("javis.webcake", "Webcake", "Dung trang ban hang"),
+    goi("jeevi.webcake", "Webcake", "Dung trang ban hang"),
   ],
 };
 
@@ -89,7 +89,7 @@ globalThis.Alpine = win.Alpine;
 new Function("window", "document", "fetch",
   fs.readFileSync(path.join(ROOT, "dashboard", "packs.js"), "utf8"))(
   win, doc, () => Promise.resolve({ json: () => Promise.resolve(DANH_MUC) }));
-const P = win.JavisPacks || {};
+const P = win.JeeviPacks || {};
 
 check("packs.js phoi ra veKho / ghiConTro / traConTro",
   typeof P.veKho === "function" && typeof P.ghiConTro === "function"

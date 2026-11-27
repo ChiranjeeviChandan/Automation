@@ -21,8 +21,8 @@ import os
 import tempfile
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-remember-")
-os.environ["JAVIS_REQUIRE_LOGIN"] = "1"
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-remember-")
+os.environ["JEEVI_REQUIRE_LOGIN"] = "1"
 
 from fastapi.testclient import TestClient   # noqa: E402
 import config as c   # noqa: E402

@@ -2007,19 +2007,19 @@ def _trung_vi(xs: list) -> Optional[float]:
 
 
 # Issue #1775 (82 "manual replies" on a Zalo account nobody types on): a `human` row Jeevi itself sent is machine work.
-# Such a row carries `metadata.tu_javis` with a `via` naming the machine path: "tool" when an engine sent it with
-# `inbox_reply` (routes.conversations.owner_reply) or with a Zalo tool (zalo_sent_ledger.MARK). `tu_javis` WITHOUT a
+# Such a row carries `metadata.tu_jeevi` with a `via` naming the machine path: "tool" when an engine sent it with
+# `inbox_reply` (routes.conversations.owner_reply) or with a Zalo tool (zalo_sent_ledger.MARK). `tu_jeevi` WITHOUT a
 # `via` is the owner pressing Send in the inbox (perhaps on a bot draft): a person, so it stays a manual reply. A new
 # machine path that writes `human` rows adds its `via` here.
-JAVIS_SENT_VIA = ("tool",)
-# The sender as the Stats tab counts it: "javis" for such a row, else the stored sender. The LIKE test keeps the JSON
+JEEVI_SENT_VIA = ("tool",)
+# The sender as the Stats tab counts it: "jeevi" for such a row, else the stored sender. The LIKE test keeps the JSON
 # functions off every other row (the Stats query can see hundreds of thousands), and `json_valid` keeps an odd stored
 # value from failing the whole query.
 _STATS_SENDER = (
     "CASE WHEN m.sender_type='human' AND m.metadata_json LIKE '%\"via\"%' THEN"
-    " (CASE WHEN json_valid(m.metadata_json) AND json_extract(m.metadata_json, '$.tu_javis')=1"
-    " AND json_extract(m.metadata_json, '$.via') IN (" + ",".join("'%s'" % v for v in JAVIS_SENT_VIA) + ")"
-    " THEN 'javis' ELSE 'human' END)"
+    " (CASE WHEN json_valid(m.metadata_json) AND json_extract(m.metadata_json, '$.tu_jeevi')=1"
+    " AND json_extract(m.metadata_json, '$.via') IN (" + ",".join("'%s'" % v for v in JEEVI_SENT_VIA) + ")"
+    " THEN 'jeevi' ELSE 'human' END)"
     " ELSE m.sender_type END")
 
 
@@ -2074,8 +2074,8 @@ def insights(since: float, until: float, account: str = "") -> dict:
     ai_rest = 0
     for cid, who, ts, channel, bot_id, acc_id in rows:
         ts = float(ts or 0)
-        sent_by_javis = who == "javis"
-        if sent_by_javis:
+        sent_by_jeevi = who == "jeevi"
+        if sent_by_jeevi:
             who = "ai"          # machine work (see _STATS_SENDER), though not the answer of the chat's bot
         if cid != cur:
             cur, start = cid, None
@@ -2099,7 +2099,7 @@ def insights(since: float, until: float, account: str = "") -> dict:
                 start = ts
         else:
             if who == "ai":
-                if bot_id and not sent_by_javis:
+                if bot_id and not sent_by_jeevi:
                     by_bot[bot_id] = by_bot.get(bot_id, 0) + 1
                 if gio >= NGHI_TU or gio < NGHI_DEN:
                     ai_rest += 1

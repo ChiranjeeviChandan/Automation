@@ -20,7 +20,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zcatch-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zcatch-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -76,7 +76,7 @@ HISTORY = [
     hist(11, "new", "old chat before the first read", 50, sender="u-n", name="Khach N"),   # rule 6
     hist(12, "new", "new chat after the first read", 5, sender="u-n", name="Khach N"),
 ]
-HOME = tempfile.mkdtemp(prefix="javis-zhome-")
+HOME = tempfile.mkdtemp(prefix="jeevi-zhome-")
 CONN = dict(CONN, env={"HOME": HOME})
 PATH = zc.history_path(CONN)
 os.makedirs(os.path.dirname(PATH), exist_ok=True)

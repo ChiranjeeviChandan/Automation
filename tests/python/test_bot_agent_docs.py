@@ -89,12 +89,12 @@ def test_doc_tools_read_the_bot_of_the_turn_and_fail_closed_without_one(tmp_path
             return asyncio.run(route[name]["call"](args))
         finally:
             turn_context.reset(tok)
-    listed = call("javis_docs_list", {}, "b1")
+    listed = call("jeevi_docs_list", {}, "b1")
     assert "sources/bang-gia.md" in listed and "doi-tra" not in listed and "Daily Log" not in listed
-    assert "ERROR" in call("javis_docs_read", {"path": "01 - Daily Log/2026-11-09.md"}, "b1")
-    assert "120 nghìn" in call("javis_docs_read", {"path": "sources/bang-gia.md"}, "b1")
-    assert "chưa có tài liệu" in call("javis_docs_list", {}, "")
-    assert "Không có đoạn" in call("javis_docs_search", {"query": "nước mắm giá"}, "")
+    assert "ERROR" in call("jeevi_docs_read", {"path": "01 - Daily Log/2026-11-09.md"}, "b1")
+    assert "120 nghìn" in call("jeevi_docs_read", {"path": "sources/bang-gia.md"}, "b1")
+    assert "chưa có tài liệu" in call("jeevi_docs_list", {}, "")
+    assert "Không có đoạn" in call("jeevi_docs_search", {"query": "nước mắm giá"}, "")
 
 
 def test_every_bot_call_site_passes_the_agent_files():

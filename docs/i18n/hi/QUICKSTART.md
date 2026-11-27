@@ -14,7 +14,7 @@ Jeevi को किसी भी सामान्य ऐप की तरह �
 - **Windows 10/11:** [JeeviOS-Setup.exe](https://github.com/blogminhquy/javis-os/releases/download/desktop/JeeviOS-Setup.exe) डाउनलोड करें, डबल-क्लिक करें और अंत तक Next दबाएँ। इंस्टॉल की प्रगति Setup विंडो के अंदर ही, एक-एक चरण करके दिखती है (कुछ मिनट), अलग काली विंडो नहीं खुलती। पूरा होने पर Desktop और Start menu में JEEVI OS आइकन आ जाता है।
 - **macOS 11 या नया:** **Terminal** खोलें (Launchpad में Terminal टाइप करें), यह लाइन पेस्ट करें और Enter दबाएँ। इस तरह इंस्टॉल करने पर macOS कोई चेतावनी नहीं दिखाता:
   ```
-  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-javis.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-jeevi.sh | bash
   ```
   यह कमांड Jeevi डाउनलोड करता है, **JEEVI OS** को **Applications** में कॉपी करता है और उसी Terminal विंडो में इंस्टॉल कर देता है (यह एक बार Jeevi एडमिन खाता बनाने और Mac का पासवर्ड पूछ सकता है)। इसके बाद JEEVI OS को Launchpad से खोलें।
 
@@ -24,7 +24,7 @@ Jeevi को किसी भी सामान्य ऐप की तरह �
 
 **Windows: चेतावनी स्क्रीन के बिना इंस्टॉल करें (सुझाया गया तरीका)।** Windows इंस्टॉलर अभी कोड-साइन नहीं है, इसलिए ब्राउज़र से डाउनलोड करने पर पहली बार ब्लॉक हो जाता है। इसकी जगह एक लाइन पेस्ट करें और आपको Jeevi लोगो वाला वही इंस्टॉलर बिना ब्लॉक हुए मिल जाएगा: Start दबाएँ, `PowerShell` टाइप करें, उसे खोलें, यह लाइन पेस्ट करें और Enter दबाएँ:
 ```
-irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-javis.ps1 | iex
+irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-jeevi.ps1 | iex
 ```
 
 इंस्टॉलर आपके कंप्यूटर में क्या बदलते हैं, उन्हें कौन साइन करता है और Jeevi क्या और कहाँ भेजता है: [Code signing policy](../../../docs/code-signing-policy.md) · [Privacy policy](../../../PRIVACY.md) (अंग्रेज़ी में)।
@@ -49,9 +49,9 @@ irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/window
    ```
 3. (वैकल्पिक, HTTPS + domain के लिए) **Environment** box में यह सेट कीजिए:
    ```
-   DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud
+   DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud
    ```
-   (Hostname hPanel → VPS में मिलेगा, जैसे `javis.srv1782015.hstgr.cloud`।)
+   (Hostname hPanel → VPS में मिलेगा, जैसे `jeevi.srv1782015.hstgr.cloud`।)
 4. **Deploy** कीजिए। 1-3 मिनट इंतज़ार कीजिए। App को **Open** button से खोलिए (या `https://<DOMAIN_NAME>` पर)।
 5. पहली बार चलाने पर screen आपसे एक admin account बनाने को कहती है। उसके बाद container के terminal में एक बार Claude Code में sign in कीजिए: `claude auth login --claudeai`।
 
@@ -70,7 +70,7 @@ http://localhost:7777 खोलिए। Caddy के ज़रिए HTTPS क�
 
 1. Python 3.12 + Node 22 इंस्टॉल कीजिए।
 2. Project folder में एक बार `setup.bat` चलाइए: यह .venv बनाता है, dependencies इंस्टॉल करता है, और आपके लिए दोनों CLI engines (Claude Code, Codex) भी इंस्टॉल कर देता है।
-3. Background में चलाने के लिए `start-javis.bat` (रोकने के लिए `stop-javis.bat`)।
+3. Background में चलाने के लिए `start-jeevi.bat` (रोकने के लिए `stop-jeevi.bat`)।
 4. http://localhost:7777 खोलिए।
 
 ## चालू होने के बाद

@@ -39,7 +39,7 @@ const ctx = {
   clearTimeout: (id) => { if (timers[id - 1]) timers[id - 1].fn = null; },
   markdownToHtml: (s) => { rendered.push(s); return s; },          // identity: the bubble then holds the source text
   scrollBottom: () => { scrolls++; },
-  window: { JavisStreamCut: streamCut },
+  window: { JeeviStreamCut: streamCut },
   document: {
     body: {},
     createComment: (t) => node('comment', t),
@@ -136,12 +136,12 @@ test('text that is no longer the settled text plus more starts over', () => {
 });
 
 test('without the splitter the whole bubble is rendered as before', () => {
-  const keep = ctx.window.JavisStreamCut;
-  ctx.window.JavisStreamCut = undefined;
+  const keep = ctx.window.JeeviStreamCut;
+  ctx.window.JeeviStreamCut = undefined;
   const inner = { innerHTML: '' };
   const t = { text: 'x\n\ny\n\nz', bubble: { isConnected: true, dataset: {}, querySelector: () => inner } };
   ctx._veStreamNgay(t);
-  ctx.window.JavisStreamCut = keep;
+  ctx.window.JeeviStreamCut = keep;
   assert.equal(inner.innerHTML, 'x\n\ny\n\nz');
 });
 
@@ -155,7 +155,7 @@ test('streamCut: only complete plain blocks, never inside a fence, a list, a tab
   assert.equal(cutText('```js\na\n\nb\n```\n\nx\n\ny\n'), '```js\na\n\nb\n```\n\nx\n\n');
   assert.equal(cutText('a\n\n```\nopen\n\nstill open\n\nplain looking\n'), '', 'nothing is settled after an open fence');
   assert.equal(cutText('a\n\n| x |\n|---|\n| 1 |\n\nb\n\nc\n'), 'a\n\n| x |\n|---|\n| 1 |\n\nb\n\n');
-  assert.equal(cutText('a\n\n<!-- JAVIS_ASK: {\n\n"q": 1} -->\n\nb\n\nc\n'), 'a\n\n<!-- JAVIS_ASK: {\n\n"q": 1} -->\n\nb\n\n');
+  assert.equal(cutText('a\n\n<!-- JEEVI_ASK: {\n\n"q": 1} -->\n\nb\n\nc\n'), 'a\n\n<!-- JEEVI_ASK: {\n\n"q": 1} -->\n\nb\n\n');
   assert.equal(cutText('a\n\n<!-- open\n\nb\n\nc\n'), '', 'an open hidden block keeps everything after it');
   assert.equal(cutText('---\nt: 1\n'), '', 'open frontmatter');
   assert.equal(cutText('---\nt: 1\n---\n\na\n\nb\n\nc\n'), '---\nt: 1\n---\n\na\n\nb\n\n');

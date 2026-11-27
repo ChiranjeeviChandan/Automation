@@ -21,7 +21,7 @@ import threading
 import time
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-slowspots-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-slowspots-"))
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -67,7 +67,7 @@ check("the latest freezes are listed newest first", len(rep.get("slow_recent") o
       and rep["slow_recent"][0]["at"] >= rep["slow_recent"][1]["at"], rep.get("slow_recent"))
 
 # ---- 2. the Kanban dispatcher works off the loop ----------------------------------------------------------------------
-TMP = Path(tempfile.mkdtemp(prefix="javis-slowspots-brain-"))
+TMP = Path(tempfile.mkdtemp(prefix="jeevi-slowspots-brain-"))
 BRAIN = TMP / "Brain X"
 BRAIN.mkdir(parents=True, exist_ok=True)
 

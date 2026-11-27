@@ -8,7 +8,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-image-rotation-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-image-rotation-")
 
 import config  # noqa: E402
 import image_gen  # noqa: E402

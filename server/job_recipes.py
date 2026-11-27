@@ -55,7 +55,7 @@ PREFETCH_TOTAL_CHARS = 24_000
 PREFETCH_STEP_CHARS = 8_000
 MIN_OBSERVATIONS = 2
 MAX_FAILS = 2
-QUERY_TOOL = "javis_query"
+QUERY_TOOL = "jeevi_query"
 _DATE_RE = re.compile(r"(?<!\d)(20\d\d)-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])(?!\d)")
 _SLOT_RE = re.compile(r"\{\{d(\d+)\}\}")
 _REF_RE = re.compile(r"tr_[0-9a-f]{24}")
@@ -67,8 +67,8 @@ _live: dict = {}          # job -> {"steps": [...], "refs": {ref: step index}, "
 
 
 def enabled() -> bool:
-    """`mcp.recipes`: true (default) | false. JAVIS_RECIPES=0|1 wins."""
-    v = (os.getenv("JAVIS_RECIPES") or "").strip().lower()
+    """`mcp.recipes`: true (default) | false. JEEVI_RECIPES=0|1 wins."""
+    v = (os.getenv("JEEVI_RECIPES") or "").strip().lower()
     if v in ("0", "false", "off", "no"):
         return False
     if v in ("1", "true", "on", "yes"):
@@ -461,7 +461,7 @@ def plan(recipe: Optional[dict], task: str, mode: str, run_day: Optional[date] =
 
 def _is_read(route: dict, tool: str, args: dict) -> bool:
     if tool == QUERY_TOOL:
-        return True                                            # javis_query checks its own source
+        return True                                            # jeevi_query checks its own source
     try:
         import tool_result_tools
         return tool_result_tools.is_plain_read(route.get(tool) or {}, args)
@@ -475,7 +475,7 @@ async def replay(steps: list, route: dict) -> tuple:
     in a prompt: no failure, and no point retrying tomorrow)."""
     import mcp_client
     import tool_result_shaper
-    # the tool search may hide a recorded tool: javis_query's entry carries every route of this tool list
+    # the tool search may hide a recorded tool: jeevi_query's entry carries every route of this tool list
     route = (route.get(QUERY_TOOL) or {}).get("full_route") or route
     out, refs, used = [], {}, 0
     for i, step in enumerate(steps):

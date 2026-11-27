@@ -3,7 +3,7 @@
 //     node tests/js/test_cai_goi_di_kem.js
 //
 // Ba plugin Zalo (gửi ảnh, tag người, đọc ảnh trong nhóm) rời app sang Jeevi Store. Jeevi không có
-// đường tự cài gói, nên lối vào là `JavisPacks.caiGoiKho(id, tuy)`: tìm gói trong kho rồi mở ĐÚNG màn
+// đường tự cài gói, nên lối vào là `JeeviPacks.caiGoiKho(id, tuy)`: tìm gói trong kho rồi mở ĐÚNG màn
 // hình đồng ý của đường cài từ kho. Những điều phải giữ:
 //   1. Không có lần cài nào trước khi người dùng bấm Cài: lối vào mới không được ngắn hơn đường kho.
 //   2. Vân tay đi kèm: tải bằng sha256 của kho, cài bằng sha256 của bản soi.
@@ -65,7 +65,7 @@ function moiTruong() {
 const SRC = fs.readFileSync(path.join(ROOT, "dashboard", "packs.js"), "utf8");
 const KHO = (them) => ({ ok: true, packs: [
   { id: "javis.zalo", nguon: "kho", installed: false, enabled: true,
-    download: { url: "dist/javis-zalo-1.0.0.zip", sha256: "a".repeat(64) }, ...(them || {}) },
+    download: { url: "dist/jeevi-zalo-1.0.0.zip", sha256: "a".repeat(64) }, ...(them || {}) },
   { id: "zalo", nguon: "app", installed: true, download: { url: "" } },
 ] });
 const SOI = { ok: true, tier: "code", id: "javis.zalo", name: { vi: "Zalo mở rộng" }, staging_id: "b".repeat(64),
@@ -88,7 +88,7 @@ function nap(kho) {
   globalThis.Alpine = win.Alpine;
   new Function("window", "document", "fetch", SRC)(win, doc, fetchGia);
   globalThis.Alpine = alpineCu;
-  return { P: win.JavisPacks || {}, goi, hop, nut };
+  return { P: win.JeeviPacks || {}, goi, hop, nut };
 }
 const nghi = () => new Promise(r => setTimeout(r, 0));
 
@@ -102,7 +102,7 @@ check("packs.js phơi ra caiGoiKho", typeof nap(KHO()).P.caiGoiKho === "function
   await nghi();
   check("mở màn hình đồng ý", kq === "mo", kq);
   check("tải đúng tệp của kho, kèm vân tay của kho",
-    a.goi.some(g => g.url === "/packs/install-url" && g.body.url === "dist/javis-zalo-1.0.0.zip"
+    a.goi.some(g => g.url === "/packs/install-url" && g.body.url === "dist/jeevi-zalo-1.0.0.zip"
       && g.body.expect_sha256 === "a".repeat(64)), JSON.stringify(a.goi));
   check("CHƯA cài gì trước khi bấm Cài", !a.goi.some(g => g.url === "/packs/install"));
   check("màn hình vẫn hiện khối cảnh báo mã kèm tên tệp", a.hop.innerHTML.includes("pkm-canh do")

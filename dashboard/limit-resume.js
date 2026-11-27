@@ -139,7 +139,7 @@
   var timer = null;
 
   function send(obj) {
-    try { if (typeof window.JavisWsSend === "function") return window.JavisWsSend(obj); } catch (e) {}
+    try { if (typeof window.JeeviWsSend === "function") return window.JeeviWsSend(obj); } catch (e) {}
     return false;
   }
 
@@ -281,7 +281,7 @@
     if (!area) return null;
     var have = area.querySelector('.jv-resume[data-sid="' + sid + '"]');
     if (have) { cards[sid] = have; paint(sid); return have; }
-    var msgs = area.querySelectorAll(".msg.msg-javis");
+    var msgs = area.querySelectorAll(".msg.msg-jeevi");
     var last = msgs.length ? msgs[msgs.length - 1] : null;
     if (!last) return null;
     return attach(last, sid, null);
@@ -292,6 +292,6 @@
     attach: attach, onFrame: onFrame, turnDone: turnDone, fromHello: fromHello, renderFor: renderFor,
     _pending: function () { return pending; },
   };
-  if (typeof window !== "undefined") window.JavisResume = api;
+  if (typeof window !== "undefined") window.JeeviResume = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

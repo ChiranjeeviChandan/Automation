@@ -11,9 +11,9 @@ If you have just installed Jeevi for the first time, read [Getting started and f
 A great many errors disappear after one of these, so try them before worrying:
 
 1. **Restart the server (when you or an update just changed Python `.py` code).**
-   - On **Windows**: run `stop-javis.bat` to stop it, then `start-javis.vbs` (runs in the background) or `setup.bat` (shows a window) to start it again.
+   - On **Windows**: run `stop-jeevi.bat` to stop it, then `start-jeevi.vbs` (runs in the background) or `setup.bat` (shows a window) to start it again.
    - On **Docker / VPS**: `docker compose restart`.
-   - On **Linux (systemd)**: `sudo systemctl restart javis`.
+   - On **Linux (systemd)**: `sudo systemctl restart jeevi`.
 2. **Reload the interface with a clean cache (when the screen is wrong, a button is missing, or you just changed the interface).** Press **Ctrl+Shift+R** in the browser (Mac: Cmd+Shift+R). This is a hard refresh, forcing the browser to reload every interface file instead of using the cached copy.
 
 > The simple rule to remember: change the core (a `.py` file) means **restart the server**; the interface displaying wrong means **Ctrl+Shift+R**.
@@ -22,19 +22,19 @@ A great many errors disappear after one of these, so try them before worrying:
 
 | Symptom | What to do |
 |---|---|
-| You edited code (or just updated) and **nothing changed** | If a `.py` file changed: **restart the server** (Windows: `stop-javis.bat` then `start-javis.vbs`; Docker: `docker compose restart`). If only the interface changed: press **Ctrl+Shift+R**. |
-| **Port 7777 is held** and the new build will not come up | Kill the old process FIRST, then start again. Windows: run `stop-javis.bat`, or `taskkill /F /PID <pid>` with the PID holding the port. Docker: `docker compose down` then `docker compose up -d`. |
+| You edited code (or just updated) and **nothing changed** | If a `.py` file changed: **restart the server** (Windows: `stop-jeevi.bat` then `start-jeevi.vbs`; Docker: `docker compose restart`). If only the interface changed: press **Ctrl+Shift+R**. |
+| **Port 7777 is held** and the new build will not come up | Kill the old process FIRST, then start again. Windows: run `stop-jeevi.bat`, or `taskkill /F /PID <pid>` with the PID holding the port. Docker: `docker compose down` then `docker compose up -d`. |
 | **Hostinger cannot pull the image** | Set the GHCR package to **Public** (GitHub, the repo, Packages, choose `javis-os`, Package settings, Visibility = Public). Then wait for the GitHub Action build to finish (the repo's Actions tab) and Deploy again. |
-| Opening the app shows the **create-admin screen** on a public server | No admin exists yet, so whoever opens the link first can create it. Create the account now (password at least 8 characters), or next time preset the env vars `JAVIS_ADMIN_USER` and `JAVIS_ADMIN_PASSWORD` at deploy time and sign straight in. Once inside, turn on 2FA. |
+| Opening the app shows the **create-admin screen** on a public server | No admin exists yet, so whoever opens the link first can create it. Create the account now (password at least 8 characters), or next time preset the env vars `JEEVI_ADMIN_USER` and `JEEVI_ADMIN_PASSWORD` at deploy time and sign straight in. Once inside, turn on 2FA. |
 | **Claude reports it is not signed in** (Jeevi cannot answer) | Connect the Claude "brain" once. In the app: open **Models**, on the Claude Code card click **Connect Claude**, open the link, paste the code if the page shows one and click **Confirm code**. Fallback by command: `claude auth login --claudeai` (on Docker, run it in the App terminal), though that kind of sign-in can run out midway. |
 | **The Claude token expires soon / has expired** | The long-lived Claude token lasts a year. Open **Models**, on the Claude Code card click **Get a new token** and sign in to claude.ai once more for another year. |
 | **The Files page errors at "Loading..."** | The server has no Files endpoint yet (a 404). **Restart the server** to load the new endpoint, then press **Ctrl+Shift+R**. |
 | Images in old conversations show a grey **Image expired** box | By design: `attachments/` and `inbox/` are a cache, and files over 30 days (or when the 300MB ceiling is passed) are cleared. See "Old images and files disappear" below for how to keep them or turn clearing off. |
 | Voice / microphone will not turn on | Browsers only grant microphone permission over **HTTPS** (or on localhost). Opening `http://<ip>:7777` is always blocked. Use an `https://` URL (Hostinger `*.hstgr.cloud`, Cloudflare Tunnel, or a custom domain with SSL). See [Branding and custom domains](15-branding-and-domains.md). |
 | You updated in the app but **the version did not change** | Wait a little longer; if it still reports the old build, check the update log: `update.log` in the state folder (`server/update.log` locally, `/data/state/update.log` on Docker), or `docker compose logs`. |
-| **`javis` reports 401** or "invalid token" | The token is wrong or was revoked. Create a new one at **Integrations > API tokens** then run `javis login <address>` again. See [The Jeevi CLI](24-cli.md). |
-| **`javis task add` / `javis brain ls` report 403** | Your token is the **chat only** kind. These commands need a **full power** token, so create one at Integrations > API tokens. |
-| **`javis up` reports it cannot find a Jeevi install** | Exactly as it says: the CLI package does NOT contain the server. Point `JAVIS_HOME` at the Jeevi folder, run the command from inside that folder, or use `javis login <address>` to connect to a Jeevi running elsewhere. |
+| **`jeevi` reports 401** or "invalid token" | The token is wrong or was revoked. Create a new one at **Integrations > API tokens** then run `jeevi login <address>` again. See [The Jeevi CLI](24-cli.md). |
+| **`jeevi task add` / `jeevi brain ls` report 403** | Your token is the **chat only** kind. These commands need a **full power** token, so create one at Integrations > API tokens. |
+| **`jeevi up` reports it cannot find a Jeevi install** | Exactly as it says: the CLI package does NOT contain the server. Point `JEEVI_HOME` at the Jeevi folder, run the command from inside that folder, or use `jeevi login <address>` to connect to a Jeevi running elsewhere. |
 
 The sections below explain each row in more detail.
 
@@ -43,9 +43,9 @@ The sections below explain each row in more detail.
 Jeevi has two parts that run differently, so refreshing them differs too:
 
 1. **Changing the core (Python `.py` files in `server/`)**: the running server still holds the old build in memory. You must **stop and start the server**:
-   - Windows: run `stop-javis.bat`, wait a few seconds, then run `start-javis.vbs`.
+   - Windows: run `stop-jeevi.bat`, wait a few seconds, then run `start-jeevi.vbs`.
    - Docker / VPS: `docker compose restart`.
-   - Linux systemd: `sudo systemctl restart javis`.
+   - Linux systemd: `sudo systemctl restart jeevi`.
 2. **Changing the interface (HTML/CSS/JS in `dashboard/`)**: the server needs no restart, but the browser often keeps the old build in cache. Press **Ctrl+Shift+R** for a clean reload.
 
 If neither helps, check that you are on the right port and the right brain.
@@ -54,10 +54,10 @@ If neither helps, check that you are on the right port and the right brain.
 
 Jeevi's default port is **7777**. When an old process has not fully stopped and you start a new build, the new one errors because the port is busy. Work through it in order:
 
-1. Stop the old process first. Windows: run `stop-javis.bat`. If it persists, find the PID holding the port then `taskkill /F /PID <pid>`. Docker: `docker compose down`.
-2. Start again. Windows: `start-javis.vbs`. Docker: `docker compose up -d`.
+1. Stop the old process first. Windows: run `stop-jeevi.bat`. If it persists, find the PID holding the port then `taskkill /F /PID <pid>`. Docker: `docker compose down`.
+2. Start again. Windows: `start-jeevi.vbs`. Docker: `docker compose up -d`.
 
-To move to another port (when 7777 collides with other software), set `JAVIS_PORT` in the `.env` file; see [.env configuration](16-env-configuration.md).
+To move to another port (when 7777 collides with other software), set `JEEVI_PORT` in the `.env` file; see [.env configuration](16-env-configuration.md).
 
 ## Hostinger cannot pull the image
 
@@ -70,7 +70,7 @@ When deploying through Hostinger Docker Manager and it cannot download the image
 
 When Jeevi runs public (Docker/VPS/Hostinger) with no admin yet, opening the app the first time shows the create-account screen, which only asks for a username and password. That means **whoever opens the link first can create the admin** (and the engine runs with full power on the machine), so:
 
-1. **Preset the admin at deploy time (recommended)**: the two env vars `JAVIS_ADMIN_USER` and `JAVIS_ADMIN_PASSWORD` in the compose file or `.env`. Then opening the app takes you straight to sign-in.
+1. **Preset the admin at deploy time (recommended)**: the two env vars `JEEVI_ADMIN_USER` and `JEEVI_ADMIN_PASSWORD` in the compose file or `.env`. Then opening the app takes you straight to sign-in.
 2. **Without the env vars**: create the account right after deploying, with a password of at least 8 characters.
 3. **Once inside**: turn on two-factor authentication (2FA) on the **Account** page.
 
@@ -90,7 +90,7 @@ A machine still on the old sign-in shows a **Switch to a long-lived token** butt
 
 ## The Files page errors at "Loading..."
 
-If you open **Files** (**Brain** group) and the file list errors instead of appearing, the server is usually running an old build with no Files endpoint (a 404). The interface itself says so: **restart the server** (Windows: `stop-javis.bat` then `start-javis.vbs`) then **reload the page** with Ctrl+Shift+R.
+If you open **Files** (**Brain** group) and the file list errors instead of appearing, the server is usually running an old build with no Files endpoint (a 404). The interface itself says so: **restart the server** (Windows: `stop-jeevi.bat` then `start-jeevi.vbs`) then **reload the page** with Ctrl+Shift+R.
 
 If it reports an expired session (a 401), just reload the page and sign in again. The full Files guide is at [File manager](05-file-manager.md).
 
@@ -152,16 +152,16 @@ There are several places, depending on what you want to see:
 2. **The self-learning log**: the **Self-learning** page (**Brain** group) has two separate panels, **What Jeevi taught itself (latest commit)** and **Learning log**. See [Self-learning](22-self-learning.md).
 3. **The Updates page** (**System** group, the page title is **Update log**): this is where you see the running version and the feature history per release. There is no separate "Logs" or "Activity log" page any more; the `logs` item on the rail is this page.
 4. **The server's technical log** (when you need to dig into an error):
-   - Windows running in the background through `start-javis.vbs`: the log is at `server\javis.log`.
-   - Docker / VPS: `docker compose logs javis` (add `-f` to follow: `docker compose logs -f`).
-   - Linux systemd: `journalctl -u javis -f`.
-5. **The update log** when you click the update button in the app: the `update.log` file in the state folder, so `server/update.log` locally and `/data/state/update.log` on Docker (the path follows `JAVIS_STATE_DIR`). You usually do not need to open it: when an update fails the interface already shows the notice, and the app reads the last 50 lines of this file to report the state.
+   - Windows running in the background through `start-jeevi.vbs`: the log is at `server\jeevi.log`.
+   - Docker / VPS: `docker compose logs jeevi` (add `-f` to follow: `docker compose logs -f`).
+   - Linux systemd: `journalctl -u jeevi -f`.
+5. **The update log** when you click the update button in the app: the `update.log` file in the state folder, so `server/update.log` locally and `/data/state/update.log` on Docker (the path follows `JEEVI_STATE_DIR`). You usually do not need to open it: when an update fails the interface already shows the notice, and the app reads the last 50 lines of this file to report the state.
 
 ## Frequently asked questions
 
 ### Is data lost during an update?
 
-No, if you run Docker. Every note, brain, setting and even the Claude login token lives in a **Docker volume** (`javis-data`, `claude-auth`), separate from the image. When you update (clicking **⬆ Update now** on the **Updates** page, a Redeploy on Hostinger, or `./update.sh` on a VPS), the image is replaced but the volumes stay, so data is **not** lost. On a native install the data is in the repo's `brains/` folder, which `git pull` does not delete either.
+No, if you run Docker. Every note, brain, setting and even the Claude login token lives in a **Docker volume** (`jeevi-data`, `claude-auth`), separate from the image. When you update (clicking **⬆ Update now** on the **Updates** page, a Redeploy on Hostinger, or `./update.sh` on a VPS), the image is replaced but the volumes stay, so data is **not** lost. On a native install the data is in the repo's `brains/` folder, which `git pull` does not delete either.
 
 ### How does in-app updating work?
 
@@ -171,15 +171,15 @@ An install directly on the machine (Windows, Linux, macOS) can always update its
 
 Since 0.55.56 Watchtower **ships by default** in both the VPS compose and the Hostinger compose, so a fresh install has the button. Still missing it means the stack is running from an older compose file: Watchtower used to sit under `profiles: ["update"]` (which `docker compose up -d` does not start) and the Hostinger stack shipped without it. The way out is to fetch the new compose and bring it up again - on a VPS run `curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml` then `docker compose up -d --pull always`; on Hostinger hit **Redeploy** in Docker Manager. Not ready to swap the file? `docker compose --profile update up -d` starts it on its own. The Updates panel tells you which case your machine is in.
 
-**The stack reports "Partially running" after updating the compose file**: almost always the `<name>-watchtower` container failing to reach the host's Docker socket (Hostinger has hit exactly this). The Jeevi app is unaffected - it is a separate container and keeps running; you simply lose the "Update now" button and fall back to Redeploy. The real reason is in the log: `docker logs javis-watchtower`.
+**The stack reports "Partially running" after updating the compose file**: almost always the `<name>-watchtower` container failing to reach the host's Docker socket (Hostinger has hit exactly this). The Jeevi app is unaffected - it is a separate container and keeps running; you simply lose the "Update now" button and fall back to Redeploy. The real reason is in the log: `docker logs jeevi-watchtower`.
 
-**After an update the domain answers 404 and the Jeevi container is gone from Docker**: Watchtower stops Jeevi, removes the old container, and only then creates the new one. On a VPS with a slow disk the removal can run past Watchtower's time limit (the `javis-watchtower` log shows `Failed to remove container ... context deadline exceeded`): Watchtower gives up without creating the new one, while Docker still finishes removing the old one. Since the release that added the `javis-guard` container this heals itself: when Jeevi has been gone or stopped halfway for 2 minutes, `javis-guard` creates it again (on the new version) or starts it again; see what it did with `docker logs javis-guard`. A machine without `javis-guard` needs one **Redeploy** (VPS: fetch the new compose file as above, then `docker compose up -d --pull always`), which brings Jeevi back together with `javis-guard` for next time. Data lives in volumes, so nothing is lost.
+**After an update the domain answers 404 and the Jeevi container is gone from Docker**: Watchtower stops Jeevi, removes the old container, and only then creates the new one. On a VPS with a slow disk the removal can run past Watchtower's time limit (the `jeevi-watchtower` log shows `Failed to remove container ... context deadline exceeded`): Watchtower gives up without creating the new one, while Docker still finishes removing the old one. Since the release that added the `jeevi-guard` container this heals itself: when Jeevi has been gone or stopped halfway for 2 minutes, `jeevi-guard` creates it again (on the new version) or starts it again; see what it did with `docker logs jeevi-guard`. A machine without `jeevi-guard` needs one **Redeploy** (VPS: fetch the new compose file as above, then `docker compose up -d --pull always`), which brings Jeevi back together with `jeevi-guard` for next time. Data lives in volumes, so nothing is lost.
 
 **A compose command reporting `not found`** comes in three shapes with three entirely different causes:
 
 | Error | Cause | What to do |
 |---|---|---|
-| `no configuration file provided: not found` | You are in the wrong folder. The folder name depends on how you cloned: `javis` if you followed the command in DEPLOY.md, `javis-os` if you cloned straight without renaming | `cd` into the folder holding `docker-compose.yml`. If you cannot remember where it is, ask Docker: `docker ps --format '{{.Names}}\t{{.Label "com.docker.compose.project.working_dir"}}'` |
+| `no configuration file provided: not found` | You are in the wrong folder. The folder name depends on how you cloned: `jeevi` if you followed the command in DEPLOY.md, `javis-os` if you cloned straight without renaming | `cd` into the folder holding `docker-compose.yml`. If you cannot remember where it is, ask Docker: `docker ps --format '{{.Names}}\t{{.Label "com.docker.compose.project.working_dir"}}'` |
 | `docker: command not found` | You are typing **inside** the Jeevi container (the app's terminal) rather than on the host | SSH into the VPS and type it there |
 | `docker: 'compose' is not a docker command` | An old Compose (v1) | Write it hyphenated: `docker-compose --profile update up -d` |
 

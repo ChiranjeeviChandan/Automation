@@ -16,7 +16,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-looptest-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-looptest-"))
 
 import self_improve
 
@@ -30,7 +30,7 @@ def check(name, cond):
 
 
 # ── stub deps (không đụng mạng / CLI) ──
-_BRAIN_ROOT = tempfile.mkdtemp(prefix="javis-loopbrain-")
+_BRAIN_ROOT = tempfile.mkdtemp(prefix="jeevi-loopbrain-")
 _applied = []   # ghi lại mode mỗi lần apply_mcp được gọi
 
 
@@ -55,11 +55,11 @@ deps = self_improve.LoopDeps(
     aux_model=lambda: None,
     atomic_write_text=_atomic_write,
     project_root=Path("."),
-    state_dir=Path(os.environ["JAVIS_STATE_DIR"]),
+    state_dir=Path(os.environ["JEEVI_STATE_DIR"]),
     safe_tools=["Read", "Write", "Edit", "Glob", "Grep"],
     readonly_tools=["Read", "Glob", "Grep", "LS"],
     apply_mcp=_apply_mcp,
-    mcp_allow_patterns=lambda: ["mcp__javis"],
+    mcp_allow_patterns=lambda: ["mcp__jeevi"],
 )
 feat = self_improve.LoopFeature(deps)
 

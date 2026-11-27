@@ -20,7 +20,7 @@ import random
 import tempfile
 import time
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-dictation-speed-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-dictation-speed-"))
 
 import main  # noqa: E402
 import nghe_sua  # noqa: E402

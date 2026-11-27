@@ -10,7 +10,7 @@ from datetime import datetime
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-pushpol-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-pushpol-")
 
 import notice_text as NT  # noqa: E402
 import notify_policy as NP  # noqa: E402
@@ -133,9 +133,9 @@ PP.reset()
 for i in range(7):
     PP.act_check("loop|calm", False)
 check("a calm job keeps a rare urgent claim", PP.act_check("loop|calm", True, "customer"))
-meta = NT.split_block('Done <!-- JAVIS_NOTIFY: {"title": "Order cancelled", "line": "Call back", "act": true, "why": "Money"} -->')[1]
+meta = NT.split_block('Done <!-- JEEVI_NOTIFY: {"title": "Order cancelled", "line": "Call back", "act": true, "why": "Money"} -->')[1]
 check("the block carries its reason", meta.get("why") == "money" and meta.get("line") == "Call back", meta)
-meta = NT.split_block('Done <!-- JAVIS_NOTIFY: {"title": "x", "line": "", "act": true, "why": "because"} -->')[1]
+meta = NT.split_block('Done <!-- JEEVI_NOTIFY: {"title": "x", "line": "", "act": true, "why": "because"} -->')[1]
 check("an unknown reason is dropped", meta.get("why") == "", meta)
 check("the prompt asks for the reason and the next step", '"why"' in NT.PROMPT and "the one thing the owner should do" in NT.PROMPT)
 

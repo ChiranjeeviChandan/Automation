@@ -385,7 +385,7 @@ Review chỉ ra rằng chặn `javis_schedule` theo cờ toàn lượt (`goal_to
 - Lịch theo đuổi một mục tiêu chỉ nằm ở `wakeups` của Resonance.
 - Mỗi mục tiêu chỉ có một hẹn giờ `work` và một hẹn giờ `observe` đang chờ.
 - Hai scheduler không cùng nhận một lịch.
-- Hẹn giờ cho mục tiêu đi qua `javis_goal` (`user_schedule`).
+- Hẹn giờ cho mục tiêu đi qua `jeevi_goal` (`user_schedule`).
 
 **A2 không bảo đảm:** người dùng hay model tạo thêm loop hay nhắc hẹn riêng cho cùng việc.
 - Chưa có liên kết lịch với mục tiêu do host kiểm, và không dùng model để đoán hai yêu cầu có cùng nghĩa không.

@@ -13,7 +13,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-hidden-unicode-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-hidden-unicode-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -70,7 +70,7 @@ check("a skin-tone emoji is kept", rp.clean_chat_text("\U0001F44D\U0001F3FD") ==
 check("Arabic and Chinese text is kept", rp.clean_chat_text("مرحبا 你好") == "مرحبا 你好")
 
 check("strip_hidden keeps line breaks and markers (it is for the message the bot answers, not for chat_data)",
-      rp.strip_hidden("dòng​ 1\nJAVIS_TASK" + tags("x")) == "dòng 1\nJAVIS_TASK")
+      rp.strip_hidden("dòng​ 1\nJEEVI_TASK" + tags("x")) == "dòng 1\nJEEVI_TASK")
 
 # ---- The message the bot answers: the shared entry of every channel ----
 # `clean_chat_text` only guards the reply judge and the group context. The customer's own message goes

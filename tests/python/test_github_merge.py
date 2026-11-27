@@ -1,4 +1,4 @@
-"""GitHub inside chat, phase G4: merge policy, merge queue, post-merge checks, next jobs, the javis_github tool.
+"""GitHub inside chat, phase G4: merge policy, merge queue, post-merge checks, next jobs, the jeevi_github tool.
 
     python tests/run.py github_merge      (no network: local fake GitHub and bare repos; needs git and bash)
 
@@ -17,7 +17,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ghm-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ghm-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -26,7 +26,7 @@ except Exception:
 from _fake_github import FakeGitHub, GOOD_TOKEN, git  # noqa: E402
 
 fake = FakeGitHub()
-os.environ["JAVIS_GITHUB_API"] = fake.url
+os.environ["JEEVI_GITHUB_API"] = fake.url
 
 import github_repos  # noqa: E402
 import github_store  # noqa: E402
@@ -109,11 +109,11 @@ run(w.after_turn("c1", BRAIN, "không đổi gì"))
 check("criterion 10: repeated ticks and a restart after the merge make no second PR, merge or next job",
       n_calls == 1 and len(merge_calls()) == 1 and len(fake.pulls["acme/app"]) == 1 and len(turns) == 1)
 check("after the merge the worktree moved to a fresh branch from the new base",
-      git(["rev-parse", "--abbrev-ref", "HEAD"], wt).stdout.strip() == "javis/c1-r2"
+      git(["rev-parse", "--abbrev-ref", "HEAD"], wt).stdout.strip() == "jeevi/c1-r2"
       and git(["merge-base", "--is-ancestor", "origin/main", "HEAD"], wt, check=False).returncode == 0)
 r2 = push_change("c1", "acme/app", wt, "src/b.py", "b = 1\n")
 check("new work after a merge opens a new PR on the fresh branch",
-      r2["pr_number"] == 2 and r2["branch"] == "javis/c1-r2" and r2["integ"] == "pr_open" and r2["ci"] == "pending")
+      r2["pr_number"] == 2 and r2["branch"] == "jeevi/c1-r2" and r2["integ"] == "pr_open" and r2["ci"] == "pending")
 
 # ---- criterion 14: post-merge red keeps merged, with a warning; next job does not start ----
 w.queue_next("c1", "Việc thứ ba")
@@ -243,8 +243,8 @@ check("two ready PRs of one repo both merge, one after the other",
       S().get("ca", "acme/q")["integ"] == "merged" and S().get("cb", "acme/q")["integ"] == "merged"
       and len([p for p in fake.pulls["acme/q"] if p["merged"]]) == 2)
 
-# ---- the javis_github tool ----
-spec = importlib.util.spec_from_file_location("javis_github_plugin", ROOT / "system/plugins/javis-github/plugin.py")
+# ---- the jeevi_github tool ----
+spec = importlib.util.spec_from_file_location("jeevi_github_plugin", ROOT / "system/plugins/jeevi-github/plugin.py")
 plug = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(plug)
 
@@ -267,7 +267,7 @@ check("a next job needs an attached repo", plug._chay({"op": "next", "chat_id": 
 # Real case 2026-11-07 (PR #1120): the token dropped while CI ran, a person merged, Jeevi saw the merge after
 # reconnecting, and the chat kept the "working / waiting for CI" icon with no way out.
 S().ensure("c9", "acme/stale", brain=BRAIN, worktree="")
-S().update("c9", "acme/stale", branch="javis/c9", head_sha="abc123", pr_number=7, ci="pending", integ="merged",
+S().update("c9", "acme/stale", branch="jeevi/c9", head_sha="abc123", pr_number=7, ci="pending", integ="merged",
            post_merge="green", exec="done")
 ic = github_store.icon(S().for_session("c9"))
 check("a merged PR whose CI mark stayed 'pending' shows as merged, not working",

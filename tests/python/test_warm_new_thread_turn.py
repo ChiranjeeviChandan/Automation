@@ -19,8 +19,8 @@ import asyncio
 import os
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-warm-turn-")
-os.environ["JAVIS_WARM_BUDGET_MB"] = "400"       # room for ONE Claude process
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-warm-turn-")
+os.environ["JEEVI_WARM_BUDGET_MB"] = "400"       # room for ONE Claude process
 
 import claude_warm  # noqa: E402
 import warm_pool  # noqa: E402

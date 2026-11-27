@@ -25,7 +25,7 @@ const win = { t: (k, v) => k + (v ? "#" + Object.keys(v).map((x) => v[x]).join("
 const ctx = { window: win, console, String, Object, Array, Number, JSON };
 vm.createContext(ctx);
 vm.runInContext(V5SRC, ctx);
-const V = win.JavisInboxV5;
+const V = win.JeeviInboxV5;
 const I = (n) => "[" + n + "]";
 const L = (ch) => "<" + ch + ">";
 
@@ -117,7 +117,7 @@ check("profile strings exist in both languages and name the bot's 30 messages",
   /30 messages/.test(EN["ib.i_profile_info"]) && !!VI["ib.i_profile_ph"] && !!EN["ib.i_profile_ph"] && !!VI["ib.t_profile"] && !!EN["ib.t_profile"] &&
   /\{time\}/.test(VI["ib.i_profile_at"]) && /\{time\}/.test(EN["ib.i_profile_at"]));
 check("'Open the settings of bot X' asks the Bot tab to open that bot, which says so when it lives in another brain",
-  /javis:chatbot-open", \{ detail: \{ bot_id: c\.bot_id \} \}/.test(CV) && /addEventListener\("javis:chatbot-open"/.test(CB) && /ib\.bot_other_brain/.test(CB));
+  /jeevi:chatbot-open", \{ detail: \{ bot_id: c\.bot_id \} \}/.test(CV) && /addEventListener\("jeevi:chatbot-open"/.test(CB) && /ib\.bot_other_brain/.test(CB));
 check("every change from the chat or Info shows a toast; Undo where it can be put back", /function toast\(text, undo\)/.test(CV) &&
   /ib\.undo/.test(CV) && /setTimeout\(function \(\) \{ if \(t\.parentNode\) t\.parentNode\.removeChild\(t\); \}, 6000\)/.test(CV));
 check("CANARY: no robot icon in the inbox (owner)", !/ic\("bot"\)/.test(CV) && !/I\("bot"\)/.test(V5SRC));

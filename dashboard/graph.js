@@ -68,7 +68,7 @@ function _hash(s) { let h = 0; s = String(s || ""); for (let i = 0; i < s.length
 
 // Gán màu danh mục (tuần tự theo danh mục) vào n.color của từng node.
 // Nhớ CHỈ SỐ danh mục (không phải màu) để đổi tông chỉ là tra lại bảng khác.
-window.JavisCatColorize = function (nodes) {
+window.JeeviCatColorize = function (nodes) {
   const idx = {}; let next = 0;
   (nodes || []).forEach(n => {
     const segs = (n.path || "").split("/");
@@ -77,9 +77,9 @@ window.JavisCatColorize = function (nodes) {
     n.__catIdx = idx[cat];
     n.color = CAT_COLORS[idx[cat] % CAT_COLORS.length];   // ghi đè màu tím backend bằng màu danh mục
   });
-  window.__javisCatIdx = idx;
-  window.__javisCatMap = _mapFromIdx(idx);   // để nhãn danh mục tô chữ khớp màu
-  return window.__javisCatMap;
+  window.__jeeviCatIdx = idx;
+  window.__jeeviCatMap = _mapFromIdx(idx);   // để nhãn danh mục tô chữ khớp màu
+  return window.__jeeviCatMap;
 };
 
 function _mapFromIdx(idx) {
@@ -90,7 +90,7 @@ function _mapFromIdx(idx) {
 
 // Mở một lối tra màu cho nhãn danh mục trong app.js.
 // để nó lấy đúng bảng màu của tông đang bật.
-window.JavisCatColorAt = function (idx) {
+window.JeeviCatColorAt = function (idx) {
   return CAT_COLORS[(idx || 0) % CAT_COLORS.length];
 };
 
@@ -119,10 +119,10 @@ function _glowSprite(color) {
 function _applyGraphTheme(light) {
   CAT_COLORS = light ? CAT_COLORS_LIGHT : CAT_COLORS_DARK;
   INK = light ? INK_LIGHT : INK_DARK;
-  if (window.__javisCatIdx) window.__javisCatMap = _mapFromIdx(window.__javisCatIdx);
-  const g = window.__javisGraph;
+  if (window.__jeeviCatIdx) window.__jeeviCatMap = _mapFromIdx(window.__jeeviCatIdx);
+  const g = window.__jeeviGraph;
   if (g && g._recolor) g._recolor();
-  try { window.dispatchEvent(new Event("javis-catcolors-change")); } catch (e) {}
+  try { window.dispatchEvent(new Event("jeevi-catcolors-change")); } catch (e) {}
 }
 // Đọc tông hiện tại từ thuộc tính trên <html>. Bọc typeof vì file này còn được nạp
 // trong Node (test JS ở tests/js/) với DOM giả lập tối thiểu, không có documentElement.
@@ -131,11 +131,11 @@ function _themeIsLight() {
     ? document.documentElement.getAttribute("data-theme") === "light"
     : false;
 }
-// KHÔNG dùng window.javisTheme.on() ở đây: file này có lúc nạp trước theme.js, khi đó
-// window.javisTheme chưa tồn tại nên đăng ký hụt IM LẶNG và đồ thị kẹt ở bảng màu tối.
+// KHÔNG dùng window.jeeviTheme.on() ở đây: file này có lúc nạp trước theme.js, khi đó
+// window.jeeviTheme chưa tồn tại nên đăng ký hụt IM LẶNG và đồ thị kẹt ở bảng màu tối.
 // Nghe thẳng sự kiện + tự đọc thuộc tính thì đúng ở mọi thứ tự nạp.
 if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
-  window.addEventListener("javis-theme-change", function (e) {
+  window.addEventListener("jeevi-theme-change", function (e) {
     _applyGraphTheme(!!(e && e.detail && e.detail.light));
   });
 }
@@ -160,8 +160,8 @@ function _centerGravity(strength) {
 // desktop and 1.1 s on a phone, then five seconds at a few frames a second. A graph that starts where it last settled
 // needs neither: no warm-up, a short settle for the notes that are new.
 // Only numbers are stored (a hash of each note's id and two coordinates), never a name or a path.
-const POS_KEY = "javis.graphPos.";        // + the graph's query (source=... / path=...)
-const POS_INDEX = "javis.graphPos.keys";  // the queries kept, most recent first
+const POS_KEY = "jeevi.graphPos.";        // + the graph's query (source=... / path=...)
+const POS_INDEX = "jeevi.graphPos.keys";  // the queries kept, most recent first
 const POS_KEEP = 3;                       // graphs remembered per browser
 const POS_MAX_NODES = 15000;              // beyond this the copy would crowd localStorage
 const POS_HIT = 0.9;                      // share of notes that must have a remembered place to skip the warm-up
@@ -247,7 +247,7 @@ function _posApply(known, nodes, links) {
   return "settle";
 }
 
-class JavisGraph {
+class JeeviGraph {
   constructor(container) {
     this.container = container;
     this.graph = null;
@@ -270,8 +270,8 @@ class JavisGraph {
     this._henGiua = null;      // hẹn giờ về giữa
     this._loaiTro = "";        // "mouse" | "touch" | "pen" của lần chạm cuối
     this._diemCham = null;
-    window.__javisGraph = this;
-    try { window.dispatchEvent(new Event("javis-graph-created")); } catch (e) {}
+    window.__jeeviGraph = this;
+    try { window.dispatchEvent(new Event("jeevi-graph-created")); } catch (e) {}
   }
 
   _prep(nodes) {
@@ -302,8 +302,8 @@ class JavisGraph {
     const nodes = Array.isArray(data.nodes) ? data.nodes : [];
     this._catMap = null;                     // gán lại màu danh mục tươi cho mỗi lần nạp
     this._prep(nodes);
-    window.__javisCatIdx = this._catMap;                    // danh mục → chỉ số
-    window.__javisCatMap = _mapFromIdx(this._catMap);       // để nhãn danh mục (app.js) tô chữ khớp màu node
+    window.__jeeviCatIdx = this._catMap;                    // danh mục → chỉ số
+    window.__jeeviCatMap = _mapFromIdx(this._catMap);       // để nhãn danh mục (app.js) tô chữ khớp màu node
     const links = (data.edges || []).map(e => ({ source: e.source, target: e.target }));
     // Start from where this graph last settled (see "Remembered layout" above).
     const known = _posLoad(query);
@@ -366,7 +366,7 @@ class JavisGraph {
           self._engineOn = false;
           self._rememberLayout();
           // What follows a stop is the user's own doing (dragging a dot reheats the physics): the usual five seconds.
-          try { self.graph.cooldownTime(JavisGraph.cooldownFor("")); } catch (e) {}
+          try { self.graph.cooldownTime(JeeviGraph.cooldownFor("")); } catch (e) {}
           if (self._fitted) { self._syncLoop(); return; }
           self._fitted = true;
           // The user is already dragging or zooming: the camera is theirs, do not pull it back to the middle.
@@ -414,14 +414,14 @@ class JavisGraph {
     // Every caller hands new data to the library right after this, which starts its physics: the loop must run.
     this._engineOn = true;
     this._syncLoop();
-    const warm = JavisGraph.warmupFor(count, remembered);
+    const warm = JeeviGraph.warmupFor(count, remembered);
     if (!remembered) this._ticks = warm;   // a layout from scratch: the count starts over (warm-up steps included)
     // This run, for the speed check in _rememberLayout: steps done, when it began and how long it is given.
     this._runTicks = 0;
     this._runStart = (typeof performance !== "undefined" ? performance.now() : Date.now());
-    this._runBudget = JavisGraph.cooldownFor(remembered);
+    this._runBudget = JeeviGraph.cooldownFor(remembered);
     try { this.graph.warmupTicks(warm); } catch (e) {}
-    try { this.graph.cooldownTime(JavisGraph.cooldownFor(remembered)); } catch (e) {}
+    try { this.graph.cooldownTime(JeeviGraph.cooldownFor(remembered)); } catch (e) {}
   }
 
   // Keep where the dots stand now for the next opening (called when the physics stops).
@@ -432,7 +432,7 @@ class JavisGraph {
     const took = (typeof performance !== "undefined" ? performance.now() : Date.now()) - (this._runStart || 0);
     const budget = this._runBudget || 0;
     if (budget >= 1000 && took >= budget && took <= budget + 1500) {
-      this._slow = JavisGraph.slowRun(this._runTicks || 0, took);
+      this._slow = JeeviGraph.slowRun(this._runTicks || 0, took);
     }
     try { return _posSave(this._query, this.graph.graphData().nodes, this._ticks || 0, this._slow); } catch (e) { return false; }
   }
@@ -644,14 +644,14 @@ class JavisGraph {
       if (this._chuotTren && this._loaiTro === "mouse") return;     // chuột còn trên quả cầu: chờ nó rời đi
       this._daKeo = false;
       this.refit(700);
-    }, JavisGraph.VE_GIUA_MS);
+    }, JeeviGraph.VE_GIUA_MS);
   }
 
   _nhipVe() {
     const dong = this.level > 0.02 || this._thinking || this._hoverId != null || this._chuotTren;
     const gio = (typeof performance !== "undefined" ? performance.now() : Date.now());
     if (dong) this._dongLuc = gio;
-    const left = JavisGraph.AN_HAN_MS - (gio - (this._dongLuc || 0));   // what is left of the grace period
+    const left = JeeviGraph.AN_HAN_MS - (gio - (this._dongLuc || 0));   // what is left of the grace period
     const can = dong || left > 0;
     // 2026-11-12: when only the grace period keeps the drawing on, look again when it ends. Nobody else does: this
     // function runs on events, and since the voice pump stopped calling setLevel on every silent frame the last event
@@ -794,7 +794,7 @@ class JavisGraph {
       this._physicsFor(this._tlFull.nodes.length, "settle");
       this.graph.graphData(this._tlFull); this._tlFull = null;
     }
-    try { window.dispatchEvent(new Event("javis-timelapse-end")); } catch (e) {}
+    try { window.dispatchEvent(new Event("jeevi-timelapse-end")); } catch (e) {}
   }
 
   get timelapseRunning() { return !!this._tlTimer; }
@@ -840,6 +840,6 @@ class JavisGraph {
   }
 }
 
-window.JavisGraph = JavisGraph;
+window.JeeviGraph = JeeviGraph;
 // For tests: the remembered-layout helpers.
-JavisGraph._layoutMemory = { load: _posLoad, save: _posSave, apply: _posApply, KEY: POS_KEY, INDEX: POS_INDEX, KEEP: POS_KEEP, HIT: POS_HIT, SETTLED_TICKS: POS_SETTLED_TICKS, SLOW_RATE: POS_SLOW_RATE };
+JeeviGraph._layoutMemory = { load: _posLoad, save: _posSave, apply: _posApply, KEY: POS_KEY, INDEX: POS_INDEX, KEEP: POS_KEEP, HIT: POS_HIT, SETTLED_TICKS: POS_SETTLED_TICKS, SLOW_RATE: POS_SLOW_RATE };

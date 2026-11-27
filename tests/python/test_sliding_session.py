@@ -18,7 +18,7 @@ import os
 import tempfile
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-sliding-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-sliding-")
 
 import config as c   # noqa: E402
 

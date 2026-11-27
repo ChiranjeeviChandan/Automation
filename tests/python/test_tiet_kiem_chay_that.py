@@ -33,7 +33,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-tkct-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-tkct-")
 
 import adaptive_context_runtime as acr  # noqa: E402
 import config as cfg  # noqa: E402
@@ -50,7 +50,7 @@ def check(name, cond):
 
 
 # Brain tối thiểu nhưng THẬT: có bộ nhớ để Phase 8 còn thứ mà chọn lọc.
-BRAIN = Path(tempfile.mkdtemp(prefix="javis-tkct-brain-"))
+BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-tkct-brain-"))
 (BRAIN / "Memory" / "facts").mkdir(parents=True, exist_ok=True)
 (BRAIN / "Memory" / "MEMORY.md").write_text(
     "- [user] Chu ho kinh doanh nuoc mam\n", encoding="utf-8")
@@ -167,7 +167,7 @@ check("CANARY: đổi hẳn sang bộ não khác vẫn tiết kiệm được",
 # Trên engine API, các tầng Phase 9/7/6/5 chạy trước và tầng nào không nhận lượt thì ghim
 # "legacy". Ai ghim trước thắng, nên Phase 8 nhận lượt rồi mà nhãn vẫn là đường cũ.
 _rt = context_runtime.ObserveRuntime(
-    Path(tempfile.mkdtemp(prefix="javis-tkct-rt-")), lambda: cfg.read_settings())
+    Path(tempfile.mkdtemp(prefix="jeevi-tkct-rt-")), lambda: cfg.read_settings())
 _tr = _rt.start_turn("phien-ghim", "brain", "dashboard")
 _rt.pin_execution_path(_tr, "legacy", 1, "fast-path-canary-v1", "outside_allocation")
 check("tầng không nhận lượt thì ghim đường cũ", _tr.execution_path == "legacy")

@@ -25,7 +25,7 @@ from capability_registry import CapabilityRegistry, get_registry
 
 
 COMPILER_POLICY_VERSION = "adaptive-compiler-shadow-v1"
-CORE_CONTRACT_VERSION = "javis-core-contract-v1"
+CORE_CONTRACT_VERSION = "jeevi-core-contract-v1"
 TOKENIZER_POLICY_VERSION = "tokenizer-observe-v1"
 THOI_GIAN_POLICY_VERSION = "dong-ho-vn-v1"
 
@@ -86,7 +86,7 @@ def _nhan_mui_gio(n) -> str:
 def dong_ho(now=None, lang: str = "") -> str:
     """Một dòng "bây giờ là mấy giờ" để nhét vào MỌI prompt Jeevi gửi đi.
 
-    Vì sao phải có. Model không có đồng hồ; Jeevi vốn để nó tự gọi tool `javis_now`. Nhưng
+    Vì sao phải có. Model không có đồng hồ; Jeevi vốn để nó tự gọi tool `jeevi_now`. Nhưng
     đường tắt của mức Siêu tiết kiệm gửi capsule KHÔNG KÈM TOOL NÀO - đó chính là chỗ nó
     tiết kiệm. Nên hỏi "mấy giờ rồi" trên đường tắt là hỏi một thứ model không có cách nào
     biết, và nó làm cái tệ nhất: bịa ra lý do. Chủ repo chụp lại đúng cảnh đó, Jeevi nói
@@ -1227,7 +1227,7 @@ class QualityDecision:
 
 
 class DeterministicQualityGate:
-    _CONTROL = re.compile(r"\[(?:JAVIS_|SYSTEM_|TOOL_)[A-Z0-9_:-]*\]")
+    _CONTROL = re.compile(r"\[(?:JEEVI_|SYSTEM_|TOOL_)[A-Z0-9_:-]*\]")
     # Con số có đơn vị hoặc quy mô: tiền, phần trăm, số lượng lớn, ngày giờ cụ thể.
     # Cố ý KHÔNG bắt mọi chữ số (số thứ tự, "3 bước", năm) để tránh nhiễu.
     _QUANTITATIVE = re.compile(
@@ -1250,7 +1250,7 @@ class DeterministicQualityGate:
     _FALSE_ACTION = re.compile(
         r"(?i)(?:"
         r"(?:^|[.!?\n]\s*)(?:đã|da|vừa|vua)\s+(?:được\s+|duoc\s+)?" + _ACTION_VERBS + r"\b"
-        r"|\b(?:em|tôi|toi|mình|minh|javis)\s+(?:đã|da|vừa|vua)\s+" + _ACTION_VERBS + r"\b"
+        r"|\b(?:em|tôi|toi|mình|minh|jeevi)\s+(?:đã|da|vừa|vua)\s+" + _ACTION_VERBS + r"\b"
         r"|\b" + _ACTION_VERBS + r"\s+thành công\b"
         r"|\b" + _ACTION_VERBS + r"\s+thanh cong\b"
         r"|\bsuccessfully\s+" + _ACTION_VERBS + r"\b"

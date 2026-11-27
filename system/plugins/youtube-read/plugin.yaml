@@ -8,5 +8,5 @@ author: Jeevi (bundled)
 enabled: true
 min_mode: readonly
 tools:
-  - javis_youtube_read
+  - jeevi_youtube_read
 hooks: []

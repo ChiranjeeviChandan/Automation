@@ -31,7 +31,7 @@ MAX_ITEMS = 60
 # The menu the pet showed before this setting existed, in that order. A Jeevi that never saved a menu keeps it.
 DEFAULT_ITEMS = ("chat", "agent", "workflow", "mic", "pet", "teams")
 # Every action a save may ADD. Must match CATALOG in dashboard/pet-menu.js (tests/js/test_pet_menu.js checks).
-# Pages are the ids JavisNav.go() opens; "agent"/"workflow" open a tab of the Partners page, "mic" presses the mic.
+# Pages are the ids JeeviNav.go() opens; "agent"/"workflow" open a tab of the Partners page, "mic" presses the mic.
 KNOWN_ACTIONS = DEFAULT_ITEMS + (
     "home", "files", "learn", "conversations", "skills", "plugins", "terminal", "tasks", "webhooks",
     "mcp", "packs", "channels", "logins", "models", "settings", "share", "account", "usage", "logs",

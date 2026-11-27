@@ -17,9 +17,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-STATE_A = tempfile.mkdtemp(prefix="javis-lm-a-")
-BRAINS = tempfile.mkdtemp(prefix="javis-lm-brains-")
-os.environ["JAVIS_STATE_DIR"] = STATE_A
+STATE_A = tempfile.mkdtemp(prefix="jeevi-lm-a-")
+BRAINS = tempfile.mkdtemp(prefix="jeevi-lm-brains-")
+os.environ["JEEVI_STATE_DIR"] = STATE_A
 os.environ["BRAINS_DIR"] = BRAINS
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -157,7 +157,7 @@ chatbot_store.delete_bot(twin1)
 pub_before_restore = pub_p.read_bytes()
 
 # ---- 6. a fresh machine: new STATE_DIR, same brain folder ----
-STATE_B = tempfile.mkdtemp(prefix="javis-lm-b-")
+STATE_B = tempfile.mkdtemp(prefix="jeevi-lm-b-")
 use_state(STATE_B)
 LM.sync_all()
 check("fresh machine, nothing local yet: no store created", stores_in(STATE_B) == [], stores_in(STATE_B))
@@ -226,7 +226,7 @@ check("backup keeps Jeevi/learned/bots/x.json", git_brain._backup_skip("Shop/Jee
 check("backup keeps a .private.json outside Jeevi/learned", git_brain._backup_skip("Shop/notes/a.private.json") is False)
 check("managed .gitignore names the private learned files", "Jeevi/learned/**/*.private.json" in git_brain._GITIGNORE)
 if shutil.which("git"):
-    repo = Path(tempfile.mkdtemp(prefix="javis-lm-git-"))
+    repo = Path(tempfile.mkdtemp(prefix="jeevi-lm-git-"))
     subprocess.run(["git", "init", "-q", str(repo)], check=True)
     git_brain._ensure_gitignore_lines(str(repo))
 

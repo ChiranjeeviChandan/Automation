@@ -20,7 +20,7 @@ import os
 import tempfile
 from unittest.mock import patch
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-oauth-prm-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-oauth-prm-"))
 
 import oauth_mcp  # noqa: E402
 

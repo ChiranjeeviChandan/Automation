@@ -31,8 +31,8 @@ import os
 import sys
 import tempfile
 
-_STATE = tempfile.mkdtemp(prefix="javis-mucquyen-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-mucquyen-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -177,9 +177,9 @@ _da_goi = {}
 async def _discover_gia(mode="full", vault_root=None, **kw):
     _da_goi["mode"] = mode
     _da_goi["vault_root"] = str(vault_root or "")
-    return ([{"fn": "javis_doc_file", "server": "javis", "name": "javis_doc_file",
+    return ([{"fn": "jeevi_doc_file", "server": "jeevi", "name": "jeevi_doc_file",
               "schema": {"type": "object", "properties": {}}}],
-            {"javis_doc_file": {"call": None}})
+            {"jeevi_doc_file": {"call": None}})
 
 
 mcp_hub.discover_all = _discover_gia
@@ -201,7 +201,7 @@ def _lam_stream_co_tool(prov):
         _goi.append({"prov": prov, "co_tool": True})
 
         async def _gen():
-            yield {"type": "tool_call", "name": "javis_doc_file"}
+            yield {"type": "tool_call", "name": "jeevi_doc_file"}
             yield {"type": "text", "content": "Em làm xong rồi ạ."}
             yield {"type": "usage", "input": 20, "output": 7}
         return _gen()

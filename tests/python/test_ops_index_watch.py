@@ -13,7 +13,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-opsidx-state-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-opsidx-state-"))
 
 import ops_index_watch as w  # noqa: E402
 
@@ -40,7 +40,7 @@ write.n = 1
 
 
 # ---- 1. The signature moves with every input the index lists, and with nothing else ----
-root = Path(tempfile.mkdtemp(prefix="javis-opsidx-brain-"))
+root = Path(tempfile.mkdtemp(prefix="jeevi-opsidx-brain-"))
 (root / "Jeevi").mkdir()
 
 
@@ -126,7 +126,7 @@ check("a brain that is gone is forgotten", set(watch2._seen) == set(brains[:3]))
 # ---- 3. Through main: a brain WITHOUT any loop gets its index updated (the reported bug) ----
 import main  # noqa: E402
 
-base = Path(tempfile.mkdtemp(prefix="javis-opsidx-brains-"))
+base = Path(tempfile.mkdtemp(prefix="jeevi-opsidx-brains-"))
 main.BRAINS_DIR = str(base)
 psc = base / "PSC Advisor"
 main._ensure_brain_scaffold(psc)

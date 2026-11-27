@@ -53,7 +53,7 @@ UsageEvent {
   model         : chuỗi model chuẩn hoá
   project       : cwd hoặc '(codex)' / '(api)' nếu không có
   session_id    : id phiên (để đếm phiên, join, dedup)
-  source        : 'javis' | 'manual'      # Claude: theo entrypoint; Codex/API = 'javis'
+  source        : 'jeevi' | 'manual'      # Claude: theo entrypoint; Codex/API = 'jeevi'
   activity      : 'chat' | 'background' | 'subagent' | 'manual'
   input         : token nạp mới (không gồm cache)
   output        : token sinh ra
@@ -65,7 +65,7 @@ UsageEvent {
 
 ## 4. Phân loại nguồn / hoạt động (attribution)
 
-- `source`: Claude theo `entrypoint` (sdk-* = javis, desktop/vscode = manual). Codex và API luôn = javis.
+- `source`: Claude theo `entrypoint` (sdk-* = jeevi, desktop/vscode = manual). Codex và API luôn = jeevi.
 - `activity` cho phần Jeevi:
   - `subagent`: dòng có `isSidechain = true` (token của agent con chạy ngầm trong bất kỳ phiên nào).
   - `chat`: `sessionId` của phiên Claude-SDK có mặt trong `conversations.db.cli_session_id` (tức phiên do người dùng mở qua dashboard/Telegram).

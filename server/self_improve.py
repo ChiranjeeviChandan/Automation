@@ -71,7 +71,7 @@ from claude_cli import claude_engine, cancel_all, _empty_mcp_file
 import aux_engine   # engine viec nen theo model phu nguoi dung chon
 import job_scorecard
 import memory_control   # #1165: background writers are not stamped with a chat source
-import channel_context   # bóc khối JAVIS_* trước khi báo Telegram - kênh chữ, không phải web
+import channel_context   # bóc khối JEEVI_* trước khi báo Telegram - kênh chữ, không phải web
 
 LEGACY_SLUG = "vong-lap-goc"
 # Dấu "đã migrate loop_config.json" ghi thẳng vào chính file đó. Có dấu này thì KHÔNG dựng lại
@@ -182,7 +182,7 @@ class LoopDeps:
     incident_hook: Optional[Callable] = None
     # a loop made in a partner chat (`agent:` in its frontmatter) runs as that assistant.
     # build_agent_prompt(brain, slug) -> system prompt, raises when the assistant is gone (the loop then runs as Jeevi);
-    # finish_agent_run(brain, slug, task, output) -> output without the JAVIS_LESSON lines (written to its memory).
+    # finish_agent_run(brain, slug, task, output) -> output without the JEEVI_LESSON lines (written to its memory).
     build_agent_prompt: Optional[Callable[[str, str], str]] = None
     finish_agent_run: Optional[Callable[[str, str, str, str], str]] = None
     # ...and on that assistant's own model and effort, like a Kanban job given to it (ported from PR #1847).
@@ -863,7 +863,7 @@ class LoopFeature:
             if self.deps.apply_mcp:
                 # allowed_tools=None ở NHÁNH NÀY = ungated = plugin in-process CÓ nạp
                 # (claude_sdk_engine._mcp_servers: allowed_tools rỗng mới gọi _plugins_server()).
-                # PHẢI truyền brain để cli.javis_vault đúng brain đang chạy - thiếu brain thì
+                # PHẢI truyền brain để cli.jeevi_vault đúng brain đang chạy - thiếu brain thì
                 # plugin (vd javis_generate_image) không suy được vault, rơi về Brain Default.
                 try:
                     self.deps.apply_mcp(cli, mode="full", brain=brain)   # hub nhận mode qua header X-Jeevi-Mode
@@ -880,7 +880,7 @@ class LoopFeature:
             cli = claude_engine(system_prompt=sysprompt, cwd=cwd, tag="loop", allowed_tools=None)
             if self.deps.apply_mcp:
                 # Cũng ungated (allowed_tools=None) như nhánh full ở trên - PHẢI truyền brain
-                # cùng lý do (plugin in-process cần javis_vault đúng).
+                # cùng lý do (plugin in-process cần jeevi_vault đúng).
                 hub_mode = "auto" if mode == "auto" else "suggest"
                 try:
                     self.deps.apply_mcp(cli, mode=hub_mode, brain=brain)
@@ -1021,8 +1021,8 @@ class LoopFeature:
                 if paused_now:
                     parts.append("⚠ " + patch["auto_paused_reason"] + bat_lai)
                 try:
-                    # Telegram là kênh chữ thuần: lọc khối JAVIS_METRICS/JAVIS_ASK trước khi báo,
-                    # kẻo lộ nguyên cụm "<!-- JAVIS_...: ... -->" (system prompt loop dùng chung
+                    # Telegram là kênh chữ thuần: lọc khối JEEVI_METRICS/JEEVI_ASK trước khi báo,
+                    # kẻo lộ nguyên cụm "<!-- JEEVI_...: ... -->" (system prompt loop dùng chung
                     # CLAUDE.md nên có thể sinh các khối này).
                     #
                     # `quiet` cho vòng chạy TRÓT LỌT: tin vẫn về đủ kênh (khung chat đã giao

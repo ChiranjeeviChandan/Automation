@@ -167,7 +167,7 @@
 
   // A session that expires while the tab is open (2026-11-10): chat keeps running over the WebSocket opened earlier,
   // but every HTTP call gets 401, so chat images turn into blank boxes and lists stop loading with no visible sign.
-  // A 401 from this server outside /auth/* raises "javis:unauthorized"; app.js asks /auth/status and shows sign-in.
+  // A 401 from this server outside /auth/* raises "jeevi:unauthorized"; app.js asks /auth/status and shows sign-in.
   function isSessionLost(status, input, origin) {
     if (status !== 401) return false;
     var u;
@@ -196,7 +196,7 @@
       if (hien) {
         if (!dai) {
           dai = document.createElement("div");
-          dai.id = "javisKetNoiLai";
+          dai.id = "jeeviKetNoiLai";
           dai.setAttribute("role", "status");
           dai.style.cssText = "position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translateX(-50%);"
             + "z-index:99998;padding:8px 16px;border-radius:999px;font-size:15px;line-height:1.4;"
@@ -215,7 +215,7 @@
 
   function reportSessionLost(input, r) {
     if (!r || !isSessionLost(r.status, input, location.origin)) return;
-    try { window.dispatchEvent(new Event("javis:unauthorized")); } catch (e) { /* never break the call */ }
+    try { window.dispatchEvent(new Event("jeevi:unauthorized")); } catch (e) { /* never break the call */ }
   }
 
   function ngu(ms) { return new Promise(function (xong) { setTimeout(xong, ms); }); }
@@ -264,7 +264,7 @@
   var pending = {};         // path -> { at, p: Promise<{s, t, b} | null>, res }
   var recs = [];            // moments being recorded: { kind, vars, until, paths, timer }
 
-  function manifestKey(kind) { return "javis.batch." + kind; }
+  function manifestKey(kind) { return "jeevi.batch." + kind; }
   function readManifest(kind) {
     try { var a = JSON.parse(localStorage.getItem(manifestKey(kind)) || "[]"); return Array.isArray(a) ? a : []; }
     catch (e) { return []; }
@@ -396,7 +396,7 @@
       var c0 = copies[key];
       copies[key] = { at: Date.now(), text: text, status: r.status, ct: r.headers.get("Content-Type") || "application/json" };
       if (c0 && c0.text !== text && page && readThisVisit[key]) {
-        try { window.dispatchEvent(new CustomEvent("javis:page-data", { detail: { page: page, key: key } })); } catch (e) {}
+        try { window.dispatchEvent(new CustomEvent("jeevi:page-data", { detail: { page: page, key: key } })); } catch (e) {}
       }
       return r;
     }, function () { return r; });
@@ -455,7 +455,7 @@
     }
     return e.p.then(function (r) { return r.clone(); });
   };
-  window.JavisFetchGop = api;
+  window.JeeviFetchGop = api;
   // The app's start is a moment too: its reads leave in one batch from the second start on.
   api.visit("boot");
 })();

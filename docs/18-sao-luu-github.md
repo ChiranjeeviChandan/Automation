@@ -27,16 +27,16 @@ Brain là toàn bộ tri thức Jeevi tích luỹ được về bạn và công 
 ### Bước 1 - Tạo repo GitHub riêng tư
 
 1. Vào https://github.com/new
-2. Đặt tên, ví dụ `javis-brain-backup`.
+2. Đặt tên, ví dụ `jeevi-brain-backup`.
 3. Chọn **Private** (BẮT BUỘC - brain chứa dữ liệu cá nhân/kinh doanh, tuyệt đối không để Public).
 4. **KHÔNG** tích "Add a README file" (để repo trống, tránh xung đột lần đẩy đầu).
-5. Bấm **Create repository**. Copy URL dạng `https://github.com/<tên-bạn>/javis-brain-backup`.
+5. Bấm **Create repository**. Copy URL dạng `https://github.com/<tên-bạn>/jeevi-brain-backup`.
 
 ### Bước 2 - Tạo token (fine-grained)
 
 1. Vào https://github.com/settings/tokens?type=beta (Settings → Developer settings → **Fine-grained tokens** → Generate new token).
 2. Đặt tên token, chọn thời hạn.
-3. **Repository access** → Only select repositories → chọn đúng repo `javis-brain-backup`.
+3. **Repository access** → Only select repositories → chọn đúng repo `jeevi-brain-backup`.
 4. **Permissions** → Repository permissions → **Contents** → chọn **Read and write**.
 5. Bấm Generate, **copy token** (dạng `github_pat_...`). Token chỉ hiện 1 lần - copy ngay.
 
@@ -112,7 +112,7 @@ Sau mỗi lần bấm **⇅ Đồng bộ ngay**, nếu có media bị bỏ qua t
 
 Có người thật sự cần ảnh trong brain (chụp màn hình, ảnh sản phẩm vài trăm KB) đi theo tri thức sang máy khác. Từ bản 0.46.0, trong khối đồng bộ có thêm công tắc **Đồng bộ cả ảnh** (mặc định tắt). Bật lên thì:
 
-- Ảnh **jpg / png / gif / webp**, mỗi ảnh tối đa **10 MB** (đổi bằng biến môi trường `JAVIS_SYNC_ANH_MAX_MB`), cũng lên repo và đồng bộ 2 chiều như file chữ. Video, âm thanh, PDF và ảnh quá trần vẫn không bao giờ lên; `inbox/` cũng không - đó là chỗ trung chuyển một lượt chat.
+- Ảnh **jpg / png / gif / webp**, mỗi ảnh tối đa **10 MB** (đổi bằng biến môi trường `JEEVI_SYNC_ANH_MAX_MB`), cũng lên repo và đồng bộ 2 chiều như file chữ. Video, âm thanh, PDF và ảnh quá trần vẫn không bao giờ lên; `inbox/` cũng không - đó là chỗ trung chuyển một lượt chat.
 - Jeevi **ngừng tự dọn `attachments/`** trên máy đó (vẫn dọn `inbox/`): ảnh đã backup mà máy dọn xoá theo hạn thì lệnh xoá lan sang mọi máy, ảnh backup tự biến mất - nên hai thứ này phải đi cùng nhau.
 
 Ba điều cần cân nhắc TRƯỚC khi bật:

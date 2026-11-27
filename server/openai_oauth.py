@@ -132,7 +132,7 @@ def _cung_tai_khoan(dtok, o):
     return not a or not b or a == b
 
 
-def _la_token_cua_javis(dtok, o):
+def _la_token_cua_jeevi(dtok, o):
     """File trên đĩa có đúng là bộ token Jeevi đã bắc cầu sang không?
 
     Phải khớp DƯƠNG ít nhất một trường. Chưa từng kết nối (o rỗng) thì không trường nào khớp
@@ -172,7 +172,7 @@ def _write_codex_file(o, access_token, account_id):
     reading it never sees half a file."""
     path = _codex_auth_path()
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + ".javis-tmp")
+    tmp = path.with_name(path.name + ".jeevi-tmp")
     tmp.write_text(json.dumps({
         "OPENAI_API_KEY": None,
         "tokens": {
@@ -756,7 +756,7 @@ def disconnect():
     # dùng tưởng đã ngắt. CHỈ xoá khi file đúng là của phiên này: máy có thể đã `codex login`
     # riêng, và xoá nhầm là người dùng mất phiên họ tự tạo mà Jeevi không dựng lại được.
     dtok = doc_codex_auth()
-    if dtok and _la_token_cua_javis(dtok, o):
+    if dtok and _la_token_cua_jeevi(dtok, o):
         try:
             _codex_auth_path().unlink()
         except Exception:

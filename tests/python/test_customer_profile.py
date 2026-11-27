@@ -21,8 +21,8 @@ import sys
 import tempfile
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-customer-profile-")
-os.environ.pop("JAVIS_CUSTOMER_PROFILE", None)
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-customer-profile-")
+os.environ.pop("JEEVI_CUSTOMER_PROFILE", None)
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -340,10 +340,10 @@ run(cp.sweep(NOW))
 check("a sweep makes at most MAX_PER_SWEEP model calls", len(asked) == 1, len(asked))
 cp.MAX_PER_SWEEP = old_max
 
-os.environ["JAVIS_CUSTOMER_PROFILE"] = "0"
+os.environ["JEEVI_CUSTOMER_PROFILE"] = "0"
 asked.clear()
 check("the operator can switch the writer off", cp.enabled() is False and run(cp.sweep(NOW)) == {} and not asked)
-os.environ.pop("JAVIS_CUSTOMER_PROFILE", None)
+os.environ.pop("JEEVI_CUSTOMER_PROFILE", None)
 check("it is on by default", cp.enabled() is True)
 
 # ============================================================

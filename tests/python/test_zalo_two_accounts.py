@@ -21,7 +21,7 @@ import sys
 import tempfile
 import threading
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zalo2-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zalo2-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

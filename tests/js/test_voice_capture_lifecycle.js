@@ -23,7 +23,7 @@ function setup(onTranscript = () => {}, opts = {}) {
     clearTimeout: id => timers.delete(id), setInterval: () => 0, clearInterval() {},
   };
   vm.runInNewContext(fs.readFileSync('dashboard/voice.js', 'utf8'), context);
-  const voice = new context.window.JavisVoice({ onTranscript, ...opts });
+  const voice = new context.window.JeeviVoice({ onTranscript, ...opts });
   voice.isSpeaking = () => false;
   return { voice, context, timers };
 }

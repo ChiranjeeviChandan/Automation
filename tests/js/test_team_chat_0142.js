@@ -160,8 +160,8 @@ check("chưa có việc: lời gợi ý", AJ.html({ jobs: [], counts: {}, errors
 check("lỗi tải: có Thử lại", AJ.html(null, { error: true }).includes("aj-reload"));
 const ws = fs.readFileSync(path.join(ROOT, "dashboard", "workspace.js"), "utf8");
 check("trang Cộng sự: Lịch sử, Công việc, Cài đặt; tài liệu vẫn có nút riêng", /var TAB_PHAI = \["lichsu", "viec", "cai"\]/.test(ws)
-  && ws.includes('id="wsFiles"') && ws.includes("JavisAgentJobs.mount"));
-check("mở việc nhóm đi đúng nhóm và lọc đúng việc", /JavisTeams\.open\(teamId, taskId\)/.test(ws)
+  && ws.includes('id="wsFiles"') && ws.includes("JeeviAgentJobs.mount"));
+check("mở việc nhóm đi đúng nhóm và lọc đúng việc", /JeeviTeams\.open\(teamId, taskId\)/.test(ws)
   && /function open\(teamId, taskId\)/.test(fs.readFileSync(path.join(ROOT, "dashboard", "teams.js"), "utf8")));
 // Owner, 2026-10-15: 16px was too big for the narrow column; 13px text, 44px buttons on touch screens.
 check("Work tab text 13px, buttons 44px on touch screens", /\.aj \{[^}]*font-size: 13px/.test(css)

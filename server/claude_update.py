@@ -13,7 +13,7 @@ sáu tuần, vì:
 Nên Jeevi tự chạy `claude update` mỗi ngày một lần, và có nút bấm để chạy ngay.
 
 Bản Docker KHÔNG đi đường này: CLI cài bằng `npm -g` dưới quyền root trong ảnh, tiến trình
-Jeevi chạy bằng user `javis` nên không ghi đè được. Ở đó Claude Code mới tới theo ảnh Jeevi mới
+Jeevi chạy bằng user `jeevi` nên không ghi đè được. Ở đó Claude Code mới tới theo ảnh Jeevi mới
 (CI ép lấy bản mới nhất mỗi lần build, xem `.github/workflows/docker-publish.yml`).
 """
 from __future__ import annotations
@@ -35,13 +35,13 @@ _TRANG_THAI = "claude-update.json"
 _RX_BAN = re.compile(r"(\d+\.\d+\.\d+)")
 
 
-_ENV = "JAVIS_CLAUDE_AUTO_UPDATE"
+_ENV = "JEEVI_CLAUDE_AUTO_UPDATE"
 _OFF_VALUES = ("0", "false", "no", "off")
 SETTING_KEY = "claude_auto_update"   # under settings["model"]; the switch on the Models page
 
 
 def env_off() -> bool:
-    """True when JAVIS_CLAUDE_AUTO_UPDATE=0 (or false/no/off) forces the daily update off.
+    """True when JEEVI_CLAUDE_AUTO_UPDATE=0 (or false/no/off) forces the daily update off.
 
     The env var only ever turns the updater OFF and then wins over the switch on the Models page,
     so an admin who pinned it off in a service file keeps it off whatever someone clicks.

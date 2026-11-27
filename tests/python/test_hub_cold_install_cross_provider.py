@@ -25,14 +25,14 @@ import tempfile
 import time
 from pathlib import Path
 
-_TMP = Path(tempfile.mkdtemp(prefix="javis-hub-cold-"))
-os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
-os.environ["JAVIS_SESSIONS_DB"] = str(_TMP / "conversations.db")
+_TMP = Path(tempfile.mkdtemp(prefix="jeevi-hub-cold-"))
+os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+os.environ["JEEVI_SESSIONS_DB"] = str(_TMP / "conversations.db")
 os.environ["BRAINS_DIR"] = str(_TMP / "brains")
 os.environ["HOME"] = str(_TMP / "home")
 for _d in ("state", "brains/Brain Default/Jeevi", "home"):
     (_TMP / _d).mkdir(parents=True, exist_ok=True)
-os.environ["JAVIS_MCP_DISCOVER_TIMEOUT"] = "0.4"
+os.environ["JEEVI_MCP_DISCOVER_TIMEOUT"] = "0.4"
 
 import httpx  # noqa: E402
 from starlette.applications import Starlette  # noqa: E402
@@ -99,7 +99,7 @@ async def echo_over_http(client, headers):
         _, out = await rpc(client, headers, "tools/call", {"name": direct[0], "arguments": {"text": "hi"}}, mid=3)
         return status, text_of(out)
     _, found = await rpc(client, headers, "tools/call",
-                         {"name": "javis_search_tools", "arguments": {"query": "echo slow source"}}, mid=3)
+                         {"name": "jeevi_search_tools", "arguments": {"query": "echo slow source"}}, mid=3)
     try:
         found_tools = json.loads(text_of(found).split("\n\n(")[0]).get("tools", [])
     except ValueError:
@@ -108,7 +108,7 @@ async def echo_over_http(client, headers):
     if not fns:
         return status, ""
     _, out = await rpc(client, headers, "tools/call",
-                       {"name": "javis_run_tool", "arguments": {"name": fns[0], "args": {"text": "hi"}}}, mid=4)
+                       {"name": "jeevi_run_tool", "arguments": {"name": fns[0], "args": {"text": "hi"}}}, mid=4)
     return status, text_of(out)
 
 
@@ -193,7 +193,7 @@ async def main():
 
 
 asyncio.run(main())
-os.environ.pop("JAVIS_MCP_DISCOVER_TIMEOUT", None)
+os.environ.pop("JEEVI_MCP_DISCOVER_TIMEOUT", None)
 
 print()
 if fails:

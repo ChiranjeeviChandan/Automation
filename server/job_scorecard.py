@@ -5,7 +5,7 @@ or to save tokens as the user intends; it cannot be fixed to a frame I think up"
 job any more. Three things replace the setting:
 
   intent     what the owner said they want, in three words: "save", "balanced", "sure". Said in chat (the
-             `javis_tune` tool), for everything or for one job. No switch on any page.
+             `jeevi_tune` tool), for everything or for one job. No switch on any page.
   ladder     the provider's chat models from lightest to MAIN's model, ordered once by the main brain from the
              provider's own list (auto_background.py). Jeevi holds no table of model names.
   scorecard  every run of a job leaves one row: which model, did it get the job done, what it cost. A job that
@@ -58,7 +58,7 @@ _lock = threading.RLock()
 _conn: Optional[sqlite3.Connection] = None
 _jobs: Optional[Dict[str, dict]] = None      # job -> state, the copy every read uses
 _meta: Dict[str, str] = {}
-_active: contextvars.ContextVar = contextvars.ContextVar("javis_job_run", default=None)
+_active: contextvars.ContextVar = contextvars.ContextVar("jeevi_job_run", default=None)
 # Called with a change dict when a job moved to another model (main.py turns it into a notice). Never raises.
 on_change: Optional[Callable[[dict], None]] = None
 
@@ -394,7 +394,7 @@ def _settle(r: Run) -> None:
             print(f"[scorecard] on_change: {type(e).__name__}: {e}", file=sys.stderr)
 
 
-# ---------------------------------------------------------------- the owner's side (javis_tune)
+# ---------------------------------------------------------------- the owner's side (jeevi_tune)
 
 def feedback(job: str, good: bool, note: str = "") -> bool:
     """The owner said a job's result was wrong (or right). A complaint counts as a failure of the model that ran
@@ -431,7 +431,7 @@ def remember_ladder(provider: str, ladder) -> None:
 
 
 def status(limit: int = 30) -> dict:
-    """What `javis_tune op=status` shows: the general intent, each job's model with its record, recent changes."""
+    """What `jeevi_tune op=status` shows: the general intent, each job's model with its record, recent changes."""
     jobs = _load()
     with _lock:
         rows = sorted(jobs.values(), key=lambda s: -(s.get("updated") or 0))[:limit]

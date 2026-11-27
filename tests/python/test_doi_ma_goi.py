@@ -21,8 +21,8 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-doima-")
-os.environ["JAVIS_ENABLE_USER_PLUGINS"] = "true"
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-doima-")
+os.environ["JEEVI_ENABLE_USER_PLUGINS"] = "true"
 
 import packs           # noqa: E402
 import pack_install    # noqa: E402
@@ -91,7 +91,7 @@ check("danh mục giữ trường replaces đã làm sạch", sach["replaces"] =
 check("replaces kiểu lạ (chuỗi) thành rỗng", packs_store._lam_sach({"id": "a", "replaces": "abc"})["replaces"] == [])
 
 # ---- 1. soi gói mới ----
-moi = goi_zip("javis.gate", "2.0.0", "javis-gate", replaces=["javis.javis-trong-chatgpt", "javis.khong-cai"])
+moi = goi_zip("javis.gate", "2.0.0", "javis-gate", replaces=["javis.javis-trong-chatgpt", "jeevi.khong-cai"])
 s1 = pack_install.soi(moi, "gate.zip")
 check("soi: gói mới hợp lệ, connector cùng tên gói cũ KHÔNG bị coi là trùng",
       s1.get("ok") and "demo-svc" in s1.get("connectors", []), s1.get("error") or s1.get("warning"))
@@ -137,11 +137,11 @@ check("skill không bị bỏ qua như 'của người khác'",
       not any(x.get("khoa") == "skills/tu-van" for x in (r1.get("vault") or {}).get("bo_qua", [])), r1.get("vault"))
 
 # ---- 5. bí danh đi tiếp qua lần đổi tên thứ hai ----
-s2, r2 = cai(goi_zip("javis.gate-pro", "3.0.0", "gate-pro", replaces=["javis.gate"]), BRAIN)
+s2, r2 = cai(goi_zip("jeevi.gate-pro", "3.0.0", "gate-pro", replaces=["javis.gate"]), BRAIN)
 so = pack_install.doc_so()
 check("đổi tên lần hai: bí danh cũ nhất cũng trỏ về tên mới nhất",
-      so["javis.gate-pro"].get("plugin_aliases") == {"javis-trong-chatgpt": "gate-pro", "javis-gate": "gate-pro"},
-      so["javis.gate-pro"].get("plugin_aliases"))
+      so["jeevi.gate-pro"].get("plugin_aliases") == {"javis-trong-chatgpt": "gate-pro", "javis-gate": "gate-pro"},
+      so["jeevi.gate-pro"].get("plugin_aliases"))
 plugins_host.invalidate()
 tr = plugins_host.tim_http("javis-trong-chatgpt", "mcp", "POST")
 check("địa chỉ gốc vẫn tới plugin mới nhất", tr is not None and tr[0].slug == "gate-pro")
@@ -157,8 +157,8 @@ check("không có gói cũ để thừa hưởng: bật hay tắt đúng như m�
 src = (SERVER / "routes" / "packs.py").read_text(encoding="utf-8")
 check("route danh mục: ẩn thẻ mã cũ và đánh dấu thẻ mới đã cài",
       "bi_thay" in src and "replaces_installed" in src)
-man = packs.ma_thay_the({"replaces": ["javis.a", "javis.a", "../x", "javis.self", 3]}, "javis.self")
-check("ma_thay_the: bỏ trùng, bỏ mã sai, bỏ chính nó", man == ["javis.a", "3"], man)
+man = packs.ma_thay_the({"replaces": ["jeevi.a", "jeevi.a", "../x", "jeevi.self", 3]}, "jeevi.self")
+check("ma_thay_the: bỏ trùng, bỏ mã sai, bỏ chính nó", man == ["jeevi.a", "3"], man)
 
 print()
 print("ALL PASS" if not _fails else f"{len(_fails)} FAIL: {_fails}")

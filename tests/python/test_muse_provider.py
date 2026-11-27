@@ -25,8 +25,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from _paths import ROOT, SERVER  # noqa: E402,F401  - puts server/ on sys.path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-muse-test-"))
-os.environ["JAVIS_API_STREAM_TOOLS"] = "0"
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-muse-test-"))
+os.environ["JEEVI_API_STREAM_TOOLS"] = "0"
 for _k in ("MUSE_GATEWAY_URL", "MUSE_ADMIN_KEY"):
     os.environ.pop(_k, None)
 _GW_DIR = tempfile.mkdtemp(prefix="muse-gw-")
@@ -102,18 +102,18 @@ _used = set(__import__("re").findall(r't\("(models\.muse_[a-z0-9_]+)"', CONSOLE_
 check("every Muse key the page uses exists", _used and _used <= set(VI), sorted(_used - set(VI)))
 
 # ─────────── 2. Tools through text ───────────
-TOOLS_OAI = [{"type": "function", "function": {"name": "javis_read_file", "description": "Read a file in the brain",
+TOOLS_OAI = [{"type": "function", "function": {"name": "jeevi_read_file", "description": "Read a file in the brain",
                                                "parameters": {"type": "object", "properties": {"path": {"type": "string"}}}}},
-             {"type": "function", "function": {"name": "javis_connections", "description": "List connections",
+             {"type": "function", "function": {"name": "jeevi_connections", "description": "List connections",
                                                "parameters": {"type": "object", "properties": {}}}}]
 NAMES = muse.tool_names(TOOLS_OAI)
 p = muse.tools_prompt(TOOLS_OAI, "required")
-check("prompt lists the tools and the block", "javis_read_file" in p and "<tool_calls>" in p and "MUST call" in p)
+check("prompt lists the tools and the block", "jeevi_read_file" in p and "<tool_calls>" in p and "MUST call" in p)
 msgs = muse.gateway_messages([
     {"role": "system", "content": "You are Jeevi."},
     {"role": "user", "content": "Read a.md"},
     {"role": "assistant", "content": "", "tool_calls": [{"id": "c1", "type": "function",
-                                                         "function": {"name": "javis_read_file",
+                                                         "function": {"name": "jeevi_read_file",
                                                                       "arguments": "{\"path\": \"a.md\"}"}}]},
     {"role": "tool", "tool_call_id": "c1", "content": "hello"},
     {"role": "system", "content": "Note from Jeevi"},
@@ -123,26 +123,26 @@ check("no tool role reaches the gateway", all(m["role"] in ("system", "user", "a
 check("an earlier call is written as the block", any(m["role"] == "assistant" and "<tool_calls>" in m["content"]
                                                      and "a.md" in m["content"] for m in msgs))
 check("a result is a user message naming the tool", any(m["role"] == "user" and
-                                                        m["content"].startswith("[tool result: javis_read_file]")
+                                                        m["content"].startswith("[tool result: jeevi_read_file]")
                                                         for m in msgs))
 check("the last message is the user's (trailing note folded in)", msgs[-1]["role"] == "user"
       and "Note from Jeevi" in msgs[-1]["content"])
 check("a lone system message still ends with a user one", muse.gateway_messages([{"role": "system", "content": "x"}])[-1]["role"] == "user")
 
-before, calls = muse.parse_tool_calls('Ok.\n<tool_calls>\n[{"name": "javis_read_file", "arguments": {"path": "b.md"}}]\n</tool_calls>', NAMES)
-check("block parsed into a call", calls == [{"name": "javis_read_file", "arguments": {"path": "b.md"}}] and before == "Ok.")
-_, calls = muse.parse_tool_calls('```json\n{"tool_calls": [{"name": "javis_connections", "arguments": "{}"}]}\n```', NAMES)
-check("fenced JSON with a real tool is a call", calls == [{"name": "javis_connections", "arguments": {}}])
+before, calls = muse.parse_tool_calls('Ok.\n<tool_calls>\n[{"name": "jeevi_read_file", "arguments": {"path": "b.md"}}]\n</tool_calls>', NAMES)
+check("block parsed into a call", calls == [{"name": "jeevi_read_file", "arguments": {"path": "b.md"}}] and before == "Ok.")
+_, calls = muse.parse_tool_calls('```json\n{"tool_calls": [{"name": "jeevi_connections", "arguments": "{}"}]}\n```', NAMES)
+check("fenced JSON with a real tool is a call", calls == [{"name": "jeevi_connections", "arguments": {}}])
 txt, calls = muse.parse_tool_calls('Here is a sample:\n```json\n{"name": "Ana", "age": 3}\n```', NAMES)
 check("a JSON sample in an answer is not a call", calls == [] and "sample" in txt)
 _, calls = muse.parse_tool_calls('<tool_calls>[{"name": "rm_rf", "arguments": {}}]</tool_calls>', NAMES)
 check("a tool that was not offered is never called", calls == [])
 txt, calls = muse.parse_tool_calls("<tool_calls>not json</tool_calls>", NAMES)
 check("a broken block stays text", calls == [] and "not json" in txt)
-r = muse.openai_reply({"choices": [{"message": {"content": '<tool_calls>[{"name": "javis_connections", "arguments": {}}]</tool_calls>'}}]}, NAMES)
+r = muse.openai_reply({"choices": [{"message": {"content": '<tool_calls>[{"name": "jeevi_connections", "arguments": {}}]</tool_calls>'}}]}, NAMES)
 m0 = r["choices"][0]
 check("openai reply carries tool_calls", m0["finish_reason"] == "tool_calls"
-      and m0["message"]["tool_calls"][0]["function"]["name"] == "javis_connections")
+      and m0["message"]["tool_calls"][0]["function"]["name"] == "jeevi_connections")
 check("cookie check", muse.valid_cookie("datr=a; hatch_sess=XYZ") and muse.valid_cookie("wss://hatch.x/v1")
       and not muse.valid_cookie("hello"))
 for bad in ("127.0.0.1:8080", "http://u:p@127.0.0.1:8080", "http://127.0.0.1:8080/admin", "javascript:x"):
@@ -204,9 +204,9 @@ class _Gw(BaseHTTPRequestHandler):
             return self._json(200, {"ok": True})
         if self.path == "/v1/chat/completions":
             STATE["chat"].append(b)
-            seen_result = any("[tool result: javis_read_file]" in str(m.get("content")) for m in b["messages"])
+            seen_result = any("[tool result: jeevi_read_file]" in str(m.get("content")) for m in b["messages"])
             text = ("The file says: hello from the brain" if seen_result else
-                    'Let me read it.\n<tool_calls>\n[{"name": "javis_read_file", "arguments": {"path": "notes/a.md"}}]\n</tool_calls>')
+                    'Let me read it.\n<tool_calls>\n[{"name": "jeevi_read_file", "arguments": {"path": "notes/a.md"}}]\n</tool_calls>')
             return self._json(200, {"id": "x", "choices": [{"message": {"role": "assistant", "content": text},
                                                              "finish_reason": "stop"}]})
         self._json(404, {"error": {"message": "nope"}})
@@ -236,7 +236,7 @@ with open(os.environ["MUSE_GATEWAY_CONFIG"], "w", encoding="utf-8") as f:
 os.environ["MUSE_GATEWAY_URL"] = GW
 
 # ─────────── 3. The shared tool loop on Muse ───────────
-TOOLS = [{"fn": "javis_read_file", "server": "javis", "name": "javis_read_file", "description": "Read a file",
+TOOLS = [{"fn": "jeevi_read_file", "server": "jeevi", "name": "jeevi_read_file", "description": "Read a file",
           "schema": {"type": "object", "properties": {"path": {"type": "string"}}, "required": ["path"]}}]
 CALLED = []
 
@@ -252,17 +252,17 @@ async def _collect(gen):
 
 cfgmod.write_settings({**cfgmod.read_settings(), "model": {**(cfgmod.read_settings().get("model") or {}), "muse_on": True}})
 evs = asyncio.run(_collect(engine.muse_chat_with_mcp(KEY, "", [{"role": "user", "content": "What is in notes/a.md?"}],
-                                                     "off", TOOLS, {"javis_read_file": {"call": _read}})))
+                                                     "off", TOOLS, {"jeevi_read_file": {"call": _read}})))
 final = "".join(e.get("content", "") for e in evs if e.get("type") == "text")
 check("Muse called the tool in text and Jeevi ran it", CALLED == [{"path": "notes/a.md"}], CALLED)
-check("the turn shows the tool call", any(e.get("type") == "tool_call" and "javis_read_file" in str(e.get("name"))
+check("the turn shows the tool call", any(e.get("type") == "tool_call" and "jeevi_read_file" in str(e.get("name"))
                                           for e in evs), evs[:4])
 check("Muse's final answer comes through", "hello from the brain" in final, final)
 check("the gateway never got a tools field", STATE["chat"] and all("tools" not in b and "tool_choice" not in b
                                                                    for b in STATE["chat"]))
 check("every gateway request ends with a user message", all(b["messages"][-1]["role"] == "user" for b in STATE["chat"]))
 check("the second round carries the tool result", len(STATE["chat"]) >= 2
-      and "[tool result: javis_read_file]" in json.dumps(STATE["chat"][1]["messages"], ensure_ascii=False))
+      and "[tool result: jeevi_read_file]" in json.dumps(STATE["chat"][1]["messages"], ensure_ascii=False))
 check("Muse runs one model, unstreamed rounds", all(b["model"] == muse.MODEL and b["stream"] is False for b in STATE["chat"]))
 
 # ─────────── 4. Models page routes ───────────

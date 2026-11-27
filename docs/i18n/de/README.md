@@ -1,7 +1,7 @@
 <!-- translated-from: README.md sha256:2e10ad3d2a86 -->
 <div align="center">
 
-<a href="https://javisos.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
+<a href="https://jeevios.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
 
 # Jeevi OS
 
@@ -9,7 +9,7 @@
 
 Jeevi OS macht aus **Claude, ChatGPT, Gemini, Grok** und den Modellen deiner Wahl ein Team, das rund um die Uhr auf deinem eigenen Rechner oder Server arbeitet. Jedes Teammitglied hat eine Rolle, teilt dasselbe Gedächtnis und dieselben Tools und arbeitet im Hintergrund weiter. Kommt ein besseres Modell, wechselst du und behältst alles, was das Team gelernt hat.
 
-**🌐 Website: [javisos.com](https://javisos.com)** · Open Source · Selbst gehostet · 14 KI-Anbieter
+**🌐 Website: [jeevios.com](https://jeevios.com)** · Open Source · Selbst gehostet · 14 KI-Anbieter
 
 [![GitHub stars](https://img.shields.io/github/stars/blogminhquy/javis-os?style=flat&logo=github&label=stars)](https://github.com/blogminhquy/javis-os/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](../../../LICENSE)
@@ -38,7 +38,7 @@ Jeevi OS macht aus **Claude, ChatGPT, Gemini, Grok** und den Modellen deiner Wah
 
 [🇬🇧 English](../../../README.md) · [🇻🇳 Tiếng Việt](../vi/README.md) · [🇨🇳 简体中文](../zh/README.md) · [🇪🇸 Español](../es/README.md) · [🇯🇵 日本語](../ja/README.md) · [🇮🇳 हिन्दी](../hi/README.md) · [🇧🇷 Português](../pt-BR/README.md) · [🇰🇷 한국어](../ko/README.md) · [🇷🇺 Русский](../ru/README.md) · 🇩🇪 **Deutsch** · [🇫🇷 Français](../fr/README.md) · [🇮🇩 Bahasa Indonesia](../id/README.md) · [🌍 Beim Übersetzen helfen](../../../CONTRIBUTING.md#translations)
 
-[Schnellstart](#-schnellstart) · [Warum Jeevi](#-warum-javis) · [Gehirne](#-12-gehirne-ein-werkzeugkasten) · [Funktionen](#-funktionen) · [Installation](#-installation) · [Dokumentation](../../../docs/en/README.md) · [Unterstützen](#-unterstütze-javis-os)
+[Schnellstart](#-schnellstart) · [Warum Jeevi](#-warum-jeevi) · [Gehirne](#-12-gehirne-ein-werkzeugkasten) · [Funktionen](#-funktionen) · [Installation](#-installation) · [Dokumentation](../../../docs/en/README.md) · [Unterstützen](#-unterstütze-jeevi-os)
 
 <br>
 
@@ -56,8 +56,8 @@ Jeevi OS macht aus **Claude, ChatGPT, Gemini, Grok** und den Modellen deiner Wah
 
 | Rechner | Ein Befehl installiert alles |
 |---|---|
-| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git javis && cd javis && chmod +x install.sh && ./install.sh` |
-| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git javis; cd javis; powershell -ExecutionPolicy Bypass -File install.ps1` |
+| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi && chmod +x install.sh && ./install.sh` |
+| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi; powershell -ExecutionPolicy Bypass -File install.ps1` |
 | **Docker** | `curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml && docker compose up -d` |
 
 Öffne danach **http://localhost:7777**. Der Installer richtet Python, die vier Abo-CLI-Gehirne (`claude`, `codex`, `agy`, `grok`) und eine `.env` ein und startet dann den Server. Bei jedem Gehirn meldest du dich **auf der Seite Models im Dashboard** an, ganz ohne weitere Befehle.
@@ -257,17 +257,17 @@ Hostinger VPS → **Docker Manager → Compose → URL** → füge die Hostinger
 https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hostinger.yml
 ```
 
-Das Feld **Environment** braucht nur drei Einträge: `DOMAIN_NAME`, `JAVIS_ADMIN_USER`, `JAVIS_ADMIN_PASSWORD`, dazu optional `JAVIS_AUTO_UPDATE` (auf `true` gesetzt, aktualisiert sich Jeevi täglich selbst).
+Das Feld **Environment** braucht nur drei Einträge: `DOMAIN_NAME`, `JEEVI_ADMIN_USER`, `JEEVI_ADMIN_PASSWORD`, dazu optional `JEEVI_AUTO_UPDATE` (auf `true` gesetzt, aktualisiert sich Jeevi täglich selbst).
 
 Setze `DOMAIN_NAME`, damit Traefik bei Hostinger HTTPS ausstellt:
-- **Kostenloser Link** (ohne Domainkauf): `DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud` (Hostname unter hPanel → VPS, z. B. `javis.srv1562015.hstgr.cloud`).
+- **Kostenloser Link** (ohne Domainkauf): `DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud` (Hostname unter hPanel → VPS, z. B. `jeevi.srv1562015.hstgr.cloud`).
 - **Eigene Domain:** `DOMAIN_NAME=example.com` und einen A-Record auf die IP des VPS zeigen lassen.
 
 Warte 1-3 Minuten auf das Zertifikat und öffne dann `https://<DOMAIN_NAME>`.
 
 **Drei einmalige Schritte:**
 1. **Das GHCR-Image öffentlich machen:** GitHub → Repo → **Packages** → `javis-os` → *Package settings* → Visibility = **Public**.
-2. **Das Admin-Konto anlegen:** Fülle `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` aus (empfohlen) oder öffne die App direkt nach dem Deployment und lege es selbst an. Solange kein Admin existiert, kann es derjenige anlegen, der den Link zuerst öffnet. Danach **2FA aktivieren** ([Sicherheit und Konten](../../../docs/en/14-security-and-accounts.md)).
+2. **Das Admin-Konto anlegen:** Fülle `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` aus (empfohlen) oder öffne die App direkt nach dem Deployment und lege es selbst an. Solange kein Admin existiert, kann es derjenige anlegen, der den Link zuerst öffnet. Danach **2FA aktivieren** ([Sicherheit und Konten](../../../docs/en/14-security-and-accounts.md)).
 3. **Bei einem Gehirn anmelden** auf der Seite **Models**.
 
 Details und Fehlerbehebung: [DEPLOY.en.md](../../../DEPLOY.en.md).
@@ -281,14 +281,14 @@ Details und Fehlerbehebung: [DEPLOY.en.md](../../../DEPLOY.en.md).
 
 ```bash
 # Docker required (don't have it?  curl -fsSL https://get.docker.com | sh)
-mkdir javis && cd javis
+mkdir jeevi && cd jeevi
 curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml
 
-docker compose run --rm javis claude auth login --claudeai   # sign in to Claude once (optional)
+docker compose run --rm jeevi claude auth login --claudeai   # sign in to Claude once (optional)
 docker compose up -d                                          # pull the image and run
 ```
 
-Öffne `http://<vps-ip>:7777` und lege sofort Benutzername und Passwort für den Admin fest (mindestens 8 Zeichen), oder setze `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` vorab in der Umgebung. Aktiviere danach 2FA.
+Öffne `http://<vps-ip>:7777` und lege sofort Benutzername und Passwort für den Admin fest (mindestens 8 Zeichen), oder setze `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` vorab in der Umgebung. Aktiviere danach 2FA.
 
 Fernzugriff ohne Domain: `docker compose --profile tunnel up -d`, dann gibt `docker compose logs tunnel | grep trycloudflare` einen HTTPS-Link aus.
 
@@ -298,13 +298,13 @@ Fernzugriff ohne Domain: `docker compose --profile tunnel up -d`, dann gibt `doc
 <summary><b>Option 3: Linux oder macOS, ohne Docker</b></summary>
 
 ```bash
-git clone https://github.com/blogminhquy/javis-os.git javis && cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi
 chmod +x install.sh && ./install.sh
 ```
 
 Das Skript installiert Python, Node und die CLI-Gehirne, legt ein venv an, registriert einen Dienst, der beim Booten startet, und gibt die Adresse aus.
 
-🍎 **macOS, wie eine App öffnen:** Doppelklick auf `JEEVI OS.app` (oder `Start JEEVI OS.command`). Start bei der Anmeldung: `./bin/javis-autostart.sh install`. Details: [bin/README.md](../../../bin/README.md).
+🍎 **macOS, wie eine App öffnen:** Doppelklick auf `JEEVI OS.app` (oder `Start JEEVI OS.command`). Start bei der Anmeldung: `./bin/jeevi-autostart.sh install`. Details: [bin/README.md](../../../bin/README.md).
 
 </details>
 
@@ -312,7 +312,7 @@ Das Skript installiert Python, Node und die CLI-Gehirne, legt ein venv an, regis
 <summary><b>Option 4: Windows (persönlicher Rechner)</b></summary>
 
 ```powershell
-git clone https://github.com/blogminhquy/javis-os.git javis; cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
@@ -320,23 +320,23 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 
 ```
 Run with a visible window (live log):  setup.bat
-Run silently from then on:             start-javis.vbs   (log at server\javis.log)
-Stop:                                  stop-javis.bat
+Run silently from then on:             start-jeevi.vbs   (log at server\jeevi.log)
+Stop:                                  stop-jeevi.bat
 Dashboard:                             http://localhost:7777
 ```
 
-🪟 **Wie eine App öffnen:** Nach dem ersten Start doppelklickst du auf **`JEEVI OS.bat`**. Der Server startet im Hintergrund und das Dashboard öffnet sich in **einem eigenen Fenster** mit eigenem Eintrag in der Taskleiste. Start bei der Anmeldung: `javis-autostart.bat install` (entfernen: `uninstall`).
+🪟 **Wie eine App öffnen:** Nach dem ersten Start doppelklickst du auf **`JEEVI OS.bat`**. Der Server startet im Hintergrund und das Dashboard öffnet sich in **einem eigenen Fenster** mit eigenem Eintrag in der Taskleiste. Start bei der Anmeldung: `jeevi-autostart.bat install` (entfernen: `uninstall`).
 
 </details>
 
 <details>
 <summary><b>Mehrere Jeevi-Instanzen auf einem VPS</b></summary>
 
-Brains, Einstellungen und Konten bleiben pro Instanz vollständig getrennt. Nur drei Werte unterscheiden sich: `JAVIS_NAME`, `JAVIS_HOST_PORT`, `DOMAIN_NAME`.
+Brains, Einstellungen und Konten bleiben pro Instanz vollständig getrennt. Nur drei Werte unterscheiden sich: `JEEVI_NAME`, `JEEVI_HOST_PORT`, `DOMAIN_NAME`.
 
 - **Hostinger:** Stelle `docker-compose.hostinger.yml` erneut als zweiten Stack bereit und fülle diese drei Felder aus.
 - **Selbst verwalteter VPS:** Starte den gemeinsamen Proxy `docker-compose.proxy.yml` einmal für den ganzen Rechner und gib dann jeder Instanz mit `docker-compose.multi.yml` einen eigenen Ordner. Der Proxy erkennt neue Instanzen und fordert SSL von selbst an.
-- **Nativ:** `JAVIS_NAME=javis-shop JAVIS_PORT=7778 ./install.sh`.
+- **Nativ:** `JEEVI_NAME=jeevi-shop JEEVI_PORT=7778 ./install.sh`.
 
 Schritt für Schritt: [DEPLOY.en.md](../../../DEPLOY.en.md).
 
@@ -389,14 +389,14 @@ Jede Zeile darf leer bleiben, und Jeevi läuft trotzdem. Kopiere `env.example` �
 
 | Variable | Bedeutung | Standard |
 |---|---|---|
-| `JAVIS_HOST` | Adresse, auf der gelauscht wird. `127.0.0.1` = nur dieser Rechner, `0.0.0.0` = öffentlich | `127.0.0.1` |
-| `JAVIS_PORT` | Port | `7777` |
-| `JAVIS_REQUIRE_LOGIN` | `1`/`0`, um die Anmeldepflicht ein- oder auszuschalten (Standard: an, wenn öffentlich gebunden) | *(automatisch)* |
-| `JAVIS_ADMIN_USER` / `JAVIS_ADMIN_PASSWORD` | Legt den Admin beim Deployment an | - |
-| `JAVIS_ALLOWED_HOSTS` | Zusätzliche Hostnamen auf der Allow-List (Schutz vor CSRF und DNS-Rebinding) | localhost + deine Domain |
-| `JAVIS_STATE_DIR` | Wo Einstellungen, Sitzungen und der Verschlüsselungsschlüssel liegen | `server/` (Docker: `/data/state`) |
+| `JEEVI_HOST` | Adresse, auf der gelauscht wird. `127.0.0.1` = nur dieser Rechner, `0.0.0.0` = öffentlich | `127.0.0.1` |
+| `JEEVI_PORT` | Port | `7777` |
+| `JEEVI_REQUIRE_LOGIN` | `1`/`0`, um die Anmeldepflicht ein- oder auszuschalten (Standard: an, wenn öffentlich gebunden) | *(automatisch)* |
+| `JEEVI_ADMIN_USER` / `JEEVI_ADMIN_PASSWORD` | Legt den Admin beim Deployment an | - |
+| `JEEVI_ALLOWED_HOSTS` | Zusätzliche Hostnamen auf der Allow-List (Schutz vor CSRF und DNS-Rebinding) | localhost + deine Domain |
+| `JEEVI_STATE_DIR` | Wo Einstellungen, Sitzungen und der Verschlüsselungsschlüssel liegen | `server/` (Docker: `/data/state`) |
 | `BRAINS_DIR` | Übergeordneter Ordner mit allen Brains | `brains/` (Docker: `/brains`) |
-| `JAVIS_ENABLE_USER_PLUGINS` | `false` schaltet eigene Plugins ab (sie führen echtes Python im Server aus) | *(an)* |
+| `JEEVI_ENABLE_USER_PLUGINS` | `false` schaltet eigene Plugins ab (sie führen echtes Python im Server aus) | *(an)* |
 | `TTS_VOICE` / `TTS_RATE` | Stimme und Geschwindigkeit für Edge TTS | `en-US-EmmaMultilingualNeural` / `+5%` |
 
 ---
@@ -407,7 +407,7 @@ Jede Zeile darf leer bleiben, und Jeevi läuft trotzdem. Kopiere `env.example` �
 - **2FA (TOTP)**, Begrenzung der Anmeldeversuche, Passwörter mit mindestens 8 Zeichen, `Secure`-Cookies unter HTTPS, Sitzungen, die nach 30 Tagen ablaufen.
 - **Schutz vor CSRF und DNS-Rebinding**: Jede schreibende Anfrage von einem unbekannten Ursprung wird abgelehnt.
 - **Geheimnisse werden verschlüsselt** in `settings.json` (API-Schlüssel, OAuth-Tokens, Bot-Tokens), mit einem Schlüssel pro Rechner.
-- **Eigene Plugins werden standardmäßig geladen, jedes bleibt aber aus, bis du es in der App einschaltest**; mit `JAVIS_ENABLE_USER_PLUGINS=false` schaltest du alle ab.
+- **Eigene Plugins werden standardmäßig geladen, jedes bleibt aber aus, bis du es in der App einschaltest**; mit `JEEVI_ENABLE_USER_PLUGINS=false` schaltest du alle ab.
 - **Verbindungsberechtigungen werden durchgesetzt** vom Hub, nicht vom Modell: Mit einem Nur-Lese-Konto kann nichts gesendet, bezahlt oder veröffentlicht werden.
 
 Eine Sicherheitslücke gefunden? Bitte folge [SECURITY.md](../../../SECURITY.md), statt ein öffentliches Issue zu eröffnen.
@@ -416,7 +416,7 @@ Eine Sicherheitslücke gefunden? Bitte folge [SECURITY.md](../../../SECURITY.md)
 
 ## 🔄 Aktualisieren
 
-In der App: **Settings → Updates → Update now**, mit Fortschrittsbalken und einem Rollback-Button, falls der neue Build etwas kaputt macht. Auf einem VPS: `cd javis && ./update.sh` (zieht das neue Image und startet neu; deine Daten in den Volumes bleiben erhalten).
+In der App: **Settings → Updates → Update now**, mit Fortschrittsbalken und einem Rollback-Button, falls der neue Build etwas kaputt macht. Auf einem VPS: `cd jeevi && ./update.sh` (zieht das neue Image und startet neu; deine Daten in den Volumes bleiben erhalten).
 
 ---
 
@@ -425,7 +425,7 @@ In der App: **Settings → Updates → Update now**, mit Fortschrittsbalken und 
 | Symptom | Was zu tun ist |
 |---|---|
 | Die Seite Models meldet, eine CLI sei nicht installiert, obwohl sie es ist | **Starte Jeevi neu**: Der laufende Prozess behält den PATH vom Zeitpunkt seines Starts. |
-| Port 7777 ist belegt und der neue Build startet nicht | Beende zuerst den alten Prozess (`stop-javis.bat` oder die PID beenden) und starte dann erneut. |
+| Port 7777 ist belegt und der neue Build startet nicht | Beende zuerst den alten Prozess (`stop-jeevi.bat` oder die PID beenden) und starte dann erneut. |
 | Hostinger kann das Image nicht ziehen | Stell das GHCR-Paket auf **Public** und warte, bis der Build der GitHub Action fertig ist. |
 | Ein Gehirn meldet, es sei nicht angemeldet | **Models** → Karte des Anbieters → anmelden. |
 
@@ -510,6 +510,6 @@ Du kannst nicht spenden? Jeevi zu nutzen, Feedback zu schicken oder einen Pull R
 <div align="center">
 <br>
 <a href="https://nguyenminhquy.com"><img src="../../assets/author.webp" width="96" height="96" alt="Minh Quý"></a><br>
-<b><a href="https://javisos.com">javisos.com</a></b><br>
+<b><a href="https://jeevios.com">jeevios.com</a></b><br>
 Mit ☕ in Vietnam gemacht von <b><a href="https://nguyenminhquy.com">Minh Quý</a></b>
 </div>

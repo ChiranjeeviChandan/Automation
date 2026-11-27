@@ -15,7 +15,7 @@ import tempfile
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-tz-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-tz-")
 
 import config as cfgmod  # noqa: E402
 import context_compiler as cc  # noqa: E402

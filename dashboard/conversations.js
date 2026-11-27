@@ -14,9 +14,9 @@
  * Luật sống còn của file này: KHÔNG đoán gì theo id kênh. Logo, nhãn, năng lực đều do server
  * trả trong danh sách kênh (`channels`); thêm kênh ở server là trang này vẽ được ngay.
  *
- * Trang này KHÔNG phải cái chuông (notifications.js / JavisInbox): chuông là hòm thư của CHỦ
+ * Trang này KHÔNG phải cái chuông (notifications.js / JeeviInbox): chuông là hòm thư của CHỦ
  * (kết quả việc nền), còn đây là hội thoại giữa KHÁCH và cửa hàng. Tiền tố riêng: .ht-*, ht.*,
- * window.JavisConversations. Ghi chú: KHÔNG dùng ký tự em dash. */
+ * window.JeeviConversations. Ghi chú: KHÔNG dùng ký tự em dash. */
 (function () {
   "use strict";
 
@@ -69,18 +69,18 @@
   // The mic of the reply box (owner, 2026-11-05: "thêm nút chép lời để nói bằng giọng nói rồi chép lại, khỏi phải gõ").
   // dictate.js does the listening; the state lives here because the 5-second redraw rebuilds the box.
   var _dict = null, _dictState = "idle", _dictBase = "", _dictHeard = "", _dictConv = 0, _dictSend = false;
-  var _statusLoc = "", _typeLoc = "";   // bộ lọc (0.65.3), lưu ở trình duyệt qua JavisConvFilters
+  var _statusLoc = "", _typeLoc = "";   // bộ lọc (0.65.3), lưu ở trình duyệt qua JeeviConvFilters
   // The quick row (owner, 2026-11-24): messages or comment threads ("" = both), chats with a phone number only, and the
   // server's numbers for them (quick_counts), null before the first answer.
   var _kind = "", _phone = "", _quick = null;
   // Chatbot v5 (2026-10-28, docs/dev/2026-10-chatbot-v5-spec.md): who is handling the chat (the quick filters), the ticked
-  // channel accounts (the channel picker) and tags any/none (the Filter menu). Saved with the rest by JavisConvFilters.
+  // channel accounts (the channel picker) and tags any/none (the Filter menu). Saved with the rest by JeeviConvFilters.
   var _who = "you", _accs = [], _tagsAny = [], _tagsNone = [], _whoCounts = null;
   var _when = null, _lastBy = "", _pinned = "";   // when the last message came, who wrote it, pinned only (Filter menu)
   var _pick = false, _pickQ = "", _fm = false, _fmCat = "time";   // channel picker / Filter menu open, picker search, menu category
   var _wm = false;          // the "who" dropdown of the list is open
   // Info panel: closed until the owner opens it (owner, 2026-10-29: the chat gets the room), and remembered in this browser.
-  var INFO_KEY = "javis_ib_info";
+  var INFO_KEY = "jeevi_ib_info";
   var _info = (function () { try { return localStorage.getItem(INFO_KEY) === "1"; } catch (e) { return false; } })();
   var _msheet = false;      // the phone's "who replies" sheet is open
   var _aiBusy = "";         // "ask" | "redo" | "send" | "now" while the A.I. writes or a draft goes out
@@ -119,7 +119,7 @@
   // Options pass through ({cls: "ic-spin"}): before 2026-11-18 they were dropped, so every "loader" here stood still.
   var ic = function (n, o) { return window.ic ? window.ic(n, o) : ""; };
   var spin = function () { return ic("loader", { cls: "ic-spin" }); };
-  var LOC = function () { return (window.JavisI18n && JavisI18n.locale()) || "vi-VN"; };
+  var LOC = function () { return (window.JeeviI18n && JeeviI18n.locale()) || "vi-VN"; };
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -128,9 +128,9 @@
   }
   function el(html) { var d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild; }
   // (i) button (info-tip.js, 0.214.0): explanations sit behind it; without the helper (Node tests) they draw open.
-  function infoBtn() { var J = typeof window !== "undefined" && window.JavisInfo; return J ? J.btn(window.t("info.more")) : ""; }
+  function infoBtn() { var J = typeof window !== "undefined" && window.JeeviInfo; return J ? J.btn(window.t("info.more")) : ""; }
   function infoBody(html) {
-    var J = typeof window !== "undefined" && window.JavisInfo;
+    var J = typeof window !== "undefined" && window.JeeviInfo;
     return J ? J.body(html) : '<div class="info-body">' + html + "</div>";
   }
   async function api(url, opts) {
@@ -256,7 +256,7 @@
       // The Conversations tab counts the chats that need you (Chatbot v5), not unread ones: unread is what the A.I. already handles.
       var canBan = t === "inbox" && _whoCounts ? (_whoCounts.you_total != null ? _whoCounts.you_total : _whoCounts.you) : 0;
       // The Channels tab counts the nicks and Pages that need something (an error, or no bot and none was declined).
-      if (t === "kenh" && window.JavisInboxChannels) canBan = window.JavisInboxChannels.jobs(_tk);
+      if (t === "kenh" && window.JeeviInboxChannels) canBan = window.JeeviInboxChannels.jobs(_tk);
       var chuaDoc = canBan ? '<span class="ht-badge" title="' + esc(window.t(t === "kenh" ? "ib.kn_jobs" : "ib.who_you")) + '">' + canBan + '</span>' : "";
       // Phones show the icon only (0.397.0), so the name is also the button's tooltip and its spoken label.
       var ten = window.t(NHAN[t][0]);
@@ -286,8 +286,8 @@
     closeRowMenu(false);
     body.innerHTML = "";
     if (_tab === "bot") return renderBot(body);
-    if (_tab === "kenh") return renderSub(body, window.JavisInboxChannels, "inbox-channels.js");
-    if (_tab === "thongke") return renderSub(body, window.JavisInboxStats, "inbox-stats.js");
+    if (_tab === "kenh") return renderSub(body, window.JeeviInboxChannels, "inbox-channels.js");
+    if (_tab === "thongke") return renderSub(body, window.JeeviInboxStats, "inbox-stats.js");
     return renderInbox(body);
   }
 
@@ -310,7 +310,7 @@
   function renderBot(body) {
     body.innerHTML = '<div class="ht-tab-bot"><div class="ht-bot-ds"></div></div>';
     var ds = body.querySelector(".ht-bot-ds");
-    var fn = window.JavisChatbots && window.JavisChatbots.render;
+    var fn = window.JeeviChatbots && window.JeeviChatbots.render;
     if (fn) { try { fn(ds); } catch (e) { ds.innerHTML = '<div class="ht-empty">' + esc(e.message) + '</div>'; } }
     else ds.innerHTML = '<div class="ht-empty">' + esc(window.t("cs.mod_not_ready", { ten: "chatbots.js" })) + '</div>';
   }
@@ -335,7 +335,7 @@
       addAccount: function () { moThemTK(); },
       openBot: function (id) {
         chonTab("bot");
-        try { document.dispatchEvent(new CustomEvent("javis:chatbot-open", { detail: { bot_id: id } })); } catch (e) { /* old browser */ }
+        try { document.dispatchEvent(new CustomEvent("jeevi:chatbot-open", { detail: { bot_id: id } })); } catch (e) { /* old browser */ }
       },
       // Open one chat on the Conversations tab, every filter put aside so it is surely in the list.
       openChat: function (id) { _cho = {}; _chon = id; _msgs = []; _conv = null; _dauVetTin = ""; _vetMeta = ""; chonTab("inbox"); },
@@ -365,7 +365,7 @@
       if (!im) throw e;
       return false;
     }
-    if (_tab === "kenh" && window.JavisInboxChannels) window.JavisInboxChannels.paint();
+    if (_tab === "kenh" && window.JeeviInboxChannels) window.JeeviInboxChannels.paint();
     veTabs();
     return true;
   }
@@ -375,7 +375,7 @@
   // search box with the two-level Filter menu, the quick "who is handling it" filters and the active filters as chips.
   // The pure HTML builders live in inbox-v5.js; the drawing and the events are here.
   function renderInbox(body) {
-    var F = window.JavisConvFilters;
+    var F = window.JeeviConvFilters;
     if (_cho) {
       // Opened from elsewhere (a bot card, an account card): show exactly what was pointed at, whoever handles it. The
       // saved filters are put aside so they cannot hide the chat the owner wants to see.
@@ -477,7 +477,7 @@
              who: _who, accs: _accs, tagsAny: _tagsAny, tagsNone: _tagsNone, when: _when, lastBy: _lastBy, pinned: _pinned,
              kind: _kind, phone: _phone };
   }
-  function saveFilters() { if (window.JavisConvFilters) window.JavisConvFilters.save(filterState()); }
+  function saveFilters() { if (window.JeeviConvFilters) window.JeeviConvFilters.save(filterState()); }
   function onFilterChange() { saveFilters(); paintHead(); tai(); }
 
   // #1243: the list is the open brain's, like the Channels tab: chats of a Page moved to another brain leave it. The
@@ -486,7 +486,7 @@
   function urlDanhSach(limit, offset) {
     return "/conversations?limit=" + limit + (offset ? "&offset=" + offset : "") +
       "&q=" + encodeURIComponent(_q) + brainParam() +
-      (window.JavisConvFilters ? window.JavisConvFilters.query(filterState()) : "");
+      (window.JeeviConvFilters ? window.JeeviConvFilters.query(filterState()) : "");
   }
 
   // The channel accounts the picker offers: the ones of the open brain (`/channels/accounts`), each with its key.
@@ -497,7 +497,7 @@
   // The head of the list: picker summary, quick filters with counts, the quick row, chips for the active filters, the
   // Filter count.
   function paintHead() {
-    var V = window.JavisInboxV5, F = window.JavisConvFilters;
+    var V = window.JeeviInboxV5, F = window.JeeviConvFilters;
     if (!_host || !V) return;
     var accs = accList();
     var sum = V.pickerSummary(accs, _accs);
@@ -571,7 +571,7 @@
   }
 
   function paintPops() {
-    var V = window.JavisInboxV5, F = window.JavisConvFilters;
+    var V = window.JeeviInboxV5, F = window.JeeviConvFilters;
     if (!_host || !V) return;
     var pk = _host.querySelector(".ib-pk"), fm = _host.querySelector(".ib-fm"), wm = _host.querySelector(".ib-wm");
     var pb = _host.querySelector(".ib-picker"), fb = _host.querySelector(".ib-fbtn"), wb = _host.querySelector(".ib-whobtn");
@@ -662,7 +662,7 @@
       if (on) on.focus();
     } else if (b.classList.contains("ib-fm-cal")) {
       // Any days on the calendar (date-range.js); the Filter menu stays open under it.
-      if (window.JavisDateRange) window.JavisDateRange.open(b, _when, function (r) { _when = r; onFilterChange(); paintPops(); }, { all: true });
+      if (window.JeeviDateRange) window.JeeviDateRange.open(b, _when, function (r) { _when = r; onFilterChange(); paintPops(); }, { all: true });
     } else if (b.classList.contains("ib-fm-clear")) {
       clearMenuFilters();
       paintPops();
@@ -842,7 +842,7 @@
         return;
       }
       // The Filter menu or the quick row emptied the list: one tap clears them, rather than pointing at channels.
-      var menuLoc = window.JavisConvFilters.activeCount(Object.assign(filterState(), { channel: "" })) > 0 || !!(_kind || _phone);
+      var menuLoc = window.JeeviConvFilters.activeCount(Object.assign(filterState(), { channel: "" })) > 0 || !!(_kind || _phone);
       box.innerHTML = '<div class="ht-empty">' + ic("messages-square") +
         '<b>' + esc(loc || _who ? window.t("ht.khong_khop") : window.t("ht.chua_co")) +
           (!coNguon && !menuLoc ? infoBtn() : "") + '</b>' +
@@ -857,7 +857,7 @@
       if (bo) bo.onclick = function () { clearMenuFilters(true); };
       return;
     }
-    var F = window.JavisConvFilters;
+    var F = window.JeeviConvFilters;
     // The redraw (5-second refresh, a menu action) must not drop the keyboard focus: note which row and which control
     // held it, put it back afterwards.
     var ae = document.activeElement, keep = null;
@@ -865,7 +865,7 @@
       var fr = ae.closest(".ht-item");
       if (fr) keep = { id: fr.dataset.id, sel: ae.classList.contains("ht-rmore") ? ".ht-rmore" : ae.classList.contains("ht-pin") ? ".ht-pin" : "" };
     }
-    var V = window.JavisInboxV5;
+    var V = window.JeeviInboxV5;
     var many = _accs.length !== 1;      // several nicks or Pages in view: each row names the one it came through
     var rows = _items.map(function (c) {
       var ten = c.title || c.customer_name || c.external_chat_id;
@@ -898,7 +898,7 @@
               ic("ellipsis") + '</span></span>' +
           '<span class="ht-item-sub">' +
             '<small>' + (pre ? '<span class="ib-pre">' + esc(pre) + ' </span>' : "") +
-              esc(window.JavisHtMedia ? window.JavisHtMedia.tomTat(c.last_message || "", window.t) : (c.last_message || "")) + '</small>' +
+              esc(window.JeeviHtMedia ? window.JeeviHtMedia.tomTat(c.last_message || "", window.t) : (c.last_message || "")) + '</small>' +
             // Messages in the whole conversation (0.148.0), grey; the red number is only the UNREAD ones (owner, 2026-10-28:
             // v5 dropped it and he reads it to see how far a chat has gone).
             (c.message_count ? '<span class="ht-count" title="' + esc(window.t("ht.so_tin_title", { count: c.message_count })) + '">' +
@@ -1037,7 +1037,7 @@
   }
 
   function paintRowMenu(focusFirst) {
-    var F = window.JavisConvFilters, c = _rm && rmItem(_rm.id);
+    var F = window.JeeviConvFilters, c = _rm && rmItem(_rm.id);
     if (!F || !c) return closeRowMenu(false);
     var phone = isPhone();
     var m = rmEl();
@@ -1234,7 +1234,7 @@
     var c = rmItem(id);
     if (!c) return closeRowMenu(false);
     closeRowMenu(false);
-    var F = window.JavisConvFilters, k = F.chatKind(c), remote = F.platformActs(c).indexOf("block") >= 0;
+    var F = window.JeeviConvFilters, k = F.chatKind(c), remote = F.platformActs(c).indexOf("block") >= 0;
     var q = !remote ? "ht.block_q_local" : k === "zalo_private" ? "ht.block_q_zalo" : "ht.block_q_fb";
     if (!confirm(window.t(q, { ten: convName(c) }))) return;
     try {
@@ -1304,7 +1304,7 @@
     var c = rmItem(id);
     if (!c) return closeRowMenu(false);
     closeRowMenu(false);
-    var F = window.JavisConvFilters, k = F.chatKind(c), remote = F.platformActs(c).indexOf("delete_remote") >= 0;
+    var F = window.JeeviConvFilters, k = F.chatKind(c), remote = F.platformActs(c).indexOf("delete_remote") >= 0;
     var q = k === "fb_comment" ? "ht.del_q_fbc" : k === "ig_comment" ? "ht.del_q_igc" : k === "threads_comment" ? "ht.del_q_thc" :
       remote ? "ht.del_q_zalo" :
       (k === "messenger_dm" || k === "ig_dm") ? "ht.del_q_meta" : "ht.del_q_local";
@@ -1590,10 +1590,10 @@
   function veThread() {
     var box = _host.querySelector(".ht-thread");
     if (!box) return;
-    var V = window.JavisInboxV5;
+    var V = window.JeeviInboxV5;
     var c = _conv || {};
     var ten = c.title || c.customer_name || c.external_chat_id;
-    var guiDuoc = nangLuc(c.channel, "tra_loi_tu_javis");
+    var guiDuoc = nangLuc(c.channel, "tra_loi_tu_jeevi");
     var cuon = box.querySelector(".ht-msgs");
     var oDay = !cuon || (cuon.scrollHeight - cuon.scrollTop - cuon.clientHeight < 80);
     var tuDay = cuon ? cuon.scrollHeight - cuon.scrollTop : 0;      // đang đọc giữa chừng thì vẽ lại xong phải đứng đúng chỗ cũ (đo theo đáy)
@@ -1609,7 +1609,7 @@
     // on a narrow column) and the coloured bar under it only shows when the chat needs the owner. Otherwise the bar
     // carries what can be done (Allow, Let the A.I. answer here, Create an A.I.) as before.
     var calm = threeModes && who !== "you";
-    var F = window.JavisConvFilters;
+    var F = window.JeeviConvFilters;
     var tags = F && c.tags && c.tags.length ? F.tagChips(c.tags, 3) : "";
     var item = _items.filter(function (k) { return k.id === c.id; })[0] || {};
     var soTin = Number(c.message_count || item.message_count) || 0;
@@ -1663,7 +1663,7 @@
     if (mk) mk.onclick = function () { makeBot(c); };
     var why = box.querySelector(".ht-silent-why");
     if (why) why.onclick = function () {
-      if (window.JavisReplyPolicy) window.JavisReplyPolicy.openPanel({ id: c.bot_id, name: c.bot_name || "" });
+      if (window.JeeviReplyPolicy) window.JeeviReplyPolicy.openPanel({ id: c.bot_id, name: c.bot_name || "" });
     };
     var now = box.querySelector(".ib-silent-ask");
     if (now) now.onclick = function () { askNow(c); };
@@ -1697,9 +1697,9 @@
     if (ta) {
       ta.value = nhapDo;
       if (goDo) { ta.focus(); try { ta.setSelectionRange(nhapDo.length, nhapDo.length); } catch (e) { /* ignore */ } }
-      // Same Enter rule as the main chat (JavisActs.enterSends, owner 2026-10-29): on a phone Enter is a new line and the
+      // Same Enter rule as the main chat (JeeviActs.enterSends, owner 2026-10-29): on a phone Enter is a new line and the
       // Send button sends; on a computer Enter sends and Shift+Enter is a new line; an IME composition never sends.
-      var A = window.JavisActs, soan = A ? A.trackComposition(ta) : function () { return false; };
+      var A = window.JeeviActs, soan = A ? A.trackComposition(ta) : function () { return false; };
       ta.onkeydown = function (e) {
         var send = A ? A.enterSends(e, soan()) : e.key === "Enter" && !e.shiftKey && !e.isComposing;
         if (send) { e.preventDefault(); gui(c); }
@@ -1741,7 +1741,7 @@
   // The phone's "who replies" sheet: drawn inside the chat column, so the 5-second redraw keeps it as it is.
   function setSheet(on) {
     _msheet = !!on;
-    var V = window.JavisInboxV5, sh = _host && _host.querySelector(".ht-thread .ib-msheet");
+    var V = window.JeeviInboxV5, sh = _host && _host.querySelector(".ht-thread .ib-msheet");
     if (!sh || !V) return;
     sh.hidden = !_msheet;
     sh.innerHTML = _msheet ? V.modeSheetHtml(_conv || {}, ic) : "";
@@ -1760,11 +1760,11 @@
     return n;
   }
   function pinSig() {
-    var P = window.JavisPinBar;
+    var P = window.JeeviPinBar;
     return (P ? P.sig(_pins) : "") + "|" + (_pinsOpen ? 1 : 0) + "|" + _pinMenu;
   }
   function pinBarHtml() {
-    var P = window.JavisPinBar;
+    var P = window.JeeviPinBar;
     return P ? P.barHtml(_pins, { open: _pinsOpen, menu: _pinMenu, ic: ic, who: pinWho }) : "";
   }
   // The bar's place in the thread, drawn with it so the messages are measured with the bar already there.
@@ -1903,7 +1903,7 @@
       }, true);
     }
     // Touch screens: hold a message for Pin / Unpin and Copy (msg-press.js), as on the Teams page.
-    var MP = window.JavisMsgPress;
+    var MP = window.JeeviMsgPress;
     if (MP) MP.bind(box, {
       selector: ".ht-msg[data-mid]",
       bubble: ".ht-bubble",
@@ -1915,7 +1915,7 @@
         var on = !!pinnedIds()[mid];
         var out = [{ icon: on ? "pin-off" : "pin", label: window.t(on ? "pin.unpin" : "pin.pin"),
                      run: function () { pinAct(mid, on ? "unpin" : "pin"); } }];
-        var words = (window.JavisHtMedia ? window.JavisHtMedia.chuThich(t.text || "") : t.text) || "";
+        var words = (window.JeeviHtMedia ? window.JeeviHtMedia.chuThich(t.text || "") : t.text) || "";
         if (words) out.push({ icon: "copy", label: window.t("pin.copy"), run: function () { copyText(words); } });
         return out;
       }
@@ -1986,7 +1986,7 @@
     // model rewrites it after the chat goes quiet and the bot reads it on later turns; the owner can still fix or empty
     // it here. A group and a public comment thread have no one customer (the server decides, `profile_chat`): they keep
     // a plain note of their own, and never show the profile of whoever wrote first there (owner, 2026-11-13).
-    var prof = hasProfile(c), JI = window.JavisInfo, grp = c.chat_type === "group";
+    var prof = hasProfile(c), JI = window.JeeviInfo, grp = c.chat_type === "group";
     var noteBox = '<textarea class="ib-notebox"' + (prof ? ' data-profile="1" rows="8"' : ' rows="3"') + ' maxlength="4000" placeholder="' +
       esc(t(prof ? "ib.i_profile_ph" : grp ? "ib.i_note_group_ph" : "ib.i_note_ph")) + '" aria-label="' +
       esc(t(prof ? "ib.i_profile" : grp ? "ib.i_note_group" : "ib.i_note")) + '"></textarea>';
@@ -2018,7 +2018,7 @@
     var ob = p.querySelector(".ib-open-bot");
     if (ob) ob.onclick = function () {
       chonTab("bot");
-      try { document.dispatchEvent(new CustomEvent("javis:chatbot-open", { detail: { bot_id: c.bot_id } })); } catch (e) { /* old browser */ }
+      try { document.dispatchEvent(new CustomEvent("jeevi:chatbot-open", { detail: { bot_id: c.bot_id } })); } catch (e) { /* old browser */ }
     };
     var mk = p.querySelector(".ib-make-bot");
     if (mk) mk.onclick = function () { makeBot(c); };
@@ -2036,7 +2036,7 @@
   // Block / Unblock, Leave group, Delete at the foot of Info: the rows of the "..." menu (same labels, same second line
   // saying whether it also happens on Zalo or the Page), run by the same functions. Plain buttons here, not menu items.
   function infoActsHtml(c) {
-    var F = window.JavisConvFilters;
+    var F = window.JeeviConvFilters;
     var items = F && F.infoActItems ? F.infoActItems(c) : [];
     if (!items.length) return "";
     return '<div class="ib-sec ib-acts">' + F.rowMenuHtml(items, ic).replace(/ role="menuitem[a-z]*"/g, "") + '</div>';
@@ -2103,7 +2103,7 @@
   function makeBot(c) {
     var a = _tk.filter(function (x) { return x.account_key === c.channel_account_id; })[0];
     chonTab("bot");
-    try { document.dispatchEvent(new CustomEvent("javis:chatbot-new", { detail: { account_id: a ? a.id : "" } })); } catch (e) { /* old browser */ }
+    try { document.dispatchEvent(new CustomEvent("jeevi:chatbot-new", { detail: { account_id: a ? a.id : "" } })); } catch (e) { /* old browser */ }
   }
 
   // A line under the composer about the last action (an error, "the A.I. chose to stay silent").
@@ -2141,7 +2141,7 @@
   // tags on or off, makes a new one (name + colour from the fixed palette) and renames, recolours or deletes one. The
   // row redraws on its own, so ticking several tags keeps the picker open.
   function palette(cur) {
-    var F = window.JavisConvFilters;
+    var F = window.JeeviConvFilters;
     return '<span class="ht-sws" role="group" aria-label="' + esc(window.t("ht.tag_colors")) + '">' + (F ? F.TAG_COLORS : []).map(function (k, i) {
       return '<button type="button" class="ht-sw' + (k === cur ? " on" : "") + '" data-c="' + k + '" aria-pressed="' + (k === cur) +
         '" aria-label="' + esc(window.t("ht.tag_color", { n: i + 1 })) + '"></button>';
@@ -2149,7 +2149,7 @@
   }
 
   function tagPopHtml(on) {
-    var F = window.JavisConvFilters;
+    var F = window.JeeviConvFilters;
     var rows = _tags.map(function (g) {
       if (_tagEdit === g.id) {
         return '<div class="ht-tagpop-edit" data-id="' + g.id + '">' +
@@ -2184,7 +2184,7 @@
   var _tagEditColor = "", _tagNewText = "", _tagEditText = null;   // picker colour being edited, and what is typed (kept across redraws)
   // The tag chips beside the name in the chat head follow every change made in the Info panel (no thread redraw).
   function paintHeadTags() {
-    var h = _host && _host.querySelector(".ht-thread .ib-htags"), F = window.JavisConvFilters;
+    var h = _host && _host.querySelector(".ht-thread .ib-htags"), F = window.JeeviConvFilters;
     if (!h || !_conv || !F) return;
     var add = h.querySelector(".ib-htag-add");
     h.querySelectorAll(".ht-tag, .ht-tag-more").forEach(function (x) { x.remove(); });
@@ -2194,7 +2194,7 @@
   function veTagRow() {
     paintHeadTags();
     var row = _host && _host.querySelector(".ht-info .ht-tagrow");
-    var F = window.JavisConvFilters;
+    var F = window.JeeviConvFilters;
     if (!row || !_conv || !F) return;
     var c = _conv, on = {};
     (c.tags || []).forEach(function (g) { on[g.id] = true; });
@@ -2345,10 +2345,10 @@
   // (console.css hides the handle and ignores the width below 901px).
   var LIST_MIN_W = 260, LIST_MINI_W = 72;
   function attachListResize(body) {
-    var CR = window.JavisColResize, wrap = body.querySelector(".ht-wrap"), col = body.querySelector(".ht-listcol");
+    var CR = window.JeeviColResize, wrap = body.querySelector(".ht-wrap"), col = body.querySelector(".ht-listcol");
     if (!CR || !wrap || !col) return;
     var inner = wrap.querySelector(".ht-body");
-    var o = { host: wrap, varName: "--ht-list-w", key: "javis_ht_list_w", min: LIST_MIN_W, max: 560, edge: "right",
+    var o = { host: wrap, varName: "--ht-list-w", key: "jeevi_ht_list_w", min: LIST_MIN_W, max: 560, edge: "right",
       label: "ht.resize_list", keep: 420, total: function () { return inner ? inner.clientWidth : 0; },
       snap: { below: CR.FOLD_AT(LIST_MIN_W), to: LIST_MINI_W, onSnap: function (on) {
         wrap.classList.toggle("ht-mini", !!on);
@@ -2514,7 +2514,7 @@
   function renderSilenceLine(c) {
     var s = _silence;
     if (!s || !c.bot_id) return "";
-    var RP = window.JavisReplyPolicy;
+    var RP = window.JeeviReplyPolicy;
     var lyDo = s.code ? (RP ? RP.codeLabel(s.code) : s.code) : (s.reason || "");
     if (!lyDo) return "";
     var diem = (s.score == null) ? "" : " (" + Number(s.score).toFixed(2) +
@@ -2540,7 +2540,7 @@
     _dictKeys = true;
     document.addEventListener("keydown", function (e) {
       if (!_conv || !dictOn(_conv) || _chon !== _dictConv) return;
-      var A = window.JavisActs;
+      var A = window.JeeviActs;
       var send = A ? A.enterSends(e, false) : e.key === "Enter" && !e.shiftKey && !e.isComposing;
       if (!send) return;
       var tg = e.target, tag = String((tg && tg.tagName) || "").toUpperCase();
@@ -2578,13 +2578,13 @@
 
   // The last messages of the open chat, for the rewrite at the end of a dictation (dictate.js polish).
   function dictContext() {
-    var D = window.JavisDictate;
+    var D = window.JeeviDictate;
     var m = _host && _host.querySelector(".ht-thread .ht-msgs");
     return D && D.recentMessages ? D.recentMessages(m, ".ht-msg:not(.ht-react) .ht-bubble", 4) : [];
   }
 
   function toggleMic(c) {
-    var D = window.JavisDictate;
+    var D = window.JeeviDictate;
     if (!D) { setNote(window.t("dict.unsupported"), true); return; }
     if (_dict && _dictState === "listening") { _dict.stop(); return; }
     if (_dict && _dictState !== "idle") return;
@@ -2694,7 +2694,7 @@
     veThread();
   }
   function veCompose(c) {
-    var V = window.JavisInboxV5, k = kenhCua(c.channel), t = window.t;
+    var V = window.JeeviInboxV5, k = kenhCua(c.channel), t = window.t;
     var laBot = !!c.bot_id;
     var draft = c.draft && String(c.draft.text || "").trim() ? c.draft : null;
     // On a personal account the message goes out under the owner's own name: the box says so in its placeholder
@@ -2702,7 +2702,7 @@
     // notes went (owner, 2026-10-28: a good UI needs no notes).
     var ten = k.kind === "account" ? accLabel(c) || k.nhan : "";
     // "Enter to send" in the placeholder is a computer's hint only: a phone's Enter is a new line.
-    var cham = !!(window.JavisActs && window.JavisActs.touchMain && window.JavisActs.touchMain());
+    var cham = !!(window.JeeviActs && window.JeeviActs.touchMain && window.JeeviActs.touchMain());
     var ph = ten ? t(laBot ? "ib.cin_ph_as_ai" : "ib.cin_ph_as", { ten: ten }) :
       t(laBot ? "ib.cin_ph_ai" : cham ? "ib.cin_ph_touch" : "ht.gui_ph");
     var busy = _aiBusy === "redo" || _aiBusy === "send" ? _aiBusy : "";
@@ -2843,10 +2843,10 @@
     // Owner, 2026-10-25: a photo the owner (or the bot) sends must show as a photo too, so they can check what went out;
     // it used to read "image https://...zdn.vn/....jpg". Any non-text message goes through the same parser.
     var wantMedia = t.sender_type === "customer" || (t.message_type && t.message_type !== "text");
-    var media = (wantMedia && window.JavisHtMedia) ? window.JavisHtMedia.phanTich(t, t.conversation_id) : null;
+    var media = (wantMedia && window.JeeviHtMedia) ? window.JeeviHtMedia.phanTich(t, t.conversation_id) : null;
     var hasMedia = !!(media && (media.anh || media.file));
     if (hasMedia) {
-      body = window.JavisHtMedia.html(media, esc, ic, window.t) + (media.chu ? '<div class="ht-chu-thich">' + esc(media.chu) + '</div>' : "");
+      body = window.JeeviHtMedia.html(media, esc, ic, window.t) + (media.chu ? '<div class="ht-chu-thich">' + esc(media.chu) + '</div>' : "");
     } else if (t.sender_type === "ai" && window.mdToHtml) {
       try { body = window.mdToHtml(t.text || "", ""); } catch (e) { body = esc(t.text || ""); }
     } else {
@@ -2938,7 +2938,7 @@
     var chips = [];
     if (nl.nhom) chips.push(ic("users") + " " + esc(window.t("ht.nl_nhom")));
     if (nl.gui_file) chips.push(ic("paperclip") + " " + esc(window.t("ht.nl_file")));
-    if (nl.tra_loi_tu_javis) chips.push(ic("send") + " " + esc(window.t("ht.nl_tra_loi")));
+    if (nl.tra_loi_tu_jeevi) chips.push(ic("send") + " " + esc(window.t("ht.nl_tra_loi")));
     var ten = a.external_id ? (a.tien_to_ten || "") + a.external_id : "";
     // BRAIN hiện khi nó là thông tin MỚI, không phải lúc nào cũng hiện:
     //   - đang xem "mọi brain": mỗi thẻ phải tự nói nó thuộc về đâu;
@@ -3011,7 +3011,7 @@
     if (tb) tb.onclick = function () {
       // Đã đứng ở tab Bot rồi: không dựng lại tab (mất nhịp), chỉ mở form với kênh này tích sẵn.
       if (_tab !== "bot") chonTab("bot");
-      try { document.dispatchEvent(new CustomEvent("javis:chatbot-new", { detail: { account_id: a.id } })); } catch (e) {}
+      try { document.dispatchEvent(new CustomEvent("jeevi:chatbot-new", { detail: { account_id: a.id } })); } catch (e) {}
     };
     var cb = c.querySelector(".ht-watch");
     if (cb) cb.onchange = async function () {
@@ -3029,7 +3029,7 @@
     var sua = c.querySelector(".ht-acc-sua");
     if (sua) sua.onclick = function () { moSuaTK(a); };
     var kn = c.querySelector(".ht-acc-ket-noi");
-    if (kn) kn.onclick = function () { try { window.JavisNav.go("mcp"); } catch (e) {} };
+    if (kn) kn.onclick = function () { try { window.JeeviNav.go("mcp"); } catch (e) {} };
     var xoa = c.querySelector(".ht-acc-xoa");
     if (xoa) xoa.onclick = function () { xoaTK(a); };
     return c;
@@ -3066,7 +3066,7 @@
   // để người dùng thấy đủ và biết kênh đó nối ở đâu), bước 2 dán token, kiểm, đặt tên.
   //
   // Hàm này là chỗ DUY NHẤT trong dashboard biết cách nối một tài khoản kênh. Form tạo bot
-  // (chatbots.js) gọi lại chính nó qua `JavisConversations.themTaiKhoan` thay vì chép một bản
+  // (chatbots.js) gọi lại chính nó qua `JeeviConversations.themTaiKhoan` thay vì chép một bản
   // thứ hai: trước 0.61.1 có hai form dán token song song, nên hướng dẫn riêng của từng kênh
   // bị nhân đôi và thêm một kênh mới là phải sửa cả hai nơi.
   //
@@ -3114,12 +3114,12 @@
     box.onmousedown = function (e) { if (e.target === box) dong(); };
     box.querySelector(".ht-close").onclick = dong;
     box.querySelectorAll(".ht-di-ket-noi").forEach(function (n) {
-      n.onclick = function () { dong(); try { window.JavisNav.go("mcp"); } catch (e) {} };
+      n.onclick = function () { dong(); try { window.JeeviNav.go("mcp"); } catch (e) {} };
     });
     // Vietnamese interface opens docs/, every other language docs/en/ (same rule as the owner channel guides).
     function guideUrl(k) {
       var h = (k && k.huong_dan) || {};
-      var vi = window.JavisI18n && window.JavisI18n.lang() === "vi";
+      var vi = window.JeeviI18n && window.JeeviI18n.lang() === "vi";
       var f = vi ? (h.vi || h.en) : (h.en || h.vi);
       if (!f) return "";
       return "https://github.com/blogminhquy/javis-os/blob/main/docs/" + (vi && h.vi ? "" : "en/") + f;
@@ -3151,11 +3151,11 @@
       var mo = hint.querySelector(".ht-mo-the");
       if (mo) mo.onclick = function () {
         dong();
-        try { window.JavisNav.go("mcp"); } catch (e) {}
+        try { window.JeeviNav.go("mcp"); } catch (e) {}
         // 2026-11-23: messenger-connect.js loads with the lazy group "packs" (the Connections page waits for it too).
         setTimeout(function () {
-          var openForm = function () { try { window.JavisMessenger && window.JavisMessenger.openForm(null); } catch (e) {} };
-          try { if (window.JavisNapCham) window.JavisNapCham.goi("packs", openForm); else openForm(); } catch (e) {}
+          var openForm = function () { try { window.JeeviMessenger && window.JeeviMessenger.openForm(null); } catch (e) {} };
+          try { if (window.JeeviNapCham) window.JeeviNapCham.goi("packs", openForm); else openForm(); } catch (e) {}
         }, 400);
       };
       box.querySelectorAll(".cb-kenh-o").forEach(function (n) { n.classList.toggle("on", n.dataset.k === id); });
@@ -3490,6 +3490,6 @@
     try { var s = window.Alpine && Alpine.store("nav"); if (s && s.go) s.go("conversations"); } catch (e) {}
   }
 
-  window.JavisConversations = { render: render, mo: moTu, chonTab: chonTab,
+  window.JeeviConversations = { render: render, mo: moTu, chonTab: chonTab,
                                themTaiKhoan: moThemTK, suaKenh: suaKenh, tenBrain: tenBrain, nhapTinCu: nhapTinCu };
 })();

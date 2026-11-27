@@ -8,7 +8,7 @@ author: Jeevi (bundled)
 enabled: true
 min_mode: safe
 tools:
-  - javis_app_list
-  - javis_app_open
-  - javis_app_close
+  - jeevi_app_list
+  - jeevi_app_open
+  - jeevi_app_close
 hooks: []

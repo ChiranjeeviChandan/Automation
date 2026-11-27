@@ -8,7 +8,7 @@ const path = require("path");
 const root = path.join(__dirname, "..", "..");
 // 0.426.0: the forms moved to the Tasks page (dashboard/tasks.js): the loop edit form and the reminder options.
 const cs = fs.readFileSync(path.join(root, "dashboard", "tasks.js"), "utf8");
-const plug = fs.readFileSync(path.join(root, "system", "plugins", "javis-schedule", "plugin.py"), "utf8");
+const plug = fs.readFileSync(path.join(root, "system", "plugins", "jeevi-schedule", "plugin.py"), "utf8");
 const vi = JSON.parse(fs.readFileSync(path.join(root, "dashboard", "i18n", "vi.json"), "utf8"));
 const en = JSON.parse(fs.readFileSync(path.join(root, "dashboard", "i18n", "en.json"), "utf8"));
 let fails = 0;

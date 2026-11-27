@@ -23,7 +23,7 @@ from fastapi.testclient import TestClient
 import my_tasks  # noqa: E402
 
 fails = []
-root = Path(tempfile.mkdtemp(prefix="javis-pulse-"))
+root = Path(tempfile.mkdtemp(prefix="jeevi-pulse-"))
 
 
 def check(name, cond):

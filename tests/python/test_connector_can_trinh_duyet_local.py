@@ -35,7 +35,7 @@ import web_security  # noqa: E402
 
 for h, mong in [("localhost", True), ("127.0.0.1:7777", True), ("[::1]:7777", True),
                 ("192.168.1.5:7777", True), ("10.0.0.2", True), ("mymac.local", True),
-                ("javis.example.com", False), ("https://javis.phamquangdai.com", False),
+                ("jeevi.example.com", False), ("https://jeevi.phamquangdai.com", False),
                 ("8.8.8.8:7777", False)]:
     check(f"host_kieu_local({h!r}) == {mong}", web_security.host_kieu_local(h) is mong)
 

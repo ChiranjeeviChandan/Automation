@@ -63,7 +63,7 @@ Bảng dưới là **khế ước**. Không viết bản thứ hai của bất k
 |---|---|
 | Khung chat (stream, tool call, đính kèm, giọng nói) | `_borrowChatNodes` (`console.js`) |
 | Danh sách phiên, ghim, đổi tên, tìm | `sessions-ui.js`, lọc theo kênh `coding:` |
-| Cây thư mục repo | `JavisVaultPanel.borrow(host)` (`console.js:7005`) |
+| Cây thư mục repo | `JeeviVaultPanel.borrow(host)` (`console.js:7005`) |
 | Xem sửa file, tô màu cú pháp | `file-editor.js` + `code-hl.js` |
 | Terminal trong phiên | `code-term.js` |
 | Chọn engine và model | `model-picker.js` + `model-list.js` |
@@ -86,7 +86,7 @@ Bốn chỗ khai báo, mỗi chỗ một dòng, đúng như comment trong `code-
 
 ### 4.2 Sổ repo
 
-`server/coding_store.py`, một file JSON trong `JAVIS_STATE_DIR`, khoá theo brain:
+`server/coding_store.py`, một file JSON trong `JEEVI_STATE_DIR`, khoá theo brain:
 
 ```json
 {
@@ -94,8 +94,8 @@ Bốn chỗ khai báo, mỗi chỗ một dòng, đúng như comment trong `code-
     {"id": "javis-os", "ten": "javis-os", "duong_dan": "/home/user/javis-os", "nhanh_goc": "main"}
   ],
   "phien": {
-    "<session id>": {"repo": "javis-os", "nhanh": "main", "worktree": "/var/javis/wt/ab12",
-                     "muc_quyen": "full", "diem_hoi": "javis/ab12/3"}
+    "<session id>": {"repo": "javis-os", "nhanh": "main", "worktree": "/var/jeevi/wt/ab12",
+                     "muc_quyen": "full", "diem_hoi": "jeevi/ab12/3"}
   }
 }
 ```
@@ -131,7 +131,7 @@ không đẩy xuống sau.
 - **Worktree**: mode `full` thì mặc định bật, hai mức kia mặc định tắt. `git worktree add` đặt
   ngoài cây repo chính, tên theo phiên. Đóng phiên mà worktree sạch thì dọn; còn sửa dở thì
   giữ và nói trong chat là giữ ở đâu.
-- **Điểm hồi**: trước mỗi lượt ở mode `full`, tạo một tag `javis/<phiên>/<n>` trên HEAD hiện
+- **Điểm hồi**: trước mỗi lượt ở mode `full`, tạo một tag `jeevi/<phiên>/<n>` trên HEAD hiện
   tại. Rollback là `git reset --hard <tag>`, hiện thành một nút trong lượt đó.
 - **Không bao giờ** force push, và không bao giờ đụng nhánh không thuộc phiên.
 
@@ -291,8 +291,8 @@ Ghi lại vì cả ba lượt đều là CÙNG một loại sai, và loại đó
 - **0.63.1** bỏ màn chặn "Chưa có repo nào" (một bước cài đặt dựng chắn trước một trang CHAT),
   và đổi REPO thành THƯ MỤC (git là thứ đọc ra, không phải điều kiện vào cửa).
 - **0.63.2** thay danh sách phiên tự vẽ bằng chính cột hội thoại của trang Trò chuyện
-  (`JavisChatSide.mount`), và thêm chế độ Plan.
-- **0.63.4** thay ô gõ đường dẫn bằng hộp duyệt thư mục `JavisFolderPicker`, mặc lại bộ lớp
+  (`JeeviChatSide.mount`), và thêm chế độ Plan.
+- **0.63.4** thay ô gõ đường dẫn bằng hộp duyệt thư mục `JeeviFolderPicker`, mặc lại bộ lớp
   `.folder-modal/.fm-*` và endpoint `GET /browse` đã có; `/browse` thêm `md=0` (bỏ đếm .md) và
   cờ `git` cho từng thư mục con. Icon mục đổi sang `code-xml`.
 

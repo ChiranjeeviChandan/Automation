@@ -30,11 +30,11 @@ import sys
 import time
 import urllib.parse
 
-NAME = os.environ.get("JAVIS_NAME") or "javis"
-SOCKET = os.environ.get("JAVIS_GUARD_SOCKET") or "/var/run/docker.sock"
-STORE = os.environ.get("JAVIS_GUARD_DIR") or "/guard"
-EVERY = float(os.environ.get("JAVIS_GUARD_EVERY") or 15)
-GRACE = float(os.environ.get("JAVIS_GUARD_GRACE") or 120)
+NAME = os.environ.get("JEEVI_NAME") or "jeevi"
+SOCKET = os.environ.get("JEEVI_GUARD_SOCKET") or "/var/run/docker.sock"
+STORE = os.environ.get("JEEVI_GUARD_DIR") or "/guard"
+EVERY = float(os.environ.get("JEEVI_GUARD_EVERY") or 15)
+GRACE = float(os.environ.get("JEEVI_GUARD_GRACE") or 120)
 
 
 def log(msg):

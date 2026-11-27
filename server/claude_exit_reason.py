@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import re
 
-_MARK = "_javis_exit_reason"
+_MARK = "_jeevi_exit_reason"
 _PLACEHOLDER = "check stderr output for details"
 _EXIT_CODE = re.compile(r"exit code:?\s*(-?\d+)", re.I)
 _QUOTED_LINES = 3

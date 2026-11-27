@@ -1,7 +1,7 @@
 """Suggest the owner's next message once Jeevi has answered (2026-11-07).
 
 Owner, 2026-11-07: Claude often shows a ready answer in the empty chat box after it replies ("ok làm theo đề xuất cho
-cả 2 PR đi"), and Tab drops it into the box; "em xem có thêm được vào javis không?".
+cả 2 PR đi"), and Tab drops it into the box; "em xem có thêm được vào jeevi không?".
 
 How it runs:
   - The browser asks (POST /chat/suggest) when a turn ends, with the last few messages of the chat on screen. The
@@ -111,7 +111,7 @@ _COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
 
 
 def _squash(text, limit: int, tail: bool = False) -> str:
-    """Hidden JAVIS_* blocks dropped, whitespace folded, cut to `limit` characters (the END of a reply matters most:
+    """Hidden JEEVI_* blocks dropped, whitespace folded, cut to `limit` characters (the END of a reply matters most:
     that is where the question or the proposal sits)."""
     t = " ".join(_COMMENT.sub(" ", str(text or "")).split())
     if len(t) <= limit:

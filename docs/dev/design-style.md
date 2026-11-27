@@ -139,7 +139,7 @@ Chủ thử trên iPhone, iPad và app thêm vào màn hình chính, thường g
   3 link) và nút "Xem tất cả"; bấm vào mở "Kho lưu trữ" ngay trong bảng đó, có nút quay lại, tab Ảnh/File/Link kèm số,
   ô tìm, xếp theo ngày (ảnh theo tháng), phân trang. Mẫu ở tab Thông tin của trang Nhóm (`teams.js`, `assetsHtml`).
 - **Sửa một đoạn chữ thì mở khung rộng, không dùng `prompt()` của trình duyệt** (19/11: "popup làm lại khi sửa để mở
-  rộng ra dễ sửa"). Dùng chung `JavisTextEdit.open(...)` (`dashboard/text-edit-dialog.js`): ô chữ tự giãn, đếm ký tự,
+  rộng ra dễ sửa"). Dùng chung `JeeviTextEdit.open(...)` (`dashboard/text-edit-dialog.js`): ô chữ tự giãn, đếm ký tự,
   lựa chọn dạng chip, Ctrl+Enter lưu; điện thoại là bảng kéo lên. Danh sách dài thì nút Thêm đứng cạnh ô tìm ở trên
   đầu, không nằm cuối danh sách.
 - **Popup thay cho thả xuống** với nội dung chi tiết, và popup đứng yên tới khi người dùng tự đóng. Danh sách ngắn, đơn

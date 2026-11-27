@@ -13,7 +13,7 @@ const en = JSON.parse(fs.readFileSync(path.join(D, "i18n/en.json"), "utf8"));
 let fails = 0;
 function check(name, ok) { console.log((ok ? "ok   " : "FAIL ") + name); if (!ok) fails++; }
 
-const raw = '<!-- JAVIS_VIEC: {"kind": "reminder", "status": "done", "title": "Báo cáo sáng", "id": "r_1", "call": "1"} -->\n'
+const raw = '<!-- JEEVI_VIEC: {"kind": "reminder", "status": "done", "title": "Báo cáo sáng", "id": "r_1", "call": "1"} -->\n'
   + "Doanh thu hôm qua 12 triệu\n\n[🔊 Tin thoại](attachments/voice/a.mp3)";
 const c = IC.parse(raw);
 check("a call reminder is recognised", !!c && c.title === "Báo cáo sáng");
@@ -21,7 +21,7 @@ check("text to read drops hidden blocks and the voice link", c && c.text === "Do
 check("a plain reminder does not ring", IC.parse(raw.replace(', "call": "1"', "")) === null);
 check("a failed reminder does not ring", IC.parse(raw.replace('"done"', '"failed"')) === null);
 check("a task result does not ring", IC.parse(raw.replace('"reminder"', '"task"')) === null);
-check("broken block ignored", IC.parse('<!-- JAVIS_VIEC: {"kind": -->') === null && IC.parse("") === null);
+check("broken block ignored", IC.parse('<!-- JEEVI_VIEC: {"kind": -->') === null && IC.parse("") === null);
 check("long text capped", IC.parse(raw.replace("12 triệu", "x".repeat(5000))).text.length <= 1500);
 
 const t = (k) => vi[k] || k;

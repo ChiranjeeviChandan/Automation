@@ -29,7 +29,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-groktest-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-groktest-")
 
 import grok_cli          # noqa: E402
 import main              # noqa: E402
@@ -165,7 +165,7 @@ _nap_help()
 # ============================================================
 def _gia(dong_ra, ma=0, stderr=""):
     """Dựng một `grok` giả in ra đúng những dòng mình muốn."""
-    d = Path(tempfile.mkdtemp(prefix="javis-fakegrok-"))
+    d = Path(tempfile.mkdtemp(prefix="jeevi-fakegrok-"))
     p = d / "grok"
     body = json.dumps(dong_ra)
     p.write_text(
@@ -191,7 +191,7 @@ def _chay_gia(dong_ra, ma=0, stderr="", prompt="xin chào"):
 
 _DONG = [
     json.dumps({"type": "thought", "text": "để tôi nghĩ đã"}),
-    json.dumps({"type": "tool_call", "id": "t1", "name": "javis_read_file",
+    json.dumps({"type": "tool_call", "id": "t1", "name": "jeevi_read_file",
                 "input": {"path": "MEMORY.md"}}),
     json.dumps({"type": "tool_call_update", "id": "t1", "status": "running"}),
     json.dumps({"type": "tool_call_update", "id": "t1", "status": "completed",
@@ -210,7 +210,7 @@ check("mảnh chữ được GHÉP lại thành một câu trả lời",
 check("CANARY: `thought` KHÔNG lọt vào câu trả lời (lập luận nội bộ, không phải câu trả lời)",
       _final is not None and "nghĩ" not in _final["content"], _final)
 check("tool_call -> tool_call kèm tên công cụ",
-      any(e["type"] == "tool_call" and e.get("name") == "javis_read_file" for e in _evs))
+      any(e["type"] == "tool_call" and e.get("name") == "jeevi_read_file" for e in _evs))
 check("CANARY: tool_call_update đang chạy dở KHÔNG thành tool_result "
       "(không thì mỗi tool báo kết quả hai lần)",
       len([e for e in _evs if e["type"] == "tool_result"]) == 1, _loai)
@@ -256,7 +256,7 @@ check("end status=error -> sự kiện error",
 # CLI treo im (headless mà dừng lại hỏi duyệt) -> watchdog phải cắt, không treo tới vô tận.
 # Đây KHÔNG phải phòng xa: `permission_cho_mode()` fail-closed, nên trên một bản CLI không khai
 # `--permission-mode` nó không truyền cờ nào, và lúc đó không có gì ngoài watchdog gỡ được.
-_treo = Path(tempfile.mkdtemp(prefix="javis-grokhang-")) / "grok"
+_treo = Path(tempfile.mkdtemp(prefix="jeevi-grokhang-")) / "grok"
 _treo.write_text("#!/usr/bin/env python3\nimport sys, time\n"
                  "if '--help' in sys.argv:\n    print('  -p, --single')\n"
                  "else:\n    time.sleep(60)\n", encoding="utf-8")
@@ -279,13 +279,13 @@ check("và nói rõ là bị cắt vì quá giờ, không im lặng",
 # File prompt tạm phải được dọn, kể cả ở lượt bị cắt giữa chừng
 import glob  # noqa: E402
 check("CANARY: file prompt tạm được dọn, không tích rác trong thư mục tạm",
-      glob.glob(os.path.join(tempfile.gettempdir(), "javis-grok-*.txt")) == [])
+      glob.glob(os.path.join(tempfile.gettempdir(), "jeevi-grok-*.txt")) == [])
 
 
 # ============================================================
 # 4b. Trạng thái đăng nhập đọc từ file, không đẻ tiến trình
 # ============================================================
-os.environ["GROK_HOME"] = tempfile.mkdtemp(prefix="javis-grokhome-")
+os.environ["GROK_HOME"] = tempfile.mkdtemp(prefix="jeevi-grokhome-")
 os.environ.pop("XAI_API_KEY", None)
 _a = grok_cli.auth_status()
 check("chưa đăng nhập -> nói rõ phải làm gì",
@@ -305,7 +305,7 @@ check("có auth.json thì đọc ra cả tài khoản và gói",
 # ============================================================
 # 5. MCP: cô lập theo brain, và KHÔNG phá cấu hình sẵn có
 # ============================================================
-_brain = Path(tempfile.mkdtemp(prefix="javis-grokbrain-"))
+_brain = Path(tempfile.mkdtemp(prefix="jeevi-grokbrain-"))
 _hub = grok_cli.hub_entry("http://127.0.0.1:8790/mcp",
                           {"Authorization": "Bearer tok", "X-Jeevi-Mode": "full",
                            "X-Jeevi-Vault": str(_brain)})
@@ -315,8 +315,8 @@ _p = grok_cli.ghi_mcp_settings(_brain, _hub)
 check("ghi vào TRONG brain, không đụng ~/.grok của người dùng",
       _p is not None and str(_brain) in _p and _p.endswith(".grok/config.toml"), _p)
 _st = grok_cli.trang_thai_mcp(_brain)
-check("đọc LẠI chính file vừa ghi thì thấy entry javis",
-      _st["co_javis"] and _st["url"] == "http://127.0.0.1:8790/mcp" and _st["so_header"] == 3, _st)
+check("đọc LẠI chính file vừa ghi thì thấy entry jeevi",
+      _st["co_jeevi"] and _st["url"] == "http://127.0.0.1:8790/mcp" and _st["so_header"] == 3, _st)
 try:
     check("file chứa hub token nên phải chmod 600",
           (os.stat(_p).st_mode & 0o077) == 0 or os.name == "nt")
@@ -335,23 +335,23 @@ check("CANARY: ghi lại hub KHÔNG xoá mất cấu hình sẵn có của ngư�
       and _lai.get("tools", {}).get("bash_timeout") == 60
       and _lai.get("tools", {}).get("flag") is True
       and _lai.get("tools", {}).get("domains") == ["a.com", "b.com"], _lai)
-check("và entry javis vẫn còn", "javis" in _lai.get("mcp_servers", {}))
+check("và entry jeevi vẫn còn", "jeevi" in _lai.get("mcp_servers", {}))
 
-# hub=None -> gỡ entry javis, giữ phần còn lại
+# hub=None -> gỡ entry jeevi, giữ phần còn lại
 grok_cli.ghi_mcp_settings(_brain, None)
 _lai2 = tomllib.load(open(_p, "rb"))
-check("tắt hub thì GỠ entry javis nhưng giữ nguyên phần còn lại",
-      "javis" not in _lai2.get("mcp_servers", {})
+check("tắt hub thì GỠ entry jeevi nhưng giữ nguyên phần còn lại",
+      "jeevi" not in _lai2.get("mcp_servers", {})
       and _lai2.get("models", {}).get("default") == "grok-4.6", _lai2)
 
 # File HỎNG -> tuyệt đối không ghi đè
-_hong = '[mcp_servers.javis]\nurl = "quên đóng nháy\n'
+_hong = '[mcp_servers.jeevi]\nurl = "quên đóng nháy\n'
 Path(_p).write_text(_hong, encoding="utf-8")
 _r = grok_cli.ghi_mcp_settings(_brain, _hub)
 check("CANARY: file config.toml HỎNG thì KHÔNG ghi đè (thà thiếu tool còn hơn xoá cấu hình)",
       _r is None and Path(_p).read_text(encoding="utf-8") == _hong)
 check("và trạng thái nói thẳng là chưa đấu được, không báo xanh giả",
-      grok_cli.trang_thai_mcp(_brain)["co_javis"] is False)
+      grok_cli.trang_thai_mcp(_brain)["co_jeevi"] is False)
 
 
 # ============================================================
@@ -428,7 +428,7 @@ grok_cli.find_grok_cli = lambda: "/gia/grok"      # bỏ qua bước "đã cài 
 
 
 def _dat_auth(noi_dung, ten="auth.json"):
-    d = tempfile.mkdtemp(prefix="javis-grokhome-")
+    d = tempfile.mkdtemp(prefix="jeevi-grokhome-")
     if noi_dung is not None:
         Path(d, ten).write_text(json.dumps(noi_dung, ensure_ascii=False), encoding="utf-8")
     os.environ["GROK_HOME"] = d
@@ -537,8 +537,8 @@ check("và vòng quay kiểm `connected` TRƯỚC khi kêu hết giờ",
 # thật theo ảnh chụp của người dùng - in link kèm mã bằng `\r` (spinner, KHÔNG xuống dòng),
 # đứng chờ, rồi mới ghi file phiên với token LỒNG trong `oauth`. Bản 0.50.0 hỏng ở cả hai chỗ
 # đó, và không mục nào ở trên một mình chứng minh được cả chuỗi chạy thông.
-_login_home = tempfile.mkdtemp(prefix="javis-grokhome-live-")
-_d = Path(tempfile.mkdtemp(prefix="javis-fakelogin-"))
+_login_home = tempfile.mkdtemp(prefix="jeevi-grokhome-live-")
+_d = Path(tempfile.mkdtemp(prefix="jeevi-fakelogin-"))
 _p = _d / "grok"
 _p.write_text(
     "#!/usr/bin/env python3\n"
@@ -609,7 +609,7 @@ grok_cli._HELP_CACHE.update(path=None, text="", ts=0.0)
 # Hai ca cần hai cách chữa, nên test này canh riêng từng ca.
 def _gia_kich_ban(than: str):
     """Dựng `grok` giả với thân hàm tự viết, và trỏ cả `co_co` vào nó."""
-    d = Path(tempfile.mkdtemp(prefix="javis-grokq-"))
+    d = Path(tempfile.mkdtemp(prefix="jeevi-grokq-"))
     q = d / "grok"
     q.write_text("#!/usr/bin/env python3\nimport sys, json\n" + than, encoding="utf-8")
     q.chmod(q.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
@@ -890,8 +890,8 @@ check("mức suggest vẫn chặn đủ ghi file và chạy lệnh",
 check("mức full vẫn không chặn gì", grok_cli._LUAT_CHAN["full"] == ())
 
 # Owner 2026-11-07: no turn cap by default. Only a CLI build without `--permission-mode` (which could stop to ask and
-# hang silently) keeps the 900 s net; JAVIS_GROK_TIMEOUT still sets a cap.
-_co_that, _env_that = grok_cli.co_co, os.environ.pop("JAVIS_GROK_TIMEOUT", None)
+# hang silently) keeps the 900 s net; JEEVI_GROK_TIMEOUT still sets a cap.
+_co_that, _env_that = grok_cli.co_co, os.environ.pop("JEEVI_GROK_TIMEOUT", None)
 try:
     _gc = grok_cli.GrokCLI(cwd="/tmp")
     grok_cli.co_co = lambda *names: "--permission-mode" in names
@@ -900,13 +900,13 @@ try:
     check("a CLI without --permission-mode keeps the 900 s net",
           _gc.turn_cap() == grok_cli.NO_PERMISSION_FLAG_CAP == 900.0)
     for _raw, _want in (("1800", 1800.0), ("0", 0.0), ("abc", 0.0), ("-3", 0.0)):
-        os.environ["JAVIS_GROK_TIMEOUT"] = _raw
-        check(f"JAVIS_GROK_TIMEOUT={_raw!r} -> {_want}", grok_cli.turn_cap_seconds() == _want)
+        os.environ["JEEVI_GROK_TIMEOUT"] = _raw
+        check(f"JEEVI_GROK_TIMEOUT={_raw!r} -> {_want}", grok_cli.turn_cap_seconds() == _want)
 finally:
     grok_cli.co_co = _co_that
-    os.environ.pop("JAVIS_GROK_TIMEOUT", None)
+    os.environ.pop("JEEVI_GROK_TIMEOUT", None)
     if _env_that is not None:
-        os.environ["JAVIS_GROK_TIMEOUT"] = _env_that
+        os.environ["JEEVI_GROK_TIMEOUT"] = _env_that
 
 
 print()

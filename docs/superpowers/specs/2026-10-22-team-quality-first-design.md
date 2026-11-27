@@ -53,7 +53,7 @@ Ngoài phạm vi: tự thay model theo giá; hard cap tiền mới; thanh toán/
 
 ### 4.1 Áp dụng từ lúc tạo việc
 
-Mọi việc Team mới, dù tạo từ chat/Giao việc, công cụ `javis_team`, trưởng nhóm, mandate hay đường API nội bộ, đều phải có một hợp đồng nghiệm thu trước bước thực thi đầu tiên. Chat thuần không tạo sản phẩm vẫn giữ nguyên, không phát sinh hợp đồng hay việc nền.
+Mọi việc Team mới, dù tạo từ chat/Giao việc, công cụ `jeevi_team`, trưởng nhóm, mandate hay đường API nội bộ, đều phải có một hợp đồng nghiệm thu trước bước thực thi đầu tiên. Chat thuần không tạo sản phẩm vẫn giữ nguyên, không phát sinh hợp đồng hay việc nền.
 
 Thứ tự lấy hợp đồng:
 
@@ -172,7 +172,7 @@ Phải xử lý cả các trần lượt cũ, không chỉ bỏ một trần USD
 - Với việc được chủ giao trong nhóm bật quality_first, các preset lượt/việc và lượt/ngày nhằm tiết kiệm của ứng dụng chuyển thành mức tham khảo, không cắt ngang việc hay bỏ kiểm chứng. Không để một gate cũ phía agent budget âm thầm tái áp cùng trần cho nghĩa vụ của việc.
 - Giữ giới hạn đồng thời, lease, timeout, độ sâu nhờ hỗ trợ và nhận diện không tiến triển vì đây là cơ chế vận hành. Không tự tăng quyền hay số agent khi vượt mức tham khảo.
 - Với hoạt động tự phát như quét, tự lên tiếng, tự sinh việc: giữ quy tắc có sự kiện hữu ích và nguồn được cấp; không biến quality_first thành nền tự gọi model không giới hạn. Hạn mức tự phát không được lấy mất quyền hoàn tất việc chủ đã giao.
-- Trần quản trị máy chủ như `JAVIS_RESONANCE_CALL_CEILING`, quota/rate limit provider, lệnh dừng và trần chủ đã đặt rõ ràng vẫn được tôn trọng. Nếu chúng chặn việc, ghi đúng loại và lý do, giữ sản phẩm, không báo Xong và không tự đổi sang model rẻ hơn.
+- Trần quản trị máy chủ như `JEEVI_RESONANCE_CALL_CEILING`, quota/rate limit provider, lệnh dừng và trần chủ đã đặt rõ ràng vẫn được tôn trọng. Nếu chúng chặn việc, ghi đúng loại và lý do, giữ sản phẩm, không báo Xong và không tự đổi sang model rẻ hơn.
 - Nhóm cũ có số trần nhưng không biết đó là preset hay chủ đã tự đặt: migration không được tự đoán và xóa. Khi chuyển nhóm đó sang quality_first, giao diện cho chủ chọn một lần cách giữ/chuyển các trần hiện có; không hỏi lại cho từng lượt. Nhóm mới dùng mặc định quality_first sau rollout.
 
 Không làm thêm tùy chọn hard cap tiền trong phạm vi spec. Nếu sau này chủ yêu cầu một giới hạn tiền cụ thể thì đặc tả riêng, không mặc định bật dựa trên tài liệu này.

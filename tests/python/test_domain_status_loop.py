@@ -2,7 +2,7 @@
 
     python tests/run.py domain_status_loop      (no network: the lookups are stubbed with slow fakes)
 
-"Bị mất kết nối khi 1 người khác truy cập vào javis ở máy khác": every dashboard load asks /domain/status
+"Bị mất kết nối khi 1 người khác truy cập vào jeevi ở máy khác": every dashboard load asks /domain/status
 (branding.js loadExtras), and the route looked up the server's public IP (three HTTPS services, DNS + 4s timeout
 each, not cached when they failed) and resolved the saved domain ON THE EVENT LOOP. On a server whose DNS or outbound
 HTTPS is slow, one visitor opening Jeevi froze the whole server for 12 to 24 seconds (measured with Playwright: the
@@ -22,10 +22,10 @@ import threading
 import time
 import urllib.request
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-domain-loop-test-")
-os.environ["JAVIS_REQUIRE_LOGIN"] = "0"
-os.environ.pop("JAVIS_ADMIN_PASSWORD", None)
-os.environ.pop("JAVIS_DEPLOY_TARGET", None)
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-domain-loop-test-")
+os.environ["JEEVI_REQUIRE_LOGIN"] = "0"
+os.environ.pop("JEEVI_ADMIN_PASSWORD", None)
+os.environ.pop("JEEVI_DEPLOY_TARGET", None)
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -72,7 +72,7 @@ async def probe_ok(domain, hostinger=False):
 urllib.request.urlopen = slow_urlopen
 socket.gethostbyname = slow_gethostbyname
 dom._probe_https = probe_ok
-c.update_settings({"domain": {"custom": "javis.example.com"}})
+c.update_settings({"domain": {"custom": "jeevi.example.com"}})
 
 
 async def run(n_requests):

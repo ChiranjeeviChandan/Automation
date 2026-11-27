@@ -84,13 +84,13 @@ const en = JSON.parse(fs.readFileSync(path.join(ROOT, "dashboard/i18n/en.json"),
 // ---- 5. /goal: bóc dòng ẩn ----
 const R = L.tachMucTieu;
 check("goal: không có marker -> giữ nguyên, goal null", (() => { const r = R("Xong rồi\n\n\nnhé"); return r.goal === null && r.clean === "Xong rồi\n\n\nnhé"; })());
-check("goal: done true", (() => { const r = R('Đã đối soát.\n<!-- JAVIS_GOAL: {"done":true} -->'); return r.goal && r.goal.done === true && r.clean === "Đã đối soát."; })());
-check("goal: done false kèm left", (() => { const r = R('Còn việc.\n<!-- JAVIS_GOAL: {"done":false,"left":"chưa gửi báo cáo"} -->'); return r.goal && r.goal.done === false && r.goal.left === "chưa gửi báo cáo"; })());
-check("goal: marker hỏng (JSON sai) -> null, câu trả lời vẫn còn", (() => { const r = R("Ok\n<!-- JAVIS_GOAL: {done:true -->"); return r.goal === null && r.clean === "Ok"; })());
-check("goal: done không phải boolean -> null", R('a <!-- JAVIS_GOAL: {"done":"yes"} -->').goal === null);
-check("goal: nhiều marker -> marker CUỐI thắng", R('<!-- JAVIS_GOAL: {"done":false} --> b <!-- JAVIS_GOAL: {"done":true} -->').goal.done === true);
-check("goal: marker cuối hỏng thì không lấy marker trước", R('<!-- JAVIS_GOAL: {"done":true} --> b <!-- JAVIS_GOAL: xxx -->').goal === null);
-check("goal: left quá dài bị cắt", R('<!-- JAVIS_GOAL: {"done":false,"left":"' + "x".repeat(500) + '"} -->').goal.left.length === 300);
+check("goal: done true", (() => { const r = R('Đã đối soát.\n<!-- JEEVI_GOAL: {"done":true} -->'); return r.goal && r.goal.done === true && r.clean === "Đã đối soát."; })());
+check("goal: done false kèm left", (() => { const r = R('Còn việc.\n<!-- JEEVI_GOAL: {"done":false,"left":"chưa gửi báo cáo"} -->'); return r.goal && r.goal.done === false && r.goal.left === "chưa gửi báo cáo"; })());
+check("goal: marker hỏng (JSON sai) -> null, câu trả lời vẫn còn", (() => { const r = R("Ok\n<!-- JEEVI_GOAL: {done:true -->"); return r.goal === null && r.clean === "Ok"; })());
+check("goal: done không phải boolean -> null", R('a <!-- JEEVI_GOAL: {"done":"yes"} -->').goal === null);
+check("goal: nhiều marker -> marker CUỐI thắng", R('<!-- JEEVI_GOAL: {"done":false} --> b <!-- JEEVI_GOAL: {"done":true} -->').goal.done === true);
+check("goal: marker cuối hỏng thì không lấy marker trước", R('<!-- JEEVI_GOAL: {"done":true} --> b <!-- JEEVI_GOAL: xxx -->').goal === null);
+check("goal: left quá dài bị cắt", R('<!-- JEEVI_GOAL: {"done":false,"left":"' + "x".repeat(500) + '"} -->').goal.left.length === 300);
 
 // ---- 6. /goal: quyết định vòng tiếp ----
 const Q = L.quyetDinhVongTiep;
@@ -109,16 +109,16 @@ check("vòng: trần lớn nhất luôn dừng dù model nói chưa xong (vô h�
 
 // ---- 6b. /goal 0.173.1: trần 5, dừng khi không làm được, dòng nhắc gập mở ----
 check("goal: trần là 5 vòng", L.GOAL_TOI_DA === 5);
-check("goal: đọc được blocked kèm lý do", (() => { const r = R('Không vào được POS.\n<!-- JAVIS_GOAL: {"done":false,"blocked":"thiếu quyền POS"} -->'); return r.goal && r.goal.blocked === "thiếu quyền POS" && r.clean === "Không vào được POS."; })());
-check("goal: done true thì bỏ qua blocked", R('<!-- JAVIS_GOAL: {"done":true,"blocked":"x"} -->').goal.blocked === undefined);
+check("goal: đọc được blocked kèm lý do", (() => { const r = R('Không vào được POS.\n<!-- JEEVI_GOAL: {"done":false,"blocked":"thiếu quyền POS"} -->'); return r.goal && r.goal.blocked === "thiếu quyền POS" && r.clean === "Không vào được POS."; })());
+check("goal: done true thì bỏ qua blocked", R('<!-- JEEVI_GOAL: {"done":true,"blocked":"x"} -->').goal.blocked === undefined);
 check("vòng: blocked -> dừng ngay (khong_lam_duoc), mang lý do", (() => { const r = Q(st({ vong: 1 }), { marker: { done: false, left: "a", blocked: "thiếu quyền POS" } }); return r.act === "dung" && r.ly === "khong_lam_duoc" && r.why === "thiếu quyền POS"; })());
 check("vòng: lỗi và hỏi ngược vẫn đứng trước blocked", Q(st(), { loi: true, marker: { done: false, blocked: "x" } }).ly === "loi");
 const V = L.docVong;
-const khoiVong = '[MỤC TIÊU: đối soát\nChế độ...\n<!-- JAVIS_GOAL_ROUND: {"v": 3, "n": 5, "left": "còn 8 đơn"} -->\nCuối...]\n\nTiếp tục làm cho tới khi đạt mục tiêu.';
+const khoiVong = '[MỤC TIÊU: đối soát\nChế độ...\n<!-- JEEVI_GOAL_ROUND: {"v": 3, "n": 5, "left": "còn 8 đơn"} -->\nCuối...]\n\nTiếp tục làm cho tới khi đạt mục tiêu.';
 check("docVong: đọc v, n, left từ tin vòng tự động", (() => { const r = V(khoiVong); return r && r.v === 3 && r.n === 5 && r.left === "còn 8 đơn"; })());
 check("docVong: tin thường, vòng 1, JSON hỏng đều là null",
-  V("dọn kho giúp tôi") === null && V('<!-- JAVIS_GOAL_ROUND: {"v": 1, "n": 5} -->') === null && V("<!-- JAVIS_GOAL_ROUND: {v:2} -->") === null && V(null) === null);
-check("docVong: v lớn hơn n là null", V('<!-- JAVIS_GOAL_ROUND: {"v": 6, "n": 5} -->') === null);
+  V("dọn kho giúp tôi") === null && V('<!-- JEEVI_GOAL_ROUND: {"v": 1, "n": 5} -->') === null && V("<!-- JEEVI_GOAL_ROUND: {v:2} -->") === null && V(null) === null);
+check("docVong: v lớn hơn n là null", V('<!-- JEEVI_GOAL_ROUND: {"v": 6, "n": 5} -->') === null);
 const H = L.vongHtml;
 check("vongHtml: dòng gập mở có vòng, tình trạng, nút Tắt mục tiêu đang bật",
   (() => { const h = H({ v: 2, n: 5, left: "còn 8 đơn" }, true); return h.includes("<details") && h.includes("2/5") && h.includes("còn 8 đơn") && h.includes("goal-round-stop") && !h.includes("disabled") && h.includes("Tắt mục tiêu"); })());
@@ -155,13 +155,13 @@ check("bộ nhớ: trống thì nói trống", L.dinhDangBoNho({ text: "  " }).i
 check("xuất: bỏ khối điều khiển khỏi tin của Jeevi, làm sạch tin người dùng", (() => {
   const md = L.dinhDangXuat({ title: "Kế hoạch", messages: [
     { role: "user", content: "[SKILL: x\nHãy dùng]\n\nchào" },
-    { role: "assistant", content: 'Xin chào\n<!-- JAVIS_GOAL: {"done":true} -->' },
+    { role: "assistant", content: 'Xin chào\n<!-- JEEVI_GOAL: {"done":true} -->' },
     { role: "system", content: "bỏ" },
   ] }, "12:00", (s) => s.replace(/^\[[^\]]*\]\n\n/, ""));
-  return md.startsWith("# Kế hoạch") && md.includes("chào") && !md.includes("[SKILL") && !md.includes("JAVIS_GOAL") && !md.includes("bỏ");
+  return md.startsWith("# Kế hoạch") && md.includes("chào") && !md.includes("[SKILL") && !md.includes("JEEVI_GOAL") && !md.includes("bỏ");
 })());
-check("tên file xuất: bỏ dấu, chỉ a-z0-9 và gạch ngang", L.tenFileXuat("Đối soát đơn hàng!", "2026-09-29") === "javis-doi-soat-don-hang-2026-09-29.md");
-check("tên file xuất: tiêu đề rỗng có tên dự phòng", L.tenFileXuat("", "2026-09-29") === "javis-hoi-thoai-2026-09-29.md");
+check("tên file xuất: bỏ dấu, chỉ a-z0-9 và gạch ngang", L.tenFileXuat("Đối soát đơn hàng!", "2026-09-29") === "jeevi-doi-soat-don-hang-2026-09-29.md");
+check("tên file xuất: tiêu đề rỗng có tên dự phòng", L.tenFileXuat("", "2026-09-29") === "jeevi-hoi-thoai-2026-09-29.md");
 
 // ---- 8. Khớp tên (brain) ----
 const bs = [{ name: "Brain Default" }, { name: "Cửa hàng" }, { name: "Cửa hàng 2" }];

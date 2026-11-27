@@ -7,7 +7,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-os.environ['JAVIS_STATE_DIR'] = tempfile.mkdtemp(prefix='javis-workflow-codex-')
+os.environ['JEEVI_STATE_DIR'] = tempfile.mkdtemp(prefix='jeevi-workflow-codex-')
 import main
 import mcp_hub
 import workflow_codex
@@ -20,7 +20,7 @@ def apply_hub(cli, root):
     cli.vault_root = root
 
 
-with patch.object(main, '_brain_root', return_value=Path(os.environ['JAVIS_STATE_DIR'])), \
+with patch.object(main, '_brain_root', return_value=Path(os.environ['JEEVI_STATE_DIR'])), \
         patch.object(main, '_apply_codex_hub', side_effect=apply_hub), \
         patch.object(main, '_codex_user_mcp_servers', return_value=['node_repl']), \
         patch.object(main, '_codex_safe_model', side_effect=lambda model: model), \
@@ -42,12 +42,12 @@ with patch.object(main, '_brain_root', return_value=Path(os.environ['JAVIS_STATE
         assert 'features.computer_use=false' in cli.extra_config
         assert 'features.multi_agent=false' in cli.extra_config
         assert 'mcp_servers.node_repl.enabled=false' in cli.extra_config
-        assert 'mcp_servers.javis.required=true' in cli.extra_config
-        config = next(x for x in cli.extra_config if x.startswith('mcp_servers.javis.http_headers.X-Jeevi-Tool-Allowlist='))
+        assert 'mcp_servers.jeevi.required=true' in cli.extra_config
+        config = next(x for x in cli.extra_config if x.startswith('mcp_servers.jeevi.http_headers.X-Jeevi-Tool-Allowlist='))
         names = json.loads(json.loads(config.split('=', 1)[1]))
-        expected = {'javis_read_file', 'javis_list_dir', 'javis_search_files', 'audio_review'}
+        expected = {'jeevi_read_file', 'jeevi_list_dir', 'jeevi_search_files', 'audio_review'}
         if mode == 'auto':
-            expected |= {'javis_write_file', 'javis_edit_file'}
+            expected |= {'jeevi_write_file', 'jeevi_edit_file'}
         assert set(names) == expected
         assert cli.model == 'gpt-6-astra'
         print('PASS factory ChatGPT', mode, 'scoped hub and native restrictions')
@@ -61,7 +61,7 @@ class FakeClaude:
 
 
 built = []
-with patch.object(main, '_brain_root', return_value=Path(os.environ['JAVIS_STATE_DIR'])), \
+with patch.object(main, '_brain_root', return_value=Path(os.environ['JEEVI_STATE_DIR'])), \
         patch.object(main, '_apply_codex_hub', side_effect=apply_hub), \
         patch.object(main, '_codex_user_mcp_servers', return_value=[]), \
         patch.object(main.openai_oauth, 'write_codex_auth', side_effect=AssertionError('Codex auth written')), \
@@ -106,8 +106,8 @@ async def verify_hub():
     async def write(args):
         calls.append('write')
         return 'write-ok'
-    specs = [{'fn': name, 'description': name, 'schema': {}} for name in ['javis_read_file', 'javis_write_file']]
-    routes = {'javis_read_file': {'call': read}, 'javis_write_file': {'call': write}}
+    specs = [{'fn': name, 'description': name, 'schema': {}} for name in ['jeevi_read_file', 'jeevi_write_file']]
+    routes = {'jeevi_read_file': {'call': read}, 'jeevi_write_file': {'call': write}}
     async def no_mcp(*a, **k):
         return [], {}
     with patch.object(mcp_hub.mcp_store, 'resolved', return_value=[]), \
@@ -115,22 +115,22 @@ async def verify_hub():
             patch.object(mcp_hub, '_builtin_tools', return_value=(specs, routes)), \
             patch.object(main.plugins_host, 'has_tool_hooks', return_value=False):
         mcp_hub._cache.clear()
-        root = os.environ['JAVIS_STATE_DIR']
+        root = os.environ['JEEVI_STATE_DIR']
         a, route_a = await mcp_hub.discover_all('auto', root, include_plugins=False,
-                                               tool_allowlist=['javis_read_file'])
+                                               tool_allowlist=['jeevi_read_file'])
         b, route_b = await mcp_hub.discover_all('auto', root, include_plugins=False,
-                                               tool_allowlist=['javis_write_file'])
-        assert {t['fn'] for t in a} == {'javis_read_file'}
-        assert set(route_a) == {'javis_read_file'} and set(route_b) == {'javis_write_file'}
+                                               tool_allowlist=['jeevi_write_file'])
+        assert {t['fn'] for t in a} == {'jeevi_read_file'}
+        assert set(route_a) == {'jeevi_read_file'} and set(route_b) == {'jeevi_write_file'}
         empty, empty_routes = await mcp_hub.discover_all('auto', root, include_plugins=False, tool_allowlist=[])
         assert empty == [] and empty_routes == {}
         forged = await mcp_hub._handle_one({'id': 1, 'method': 'tools/call',
-            'params': {'name': 'javis_write_file', 'arguments': {}}}, 'auto',
-            include_plugins=False, vault_root=root, tool_allowlist=['javis_read_file'])
+            'params': {'name': 'jeevi_write_file', 'arguments': {}}}, 'auto',
+            include_plugins=False, vault_root=root, tool_allowlist=['jeevi_read_file'])
         assert forged['result']['isError'] and not calls
         ok = await mcp_hub._handle_one({'id': 2, 'method': 'tools/call',
-            'params': {'name': 'javis_read_file', 'arguments': {}}}, 'auto',
-            include_plugins=False, vault_root=root, tool_allowlist=['javis_read_file'])
+            'params': {'name': 'jeevi_read_file', 'arguments': {}}}, 'auto',
+            include_plugins=False, vault_root=root, tool_allowlist=['jeevi_read_file'])
         assert not ok['result']['isError'] and calls == ['read']
         print('PASS hub denies forged calls, isolates scope caches and treats [] as deny-all')
 
@@ -144,7 +144,7 @@ async def verify_http_scope():
     def request(value):
         return Request({'type':'http', 'method':'POST', 'path':'/hub/mcp',
                         'headers':[(b'authorization',b'Bearer TEST'),
-                                   (b'x-javis-tool-allowlist',value.encode())]},receive)
+                                   (b'x-jeevi-tool-allowlist',value.encode())]},receive)
     from unittest.mock import AsyncMock
     with patch.object(mcp_hub, 'hub_token', return_value='TEST'):
         for invalid in ['null', '{}', '"read"', '["bad name"]', '[2]', '[' + ','.join(['"a"']*257) + ']']:
@@ -154,7 +154,7 @@ async def verify_http_scope():
             assert dispatch.call_args.kwargs['tool_allowlist'] == []
         with patch('chat_bridge.goi_tool',new=AsyncMock(side_effect=AssertionError('bridge escape'))):
             denied=await mcp_hub._handle_one({'id':1,'method':'tools/call',
-                'params':{'name':'javis_run_tool','arguments':{}}},'auto',gate={},tool_allowlist=['*'])
+                'params':{'name':'jeevi_run_tool','arguments':{}}},'auto',gate={},tool_allowlist=['*'])
             assert denied['result']['isError']
         specs=[{'fn':'read_doc','description':'read','schema':{}}]
         with patch.object(mcp_hub.chatbot_doc_tools,'build',return_value=(specs,{'read_doc':{}})):

@@ -36,9 +36,9 @@ def check(name, cond):
 
 
 _td = tempfile.TemporaryDirectory()
-os.environ["JAVIS_STATE_DIR"] = _td.name
+os.environ["JEEVI_STATE_DIR"] = _td.name
 
-import config as cfgmod          # noqa: E402  - đọc JAVIS_STATE_DIR lúc import
+import config as cfgmod          # noqa: E402  - đọc JEEVI_STATE_DIR lúc import
 import secrets_store             # noqa: E402
 
 assert str(cfgmod.STATE_DIR) == _td.name, "STATE_DIR phải trỏ vào thư mục tạm của test"

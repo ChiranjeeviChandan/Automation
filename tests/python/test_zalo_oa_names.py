@@ -23,7 +23,7 @@ import tempfile
 import time
 import types
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zalo-oa-names-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zalo-oa-names-")
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")

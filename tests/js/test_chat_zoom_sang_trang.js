@@ -73,16 +73,16 @@ check("nút thu nhỏ đưa về màn Jeevi",
 check("nút thu nhỏ có chữ cho biết nó làm gì", /Thu nhỏ/.test(CONSOLE));
 
 // ---- 5. Các API cũ vẫn gọi được, và trở thành vô hại ----
-// console.js/sessions-ui.js còn gọi JavisChatStage. Bỏ hẳn object là vỡ trang.
-check("còn xuất window.JavisChatStage", ZOOM.indexOf("window.JavisChatStage") !== -1);
+// console.js/sessions-ui.js còn gọi JeeviChatStage. Bỏ hẳn object là vỡ trang.
+check("còn xuất window.JeeviChatStage", ZOOM.indexOf("window.JeeviChatStage") !== -1);
 check("CANARY: isOpen() luôn false (các nhát 'thu lại' còn sót thành vô hại)",
       /isOpen: function \(\) \{ return false; \}/.test(ZOOM_CODE));
 // 06/11/2026: nút Lịch sử ở thanh trên cùng bỏ hẳn (chủ repo: "không cần thiết"), sessions-ui.js không dựng nó nữa.
-check("sessions-ui.js không còn dựng nút Lịch sử", SESS.indexOf("jv-sess-btn") === -1 && SESS.indexOf("JavisChatStage.showSide()") === -1);
+check("sessions-ui.js không còn dựng nút Lịch sử", SESS.indexOf("jv-sess-btn") === -1 && SESS.indexOf("JeeviChatStage.showSide()") === -1);
 
 // ---- 6. Không còn chỗ nào chờ lớp nổi ----
 check("CANARY: navigateTo không còn nhát thu lớp nổi",
-      CONSOLE_CODE.indexOf("JavisChatStage") === -1);
+      CONSOLE_CODE.indexOf("JeeviChatStage") === -1);
 check("sessions-ui đóng drawer bằng #chatPage chứ không phải .chat-stage",
       SESS.indexOf('getElementById("chatPage")') !== -1
       && khongComment(SESS).indexOf(".chat-stage") === -1);

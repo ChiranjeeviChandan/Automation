@@ -30,7 +30,7 @@ from urllib.parse import quote
 import localefmt
 from github_api import GitHub, GitHubError
 
-DEFAULT_NAME = "javis-brain-backup"
+DEFAULT_NAME = "jeevi-brain-backup"
 _NAME_RE = re.compile(r"^[A-Za-z0-9._-]{1,100}$")
 
 

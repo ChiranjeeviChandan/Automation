@@ -392,11 +392,11 @@ def snapshot_diff(before: dict, after: dict) -> dict:
             "removed": sorted(k for k in before if k not in after)}
 
 
-SEARCH_TOOLS = ("ToolSearch", "javis_search_tools")
+SEARCH_TOOLS = ("ToolSearch", "jeevi_search_tools")
 
 
 def search_calls(tool_frames) -> list:
-    """Các khung công cụ có dính tới việc TÌM tool (ToolSearch của Claude Code, javis_search_tools của hub), giữ cả
+    """Các khung công cụ có dính tới việc TÌM tool (ToolSearch của Claude Code, jeevi_search_tools của hub), giữ cả
     đầu vào và kết quả như khung đã ghi. Không suy ra gì thêm: không thấy khung nào thì chỉ nghĩa là trace không ghi."""
     out = []
     for f in tool_frames or []:
@@ -407,6 +407,6 @@ def search_calls(tool_frames) -> list:
 
 
 def goal_tool_calls(tool_frames) -> list:
-    """Các khung công cụ có nhắc javis_goal hay javis_task (gọi, hay kết quả trả về)."""
+    """Các khung công cụ có nhắc jeevi_goal hay jeevi_task (gọi, hay kết quả trả về)."""
     return [f for f in tool_frames or [] if any(n in json.dumps(f, ensure_ascii=False)
-                                                for n in ("javis_goal", "javis_task"))]
+                                                for n in ("jeevi_goal", "jeevi_task"))]

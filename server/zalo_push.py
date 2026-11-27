@@ -39,15 +39,15 @@ _STATE: Dict[str, dict] = {}
 
 
 def enabled() -> bool:
-    """`JAVIS_ZALO_PUSH=0` turns live push off for the whole machine: nothing is given to javis-zalo and every
+    """`JEEVI_ZALO_PUSH=0` turns live push off for the whole machine: nothing is given to javis-zalo and every
     account is read on the timer as before."""
-    return os.environ.get("JAVIS_ZALO_PUSH", "").strip() != "0"
+    return os.environ.get("JEEVI_ZALO_PUSH", "").strip() != "0"
 
 
 def _port() -> int:
     # Same source as mcp_hub.hub_port, read here so this module imports nothing of Jeevi (mcp_store imports it).
     try:
-        return int(os.getenv("JAVIS_PORT", "7777"))
+        return int(os.getenv("JEEVI_PORT", "7777"))
     except ValueError:
         return 7777
 
@@ -59,8 +59,8 @@ def env_for(conn_id: str) -> dict:
     if not cid or not enabled():
         return {}
     from urllib.parse import quote
-    return {"JAVIS_ZALO_PUSH_URL": f"http://127.0.0.1:{_port()}{PATH}?conn={quote(cid, safe='')}",
-            "JAVIS_ZALO_PUSH_TOKEN": _TOKEN}
+    return {"JEEVI_ZALO_PUSH_URL": f"http://127.0.0.1:{_port()}{PATH}?conn={quote(cid, safe='')}",
+            "JEEVI_ZALO_PUSH_TOKEN": _TOKEN}
 
 
 def token_ok(authorization: str) -> bool:

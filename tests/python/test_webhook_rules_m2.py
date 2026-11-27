@@ -32,9 +32,9 @@ import threading
 import time
 from pathlib import Path
 
-STATE = Path(tempfile.mkdtemp(prefix="javis-wh-m2-"))
-os.environ["JAVIS_STATE_DIR"] = str(STATE)
-os.environ["JAVIS_NO_REAL_JUDGE_ENGINE"] = "1"
+STATE = Path(tempfile.mkdtemp(prefix="jeevi-wh-m2-"))
+os.environ["JEEVI_STATE_DIR"] = str(STATE)
+os.environ["JEEVI_NO_REAL_JUDGE_ENGINE"] = "1"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -399,15 +399,15 @@ check("a second decision on an event already decided is a no-op", again == [""] 
 
 # crash inside the triage transaction: neither the decision nor the key
 CH = ("import webhook_store as ws, webhook_rules as wr, os\n"
-      "st = ws.Store(os.path.join(os.environ['JAVIS_STATE_DIR'], 'e.sqlite3'))\n"
+      "st = ws.Store(os.path.join(os.environ['JEEVI_STATE_DIR'], 'e.sqlite3'))\n"
       "if not st.triage_candidates(10):\n"
       "    st.ingest({'id': 'wh_c', 'brain': '/b'}, b'{\"k\":\"go\",\"id\":\"X\"}', 'application/json', '')\n"
       "r = st.triage_candidates(10)[0]\n"
       "pre = wr.evaluate(wr.validate(" + repr(R) + "), r['body'], 'application/json')\n"
       "print('DECIDED', st.triage_commit(r['id'], pre, []))\n")
 s5 = Path(tempfile.mkdtemp(prefix="wh-m2-crash-"))
-env = dict(os.environ, JAVIS_STATE_DIR=str(s5), PYTHONPATH=str(SERVER))
-r = subprocess.run([PY, "-c", CH], env=dict(env, JAVIS_WH_CRASH_AT="triage_before_commit"), capture_output=True, text=True,
+env = dict(os.environ, JEEVI_STATE_DIR=str(s5), PYTHONPATH=str(SERVER))
+r = subprocess.run([PY, "-c", CH], env=dict(env, JEEVI_WH_CRASH_AT="triage_before_commit"), capture_output=True, text=True,
                    timeout=60)
 c = sqlite3.connect(str(s5 / "e.sqlite3"))
 check("crash inside triage: the event is still received, no business key", r.returncode == 77

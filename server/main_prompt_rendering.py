@@ -175,15 +175,15 @@ def render_skill_router(visible_metas: list, *, skills_dir, hidden_count: int = 
         desc = (s.get("description") or "").replace("\n", " ")[:description_max]
         lines.append(f"- {s['slug']} ({s['name']}): {desc}")
     if hidden_count > 0:
-        # Nói rõ CÁCH LẤY chứ không chỉ nói còn bao nhiêu: `javis_use_skill` nạp được theo
+        # Nói rõ CÁCH LẤY chứ không chỉ nói còn bao nhiêu: `jeevi_use_skill` nạp được theo
         # slug kể cả skill không nằm trong danh sách trên, nên một skill bị cắt vẫn dùng được
         # nếu model biết tên. Câu cũ chỉ trỏ sang một file mà model không đọc.
         lines.append(f"…(+{hidden_count} more skills not listed here - the full list is in "
-                     f"`Jeevi/index.md`, and `javis_use_skill(name=<slug>)` loads one directly "
+                     f"`Jeevi/index.md`, and `jeevi_use_skill(name=<slug>)` loads one directly "
                      f"when you know its name)")
     lines.append(
         "HOW TO USE: when the user's request MATCHES the description of a skill above, LOAD that skill "
-        "and FOLLOW it - call tool `javis_use_skill(name=<slug>)` if the engine has it; otherwise open "
+        "and FOLLOW it - call tool `jeevi_use_skill(name=<slug>)` if the engine has it; otherwise open "
         f"`{sk_dir}/<slug>/SKILL.md` with a file-reading tool and follow its instructions. "
         "Load one only on a real match, never indiscriminately."
     )

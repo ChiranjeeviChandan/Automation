@@ -31,7 +31,7 @@ import sys
 import tempfile
 from types import SimpleNamespace
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-tinwf-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-tinwf-"))
 
 import workflow_chat  # noqa: E402
 

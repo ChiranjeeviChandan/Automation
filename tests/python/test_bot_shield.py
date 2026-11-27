@@ -18,9 +18,9 @@ import sys
 import tempfile
 import urllib.robotparser
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-botshield-")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-botshield-brains-")
-os.environ.pop("JAVIS_BLOCK_BOTS", None)
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-botshield-")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-botshield-brains-")
+os.environ.pop("JEEVI_BLOCK_BOTS", None)
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -172,11 +172,11 @@ check("a route that set its own X-Robots-Tag keeps it", r.headers.get("x-robots-
 r = client.get("/stream", headers=BROWSER)
 check("a streamed answer passes whole, with the header", r.text == "ab" and "noindex" in r.headers.get("x-robots-tag", ""))
 
-os.environ["JAVIS_BLOCK_BOTS"] = "0"
+os.environ["JEEVI_BLOCK_BOTS"] = "0"
 r = client.get("/", headers=GPT)
-check("JAVIS_BLOCK_BOTS=0 lets declared bots through", r.status_code == 200, r.status_code)
+check("JEEVI_BLOCK_BOTS=0 lets declared bots through", r.status_code == 200, r.status_code)
 check("... and still sends noindex", "noindex" in r.headers.get("x-robots-tag", ""))
-os.environ.pop("JAVIS_BLOCK_BOTS")
+os.environ.pop("JEEVI_BLOCK_BOTS")
 
 
 def call(client_addr, headers):
@@ -204,7 +204,7 @@ check("... nor does Cloudflare Tunnel", call(("127.0.0.1", 5000), {**GPT, "cf-co
 
 
 # ---- 5. main wires it outermost, robots.txt public, dashboard tagged ----------------------------
-os.environ["JAVIS_REQUIRE_LOGIN"] = "1"
+os.environ["JEEVI_REQUIRE_LOGIN"] = "1"
 import main  # noqa: E402
 
 check("main wires BotShield as the OUTERMOST middleware",

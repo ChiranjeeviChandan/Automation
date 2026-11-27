@@ -62,10 +62,10 @@ The whole history sits in a single file named `conversations.db`.
 |---|---|---|
 | File name | `conversations.db` | SQLite format |
 | Folder | Jeevi's `server/` folder | Same place as `settings.json` |
-| Environment variable to move the file | `JAVIS_SESSIONS_DB` | Point it at another `.db` path |
-| Environment variable to move the root folder | `JAVIS_STATE_DIR` | Moves the whole state folder |
+| Environment variable to move the file | `JEEVI_SESSIONS_DB` | Point it at another `.db` path |
+| Environment variable to move the root folder | `JEEVI_STATE_DIR` | Moves the whole state folder |
 
-To move the history file elsewhere (a dedicated data disk, for example), set `JAVIS_SESSIONS_DB` in the config file. Details on environment variables are in [.env configuration](16-env-configuration.md).
+To move the history file elsewhere (a dedicated data disk, for example), set `JEEVI_SESSIONS_DB` in the config file. Details on environment variables are in [.env configuration](16-env-configuration.md).
 
 Each conversation stores its title, brain, engine in use, model, the channel it came from, message count, creation time and last update time. Each question and answer is stored separately so it can be searched and reopened exactly.
 

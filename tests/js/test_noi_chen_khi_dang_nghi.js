@@ -97,7 +97,7 @@ check("có bộ canh treo cho khúc audio", /_canhTreo\(audio, onFail\);/.test(v
 check("đường iOS cũng được canh", /this\._canhTreo\(a, onFail\);/.test(voiceSrc));
 check("hai ngưỡng: chưa phát chờ rộng tay, đang phát cắt sớm",
   /TREO_CHUA_PHAT = 12/.test(voiceSrc) && /TREO_DANG_PHAT = 6/.test(voiceSrc)
-  && /im >= \(t > 0 \? JavisVoice\.TREO_DANG_PHAT : JavisVoice\.TREO_CHUA_PHAT\)/.test(voiceSrc));
+  && /im >= \(t > 0 \? JeeviVoice\.TREO_DANG_PHAT : JeeviVoice\.TREO_CHUA_PHAT\)/.test(voiceSrc));
 check("tạm dừng có chủ ý KHÔNG bị tính là treo", /if \(this\._paused\) \{ im = 0; return; \}/.test(voiceSrc));
 check("audio đã đổi hoặc đã hết thì thôi canh",
   /if \(this\.currentAudio !== audio \|\| audio\.ended\) \{ this\._huyCanhTreo\(\); return; \}/.test(voiceSrc));
@@ -107,7 +107,7 @@ check("giọng lỗi phải báo lên giao diện",
   /this\.onPlaybackError\("tts-unavailable"\)/.test(voiceSrc));
 
 // Chạy thật vòng canh treo bằng đồng hồ giả: audio đứng im -> phải gọi onFail.
-const classSrc = voiceSrc.slice(voiceSrc.indexOf("class JavisVoice"), voiceSrc.lastIndexOf("window.JavisVoice"));
+const classSrc = voiceSrc.slice(voiceSrc.indexOf("class JeeviVoice"), voiceSrc.lastIndexOf("window.JeeviVoice"));
 function dungDongHo() {
   let now = 0, id = 0;
   const timers = new Map();
@@ -132,7 +132,7 @@ function dungDongHo() {
 }
 const dh = dungDongHo();
 const Lop = new Function("window", "localStorage", "setInterval", "clearInterval", "setTimeout", "clearTimeout",
-  classSrc + "\nreturn JavisVoice;")(
+  classSrc + "\nreturn JeeviVoice;")(
   { speechSynthesis: { getVoices: () => [], speak() {}, cancel() {} },
     SpeechRecognition: function () { this.start = function () {}; this.stop = function () {}; this.abort = function () {}; } },
   { getItem: () => null, setItem: () => {} },

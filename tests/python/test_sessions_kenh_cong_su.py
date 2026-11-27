@@ -8,15 +8,15 @@ import sys
 import tempfile
 from pathlib import Path
 
-_TMP = tempfile.mkdtemp(prefix="javis-kenh-")
-os.environ["JAVIS_STATE_DIR"] = _TMP
-os.environ["JAVIS_SESSIONS_DB"] = str(Path(_TMP) / "conv.db")
-# main.py:946 đọc BRAINS_DIR (KHÔNG có tiền tố JAVIS_) để tìm brain "brain" mặc định -
+_TMP = tempfile.mkdtemp(prefix="jeevi-kenh-")
+os.environ["JEEVI_STATE_DIR"] = _TMP
+os.environ["JEEVI_SESSIONS_DB"] = str(Path(_TMP) / "conv.db")
+# main.py:946 đọc BRAINS_DIR (KHÔNG có tiền tố JEEVI_) để tìm brain "brain" mặc định -
 # đặt về thư mục tạm TRƯỚC khi import main, không được đụng vào brains/ thật của máy.
-_BRAINS = tempfile.mkdtemp(prefix="javis-kenh-brains-")
+_BRAINS = tempfile.mkdtemp(prefix="jeevi-kenh-brains-")
 os.environ["BRAINS_DIR"] = _BRAINS
 # TestClient gửi Host: testserver, không nằm trong allowlist mặc định của web_security.py.
-os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
+os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
 
 import sessions  # noqa: E402
 

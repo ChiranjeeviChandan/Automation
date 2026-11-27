@@ -12,7 +12,7 @@ one is added next to it. A qualified trial profile (`trial_profile`) builds its 
 """
 from __future__ import annotations
 
-_MARK = "_javis_secret_hook"
+_MARK = "_jeevi_secret_hook"
 
 
 async def secret_guard_hook(input_data, tool_use_id, context):

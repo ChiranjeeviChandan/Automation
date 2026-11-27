@@ -17,7 +17,7 @@ import os
 import sys
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-gdocker-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-gdocker-"))
 
 import deploy_info  # noqa: E402
 import main  # noqa: E402
@@ -89,7 +89,7 @@ try:
     r = asyncio.run(main.connect_add(_Req({"connector_id": "google-workspace", "fields": {}})))
     check("Docker, mở Jeevi trên chính máy đó: nói rõ phải mở cổng 8000 và cho bấm lại",
           r.get("ok") is False and r.get("can_force") is True and "docker-compose.google.yml" in (r.get("error") or ""))
-    r = asyncio.run(main.connect_add(_Req({"connector_id": "google-workspace", "fields": {}}, host="javis.example.com")))
+    r = asyncio.run(main.connect_add(_Req({"connector_id": "google-workspace", "fields": {}}, host="jeevi.example.com")))
     check("Docker qua tên miền công khai: vẫn là lời nhắc dùng thẻ Lịch/Gmail (issue #112)",
           "VPS" in (r.get("error") or "") and "docker-compose.google.yml" not in (r.get("error") or ""))
 finally:

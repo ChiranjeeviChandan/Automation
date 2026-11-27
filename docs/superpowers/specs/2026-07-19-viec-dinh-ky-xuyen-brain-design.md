@@ -67,7 +67,7 @@ Nút "Chuyển sang brain..." trên mỗi thẻ, đổ danh sách brain (trừ b
 - **Loop**: `POST /loops/move` (self_improve router): `slug`, `from_brain`, `to_brain`.
   - Đọc loop nguồn (`get_loop`); không có → lỗi.
   - Đích đã có file cùng slug (`_loop_path(to_brain, slug).exists()`) → **lỗi, KHÔNG ghi đè**
-    (định danh theo tên file, `self_improve.py:319`; builtin `tu-cai-tien-javis` có ở mọi brain
+    (định danh theo tên file, `self_improve.py:319`; builtin `tu-cai-tien-jeevi` có ở mọi brain
     nên đây là va chạm thật sẽ gặp).
   - Đang chạy đúng loop đó (`self._running`) → lỗi "đang chạy, thử lại sau".
   - `save_loop(to_brain, lp)` → `delete_loop(from_brain, slug)` → dời entry
@@ -87,7 +87,7 @@ vì cứng `fbrain()` (`console.js:847`). Không đổi backend `POST /loops` (�
 
 ### Mảnh 4 - Chat báo rõ brain khi tạo việc
 
-`javis_schedule` (system/plugins/javis-schedule/plugin.py) hiện báo "Đã tạo... tại
+`javis_schedule` (system/plugins/jeevi-schedule/plugin.py) hiện báo "Đã tạo... tại
 Jeevi/loops/<slug>.md" nhưng KHÔNG nói brain (`plugin.py:249`). Sửa để câu xác nhận nêu tên
 brain: "Đã tạo việc 'Quét đơn' trong brain **Kim Khí Hà Lộc**, chạy mỗi 120 phút, đang tắt,
 vào tab Việc để bật."
@@ -128,7 +128,7 @@ Kết quả: `/brain` sang brain nào thì dính đó tới khi đổi cái khá
 1. **Nút thao tác nhắm nhầm brain sau khi gộp.** Điểm dễ sai nhất: mọi nút hiện gửi `fbrain()`.
    Gộp xong PHẢI đổi sang brain của chính item. Cần test: bật/xoá item ở brain B khi sidebar
    đang brain A phải tác động brain B.
-2. **Di chuyển loop trùng slug ở đích** (builtin `tu-cai-tien-javis` có ở mọi brain) - phải
+2. **Di chuyển loop trùng slug ở đích** (builtin `tu-cai-tien-jeevi` có ở mọi brain) - phải
    fail rõ, KHÔNG ghi đè. Cần test va chạm.
 3. **Map bền lưu tên brain** - brain xoá/đổi tên giữa chừng phải fail-safe về mặc định, không
    crash `_tg_brain`.

@@ -632,7 +632,7 @@ async def whole_chain():
           b6["status"] == "unknown" and c6 == 200 and prev["may_repeat"] == ["crm"], (b6["status"], prev))
     check("R6 P2-6: confirming a preview after the hook changed is refused (409: preview again)", cc == 409, (cc, conf))
     mx.HTTP["by_host"]["amb6.example"] = 200
-    # R6 P2-7: a test event says so to the receiver in a header (a raw body cannot carry `_javis.test`).
+    # R6 P2-7: a test event says so to the receiver in a header (a raw body cannot carry `_jeevi.test`).
     ht, tt, _ = f.create("/b1", name="Thử", target="", text="", level="full",
                          actions=[{"id": "crm", "kind": "http", "url": "https://test6.example/in", "body": "raw"}])
     mx.HITS.clear()
@@ -640,11 +640,11 @@ async def whole_chain():
     await f.wait_idle()
     hits = [x for x in mx.HITS if x["host"] == "test6.example"]
     check("R6 P2-7: a test send reaches the receiver with X-Jeevi-Test: 1", code == 200 and hits
-          and hits[0]["headers"].get("x-javis-test") == "1", (code, resp, hits[:1]))
+          and hits[0]["headers"].get("x-jeevi-test") == "1", (code, resp, hits[:1]))
     c, rl = await f.accept(ht["id"], tt, b'{"x": 2}', "application/json", "")
     await f.wait_idle()
     hits = [x for x in mx.HITS if x["host"] == "test6.example"]
-    check("R6 P2-7: a real event carries no test header", len(hits) == 2 and "x-javis-test" not in hits[1]["headers"])
+    check("R6 P2-7: a real event carries no test header", len(hits) == 2 and "x-jeevi-test" not in hits[1]["headers"])
     # R6 P2-8: deleting a hook closes its events waiting for the owner; an ingest racing the delete stores nothing.
     hd, td, _ = f.create("/b1", name="Xoá", target="", text="", level="full",
                          actions=[{"id": "crm", "kind": "http", "url": "https://amb6.example/in"}])
@@ -866,8 +866,8 @@ async def fix_review():
     ctx = {"delivery_id": "dlv_1", "event_id": "ev_1", "source": "test"}
     u = wa.target_url({"kind": "apps_script", "url": "https://script.google.com/macros/s/X/exec"}, ctx)
     u2 = wa.target_url({"kind": "apps_script", "url": "https://script.google.com/macros/s/X/exec"}, dict(ctx, source="http"))
-    check("R7 P3: an Apps Script test event carries javis_test=1 without delivery_ref query; a real one does not",
-          u.endswith("?javis_test=1") and "javis_test" not in u2, (u, u2))
+    check("R7 P3: an Apps Script test event carries jeevi_test=1 without delivery_ref query; a real one does not",
+          u.endswith("?jeevi_test=1") and "jeevi_test" not in u2, (u, u2))
     # R7 P3: plugins allowed to use AI count among the AI hooks (they may run long).
     old_ph = f.deps.plugin_handler
     f.deps.plugin_handler = lambda b, slug, n: {"handler": lambda e, c: {"status": "completed"}, "ctx": None,
@@ -981,9 +981,9 @@ async def chain_review_two():
     # R8 P3: X-Request-ID is not a delivery key for a new hook.
     hx, tx, _ = f.create("/b1", name="Req id", target="task", text="x")
     a1 = await cl.post(f"/hooks/{hx['id']}", content=b"{}", headers={"content-type": "application/json",
-                                                                     "x-javis-token": tx, "x-request-id": "r1"})
+                                                                     "x-jeevi-token": tx, "x-request-id": "r1"})
     a2 = await cl.post(f"/hooks/{hx['id']}", content=b"{}", headers={"content-type": "application/json",
-                                                                     "x-javis-token": tx, "x-request-id": "r1"})
+                                                                     "x-jeevi-token": tx, "x-request-id": "r1"})
     check("R8 P3: two deliveries with the same X-Request-ID on a new hook are two events (it is a per-attempt id)",
           a1.status_code == 202 and a2.status_code == 202 and a1.json()["event_id"] != a2.json()["event_id"],
           (a1.status_code, a2.status_code, a2.text[:120]))

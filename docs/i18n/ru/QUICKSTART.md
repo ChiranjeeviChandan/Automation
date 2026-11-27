@@ -14,7 +14,7 @@
 - **Windows 10/11:** скачайте [JeeviOS-Setup.exe](https://github.com/blogminhquy/javis-os/releases/download/desktop/JeeviOS-Setup.exe), дважды щёлкните и нажимайте Next до конца. Ход установки показывается прямо в окне Setup, шаг за шагом (несколько минут), без отдельного чёрного окна. После этого на рабочем столе и в меню «Пуск» появится значок JEEVI OS.
 - **macOS 11 и новее:** откройте **Терминал** (Launchpad, введите Terminal), вставьте эту строку и нажмите Enter. При такой установке macOS не показывает предупреждений:
   ```
-  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-javis.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-jeevi.sh | bash
   ```
   Команда скачивает Jeevi, копирует **JEEVI OS** в **Applications** и устанавливает его прямо в этом окне Терминала (она может один раз попросить создать учётную запись администратора Jeevi и ввести пароль Mac). После этого откройте JEEVI OS из Launchpad.
 
@@ -24,7 +24,7 @@
 
 **Windows: установка без экрана предупреждения (рекомендуется).** Установщик для Windows пока не подписан, поэтому загрузку через браузер в первый раз блокируют. Вместо этого вставьте одну строку, и вы получите тот же установщик с логотипом Jeevi, без блокировки: нажмите «Пуск», введите `PowerShell`, откройте его, вставьте эту строку и нажмите Enter:
 ```
-irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-javis.ps1 | iex
+irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-jeevi.ps1 | iex
 ```
 
 Что установщики меняют на компьютере, кто их подписывает и что Jeevi отправляет и куда: [Code signing policy](../../../docs/code-signing-policy.md) · [Privacy policy](../../../PRIVACY.md) (на английском).
@@ -49,9 +49,9 @@ irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/window
    ```
 3. (Необязательно, для HTTPS + домена) задайте в поле **Environment**:
    ```
-   DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud
+   DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud
    ```
-   (Hostname смотрите в hPanel → VPS, например `javis.srv1782015.hstgr.cloud`.)
+   (Hostname смотрите в hPanel → VPS, например `jeevi.srv1782015.hstgr.cloud`.)
 4. **Deploy**. Подождите 1-3 минуты. Откройте приложение кнопкой **Open** (или по адресу `https://<DOMAIN_NAME>`).
 5. При первом запуске экран попросит создать аккаунт администратора. После этого один раз войдите в Claude Code в терминале контейнера: `claude auth login --claudeai`.
 
@@ -70,7 +70,7 @@ docker compose -f docker-compose.yml up -d
 
 1. Установите Python 3.12 + Node 22.
 2. В папке проекта один раз запустите `setup.bat`: он создаст .venv, установит зависимости и сам поставит два CLI-движка (Claude Code, Codex).
-3. `start-javis.bat` для запуска в фоне (`stop-javis.bat` для остановки).
+3. `start-jeevi.bat` для запуска в фоне (`stop-jeevi.bat` для остановки).
 4. Откройте http://localhost:7777.
 
 ## Когда всё запущено

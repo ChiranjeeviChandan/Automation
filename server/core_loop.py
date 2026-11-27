@@ -17,7 +17,7 @@ Three kinds of actor, in rising cost:
   rule   plain code looking at counters (this file's `tick`): no model, no tokens;
   core   Jeevi Core proposing a change after thinking, inside its own daily allowance (not built yet: it
          needs real data from the first two to be worth a model call);
-  owner  what the person said in chat (`javis_tune`): always wins, and may jump more than one step.
+  owner  what the person said in chat (`jeevi_tune`): always wins, and may jump more than one step.
 
 The background scorecard (job_scorecard.py) is the first family of knobs: one per job, moved by its own rule
 (`job_scorecard.step`). It keeps its own table because it moves after every run; `status` and `undo` here
@@ -225,7 +225,7 @@ def undo(change_id) -> Optional[dict]:
 
 
 def status() -> dict:
-    """Every knob with its value, bounds and recent moves, for `javis_tune op=status`."""
+    """Every knob with its value, bounds and recent moves, for `jeevi_tune op=status`."""
     _ensure_table()
     now = time.time()
     out = []

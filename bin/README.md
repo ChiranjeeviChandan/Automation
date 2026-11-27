@@ -19,18 +19,18 @@ start it like a normal app.
   the repo relative to its own location).
 - **`Start JEEVI OS.command`** / **`Stop JEEVI OS.command`** - double-clickable
   Finder alternatives.
-- **`bin/javis-start.sh`** / **`bin/javis-stop.sh`** - the underlying scripts.
-- **`bin/javis-autostart.sh [install|uninstall]`** - run the server at login via a
+- **`bin/jeevi-start.sh`** / **`bin/jeevi-stop.sh`** - the underlying scripts.
+- **`bin/jeevi-autostart.sh [install|uninstall]`** - run the server at login via a
   macOS LaunchAgent, and open the dashboard in the browser once it is up (a second,
-  run-once agent; `JAVIS_AUTOSTART_OPEN=0` skips it). `./install.sh` turns this on by
-  default since 0.306.0 (`JAVIS_NO_AUTOSTART=1` to skip). The plists are generated with
+  run-once agent; `JEEVI_AUTOSTART_OPEN=0` skips it). `./install.sh` turns this on by
+  default since 0.306.0 (`JEEVI_NO_AUTOSTART=1` to skip). The plists are generated with
   paths for your machine; nothing is hardcoded in the repo.
 
 ## Notes
 
 - Every script resolves the repo location from its own path, so the repo can live
   anywhere.
-- Default port is `7777`; override with the `JAVIS_PORT` environment variable.
+- Default port is `7777`; override with the `JEEVI_PORT` environment variable.
 - Bound to `127.0.0.1` (local only). Because it's `localhost`, the browser allows
   the microphone, so voice works without HTTPS. Use Chrome or Edge for speech
   recognition.

@@ -82,12 +82,12 @@ def test_loop_events_reads_only_existing_log_files():
 
 def test_offline_ear_leaves_a_core_and_runs_niced(monkeypatch):
     import local_stt
-    monkeypatch.delenv("JAVIS_LOCAL_STT_THREADS", raising=False)
+    monkeypatch.delenv("JEEVI_LOCAL_STT_THREADS", raising=False)
     monkeypatch.setattr(os, "cpu_count", lambda: 2)
     assert local_stt._threads() == 1
     monkeypatch.setattr(os, "cpu_count", lambda: 1)
     assert local_stt._threads() == 1
-    monkeypatch.setenv("JAVIS_LOCAL_STT_THREADS", "3")
+    monkeypatch.setenv("JEEVI_LOCAL_STT_THREADS", "3")
     assert local_stt._threads() == 3
     assert '"--threads", str(_threads())' in inspect.getsource(local_stt.transcribe)
     worker = (SERVER / "offline_ear" / "worker.py").read_text(encoding="utf-8")

@@ -13,8 +13,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_TMP = Path(tempfile.mkdtemp(prefix="javis-wscope-")).resolve()
-os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
+_TMP = Path(tempfile.mkdtemp(prefix="jeevi-wscope-")).resolve()
+os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
 (_TMP / "state").mkdir()
 BRAIN = _TMP / "brain"
 (BRAIN / "drafts").mkdir(parents=True)
@@ -36,11 +36,11 @@ def check(name, cond, extra=None):
 
 class Eng:
     def __init__(self, allowed=None, mode=None, vault=str(BRAIN), cwd=str(BRAIN), gate=""):
-        self.allowed_tools, self.javis_mode, self.javis_vault, self.cwd = allowed, mode, vault, cwd
+        self.allowed_tools, self.jeevi_mode, self.jeevi_vault, self.cwd = allowed, mode, vault, cwd
         self.team_gate, self.tag, self.trial_profile = gate, "loop:x", None
 
 
-SAFE = ["Read", "Write", "Edit", "Glob", "Grep", "LS", "mcp__javis"]
+SAFE = ["Read", "Write", "Edit", "Glob", "Grep", "LS", "mcp__jeevi"]
 
 # ---- which runs are restricted ----
 check("auto job with a whitelist is restricted", ws.restricted(Eng(SAFE, "auto")))
@@ -58,7 +58,7 @@ check("an ordinary file in the brain (relative path)", ok("Edit", "drafts/a.md")
 check("a new folder in the brain", ok("Write", "06 - Sources/moi/x.md"))
 for bad in ("plugins/x/plugin.py", "plugins/x/plugin.yaml", "Jeevi/loops/x.md", "Jeevi/reminders.json",
             ".claude/settings.json", ".git/config", ".grok/config.toml", "CLAUDE.md", "sub/.git/hooks/pre-commit",
-            "Plugins/x/plugin.py", "javis/loops/x.md", "claude.md", ".GIT/config", "plugins./x.py"):
+            "Plugins/x/plugin.py", "jeevi/loops/x.md", "claude.md", ".GIT/config", "plugins./x.py"):
     check(f"refused: {bad}", not ok("Write", bad))
 check("refused: a file outside the brain", not ok("Write", str(OTHER / "a.md")))
 check("refused: the state directory", not ok("Write", str(_TMP / "state" / "plugins" / "x" / "plugin.py")))
@@ -106,21 +106,21 @@ if claude_sdk_engine.ClaudeSDK.pre_tool_hooks_supported():
     check("install wraps ClaudeSDK._options", ws.install())
     claude_secret_hook.install()
     check("the secret hook stays the outermost wrapper",
-          getattr(claude_sdk_engine.ClaudeSDK._options, "_javis_secret_hook", False))
+          getattr(claude_sdk_engine.ClaudeSDK._options, "_jeevi_secret_hook", False))
     top = claude_sdk_engine.ClaudeSDK._options
     ws.install(); claude_secret_hook.install()
     check("installing again does not stack wrappers", claude_sdk_engine.ClaudeSDK._options is top)
 
     def pre_hooks(**kw):
         e = claude_sdk_engine.ClaudeSDK(system_prompt="x", cwd=str(BRAIN), tag="loop:t", allowed_tools=kw.get("allowed"))
-        e.javis_mode, e.javis_vault = kw.get("mode"), str(BRAIN)
+        e.jeevi_mode, e.jeevi_vault = kw.get("mode"), str(BRAIN)
         pre = (getattr(e._options(), "hooks", None) or {}).get("PreToolUse") or []
         return [h for m in pre for h in (m.hooks or [])]
     check("an auto job carries the write-scope hook",
-          any(getattr(h, "_javis_write_scope_hook", False) for h in pre_hooks(allowed=SAFE, mode="auto")))
+          any(getattr(h, "_jeevi_write_scope_hook", False) for h in pre_hooks(allowed=SAFE, mode="auto")))
     check("and still the secret hook", claude_secret_hook.secret_guard_hook in pre_hooks(allowed=SAFE, mode="auto"))
     check("the owner's chat does not",
-          not any(getattr(h, "_javis_write_scope_hook", False) for h in pre_hooks(allowed=None, mode="full")))
+          not any(getattr(h, "_jeevi_write_scope_hook", False) for h in pre_hooks(allowed=None, mode="full")))
 else:
     print("skip  SDK without PreToolUse hooks")
 check("claude_cli installs it where it builds every Claude engine, before the secret hook",

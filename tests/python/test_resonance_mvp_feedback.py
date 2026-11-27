@@ -12,8 +12,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="javis-resonance-m4-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-resonance-m4-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 
 from fastapi.testclient import TestClient  # noqa: E402
 import main  # noqa: E402
@@ -33,7 +33,7 @@ client = TestClient(main.app, base_url="http://127.0.0.1:8080")
 BRAIN = str(Path(tempfile.mkdtemp(prefix="brain-m4-")).resolve())
 OTHER = str(Path(tempfile.mkdtemp(prefix="brain-m4b-")).resolve())
 KEY = main._brain_key(BRAIN)
-P = RS.Principal("agent", "javis", KEY)
+P = RS.Principal("agent", "jeevi", KEY)
 OWNER = RS.Principal("owner", "owner", KEY)
 store = main._resonance_store()
 import _resonance_agent as RA  # noqa: E402  - A1: Cộng hưởng bật theo trợ lý qua API của chủ dự án
@@ -394,14 +394,14 @@ all_reports = [b.get("report") for m in main.get_store().get_messages(SID) if m[
 check("test_report_replay_same_mid: chết giữa lưu tin và đánh dấu outbox thì nhịp sau KHÔNG gửi lần hai",
       n_first >= 1 and len([c for c in cards if c.get("report", "").startswith("outbox:")]) == 1
       and len(all_reports) == len(set(all_reports)) and not store.outbox_pending())
-check("tin báo lưu trong kho phiên mang thẻ mục tiêu (khối JAVIS_RESONANCE) có goal_id và revision",
+check("tin báo lưu trong kho phiên mang thẻ mục tiêu (khối JEEVI_RESONANCE) có goal_id và revision",
       cards and cards[0]["revision"] == 1)
 code, body = api("get", f"/goals/{cards[0]['goal_id']}")
 check("test_reload_keeps_goal_action_links: sau F5 đọc lại tin, thẻ lấy lại được mục tiêu và các hành động của nó",
       code == 200 and any(t["kind"] == "work" for t in body["goal"]["timeline"])
       and any(t["kind"] == "publish" for t in body["goal"]["timeline"]))
 check("khối thẻ không lọt qua kênh chữ (bị bóc như khối điều khiển khác)",
-      "JAVIS_RESONANCE" not in main.channel_context.strip_control_blocks(msgs[-1]["content"]))
+      "JEEVI_RESONANCE" not in main.channel_context.strip_control_blocks(msgs[-1]["content"]))
 check("push_to_chat chỉ nhận đúng khuôn khối thẻ, chuỗi tuỳ ý không lọt vào kho phiên",
       not asyncio.run(main.push_to_chat(SID, "x", card="<script>")) or
       "<script>" not in main.get_store().get_messages(SID)[-1]["content"])
@@ -637,7 +637,7 @@ g18b = make_goal()
 S18 = main.get_store().get_or_create(None, brain=BRAIN, engine="test", model="test")
 row18 = _pending_row(g18, "r2-neg")
 key18 = f"outbox:{row18['id']}"
-for txt in ('<!-- JAVIS_RESONANCE: {"goal_id": "' + g18.id + '", "report": "' + key18 + '", -->',
+for txt in ('<!-- JEEVI_RESONANCE: {"goal_id": "' + g18.id + '", "report": "' + key18 + '", -->',
             R.goal_block(g18.id, 1, report=key18 + "9"),
             R.goal_block(g18b.id, 1, report=key18),
             "Model chép lại tin cũ:\n" + R.goal_block(g18.id, 1, report=key18)):
@@ -706,11 +706,11 @@ def _req(text, framer=None, blocked=False):
         main._resonance_engine = old
 
 
-os.environ["JAVIS_RESONANCE_CALL_CEILING"] = "0"
+os.environ["JEEVI_RESONANCE_CALL_CEILING"] = "0"
 f0 = CountFramer()
 c0, _ = _req("Theo dõi giúp anh thư mục Inbox, gom ghi chú mới mỗi tuần (trần 0).", f0)
 check("e2e P1-1: trần 0 chặn bộ lập mục tiêu TRƯỚC khi gọi engine", c0 == 400 and f0.queries == 0)
-os.environ["JAVIS_RESONANCE_CALL_CEILING"] = str(_total_calls() + 1)
+os.environ["JEEVI_RESONANCE_CALL_CEILING"] = str(_total_calls() + 1)
 f1, f2 = CountFramer(), CountFramer()
 c1, _ = _req("Theo dõi giúp anh thư mục Inbox, gom ghi chú mới mỗi tuần (lượt 1).", f1)
 c2, _ = _req("Theo dõi giúp anh thư mục Inbox, gom ghi chú mới mỗi tuần (lượt 2).", f2)
@@ -720,17 +720,17 @@ main._RESONANCE_STORE = None          # mô phỏng khởi động lại: kho m�
 f3 = CountFramer()
 c3, _ = _req("Theo dõi giúp anh thư mục Inbox, gom ghi chú mới mỗi tuần (sau khởi động lại).", f3)
 check("e2e P1-1: mở lại kho vẫn chặn bộ lập mục tiêu", c3 == 400 and f3.queries == 0)
-os.environ["JAVIS_RESONANCE_CALL_CEILING"] = str(_total_calls() + 1)
+os.environ["JEEVI_RESONANCE_CALL_CEILING"] = str(_total_calls() + 1)
 before = _total_calls()
 ff = CountFramer(fail=True)
 cf, _ = _req("Theo dõi giúp anh thư mục Inbox, gom ghi chú mới mỗi tuần (framer lỗi).", ff)
 check("e2e P1-1: framer đã gọi mà lỗi vẫn bị tính vào trần", cf == 400 and ff.queries == 1
       and _total_calls() == before + 1)
-os.environ["JAVIS_RESONANCE_CALL_CEILING"] = str(_total_calls() + 1)
+os.environ["JEEVI_RESONANCE_CALL_CEILING"] = str(_total_calls() + 1)
 before = _total_calls()
 cb, _ = _req("Theo dõi giúp anh thư mục Inbox, gom ghi chú mới mỗi tuần (engine bị chặn).", blocked=True)
 check("e2e P1-1: engine bị chặn trước khi gọi thì hoàn chỗ trong sổ", cb == 400 and _total_calls() == before)
-os.environ["JAVIS_RESONANCE_CALL_CEILING"] = str(_total_calls() + 1)
+os.environ["JEEVI_RESONANCE_CALL_CEILING"] = str(_total_calls() + 1)
 _st = main._resonance_store()
 _got = []
 _ths = [threading.Thread(target=lambda: _got.append(_st.reserve_ledger_call(P, "framer", "dong-thoi")))
@@ -741,7 +741,7 @@ for t_ in _ths:
     t_.join()
 check("e2e P1-1: sáu yêu cầu giữ chỗ đồng thời với trần còn một: đúng một qua",
       len([x for x in _got if x is not None]) == 1)
-del os.environ["JAVIS_RESONANCE_CALL_CEILING"]
+del os.environ["JEEVI_RESONANCE_CALL_CEILING"]
 
 if _fails:
     print(f"\n{len(_fails)} FAIL:", _fails)

@@ -113,7 +113,7 @@ khi có tin (hoặc khi kết nối Zalo rớt, nối lại), và Jeevi chỉ đ
   kết nối được lưu ở trang Kết nối.
 - Trong lúc có tin đang giữ (chờ khách nhắn xong, chờ chủ trả lời tay), vòng đọc chạy nhịp ngắn để
   nhả đúng giờ rồi ngủ lại. Việc đó không gọi `javis-zalo`.
-- Tắt cho cả máy: đặt biến môi trường `JAVIS_ZALO_PUSH=0` rồi khởi động lại Jeevi.
+- Tắt cho cả máy: đặt biến môi trường `JEEVI_ZALO_PUSH=0` rồi khởi động lại Jeevi.
 
 ## Duyệt người xin vào nhóm
 
@@ -295,7 +295,7 @@ giới hạn vẫn bị MCP Hub chặn gửi tin, dù tài khoản đang đặt 
 ## Khác với tích hợp Zalo cũ
 
 Luồng mới đã bỏ sidecar `listen --webhook`, endpoint `/hook/zalo`, panel “Nghe tin liên
-tục”, file luật theo từng cuộc chat và hai plugin `javis_zalo_rule`/`javis_zalo_send`.
+tục”, file luật theo từng cuộc chat và hai plugin `jeevi_zalo_rule`/`jeevi_zalo_send`.
 Không còn việc một tiến trình listener tự tắt rồi bật lại connector MCP.
 
 Do đó Jeevi không tự chuyển tiếp tin Zalo sang Telegram ở nền. Khi cần kiểm tra tin, hãy

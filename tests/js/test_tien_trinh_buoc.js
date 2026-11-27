@@ -1,4 +1,4 @@
-/* Khối tiến trình từng bước trong khung chat (JavisSteps).
+/* Khối tiến trình từng bước trong khung chat (JeeviSteps).
  *
  *     node tests/js/test_tien_trinh_buoc.js
  *
@@ -56,10 +56,10 @@ check("nhãn: bỏ ký tự ⚙ dẫn đầu", st.ds[0].label === "Đang gọi: 
 
 // ---- 2. Nhiều bước: giữ đủ và ĐÚNG THỨ TỰ (lỗi gốc: chỉ còn bước cuối) -------------------
 st = S.nhan(st, goi("zalo_send_message", "⚙ Đang gọi: zalo_send_message"));
-st = S.nhan(st, goi("javis_task", "⚙ Đang gọi: javis_task"));
+st = S.nhan(st, goi("jeevi_task", "⚙ Đang gọi: jeevi_task"));
 check("ba bước: giữ đủ cả ba", st.ds.length === 3);
 check("ba bước: thứ tự trước sau đúng",
-  st.ds[0].tool === "pos_order" && st.ds[2].tool === "javis_task");
+  st.ds[0].tool === "pos_order" && st.ds[2].tool === "jeevi_task");
 check("gọi lại cùng một công cụ vẫn là bước riêng",
   S.nhan(S.nhan(null, goi("a")), goi("a")).ds.length === 2);
 

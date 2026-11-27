@@ -17,7 +17,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ollama-think-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ollama-think-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -82,7 +82,7 @@ class _Client(_RealClient):
 
 engine.httpx.AsyncClient = _Client
 MSGS = [{"role": "user", "content": "file khách có bao nhiêu dòng?"}]
-TOOLS = [{"fn": "javis_read_file", "description": "đọc file", "schema": {"type": "object", "properties": {}}}]
+TOOLS = [{"fn": "jeevi_read_file", "description": "đọc file", "schema": {"type": "object", "properties": {}}}]
 
 
 def stream(reasoning):

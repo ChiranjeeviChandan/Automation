@@ -1133,7 +1133,7 @@ class WebhookFeature(webhook_worker.WebhookWorker):
     async def test_send(self, p: dict) -> tuple:
         """Spec §12 "real test send": the owner's own payload; without `confirm` only the preview (what each action
         would do); with it, a TEST event (source test: its business keys have their own space, receivers see
-        `_javis.test`) that goes through the same permissions and quotas as any event."""
+        `_jeevi.test`) that goes through the same permissions and quotas as any event."""
         hid = str(p.get("id") or "")
         h = await asyncio.to_thread(self._find_hook, hid)
         if h is None:

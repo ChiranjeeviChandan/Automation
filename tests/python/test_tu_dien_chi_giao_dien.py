@@ -18,7 +18,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-tudien-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-tudien-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -42,7 +42,7 @@ check("no dashboard-only dictionary ships (interface is English and Vietnamese o
 check("de.json is gone", not (ROOT / "dashboard" / "i18n" / "de.json").exists())
 
 # ---- 2. odd files are never offered ----
-d = Path(tempfile.mkdtemp(prefix="javis-i18n-"))
+d = Path(tempfile.mkdtemp(prefix="jeevi-i18n-"))
 (d / "fr.json").write_text(json.dumps({"_meta.name": "Français", "nav.x": "y"}), encoding="utf-8")
 (d / "pt-br.json").write_text(json.dumps({"nav.x": "y"}), encoding="utf-8")
 (d / "ja.json").write_text("{ broken", encoding="utf-8")

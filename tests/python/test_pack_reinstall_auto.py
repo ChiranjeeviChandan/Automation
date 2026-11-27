@@ -21,9 +21,9 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-STATE = tempfile.mkdtemp(prefix="javis-pack-auto-")
-os.environ["JAVIS_STATE_DIR"] = STATE
-BR = Path(tempfile.mkdtemp(prefix="javis-pack-auto-brain-")).resolve()
+STATE = tempfile.mkdtemp(prefix="jeevi-pack-auto-")
+os.environ["JEEVI_STATE_DIR"] = STATE
+BR = Path(tempfile.mkdtemp(prefix="jeevi-pack-auto-brain-")).resolve()
 (BR / "agents").mkdir()
 
 import main  # noqa: E402
@@ -252,7 +252,7 @@ check("a pack file the user edited is the user's", "plan" not in pack_vault.agen
 listing()
 check("and its origin is dropped", plan["agent_key"] not in store.agent_origins(str(BR)))
 check("a brain that holds none of the pack's files maps nothing",
-      pack_vault.agent_packs(tempfile.mkdtemp(prefix="javis-pack-auto-other-")) == {})
+      pack_vault.agent_packs(tempfile.mkdtemp(prefix="jeevi-pack-auto-other-")) == {})
 check("sync reports what it changed", agent_presence.sync(store, str(BR), [m for m in listing()]) ==
       {"missing": [], "restored": []})
 

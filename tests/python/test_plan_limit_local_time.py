@@ -14,7 +14,7 @@ import sys
 import tempfile
 from datetime import datetime, timezone
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-limit-tz-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-limit-tz-"))
 os.environ["TZ"] = "UTC"   # the VPS case: OS clock on UTC, owner in Vietnam
 if hasattr(__import__("time"), "tzset"):
     __import__("time").tzset()

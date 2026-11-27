@@ -34,8 +34,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_TMP = tempfile.mkdtemp(prefix="javis-memcase-")
-os.environ.setdefault("JAVIS_STATE_DIR", _TMP)
+_TMP = tempfile.mkdtemp(prefix="jeevi-memcase-")
+os.environ.setdefault("JEEVI_STATE_DIR", _TMP)
 
 import main  # noqa: E402
 import learn  # noqa: E402

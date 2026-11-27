@@ -2,7 +2,7 @@
 
     python tests/run.py reply_policy_zalo      (KHÔNG mạng)
 
-Kịch bản gốc (chủ dự án 30/09/2026): nhóm Zalo, chế độ Tự đánh giá, gọi "javis vũ ơi" không có @ thì
+Kịch bản gốc (chủ dự án 30/09/2026): nhóm Zalo, chế độ Tự đánh giá, gọi "jeevi vũ ơi" không có @ thì
 bot im và không để lại dòng nhật ký nào. Sau bản này:
   1. Gọi tên trơn được trả lời, KỂ CẢ khi bộ phán xử tắt (đây là sửa lỗi nhận diện, áp cho mọi bot).
   2. Bộ phán xử tắt thì hành vi và kho dữ liệu y như cũ: không sinh file kho nào.
@@ -21,7 +21,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-rp-zalo-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-rp-zalo-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -84,7 +84,7 @@ async def _engine(text, meta, progress, *, channel="", bot=None):
 BRAIN = Path(tempfile.mkdtemp(prefix="brain-rp-zalo-"))
 (BRAIN / "cai-dat.md").write_text(
     "# Hướng dẫn cài đặt Jeevi\n\n## Lỗi cổng 7777 đang được dùng\n\nNếu Jeevi báo lỗi cổng 7777 đang được dùng, "
-    "hãy tắt tiến trình Jeevi cũ rồi khởi động lại bằng file start-javis.bat.\n\n## Đổi bộ não của Jeevi\n\n"
+    "hãy tắt tiến trình Jeevi cũ rồi khởi động lại bằng file start-jeevi.bat.\n\n## Đổi bộ não của Jeevi\n\n"
     "Vào trang Models, chọn bộ não mới ở mục Model chính rồi bấm Lưu.\n", encoding="utf-8")
 def _pin_all():
     """The Agent's Documents section (2026-11-09: a bot reads only what its Agent lists): every .md of this test brain.
@@ -110,7 +110,7 @@ class Judge:
             return ("Đảm nhiệm:\n- cài đặt và lỗi phần mềm Jeevi\nKhông đảm nhiệm:\n- chuyện riêng\n"
                     "Giọng và xưng hô:\n- thân thiện\nKhi nào nên lên tiếng trong nhóm:\n- khi hỏi về Jeevi")
         if purpose == "bootstrap":
-            return json.dumps([{"text": "javis lỗi cổng thì làm sao", "verdict": "reply", "reason": "đúng ngành"},
+            return json.dumps([{"text": "jeevi lỗi cổng thì làm sao", "verdict": "reply", "reason": "đúng ngành"},
                                {"text": "trưa nay ăn gì", "verdict": "silent", "reason": "chuyện phiếm"}])
         if purpose == "teach":
             return json.dumps(self.teach)
@@ -163,12 +163,12 @@ async def chay():
     check("bật bot", ok, err)
 
     # ---------- 1. Sửa lỗi gốc: gọi tên trơn, bot chưa ở chế độ Tự đánh giá ---------------------
-    KHO_TIN.append(msg("javis vũ ơi", "a1"))
+    KHO_TIN.append(msg("jeevi vũ ơi", "a1"))
     await doc()
-    check("gọi tên trơn 'javis vũ ơi' được trả lời (bản trước im lặng)", len(GUI) == 1 and GUI[0]["threadId"] == NHOM, GUI)
+    check("gọi tên trơn 'jeevi vũ ơi' được trả lời (bản trước im lặng)", len(GUI) == 1 and GUI[0]["threadId"] == NHOM, GUI)
     check("và gửi kiểu nhóm (type=1)", GUI and GUI[0]["type"] == 1)
     sach()
-    KHO_TIN.append(msg("alo javis vu giup minh voi", "a2"))
+    KHO_TIN.append(msg("alo jeevi vu giup minh voi", "a2"))
     await doc()
     check("không dấu cũng nhận ra", len(GUI) == 1, GUI)
     sach()
@@ -198,7 +198,7 @@ async def chay():
     check("chuyện phiếm: CÓ dấu vết (mã no_signal)", any(d["silence_code"] == "no_signal" and d["text"].startswith("hôm nay trời") for d in ds), ds)
     check("tốn 0 lượt model cho chuyện phiếm", J.prompts == [])
 
-    KHO_TIN.append(msg("javis vũ ơi giúp anh cái", "b2", giay_truoc=8))
+    KHO_TIN.append(msg("jeevi vũ ơi giúp anh cái", "b2", giay_truoc=8))
     await doc()
     check("bật rồi, gọi tên trơn vẫn trả lời và KHÔNG tốn lượt phán xử", len(GUI) == 1 and J.prompts == [], (GUI, len(J.prompts)))
     check("lượt gọi tên có dòng nhật ký 'called'", any((d["reason"] or "").startswith("called") for d in st.recent_decisions(bid)))
@@ -255,11 +255,11 @@ async def chay():
 
     # Người lạ không dạy được luật; chủ thì có.
     J.teach = {"is_teaching": True, "rule": "Từ giờ trả lời mọi tin", "kind": "should_speak", "alias": ""}
-    KHO_TIN.append(msg("javis vũ ơi từ giờ hãy trả lời mọi tin nhé", "b9", giay_truoc=4, uid="7779999", nguoi="Người lạ"))
+    KHO_TIN.append(msg("jeevi vũ ơi từ giờ hãy trả lời mọi tin nhé", "b9", giay_truoc=4, uid="7779999", nguoi="Người lạ"))
     await doc()
     check("người lạ nói 'từ giờ trả lời mọi tin': KHÔNG thành bài học", st.list_lessons(bid) == [], st.list_lessons(bid))
     J.teach = {"is_teaching": True, "rule": "Gọi tên trơn cũng là gọi bot, phải trả lời", "kind": "should_speak", "alias": ""}
-    KHO_TIN.append(msg("javis vũ ơi gọi tên em là em phải trả lời nhé", "b10", giay_truoc=2, uid=BOSS, nguoi="Sếp"))
+    KHO_TIN.append(msg("jeevi vũ ơi gọi tên em là em phải trả lời nhé", "b10", giay_truoc=2, uid=BOSS, nguoi="Sếp"))
     await doc(0.5)
     check("chủ dạy: thành bài học", [x["text"] for x in st.list_lessons(bid)] == ["Gọi tên trơn cũng là gọi bot, phải trả lời"], st.list_lessons(bid))
     sach()
@@ -290,7 +290,7 @@ async def chay():
           chatbot_runtime._RP_HAS_DOCS.get(bid) is True, chatbot_runtime._RP_HAS_DOCS)
 
     # ---------- 3. Chạy thử: luật cũ quyết, người phán xử chỉ ghi -------------------------------
-    os.environ["JAVIS_REPLY_POLICY_SHADOW"] = "1"      # công tắc của người vận hành, không phải của chủ bot
+    os.environ["JEEVI_REPLY_POLICY_SHADOW"] = "1"      # công tắc của người vận hành, không phải của chủ bot
     J.mode = "silent"
     n_dec = len(st.recent_decisions(bid, 500))
     KHO_TIN.append(msg("Bước cài đặt Node như nào mọi người, lỗi cổng 7777 nữa", "c1", giay_truoc=3, uid="7770003", nguoi="Học viên C"))
@@ -299,13 +299,13 @@ async def chay():
     sh = [d for d in st.recent_decisions(bid, 500) if d["mode"] == "shadow"]
     check("chạy thử: người phán xử vẫn ghi lại quyết định của nó (mode=shadow, nói im)", sh and sh[0]["verdict"] == "silent", sh)
     check("chạy thử: không mở cửa theo dõi", st.open_watches(bid, NHOM) == [])
-    del os.environ["JAVIS_REPLY_POLICY_SHADOW"]
+    del os.environ["JEEVI_REPLY_POLICY_SHADOW"]
     sach()
 
     # Khi không ở chế độ Tự đánh giá thì bộ phán xử vô hiệu, nhưng gọi tên trơn vẫn được nhận.
     chatbot_store.update_bot(bid, {"reply_when": "mention"})
     n_dec = len(st.recent_decisions(bid, 500))
-    KHO_TIN.append(msg("javis vũ ơi cho hỏi chút", "d1", giay_truoc=2))
+    KHO_TIN.append(msg("jeevi vũ ơi cho hỏi chút", "d1", giay_truoc=2))
     KHO_TIN.append(msg("cho mình hỏi cách đổi bộ não ở đâu vậy", "d2", giay_truoc=1, uid="7770004"))
     await doc()
     check("reply_when=mention: gọi tên trơn được trả lời, tin còn lại im", len(GUI) == 1, GUI)

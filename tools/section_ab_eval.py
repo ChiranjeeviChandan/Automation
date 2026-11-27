@@ -10,9 +10,9 @@ section_select would load (the parts plus the list of what was left out). Both a
 correct answer must contain (the template's own fields and paths, the safety rules) and on banned strings. The run fails
 (exit 1) when the selective variant covers fewer key facts than the whole one on any case, averaged over the tries.
 
-Cases are javis-builder requests, the one skill on section_select.MENU_SKILLS. A skill added to that list should bring
+Cases are jeevi-builder requests, the one skill on section_select.MENU_SKILLS. A skill added to that list should bring
 its own cases here first. Jeevi serves every language (owner, 18/11/2026), so cases come in several: a request in
-another language than the skill carries the `task` the model would pass to javis_use_skill, written in the skill's
+another language than the skill carries the `task` the model would pass to jeevi_use_skill, written in the skill's
 language as its description asks.
 """
 from __future__ import annotations
@@ -48,7 +48,7 @@ CASES = [
      # The skill prefers the javis_schedule tool over writing Jeevi/loops/<slug>.md by hand: either is right.
      "must": [["javis_schedule", "Jeevi/loops/"], ["enabled: false"], ["mode:"]], "must_not": []},
     {"id": "plugin", "ask": "Viết plugin tính phí ship theo cân nặng đơn hàng.",
-     "must": [["javis_plugin"], ["min_mode"], ["readonly"], ["enabled: false", "tat", "off"]], "must_not": []},
+     "must": [["jeevi_plugin"], ["min_mode"], ["readonly"], ["enabled: false", "tat", "off"]], "must_not": []},
     {"id": "workflow", "ask": "Tạo workflow: một trợ lý viết bài blog, rồi một trợ lý đăng lên Facebook.",
      # Two new assistants: a right answer creates them first, from the Agent template (role:, not description:).
      "must": [["workflows/"], ["type: workflow"], ["steps:"], ["status: 'off'", "status: \"off\"", "status: off"],
@@ -57,7 +57,7 @@ CASES = [
     {"id": "skill", "ask": "Tạo skill viết caption bán hàng cho Facebook.",
      "must": [["skills/"], ["SKILL.md"], ["description:"], ["group:"]], "must_not": []},
     {"id": "team", "ask": "Lập nhóm chat gồm trợ lý marketing và trợ lý bán hàng.",
-     "must": [["javis_team"], ["op"], ["create"]], "must_not": []},
+     "must": [["jeevi_team"], ["op"], ["create"]], "must_not": []},
     {"id": "agent-ja", "ask": "古いお客様にフォローメールを書くエージェントを作って。",
      "task": "tạo agent viết email chăm sóc khách cũ",
      "must": [["agents/"], ["type: agent"], ["role:"], ["tags:"], ["slug:"]], "must_not_re": [WRONG_AGENT_DIR]},
@@ -89,7 +89,7 @@ def variants(skill_text: str, request: str, task: str = "") -> dict:
     if picked is None:
         return {"whole": skill_text, "selected": None}
     tail = ("\n\n[Other parts of this skill, not loaded: " + "; ".join(f'"{t}"' for t, _a, _b in picked.left_out)
-            + ". If the task needs one, call javis_use_skill(name=\"javis-builder\", section=\"<title>\"), or "
+            + ". If the task needs one, call jeevi_use_skill(name=\"jeevi-builder\", section=\"<title>\"), or "
               "full=true for the whole skill.]")
     return {"whole": skill_text, "selected": picked.text + tail}
 
@@ -122,7 +122,7 @@ def main(argv=None) -> int:
     ap.add_argument("--model", default="claude-sonnet-5-5")
     ap.add_argument("--base-url", default="")
     ap.add_argument("--repeat", type=int, default=3)
-    ap.add_argument("--skill", default=str(ROOT / ".claude" / "skills" / "javis-builder" / "SKILL.md"))
+    ap.add_argument("--skill", default=str(ROOT / ".claude" / "skills" / "jeevi-builder" / "SKILL.md"))
     ap.add_argument("--only", default="")
     ap.add_argument("--out", default="")
     a = ap.parse_args(argv)

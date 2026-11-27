@@ -30,7 +30,7 @@ from config import STATE_DIR
 CACHE = STATE_DIR / "plan-names-cache.json"
 TTL = 6 * 3600
 RETRY = 30 * 60
-FORMAT = "javis-plan-names"
+FORMAT = "jeevi-plan-names"
 FORMAT_VERSION = 1
 NHA = ("claude", "codex", "grok", "agy")
 MAX_BYTES = 64 * 1024
@@ -74,9 +74,9 @@ def lam_sach(d) -> dict:
 
 
 def url_danh_ba() -> str:
-    """`plan-names.json` next to the pack catalog the machine uses. `JAVIS_PLAN_NAMES_URL` overrides it;
+    """`plan-names.json` next to the pack catalog the machine uses. `JEEVI_PLAN_NAMES_URL` overrides it;
     an empty value turns the catalog off."""
-    env = os.environ.get("JAVIS_PLAN_NAMES_URL")
+    env = os.environ.get("JEEVI_PLAN_NAMES_URL")
     if env is not None:
         return env.strip()
     try:

@@ -8,14 +8,14 @@ from claude_cli import CodexCLI, codex_sandbox_cho_mode
 
 HEADER = "X-Jeevi-Tool-Allowlist"
 _FILE_TOOLS = {
-    "Read": ("javis_read_file",),
-    "LS": ("javis_list_dir",),
-    "Glob": ("javis_list_dir", "javis_search_files"),
-    "Grep": ("javis_search_files",),
-    "Write": ("javis_write_file",),
-    "Edit": ("javis_edit_file",),
-    "WebFetch": ("javis_web_fetch",),
-    "WebSearch": ("javis_web_search",),
+    "Read": ("jeevi_read_file",),
+    "LS": ("jeevi_list_dir",),
+    "Glob": ("jeevi_list_dir", "jeevi_search_files"),
+    "Grep": ("jeevi_search_files",),
+    "Write": ("jeevi_write_file",),
+    "Edit": ("jeevi_edit_file",),
+    "WebFetch": ("jeevi_web_fetch",),
+    "WebSearch": ("jeevi_web_search",),
 }
 
 
@@ -26,7 +26,7 @@ def hub_allowlist(allowed):
         name = str(item)
         if name in _FILE_TOOLS:
             names.update(_FILE_TOOLS[name])
-        elif name.startswith(("mcp__javis__", "mcp__javis-plugins__")):
+        elif name.startswith(("mcp__jeevi__", "mcp__jeevi-plugins__")):
             names.add(name.split("__", 2)[2])
         elif name.startswith("mcp__") and len(name.split("__", 2)) == 3:
             names.add(name[5:])
@@ -60,11 +60,11 @@ def build(*, cwd, model, instructions, allowed, mode, apply_hub, extra_servers):
         "features.skill_mcp_dependency_install=false", 'web_search="disabled"',
         "sandbox_workspace_write.network_access=false",
         'service_tier="default"',
-        "mcp_servers.javis.http_headers." + HEADER + "=" + json.dumps(json.dumps(names)),
+        "mcp_servers.jeevi.http_headers." + HEADER + "=" + json.dumps(json.dumps(names)),
     ]
     # Keep the owner's persistent MCP configuration intact. Servers outside the permissioned
     # hub are disabled only for this restricted workflow process.
     cli.extra_config += ["mcp_servers." + name + ".enabled=false" for name in extra_servers]
     if not any("*" in name for name in names):
-        cli.extra_config.append("mcp_servers.javis.enabled_tools=" + json.dumps(names))
+        cli.extra_config.append("mcp_servers.jeevi.enabled_tools=" + json.dumps(names))
     return cli

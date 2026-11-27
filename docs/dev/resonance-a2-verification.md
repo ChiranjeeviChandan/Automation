@@ -45,7 +45,7 @@ Mốc A2 của lộ trình [agent scope](../superpowers/specs/2026-10-08-resonan
 
 - **Nền lúc kiểm:** A1 (#590) chưa merge, `main` ở `71f9c5b9`. Sau đó A1 vào `main` (`fdfec7c5`), A2 chuyển nền và ghim test quay về vào `fdfec7c5` (mục "Đường tích hợp").
 - **Smoke dry trên bản tích hợp:**
-  - chạy `JAVIS_RESONANCE_E2E_ACHIEVE=dry tests/python/test_resonance_mvp_e2e_achieve.py`;
+  - chạy `JEEVI_RESONANCE_E2E_ACHIEVE=dry tests/python/test_resonance_mvp_e2e_achieve.py`;
   - dựng server thật, đi đủ S0 tới S6 trong phiên trợ lý;
   - kết quả `dry_ok`, **0 lượt engine cấp host**, 255 giây.
 - **Soi giao diện** trên server sandbox (cổng 7788, state và brain tạm, engine giả, nhịp tạm dừng):

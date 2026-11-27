@@ -28,9 +28,9 @@ import os
 import sys
 import tempfile
 
-_STATE = tempfile.mkdtemp(prefix="javis-tkkn-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-tkkn-brains-")
+_STATE = tempfile.mkdtemp(prefix="jeevi-tkkn-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-tkkn-brains-")
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")

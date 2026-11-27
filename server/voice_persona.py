@@ -25,12 +25,12 @@ def _env_budget(name: str, default: int, ceiling: int) -> int:
     return max(1000, min(configured, ceiling))
 
 
-BODY_CHARS = _env_budget("JAVIS_VOICE_AGENT_BODY_CHARS", 12000, 24000)
-MEMORY_CHARS = _env_budget("JAVIS_VOICE_AGENT_MEMORY_CHARS", 6000, 12000)
+BODY_CHARS = _env_budget("JEEVI_VOICE_AGENT_BODY_CHARS", 12000, 24000)
+MEMORY_CHARS = _env_budget("JEEVI_VOICE_AGENT_MEMORY_CHARS", 6000, 12000)
 # Optional markers in an agent's Markdown body. Move the enclosed high-priority
 # instructions before ordinary agent prose *before* applying BODY_CHARS.
-VOICE_RULES_START = "<!-- JAVIS_VOICE_RULES_START -->"
-VOICE_RULES_END = "<!-- JAVIS_VOICE_RULES_END -->"
+VOICE_RULES_START = "<!-- JEEVI_VOICE_RULES_START -->"
+VOICE_RULES_END = "<!-- JEEVI_VOICE_RULES_END -->"
 
 # These operational integrity rules are never subject to body or memory truncation.
 # Worded for any partner (not only a sales one): the caller is the owner, not a customer.

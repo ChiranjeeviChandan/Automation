@@ -18,10 +18,10 @@ import tempfile
 import time
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="javis-braindem-")
-os.environ.setdefault("JAVIS_STATE_DIR", _STATE)
-_BRAINS = tempfile.mkdtemp(prefix="javis-braindem-brains-")
-os.environ["BRAINS_DIR"] = _BRAINS       # main.py:432 đọc đúng tên này, KHÔNG có tiền tố JAVIS_
+_STATE = tempfile.mkdtemp(prefix="jeevi-braindem-")
+os.environ.setdefault("JEEVI_STATE_DIR", _STATE)
+_BRAINS = tempfile.mkdtemp(prefix="jeevi-braindem-brains-")
+os.environ["BRAINS_DIR"] = _BRAINS       # main.py:432 đọc đúng tên này, KHÔNG có tiền tố JEEVI_
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -43,7 +43,7 @@ BASE = Path(main.BRAINS_DIR)
 
 # CHỐT CHẶN - đừng gỡ. Test này TẠO brain giả, nên nếu BRAINS_DIR không phải thư mục tạm thì
 # nó sẽ đẻ rác vào kho brain THẬT của người dùng. Đã xảy ra một lần: đặt nhầm tên biến môi
-# trường (JAVIS_BRAINS_DIR thay vì BRAINS_DIR) làm 3019 file rác rơi vào brains/ thật.
+# trường (JEEVI_BRAINS_DIR thay vì BRAINS_DIR) làm 3019 file rác rơi vào brains/ thật.
 # Chết ngay còn hơn ghi nhầm chỗ.
 if BASE.resolve() != Path(_BRAINS).resolve():
     print(f"FAIL BRAINS_DIR không trỏ vào thư mục tạm: {BASE}\n"

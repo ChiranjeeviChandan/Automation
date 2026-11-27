@@ -19,7 +19,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-staff-files-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-staff-files-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -44,7 +44,7 @@ def run(coro):
     return asyncio.run(coro)
 
 
-ROOT_DIR = Path(tempfile.mkdtemp(prefix="javis-staff-brain-"))
+ROOT_DIR = Path(tempfile.mkdtemp(prefix="jeevi-staff-brain-"))
 INBOX = ROOT_DIR / "inbox" / "khach"
 INBOX.mkdir(parents=True)
 

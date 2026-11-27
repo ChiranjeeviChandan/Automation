@@ -21,9 +21,9 @@ import os
 import sys
 import tempfile
 
-_STATE = tempfile.mkdtemp(prefix="javis-share-")
-_BRAINS = tempfile.mkdtemp(prefix="javis-share-brains-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-share-")
+_BRAINS = tempfile.mkdtemp(prefix="jeevi-share-brains-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 os.environ["BRAINS_DIR"] = _BRAINS
 
 BRAIN = os.path.join(_BRAINS, "brain")

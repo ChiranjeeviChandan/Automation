@@ -21,7 +21,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-rewrite-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-rewrite-"))
 
 import main  # noqa: E402
 import nghe_sua  # noqa: E402

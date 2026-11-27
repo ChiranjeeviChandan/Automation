@@ -27,7 +27,7 @@ import tempfile
 
 from _paths import ROOT, SERVER  # noqa: E402,F401  - nạp server/ vào sys.path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-push-test-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-push-test-"))
 
 import channel_context  # noqa: E402
 import main  # noqa: E402
@@ -158,7 +158,7 @@ check("nhánh Telegram vẫn dạy kèm chat_id như cũ", '\\"chat_id\\":\\"999
 _push = APP.split('if (data.type === "push")', 1)
 check("app.js có nhánh xử lý sự kiện push", len(_push) == 2)
 _body = _push[1].split("if (data.type === \"status\")", 1)[0] if len(_push) == 2 else ""
-check("push vẽ thành bong bóng Jeevi", "appendJavisMessage(data.content" in _body)
+check("push vẽ thành bong bóng Jeevi", "appendJeeviMessage(data.content" in _body)
 # Bỏ chú thích trước khi soi: chú thích được quyền NHẮC tới turns[sid] để giải thích vì sao
 # không đụng vào nó.
 _code = re.sub(r"//[^\n]*", "", _body)

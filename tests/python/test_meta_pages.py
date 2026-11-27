@@ -16,7 +16,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-metapages-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-metapages-"))
 
 _fails = []
 def check(n, c):
@@ -26,7 +26,7 @@ def check(n, c):
 
 # ---- 1. Connector: đã dọn sang kho ----
 # Khuôn connector `facebook-pages` rời `system/mcp-catalog.json` ở 0.55.36 và giờ sống trong gói
-# `javis.facebook-pages` của repo kho (blogminhquy/javis-store). Những assert về HÌNH DẠNG của nó
+# `jeevi.facebook-pages` của repo kho (blogminhquy/javis-store). Những assert về HÌNH DẠNG của nó
 # (provider, scope, fields, default_perm, phân loại tool, chữ cảnh báo) đi theo dữ liệu sang đó:
 # `tools/kiem-tra.py` của repo kho chạy đúng các phép kiểm ấy trên mọi Pull Request.
 #
@@ -150,7 +150,7 @@ async def handler_tests():
     check("fb_page_photo: thiếu photo → ERROR", r_ph_miss.startswith("ERROR"))
 
     # fb_page_photo: file trong vault → upload multipart (fake _post_file, không mạng)
-    vroot = Path(tempfile.mkdtemp(prefix="javis-fbvault-"))
+    vroot = Path(tempfile.mkdtemp(prefix="jeevi-fbvault-"))
     (vroot / "attachments").mkdir()
     (vroot / "attachments" / "a.jpg").write_bytes(b"img")
 

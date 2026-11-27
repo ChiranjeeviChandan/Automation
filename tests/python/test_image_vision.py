@@ -8,7 +8,7 @@ pinned here:
   1. `image_vision`: ChatGPT on the signed-in plan looks at brain images and describes them, the only eyes the six API
      engines have. Images outside the brain are never sent; more than 4 per look is refused.
   2. `javis_describe_image` in the bundled `image-chatgpt` plugin, read only.
-  3. `javis_read_file` on a photo explains how to see it instead of returning mojibake.
+  3. `jeevi_read_file` on a photo explains how to see it instead of returning mojibake.
   4. The Zalo plugins are no longer bundled, and the Zalo connector names `javis.zalo` as its companion pack so the QR flow
      and the Connect page can offer it. Jeevi never installs it silently: the state is reported, nothing more.
 """
@@ -22,7 +22,7 @@ import tempfile
 import types
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-iv-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-iv-"))
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -43,7 +43,7 @@ def check(name, cond, them=""):
 
 
 JPEG = b"\xff\xd8\xff\xe0" + b"x" * 200
-vault = Path(tempfile.mkdtemp(prefix="javis-iv-vault-"))
+vault = Path(tempfile.mkdtemp(prefix="jeevi-iv-vault-"))
 (vault / "attachments").mkdir()
 (vault / "attachments" / "x.jpg").write_bytes(JPEG)
 
@@ -82,7 +82,7 @@ r = asyncio.run(iv.describe_images(["attachments/x.jpg"], "có gì", vault_root=
 check("ChatGPT stream deltas are joined into the answer", r.get("ok") and r["text"] == "Ảnh 1: một hoá đơn", r)
 check("the image goes as a data URL, with the plan's token", SEEN["body"]["input"][0]["content"][1]["image_url"]
       .startswith("data:image/jpeg;base64,") and SEEN["auth"] == "Bearer tok")
-outside = Path(tempfile.mkdtemp(prefix="javis-iv-out-")) / "secret.jpg"
+outside = Path(tempfile.mkdtemp(prefix="jeevi-iv-out-")) / "secret.jpg"
 outside.write_bytes(JPEG)
 SEEN.clear()
 r = asyncio.run(iv.describe_images([str(outside)], vault_root=str(vault)))
@@ -167,11 +167,11 @@ iv.describe_images = real_describe
 # ============================================================
 import mcp_hub  # noqa: E402
 _tools, route = mcp_hub._builtin_tools("full", str(vault))
-kq = asyncio.run(route["javis_read_file"]["call"]({"path": "attachments/x.jpg"}))
+kq = asyncio.run(route["jeevi_read_file"]["call"]({"path": "attachments/x.jpg"}))
 check("reading a photo as text explains how to see it instead of mojibake", "javis_describe_image" in kq
       and "�" not in kq and "![](attachments/x.jpg)" in kq, kq[:200])
 (vault / "note.md").write_text("xin chào", encoding="utf-8")
-check("text files still read as before", asyncio.run(route["javis_read_file"]["call"]({"path": "note.md"})) == "xin chào")
+check("text files still read as before", asyncio.run(route["jeevi_read_file"]["call"]({"path": "note.md"})) == "xin chào")
 
 # ============================================================
 # 4. Zalo tools moved to the store pack javis.zalo
@@ -202,7 +202,7 @@ pack_install.doc_so = lambda: {"javis.zalo": {"enabled": True}}
 check("installed and on: reported as installed", pack_install.companion_packs(CAT, {"zalo"})[0]["state"] == "installed")
 pack_install.doc_so = lambda: {}
 real_dir = packs.PACKS_DIR
-packs.PACKS_DIR = Path(tempfile.mkdtemp(prefix="javis-iv-packs-"))
+packs.PACKS_DIR = Path(tempfile.mkdtemp(prefix="jeevi-iv-packs-"))
 (packs.PACKS_DIR / "javis.zalo").mkdir()
 check("dropped in by hand (no ledger row) counts as installed",
       pack_install.companion_packs(CAT, {"zalo"})[0]["state"] == "installed")

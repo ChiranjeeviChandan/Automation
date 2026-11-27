@@ -46,7 +46,7 @@
   var cho = [], daGui = {}, dem = 0, hen = 0;
 
   function phienBan() {
-    try { return JSON.parse(document.getElementById("javis-fresh").textContent).version || ""; } catch (e) { return ""; }
+    try { return JSON.parse(document.getElementById("jeevi-fresh").textContent).version || ""; } catch (e) { return ""; }
   }
   function trang() {
     try { return (window.Alpine && Alpine.store("nav") && Alpine.store("nav").active) || ""; } catch (e) { return ""; }
@@ -68,7 +68,7 @@
   function them(loai, msg, src, dong, cot, stack) {
     try {
       if (!nenGui(msg, src, location.origin)) return;
-      var goc = mapBundle(src, dong, window.__javisBundleMap);
+      var goc = mapBundle(src, dong, window.__jeeviBundleMap);
       if (goc) { src = goc[0]; dong = goc[1]; }
       src = String(src || "").replace(location.origin, "").replace(/\?v=[\w.]+/, "");
       var khoa = msg + "|" + src + "|" + dong;
@@ -107,5 +107,5 @@
       them("caught", msg, m ? m[1] : "", m ? Number(m[2]) : 0, m ? Number(m[3]) : 0, st);
     } catch (e) { /* noop */ }
   };
-  window.JavisLoiMayKhach = api;
+  window.JeeviLoiMayKhach = api;
 })();

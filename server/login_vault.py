@@ -4,10 +4,10 @@ The owner signs in on their own browser, exports the cookies of that site and pa
 "Kho đăng nhập" page. Four shapes are read: a Cookie-Editor JSON export, a Playwright storage state,
 a Netscape cookies.txt and a bare `Cookie:` header. Jeevi then uses that sign-in to:
 
-- open a page behind it for every engine (plugin tool `javis_login`, op=fetch),
+- open a page behind it for every engine (plugin tool `jeevi_login`, op=fetch),
 - check a page behind it on a schedule (web_watch, a watch with `login_id`), and
 - since 2026-11-21 put it into the browser the Playwright connection drives, so Jeevi can click and fill forms
-  signed in (`javis_login` op=browser, browser_login.py). Only a sign-in whose "act" switch is on goes there.
+  signed in (`jeevi_login` op=browser, browser_login.py). Only a sign-in whose "act" switch is on goes there.
 
 Rules this module keeps:
 

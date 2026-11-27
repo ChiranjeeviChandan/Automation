@@ -161,7 +161,7 @@ def add(text: str, *, kind: str = "answer", session_id: str = "", brain: str = "
     # same key; the first item stands and the caller learns it was a repeat (`duplicate`), so no channel rings twice.
     # `routing` (0.186.0): why the report could not be delivered to a chat ("no_target": no chat and no source brain),
     # kept so the owner sees it in the bell instead of Jeevi guessing a recipient.
-    # 2026-11-19: one plain line under the title (the run's own JAVIS_NOTIFY line, or the first reporting line of the
+    # 2026-11-19: one plain line under the title (the run's own JEEVI_NOTIFY line, or the first reporting line of the
     # text). The card shows it instead of the raw start of the text, which often repeated the title word for word.
     summary = " ".join(str(summary or "").split())[:MAX_SUMMARY]
     if summary and not _same_line(summary, item["title"]):

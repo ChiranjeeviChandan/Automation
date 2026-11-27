@@ -17,7 +17,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ear-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ear-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -81,20 +81,20 @@ r = run(stt.listen_any(b"x", "a.ogg", {"gemini": "m"}))
 check("only a Gemini key -> Gemini hears it", r.get("ear") == "gemini" and r.get("text") == "nghe bằng gemini", r)
 
 CALLS.clear()
-REPLIES["groq"] = {"ok": False, "ly_do": "loi", "noi_voi_javis": "x"}
-REPLIES["openai"] = {"ok": False, "ly_do": "loi", "noi_voi_javis": "x"}
+REPLIES["groq"] = {"ok": False, "ly_do": "loi", "noi_voi_jeevi": "x"}
+REPLIES["openai"] = {"ok": False, "ly_do": "loi", "noi_voi_jeevi": "x"}
 r = run(stt.listen_any(b"x", "a.ogg", ALL, local=fake_local))
 check("CANARY: a failing ear hands over to the next (Groq, OpenAI down -> Gemini)",
       r.get("ear") == "gemini" and CALLS == ["groq", "openai", "gemini"], CALLS)
 
 CALLS.clear()
-REPLIES["gemini"] = {"ok": False, "ly_do": "qua_lon", "noi_voi_javis": "x"}
+REPLIES["gemini"] = {"ok": False, "ly_do": "qua_lon", "noi_voi_jeevi": "x"}
 r = run(stt.listen_any(b"x", "a.ogg", ALL, local=fake_local))
 check("every key failing -> the offline Whisper hears it", r.get("ear") == "local" and CALLS[-1] == "local", CALLS)
 
 CALLS.clear()
 REPLIES.clear()
-REPLIES["groq"] = {"ok": False, "ly_do": "khong_nghe_ro", "noi_voi_javis": "x"}
+REPLIES["groq"] = {"ok": False, "ly_do": "khong_nghe_ro", "noi_voi_jeevi": "x"}
 r = run(stt.listen_any(b"x", "a.ogg", ALL, local=fake_local))
 check("silence stays silence: 'nothing heard' does not try every other ear", CALLS == ["groq"]
       and r.get("ly_do") == "khong_nghe_ro", CALLS)
@@ -289,7 +289,7 @@ check("a voice message that cannot be fetched -> honest line, no guess", "không
 
 
 async def no_ear(data, name):
-    return {"ok": False, "ly_do": "thieu_key", "noi_voi_javis": "x"}
+    return {"ok": False, "ly_do": "thieu_key", "noi_voi_jeevi": "x"}
 
 cr._deps["transcribe"] = no_ear
 n = run(cr.nghe_cho_bot({"audio_urls": [URL]}, {}))

@@ -2,7 +2,7 @@
 # ============================================================
 # JEEVI OS - first install on a Mac (JEEVI OS.app opens Terminal on this file).
 #
-#   bash bootstrap.sh            # installs into ~/JeeviOS (JAVIS_HOME to change it)
+#   bash bootstrap.sh            # installs into ~/JeeviOS (JEEVI_HOME to change it)
 #
 # Checks and installs what the Mac lacks, WITHOUT Homebrew (most Macs do not have it):
 #   1. Git: Apple's Command Line Tools. macOS shows its own "Install" dialog for them.
@@ -16,9 +16,9 @@
 # ============================================================
 set -u
 
-JAVIS_HOME="${JAVIS_HOME:-$HOME/JeeviOS}"
-REPO="${JAVIS_REPO:-https://github.com/blogminhquy/javis-os.git}"
-BRANCH="${JAVIS_BRANCH:-main}"
+JEEVI_HOME="${JEEVI_HOME:-$HOME/JeeviOS}"
+REPO="${JEEVI_REPO:-https://github.com/blogminhquy/javis-os.git}"
+BRANCH="${JEEVI_BRANCH:-main}"
 
 CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; RED='\033[0;31m'; NC='\033[0m'
 step() { echo ""; echo -e "${CYAN}[$1]${NC} $2"; }
@@ -32,12 +32,12 @@ fail() {
   exit 1
 }
 
-export PATH="$HOME/.local/bin:$HOME/.javis/node/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.jeevi/node/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 echo ""
 echo " =========================================="
 echo "  JEEVI OS - kiem tra va cai nhung gi may con thieu"
-echo "  Thu muc cai: $JAVIS_HOME"
+echo "  Thu muc cai: $JEEVI_HOME"
 echo " =========================================="
 
 # ---------------------------------------------------------------- [A] git
@@ -86,21 +86,21 @@ done
 
 # ---------------------------------------------------------------- [C] source
 step C "Tai Jeevi ve may"
-if [ -d "$JAVIS_HOME/.git" ]; then
-  ok "Da co ban Jeevi o $JAVIS_HOME, giu nguyen (cap nhat bang nut Cap nhat trong app)"
+if [ -d "$JEEVI_HOME/.git" ]; then
+  ok "Da co ban Jeevi o $JEEVI_HOME, giu nguyen (cap nhat bang nut Cap nhat trong app)"
 else
-  if [ -e "$JAVIS_HOME" ] && [ -n "$(ls -A "$JAVIS_HOME" 2>/dev/null)" ]; then
-    fail "Thu muc $JAVIS_HOME da co file nhung khong phai ban Jeevi tai bang git. Doi ten no roi mo lai JEEVI OS."
+  if [ -e "$JEEVI_HOME" ] && [ -n "$(ls -A "$JEEVI_HOME" 2>/dev/null)" ]; then
+    fail "Thu muc $JEEVI_HOME da co file nhung khong phai ban Jeevi tai bang git. Doi ten no roi mo lai JEEVI OS."
   fi
   # blob:none keeps every commit (the updater merges and rolls back on them) and downloads
   # file contents only when needed.
-  git clone --filter=blob:none --branch "$BRANCH" "$REPO" "$JAVIS_HOME" || fail "Khong tai duoc Jeevi (kiem tra mang Internet)."
-  ok "Da tai ve $JAVIS_HOME"
+  git clone --filter=blob:none --branch "$BRANCH" "$REPO" "$JEEVI_HOME" || fail "Khong tai duoc Jeevi (kiem tra mang Internet)."
+  ok "Da tai ve $JEEVI_HOME"
 fi
 
 # ---------------------------------------------------------------- [D] install.sh
 step D "Cai Node, cac bo nao AI, thu vien va tu khoi dong (vai phut)"
-cd "$JAVIS_HOME" || fail "Khong vao duoc $JAVIS_HOME"
+cd "$JEEVI_HOME" || fail "Khong vao duoc $JEEVI_HOME"
 bash ./install.sh || fail "install.sh bao loi, doc cac dong phia tren."
 
 echo ""

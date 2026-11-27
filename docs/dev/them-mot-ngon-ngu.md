@@ -132,7 +132,7 @@ trong prompt. `system_sync._cap_desc` cắt mọi khoá mô tả, không riêng 
 ### 6. Chữ phía server, kho Kết nối, brain mẫu
 
 Từ 0.67.0 chữ phía server đi theo ngôn ngữ giao diện của THIẾT BỊ đang gọi (cookie
-`javis_lang`, do `dashboard/i18n/index.js` đặt). Thứ gì chưa có bản cho tiếng Thái thì hiện
+`jeevi_lang`, do `dashboard/i18n/index.js` đặt). Thứ gì chưa có bản cho tiếng Thái thì hiện
 tiếng Anh, nên không bước nào dưới đây là bắt buộc để mời người dùng Thái vào.
 
 - **Thông báo của server** viết hai bản ngay tại chỗ: `localefmt.chu("Đã lưu", "Saved")`. Bản

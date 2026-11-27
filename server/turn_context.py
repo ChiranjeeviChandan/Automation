@@ -56,7 +56,7 @@ from typing import Optional
 HEADER = "X-Jeevi-Turn"
 # Codex takes per-process header overrides through `-c`. No quotes around the header name, same
 # reason as mcp_hub.CODEX_VAULT_KEY (Codex keeps the quotes and the header becomes invalid).
-CODEX_HEADER_KEY = "mcp_servers.javis.http_headers." + HEADER
+CODEX_HEADER_KEY = "mcp_servers.jeevi.http_headers." + HEADER
 
 # Safety net only: a key is dropped when its turn ends (`reset`). This bounds the table if a turn
 # is killed without reaching its `finally`. Long enough for a slow tool (the CLI tool timeout is
@@ -88,7 +88,7 @@ class Token:
 
 
 _CURRENT: contextvars.ContextVar[Optional[_Binding]] = contextvars.ContextVar(
-    "javis_turn_context", default=None)
+    "jeevi_turn_context", default=None)
 _KEYS: dict = {}          # key -> (turn dict, expires_at)
 _LOCK = threading.Lock()  # CLI engines build argv from worker threads too
 

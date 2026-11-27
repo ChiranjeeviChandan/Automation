@@ -20,7 +20,7 @@ Spec: `docs/superpowers/specs/2026-07-17-hop-nhat-viec-dinh-ky-design.md`
 - Tiếng Việt là ngôn ngữ chính cho comment, docstring, tên hiển thị, thông báo lỗi.
 - Test là **script thuần, không pytest**. Quy ước nhà: `server/test_*.py`, có `def check(name, cond)`, gom `_fails`, `sys.exit(1)` khi có lỗi. CI chạy `for f in test_*.py; do python "$f"; done` (`.github/workflows/ci.yml:35-37`), nên mọi file `server/test_*.py` tự động vào CI.
 - Chạy test bằng venv: `.venv/Scripts/python.exe` (python hệ thống thiếu lib).
-- Test phải tự cô lập: `os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="..."))` **trước** khi import module Jeevi.
+- Test phải tự cô lập: `os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="..."))` **trước** khi import module Jeevi.
 - **Helper của `dashboard/console.js`** (dùng cho Task 2): chỉ có `esc(s)` (`:116`) và `fbrain()` (`:363`), gọi HTTP bằng `fetch()` trần với `FormData` dựng tại chỗ. **KHÔNG** có `api()`, `fd()`, `brain()` - đó là helper của `studio.js`, không dùng được ở console.js.
 - Không chạm `Jeevi/loops/*.md`, `loop-state.json`, hay `system_sync.LEGACY_HASHES` trong giai đoạn này. Loop giữ nguyên hành vi.
 - Không sửa `self_improve.py:105-113` (`_isolate`). Nó là nhánh chết trong production (`main.py:3029` luôn inject `apply_mcp`) nhưng `test_loop_ambient.py` đang dựa vào nó.
@@ -37,7 +37,7 @@ Spec: `docs/superpowers/specs/2026-07-17-hop-nhat-viec-dinh-ky-design.md`
 | `dashboard/index.html` | Chỉ bỏ panel loop cũ đã chết (`:160-192`, Task 3). **Không** có `panel-automations` ở đây - nó do `console.js:222` dựng động từ `STUDIO_PAGES`. |
 | `dashboard/app.js` | Bỏ fetch `/loop/config` của panel chết (`:1497`). |
 
-**Ghi chú decomposition:** khối registry + khối caps **phải cùng một task**. `_gather_capabilities` (`main.py:3352`) gọi `_read_automations`; xoá helper mà để lại lời gọi thì `rebuild_javis_index` ném `NameError` **mỗi tick scheduler** (`main.py:3650-3651`). Reviewer không thể duyệt cái này mà từ chối cái kia, nên chúng là một deliverable.
+**Ghi chú decomposition:** khối registry + khối caps **phải cùng một task**. `_gather_capabilities` (`main.py:3352`) gọi `_read_automations`; xoá helper mà để lại lời gọi thì `rebuild_jeevi_index` ném `NameError` **mỗi tick scheduler** (`main.py:3650-3651`). Reviewer không thể duyệt cái này mà từ chối cái kia, nên chúng là một deliverable.
 
 ---
 
@@ -75,8 +75,8 @@ KHÔNG thêm endpoint nào: trang Việc dùng thẳng /loops + /reminders đã 
 Phủ:
 - 4 path /automations* đã biến mất khỏi app.routes.
 - 3 helper registry + 2 lớp chiếu đã xoá (caller duy nhất của chúng là /automations GET).
-- caps: key 'automations' đã xoá, và _gather_capabilities/_render_javis_index còn chạy được
-  (nếu xoá helper mà để lại lời gọi thì rebuild_javis_index NameError MỖI tick scheduler).
+- caps: key 'automations' đã xoá, và _gather_capabilities/_render_jeevi_index còn chạy được
+  (nếu xoá helper mà để lại lời gọi thì rebuild_jeevi_index NameError MỖI tick scheduler).
 - Các endpoint THẬT mà trang Việc dựa vào vẫn còn sống.
 """
 import os
@@ -84,7 +84,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-jobstest-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-jobstest-"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import main  # noqa: E402
@@ -124,13 +124,13 @@ check("chiếu: pending_as_automations đã xoá",
 
 # ---- 3. caps sạch VÀ còn chạy được ----
 # Đây là assert quan trọng nhất của task: xoá _read_automations mà để lại lời gọi ở
-# _gather_capabilities:3352 → rebuild_javis_index (main.py:3650-3651) ném NameError mỗi tick.
+# _gather_capabilities:3352 → rebuild_jeevi_index (main.py:3650-3651) ném NameError mỗi tick.
 caps = main._gather_capabilities("brain")
 check("caps: không còn key 'automations'", "automations" not in caps)
 check("caps: _gather_capabilities vẫn chạy (không NameError)", isinstance(caps, dict))
-check("caps: _render_javis_index vẫn chạy", isinstance(main._render_javis_index(caps), str))
+check("caps: _render_jeevi_index vẫn chạy", isinstance(main._render_jeevi_index(caps), str))
 check("caps: index không còn mục 'Lịch (automations)'",
-      "Lịch (automations)" not in main._render_javis_index(caps))
+      "Lịch (automations)" not in main._render_jeevi_index(caps))
 
 # ---- 4. Endpoint THẬT mà trang Việc dựa vào phải còn sống ----
 # Xoá Lịch KHÔNG được kéo theo hai nguồn thật. Task 2 (UI) gọi đúng ba cái này; nếu task này
@@ -209,7 +209,7 @@ Ba sửa trong `server/main.py`:
             L.append(f"- **{a['name']}** - {a['type']} · {a['schedule']} · {a['status']}")
 ```
 
-Ghi chú: khối này **không** rác vào system prompt. Nó đi vào `Jeevi/index.md` qua `rebuild_javis_index` (`main.py:3462`), và vì list luôn rỗng nên `if caps["automations"]:` luôn falsy → section chưa từng render. Đây là dọn code chết. `_javis_capability_summary` (`:3477`) không hề nhắc automations.
+Ghi chú: khối này **không** rác vào system prompt. Nó đi vào `Jeevi/index.md` qua `rebuild_jeevi_index` (`main.py:3462`), và vì list luôn rỗng nên `if caps["automations"]:` luôn falsy → section chưa từng render. Đây là dọn code chết. `_jeevi_capability_summary` (`:3477`) không hề nhắc automations.
 
 - [ ] **Step 6: Chạy test để xác nhận PASS**
 
@@ -470,7 +470,7 @@ Run:
 ```bash
 cd server && ../.venv/Scripts/python.exe -c "
 import os, sys, tempfile
-os.environ.setdefault('JAVIS_STATE_DIR', tempfile.mkdtemp())
+os.environ.setdefault('JEEVI_STATE_DIR', tempfile.mkdtemp())
 sys.path.insert(0, '.')
 import main
 paths = {getattr(r,'path','') for r in main.app.routes}
@@ -503,7 +503,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 
 **Files:**
 - Modify: `CLAUDE.md` (bỏ nhắc tab Lịch ở mục điều phối)
-- Modify: `.claude/skills/javis-builder/SKILL.md` (nếu có nhắc automations/Lịch)
+- Modify: `.claude/skills/jeevi-builder/SKILL.md` (nếu có nhắc automations/Lịch)
 - Modify: `CHANGELOG.md`, `VERSION`
 
 **Interfaces:**
@@ -540,9 +540,9 @@ Run: `cd /d/Project/Jeevi-OS && grep -n "tab Lịch\|automations" CLAUDE.md`
 
 Giữ nguyên 8 bậc, không đánh số lại, để khỏi vỡ các chỗ khác tham chiếu tới thang này.
 
-- [ ] **Step 5: Kiểm tra javis-builder skill**
+- [ ] **Step 5: Kiểm tra jeevi-builder skill**
 
-Run: `cd /d/Project/Jeevi-OS && grep -rn "automations\|tab Lịch" .claude/skills/javis-builder/SKILL.md skills/javis-builder/SKILL.md 2>/dev/null`
+Run: `cd /d/Project/Jeevi-OS && grep -rn "automations\|tab Lịch" .claude/skills/jeevi-builder/SKILL.md skills/jeevi-builder/SKILL.md 2>/dev/null`
 
 Nếu có hit, sửa theo cùng cách Step 4. Nếu không có hit, bỏ qua step này.
 
@@ -561,7 +561,7 @@ Nếu có hit, sửa theo cùng cách Step 4. Nếu không có hit, bỏ qua ste
 - [ ] **Step 7: Commit + push**
 
 ```bash
-git add CLAUDE.md CHANGELOG.md VERSION .claude/skills/javis-builder/SKILL.md
+git add CLAUDE.md CHANGELOG.md VERSION .claude/skills/jeevi-builder/SKILL.md
 git commit -m "docs: cap nhat tai lieu sau khi xoa tab Lich
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"

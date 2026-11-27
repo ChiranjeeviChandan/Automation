@@ -85,7 +85,7 @@ const goiGui = (app.match(/(?<!function )\bsendMessage\(/g) || []).length;
 check("có 12 chỗ gọi sendMessage (giọng nói, Enter, nút gửi, sau khi tải file xong, sau khi dừng lượt cũ, sau khi nối lại mạng, sau khi mở agent/workflow, adaptive commit, câu chờ lượt trong cuộc gọi, bấm Nghe cuộc gọi hẹn giờ, câu dở khi Live hết lượt, sau khi nạp lại danh sách lệnh /)",
   goiGui === 12, goiGui);
 check("chỗ thứ 12 nằm TRONG sendMessage, chỉ chạy sau khi nạp lại danh sách lệnh, và chỉ một lần",
-  /window\.JavisSlash\.coLenhLa\(msg\)[\s\S]{0,250}_lenhMoi: true[\s\S]{0,100}sendMessage\(msg, o\);/.test(app));
+  /window\.JeeviSlash\.coLenhLa\(msg\)[\s\S]{0,250}_lenhMoi: true[\s\S]{0,100}sendMessage\(msg, o\);/.test(app));
 check("chỗ thứ 11 chỉ gửi câu đã nói dở, khi chuyển đường Cơ bản",
   /function chuyenSangCoBan\(cauDangNoi = ""[\s\S]{0,500}if \(cauDangNoi\) sendMessage\(cauDangNoi\);/.test(app));
 // Chỗ thứ 11 (0.203.0) KHÔNG phải mic tự gửi: người dùng bấm Nghe trên thẻ cuộc gọi hẹn giờ, đường giọng cơ bản

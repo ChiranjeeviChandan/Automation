@@ -49,7 +49,7 @@ function openCtx() {
   const ctx = {
     TIN_MOI_LUOT: 30, savedSessionId: null, convo: [], handsFree: false, sessionOpenSeq: 0, currentBrainPath: () => "b",
     tatRanhTay() {}, boViecPhienCu() {}, Date, Map, JSON, Promise, encodeURIComponent,
-    window: { JavisChatCache: { del(id) { st.deleted.push(id); } } },
+    window: { JeeviChatCache: { del(id) { st.deleted.push(id); } } },
     // Timers run only when the test says so: setTimeout returns its id, fire() runs what is still armed.
     setTimeout(fn, ms) { st.timers.push({ fn, ms, on: true }); return st.timers.length; },
     clearTimeout(i) { if (st.timers[i - 1]) st.timers[i - 1].on = false; },
@@ -170,7 +170,7 @@ function drawCtx() {
     chatArea: { querySelectorAll: (sel) => (sel === ".msg" ? area.filter((x) => /\bmsg\b/.test(x.className)) : []) },
     chatAppend(x) { area.push(x); },
     chuNguoiGo: (s) => String(s).replace(/^\[FILE ĐANG MỞ[^\]]*\]\n\n/, ""),
-    window: { JavisLoiMayKhach: { report(where, e) { reported.push(where + ":" + e.message); } } },
+    window: { JeeviLoiMayKhach: { report(where, e) { reported.push(where + ":" + e.message); } } },
     console: { error() {} },
   };
   vm.createContext(ctx);
@@ -180,21 +180,21 @@ function drawCtx() {
 
 function safeDraw() {
   let { ctx, area, reported } = drawCtx();
-  const m = { id: 7, role: "assistant", content: "Bang ket qua <!-- JAVIS_VIEC: {} -->\nDong 2", content_sha: "h", ts: 2 };
+  const m = { id: 7, role: "assistant", content: "Bang ket qua <!-- JEEVI_VIEC: {} -->\nDong 2", content_sha: "h", ts: 2 };
   const entry = ctx._safeDraw(() => { throw new Error("render broke"); }, m, "brainX");
   check("a message the renderer throws on is still drawn, as plain text",
-    area.length === 1 && /msg-javis/.test(area[0].className) && /msg-plain/.test(area[0].className)
+    area.length === 1 && /msg-jeevi/.test(area[0].className) && /msg-plain/.test(area[0].className)
     && area[0].children[0].textContent === "Bang ket qua \nDong 2");
   check("its convo entry keeps the id, so reactions and reloads still work",
-    entry && entry.role === "javis" && entry.mid === 7 && entry.sha === "h" && entry.ts === 2000 && entry.brain === "brainX");
+    entry && entry.role === "jeevi" && entry.mid === 7 && entry.sha === "h" && entry.ts === 2000 && entry.brain === "brainX");
   check("the error reaches the Health page", reported.join() === "chat.message:render broke");
 
   ({ ctx, area, reported } = drawCtx());
-  const ok = ctx._safeDraw(() => { area.push({ className: "msg msg-javis" }); return { role: "javis" }; }, m, "b");
-  check("a message that draws fine is untouched", area.length === 1 && ok.role === "javis" && reported.length === 0);
+  const ok = ctx._safeDraw(() => { area.push({ className: "msg msg-jeevi" }); return { role: "jeevi" }; }, m, "b");
+  check("a message that draws fine is untouched", area.length === 1 && ok.role === "jeevi" && reported.length === 0);
 
   ({ ctx, area, reported } = drawCtx());
-  const after = ctx._safeDraw(() => { area.push({ className: "msg msg-javis" }); throw new Error("pin failed"); }, m, "b");
+  const after = ctx._safeDraw(() => { area.push({ className: "msg msg-jeevi" }); throw new Error("pin failed"); }, m, "b");
   check("no second bubble when the bubble made it and only an extra after it failed",
     area.length === 1 && after === null && reported.length === 1);
 

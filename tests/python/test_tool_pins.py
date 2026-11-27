@@ -22,8 +22,8 @@ import os
 import tempfile
 import time
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-tool-pins-"))
-os.environ["JAVIS_AUTO_BACKGROUND_PAUSED"] = "1"
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-tool-pins-"))
+os.environ["JEEVI_AUTO_BACKGROUND_PAUSED"] = "1"
 
 import config  # noqa: E402
 import core_loop as cl  # noqa: E402
@@ -175,10 +175,10 @@ def _tool(fn, ns, desc):
 
 def _fixture():
     tools, route = [], {}
-    for fn, ns, desc in (("javis_read_file", "javis", "đọc file"), ("pos__pos_order", "pos", "Đơn hàng POS"),
+    for fn, ns, desc in (("jeevi_read_file", "jeevi", "đọc file"), ("pos__pos_order", "pos", "Đơn hàng POS"),
                          ("pos__pos_stock", "pos", "Tồn kho"), ("ads__ads_insights", "ads", "Hiệu suất quảng cáo")):
         s, e = _tool(fn, ns, desc)
-        if fn == "javis_read_file":
+        if fn == "jeevi_read_file":
             e = {"call": _guarded(fn)}
         tools.append(s)
         route[fn] = e
@@ -191,7 +191,7 @@ tools, route = _fixture()
 lt, lr = mcp_hub._apply_lazy(tools, route, pins_key=K, pins=())
 fns = [t["fn"] for t in lt]
 check("with no pins the lazy tier is what it was: core tools and the two meta tools",
-      fns == ["javis_read_file", mcp_hub._LAZY_SEARCH, mcp_hub._LAZY_RUN], fns)
+      fns == ["jeevi_read_file", mcp_hub._LAZY_SEARCH, mcp_hub._LAZY_RUN], fns)
 
 res = asyncio.run(lr[mcp_hub._LAZY_RUN]["call"]({"name": "pos__pos_order", "args": {"x": "1"}}))
 asyncio.run(lr[mcp_hub._LAZY_SEARCH]["call"]({"query": "đơn hàng"}))
@@ -199,7 +199,7 @@ st = tp.status()[0]
 check("a tool reached through search and run is counted, with its size",
       res == "OK[pos__pos_order]" and st["calls_after_search"] == 1 and st["searches"] == 1
       and tp._state["brains"][K]["sizes"]["pos__pos_order"] == mcp_hub._tool_chars(tools[1]), st)
-asyncio.run(lr[mcp_hub._LAZY_RUN]["call"]({"name": "javis_read_file", "args": {}}))
+asyncio.run(lr[mcp_hub._LAZY_RUN]["call"]({"name": "jeevi_read_file", "args": {}}))
 asyncio.run(lr[mcp_hub._LAZY_RUN]["call"]({"name": "no__such", "args": {}}))
 check("a core tool or a wrong name called through run is not counted", tp.status()[0]["calls_after_search"] == 1)
 
@@ -212,7 +212,7 @@ pins = ("pos__pos_order", "gone__tool")
 lt, lr = mcp_hub._apply_lazy(tools, route, pins_key=K, pins=pins)
 fns = [t["fn"] for t in lt]
 check("a pinned tool is shown directly, after the core tools and before the meta tools",
-      fns == ["javis_read_file", "pos__pos_order", mcp_hub._LAZY_SEARCH, mcp_hub._LAZY_RUN], fns)
+      fns == ["jeevi_read_file", "pos__pos_order", mcp_hub._LAZY_SEARCH, mcp_hub._LAZY_RUN], fns)
 check("a pin this list does not hold (other permission level, source removed) is simply not shown",
       "gone__tool" not in fns and "gone__tool" not in lr)
 _calls.clear()
@@ -231,7 +231,7 @@ fat_tools, fat_route = _fixture()
 fat_tools[1] = {**fat_tools[1], "description": "x" * (tp.MAX_TOOL_CHARS + 1)}
 lt_fat, lr_fat = mcp_hub._apply_lazy(fat_tools, fat_route, pins_key=K, pins=("pos__pos_order", "pos__pos_stock"))
 check("a pinned tool whose description grew past the bound is not shown, the next one still is",
-      [t["fn"] for t in lt_fat] == ["javis_read_file", "pos__pos_stock", mcp_hub._LAZY_SEARCH, mcp_hub._LAZY_RUN])
+      [t["fn"] for t in lt_fat] == ["jeevi_read_file", "pos__pos_stock", mcp_hub._LAZY_SEARCH, mcp_hub._LAZY_RUN])
 wide_tools, wide_route = _fixture()
 for i in (1, 2, 3):
     wide_tools[i] = {**wide_tools[i], "description": "y" * 1900}
@@ -248,13 +248,13 @@ check("with the lazy tier off nothing changes: every tool is already shown", lt_
 # The whole path once, on a real (empty) brain: count through run, let the loop look, list again.
 config.read_settings = lambda: {"mcp": {"lazy_tools": True}}   # type: ignore[assignment]
 tp.reset_for_tests()
-_vault = tempfile.mkdtemp(prefix="javis-pins-brain-")
+_vault = tempfile.mkdtemp(prefix="jeevi-pins-brain-")
 
 
 async def _whole_path():
     t1, r1 = await mcp_hub.discover_all("full", vault_root=_vault)
     for _ in range(6):
-        await r1[mcp_hub._LAZY_RUN]["call"]({"name": "javis_connections", "args": {}})
+        await r1[mcp_hub._LAZY_RUN]["call"]({"name": "jeevi_connections", "args": {}})
     tp.tick()
     t2, r2 = await mcp_hub.discover_all("full", vault_root=_vault)
     t3, _r3 = await mcp_hub.discover_all("full", vault_root=_vault, for_bot=True)
@@ -262,10 +262,10 @@ async def _whole_path():
 
 f1, f2, f3, r2 = asyncio.run(_whole_path())
 check("a tool the brain keeps calling is listed directly on the next turn, without waiting for the cache",
-      "javis_connections" not in f1 and "javis_connections" in f2 and "javis_connections" in r2, (f1, f2))
+      "jeevi_connections" not in f1 and "jeevi_connections" in f2 and "jeevi_connections" in r2, (f1, f2))
 check("the core tools still come first and the meta tools last",
       f2[:len(f1) - 2] == f1[:-2] and f2[-2:] == [mcp_hub._LAZY_SEARCH, mcp_hub._LAZY_RUN], f2)
-check("the customer bot of that brain keeps its own list", "javis_connections" not in f3, f3)
+check("the customer bot of that brain keeps its own list", "jeevi_connections" not in f3, f3)
 
 src = (SERVER / "mcp_hub.py").read_text(encoding="utf-8")
 disc = src.split("async def discover_all(", 1)[1].split("\ndef _stale_servable(", 1)[0]
@@ -334,7 +334,7 @@ import job_tune  # noqa: E402
 import main  # noqa: E402
 
 st = json.loads(job_tune.run({"op": "status"}))
-check("javis_tune status lists the pinned tools per brain and how to switch them off",
+check("jeevi_tune status lists the pinned tools per brain and how to switch them off",
       st.get("ok") and st["pinned_tools"] and st["pinned_tools"][0]["brain"] == "Minh Quy"
       and "tools.pin_limit" in st["pinned_tools_note"], st.get("pinned_tools"))
 check("the knob is registered by the server", any(k.id == "tools.pin_limit" for k in cl.knobs()))

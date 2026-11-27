@@ -28,7 +28,7 @@ function check(name, cond) {
 }
 
 // 1. app.js đi qua đạo diễn
-check("app.js dựng đạo diễn từ voice-turn.js", /new window\.JavisVoiceTurn\.VoiceTurn\(/.test(app));
+check("app.js dựng đạo diễn từ voice-turn.js", /new window\.JeeviVoiceTurn\.VoiceTurn\(/.test(app));
 check("app.js không còn setOrbState('thinking') rải rác", !/setOrbState\("thinking"/.test(app));
 check("app.js không còn setOrbState('speaking') rải rác", !/setOrbState\("speaking"/.test(app));
 check("app.js không còn setOrbState('', ready) rải rác", !/setOrbState\("", window\.t\("orb\.ready"\)\)/.test(app));
@@ -45,7 +45,7 @@ check("nghe xong đi qua veTinTuGiong (luật CHỜ/DỪNG)", /text = veTinTuGio
 check("stop_turn bấm hộ nút Dừng", /case "stop_turn": stopCurrent\(\)/.test(app));
 check("pause_tts đặt đồng hồ chen ngang giả theo falseInterruptMs", /case "pause_tts":[\s\S]{0,300}turn\.opts\.falseInterruptMs/.test(app));
 check("orb nhãn tool dùng app.orb_tool", /app\.orb_tool/.test(app));
-check("dải việc nền báo số cho orb", /window\.JavisOrb\.setBackground/.test(read("dashboard/background-strip.js")));
+check("dải việc nền báo số cho orb", /window\.JeeviOrb\.setBackground/.test(read("dashboard/background-strip.js")));
 
 // 3. voice.js
 // 0.57.14: 2 nhịp = 200 ms là đủ để NGHI NGỜ, vì nghi ngờ chỉ dẫn tới một cú nhá tiếng 400 ms

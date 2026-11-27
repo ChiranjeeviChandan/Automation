@@ -33,7 +33,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-3db-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-3db-")
 
 from fastapi import WebSocketDisconnect  # noqa: E402
 
@@ -53,7 +53,7 @@ def check(name, cond):
         _fails.append(name)
 
 
-BRAIN = Path(tempfile.mkdtemp(prefix="javis-3db-brain-"))
+BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-3db-brain-"))
 (BRAIN / "Memory" / "facts").mkdir(parents=True, exist_ok=True)
 (BRAIN / "Memory" / "MEMORY.md").write_text("- [user] chu ho nuoc mam\n", encoding="utf-8")
 (BRAIN / "Memory" / "facts" / "a.md").write_text(
@@ -190,7 +190,7 @@ def chay(cau_hoi, sid, store):
     }
 
 
-STORE = SessionStore(Path(os.environ["JAVIS_STATE_DIR"]) / "c.db")
+STORE = SessionStore(Path(os.environ["JEEVI_STATE_DIR"]) / "c.db")
 
 # ============================================================
 # 1. Đường tắt: câu không cần tra cứu thì KHÔNG đi qua vòng lặp Codex
@@ -279,7 +279,7 @@ for _rac in (None, "abc", -5, 0):
 # 4. Hiệu chỉnh bộ đoán
 # ============================================================
 _rt2 = context_runtime.ObserveRuntime(
-    Path(tempfile.mkdtemp(prefix="javis-3db-rt-")), cfg.read_settings)
+    Path(tempfile.mkdtemp(prefix="jeevi-3db-rt-")), cfg.read_settings)
 _db = _rt2._conn()
 
 
@@ -424,7 +424,7 @@ check("CANARY: gói Claude Code cũng ăn được (mở ở 0.14.4)",
 # Và khi một lượt KHÔNG đi đường tắt, phải nói được vì sao. Lý do vốn đã ghi vào trace từ
 # đầu nhưng chưa ai đưa ra màn hình, nên bấm mức xong thấy vẫn "Tối ưu" là chịu.
 _rt3 = context_runtime.ObserveRuntime(
-    Path(tempfile.mkdtemp(prefix="javis-3db-ld-")), cfg.read_settings)
+    Path(tempfile.mkdtemp(prefix="jeevi-3db-ld-")), cfg.read_settings)
 _t1 = _rt3.start_turn("s-ld1", "brain", "dashboard")
 _rt3.pin_execution_path(_t1, "legacy", 1, "fast-path-canary-v1", "requires_live_data")
 _hang = [x for x in _rt3.diagnostics_snapshot()["tasks"] if x["task_id"] == _t1.task_id][0]
@@ -506,7 +506,7 @@ check("tra không ra thì trả nguyên, không tự đoán tên khác",
 # chạy bằng engine đầy đủ vẫn đeo nhãn "Tức thì" và con số tiết kiệm bị thổi lên bằng đúng
 # những lượt không hề tiết kiệm.
 _rt4 = context_runtime.ObserveRuntime(
-    Path(tempfile.mkdtemp(prefix="javis-3db-nha-")), cfg.read_settings)
+    Path(tempfile.mkdtemp(prefix="jeevi-3db-nha-")), cfg.read_settings)
 _tn = _rt4.start_turn("s-nha", "brain", "dashboard")
 _rt4.pin_execution_path(_tn, "fast", 1, "fast-path-canary-v1", "admitted")
 check("đường tắt ghim được", _tn.execution_path == "fast")

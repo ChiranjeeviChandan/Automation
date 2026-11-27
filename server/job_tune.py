@@ -1,4 +1,4 @@
-"""The owner's side of the background scorecard, from chat (tool `javis_tune`, 10/11/2026).
+"""The owner's side of the background scorecard, from chat (tool `jeevi_tune`, 10/11/2026).
 
 There is no settings page for how background jobs pick their model: the owner says what they want and Jeevi
 adjusts (job_scorecard.py). This module turns those sentences into four operations and answers in JSON the chat
@@ -72,7 +72,7 @@ def run(args: dict, vault_root: str = "") -> str:
             return json.dumps({"ok": False, "error": f"không lưu được bài học: {type(e).__name__}"}, ensure_ascii=False)
         return json.dumps({"ok": True, "lesson": f"L{lid}", "text": text[:300],
                            "effect": "mẻ tự học kế tiếp của brain này đọc bài học này trước khi quyết định ghi gì",
-                           "revoke": "javis_memory op=lesson_revoke agent=javis-core id=L%s" % lid}, ensure_ascii=False)
+                           "revoke": "jeevi_memory op=lesson_revoke agent=jeevi-core id=L%s" % lid}, ensure_ascii=False)
     if op == "set":
         knob = str(args.get("knob") or "").strip()
         known = {k.id: k for k in core_loop.knobs()}

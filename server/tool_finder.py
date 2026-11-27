@@ -208,7 +208,7 @@ _STOP = {stem(w) for w in fold(
 ).split()}
 
 # Names of the meta tools themselves: never results.
-META = {"javis_search_tools", "javis_run_tool"}
+META = {"jeevi_search_tools", "jeevi_run_tool"}
 
 
 def parse_query(query: str):
@@ -287,7 +287,7 @@ class Index:
     """BM25 over one pool, built once per pool and reused by every search of it."""
 
     def __init__(self, pool, source_desc=None):
-        # A meta tool may come with a source prefix ("javis__javis_search_tools"): judged by its tool part.
+        # A meta tool may come with a source prefix ("jeevi__jeevi_search_tools"): judged by its tool part.
         self.pool = [t for t in pool if str(t.get("fn") or "").split("__")[-1] not in META]
         source_desc = source_desc or {}
         self.docs = []
@@ -712,7 +712,7 @@ def group_hits(hits):
 
 
 def suggest_names(name: str, fns, labels=None, limit=5):
-    """Tool names close to a name that does not exist, for javis_run_tool. Matches the tool part of the
+    """Tool names close to a name that does not exist, for jeevi_run_tool. Matches the tool part of the
     name first ("zalo_get_history" -> every account's "<ns>__zalo_get_history"), then spelling."""
     labels = labels or {}
     n = str(name or "").strip()

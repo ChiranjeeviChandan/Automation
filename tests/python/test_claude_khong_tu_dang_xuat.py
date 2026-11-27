@@ -50,7 +50,7 @@ _that_home = claude_cli._home_dir
 claude_cli._home_dir = lambda: _home
 try:
     p = _home / ".claude" / ".credentials.json"
-    b = _home / ".claude" / ".credentials.json.javis-bak"
+    b = _home / ".claude" / ".credentials.json.jeevi-bak"
 
     # ---- 0. Máy chưa từng đăng nhập (macOS Keychain cũng rơi vào đây) → im lặng ----
     check("chưa có file + chưa có sao lưu → không làm gì", claude_cli.giu_credentials() == "")

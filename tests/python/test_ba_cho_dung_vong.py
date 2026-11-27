@@ -20,8 +20,8 @@ import tempfile
 import threading
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-bachodung-")
-os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-bachodung-")
+os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -70,7 +70,7 @@ gsrc = (ROOT / "server" / "routes" / "graph.py").read_text(encoding="utf-8")
 check("graph.py không còn awatch (RustNotify dựng trên event loop)", "awatch(" not in gsrc)
 
 seen = {}
-root = tempfile.mkdtemp(prefix="javis-bachodung-vault-")
+root = tempfile.mkdtemp(prefix="jeevi-bachodung-vault-")
 note = os.path.join(root, "moi.md")
 
 

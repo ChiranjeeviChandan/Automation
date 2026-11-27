@@ -8,11 +8,11 @@ Không cần pytest, không chạm mạng, không đụng kho gói thật.
 tức thêm được NGUỒN DỮ LIỆU nhưng không thêm được KHẢ NĂNG.
 
 Chủ dự án chốt 2026-09-03 là mở cho mã Python, vì chính chủ là người xem gói trước khi cài. Nên
-cổng `JAVIS_ENABLE_USER_PLUGINS` KHÔNG áp cho gói. Việc đó nhất quán chứ không phải nới lỏng,
+cổng `JEEVI_ENABLE_USER_PLUGINS` KHÔNG áp cho gói. Việc đó nhất quán chứ không phải nới lỏng,
 và test này canh đúng chỗ nhất quán nằm ở đâu:
 
 - Cổng env bịt lỗ "thư mục ghi được nên mã chạy mà không ai bấm gì". Lỗ đó CÓ THẬT với
-  `<brain>/plugins/` vì model ghi được vào vault qua `javis_write_file`.
+  `<brain>/plugins/` vì model ghi được vào vault qua `jeevi_write_file`.
 - Trình cài phá bỏ đúng điều kiện đó: có người bấm, có màn hình liệt kê từng tệp `.py`, và có
   chữ ký nội dung mã ghi lại.
 - Nên thay vì cổng env, gói chịu HAI chốt khác: phải có hàng trong sổ cài đặt (tức đã qua trình
@@ -143,7 +143,7 @@ with tempfile.TemporaryDirectory() as td:
         asyncio.run(pack_install.go("acme.tool"))
         check("gỡ gói thì tool biến mất", not route_co("goi_chao"))
         check("và không để lại xác module trong bộ nhớ",
-              not [m for m in sys.modules if m.startswith("javis_plugin_") and "chao" in m])
+              not [m for m in sys.modules if m.startswith("jeevi_plugin_") and "chao" in m])
         check("thư mục gói cũng sạch", not (packs.PACKS_DIR / "acme.tool").exists())
 
         # ─────────────── 5. Không được cướp tên plugin có sẵn ───────────────

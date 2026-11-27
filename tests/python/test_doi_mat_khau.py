@@ -24,8 +24,8 @@ import os
 import sys
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-pwtest-")
-os.environ["JAVIS_REQUIRE_LOGIN"] = "1"
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-pwtest-")
+os.environ["JEEVI_REQUIRE_LOGIN"] = "1"
 
 from fastapi.testclient import TestClient   # noqa: E402
 import config as c   # noqa: E402
@@ -167,7 +167,7 @@ check("index.html có ô mật khẩu hiện tại cho khối đó", 'id="setAut
 check("CANARY: nút Lưu đọc trạng thái TƯƠI, không tin _settingsCache",
       "_settingsCache && _settingsCache.auth" not in _app)
 check("console.js gọi hàm đổ trạng thái tài khoản khi mở trang Cài đặt",
-      "__javisRefreshAuthRow" in _console and "__javisRefreshAuthRow" in _app)
+      "__jeeviRefreshAuthRow" in _console and "__jeeviRefreshAuthRow" in _app)
 
 # Rào tối thiểu 8 ký tự phải giống nhau ở giao diện và server, nếu không người dùng gõ 5 ký tự
 # rồi ăn lỗi từ server mà chẳng hiểu vì sao.

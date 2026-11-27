@@ -15,10 +15,10 @@ import tempfile
 import time
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="javis-luutru-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-luutru-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 os.environ["BRAINS_DIR"] = str(Path(_STATE) / "brains")
-os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
+os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -102,7 +102,7 @@ check("menu của hàng có đủ mục", all(f'"{a}"' in js for a in ("pin", "p
 check("xoá hỏi lại ngay trong menu, không dùng confirm()", 'if (act === "delete") { _sm.view = "del"; return veMenuDong(true); }' in js
       and "confirm(window.t(\"sess.del_q\"" not in js)
 check("đổi tên ngay tại hàng", "function doiTenTaiDong(s)" in js and 'class="ci-ren-in"' in js)
-check("xuất .md dùng chung với lệnh /export", "window.JavisLenh.xuatHoiThoai(s.id)" in js
+check("xuất .md dùng chung với lệnh /export", "window.JeeviLenh.xuatHoiThoai(s.id)" in js
       and "xuatHoiThoai: xuatHoiThoai" in (ROOT / "dashboard" / "chat-lenh.js").read_text(encoding="utf-8"))
 check("chia sẻ link mở đúng hội thoại của hàng", "moChiaSeHoiThoai(nut || document.body, s.id)" in js)
 check("mục Đã lưu trữ ghim ở đáy cột, có số đếm", "function ganChanLuuTru()" in js and '"&archived=1"' in js

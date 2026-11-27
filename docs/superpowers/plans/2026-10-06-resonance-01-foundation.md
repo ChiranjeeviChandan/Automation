@@ -10,7 +10,7 @@
 
 **Tech Stack:** Python hiện có của repo, FastAPI, SQLite, standard-library unittest, dashboard JavaScript và i18n vi/en. Không thêm framework agent hoặc dịch vụ cơ sở dữ liệu.
 
-**Spec:** [Jeevi Resonance thiết kế và lộ trình thực thi mục tiêu](../specs/2026-10-06-javis-resonance-design.md), đặc biệt mục 2 đến 7, 12 đến 17.
+**Spec:** [Jeevi Resonance thiết kế và lộ trình thực thi mục tiêu](../specs/2026-10-06-jeevi-resonance-design.md), đặc biệt mục 2 đến 7, 12 đến 17.
 
 ## Global Constraints
 
@@ -22,7 +22,7 @@
 - Reaction không quyết định hiệu suất hoặc quyền hạn.
 - Feature mới mặc định off; loop/cron legacy giữ hành vi khi chưa gắn mục tiêu.
 - Thời gian lưu bằng UTC epoch seconds; giao diện dùng múi giờ đã cấu hình.
-- State ở JAVIS_STATE_DIR; dữ liệu riêng không đưa vào Git hoặc prompt toàn cục.
+- State ở JEEVI_STATE_DIR; dữ liệu riêng không đưa vào Git hoặc prompt toàn cục.
 - Không dùng em dash (U+2014); định danh mới bằng tiếng Anh, chuỗi UI có vi/en. File văn bản ghi UTF-8 và LF. TestClient dùng base_url http://127.0.0.1:8080 để đi qua web_security đúng như các test hiện có.
 - Log giao tiếp tùy chọn có thể lỗi mà chat tiếp tục; lỗi sổ bắt buộc không được giả thành đã lưu. Không dùng actor slug hoặc thời gian gần nhau thay định danh brain/run/action.
 - Dùng tests/run.py để chạy test; test mới dùng unittest và gọi unittest.main khi chạy trực tiếp, theo đường dẫn import tests/python/_paths.py.
@@ -175,7 +175,7 @@ Giai đoạn A chỉ hỗ trợ hợp đồng observation-only với authority_r
 
 **Files:** Create dashboard/resonance.js, tests/js/test_resonance_ui.js. Modify dashboard/workspace.js, dashboard/console.js, dashboard/index.html, dashboard/i18n/vi.json, dashboard/i18n/en.json. Create docs/22-muc-tieu-va-resonance.md, docs/en/22-goals-and-resonance.md.
 
-**Interfaces:** window.JavisResonance.render(container, {ownerType, ownerId, brain}); destroy(container). Module gọi API A4; không đọc SQLite/file trực tiếp.
+**Interfaces:** window.JeeviResonance.render(container, {ownerType, ownerId, brain}); destroy(container). Module gọi API A4; không đọc SQLite/file trực tiếp.
 
 - [ ] Viết test render các trạng thái chưa có mục tiêu, active, waiting, unknown, paused, succeeded; không tạo phần trăm từ số tiêu chí một cách tùy tiện.
 - [ ] Viết test đổi brain xóa dữ liệu màn trước, hủy request cũ; tên/ý định/bằng chứng HTML được escape; request revise 409 không ghi đè thay đổi mới.

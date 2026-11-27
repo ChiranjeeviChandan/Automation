@@ -26,7 +26,7 @@ import sys
 import tempfile
 from urllib.parse import parse_qs, urlparse
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-messenger-cmt-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-messenger-cmt-")
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -184,7 +184,7 @@ check("a reply typed in the inbox goes under the comment",
 
 async def _photo_refused():
     bot = messenger_bot.MessengerBot({"page_id": PAGE, "access_token": TOKEN, "app_secret": SECRET}, "", None)
-    p = os.path.join(os.environ["JAVIS_STATE_DIR"], "bang-gia.pdf")
+    p = os.path.join(os.environ["JEEVI_STATE_DIR"], "bang-gia.pdf")
     with open(p, "wb") as f:
         f.write(b"%PDF-1.4")
     return await bot.send_file(p, "", chat="cmt:" + TOP)
@@ -241,7 +241,7 @@ check("insights row: warning when read_insights is missing, green when present",
 # ============================================================
 APP = "987654321098765"
 APP_SECRET = "d" * 32
-REDIRECT = "https://javis.example.com/messenger/oauth/callback"
+REDIRECT = "https://jeevi.example.com/messenger/oauth/callback"
 USER_SHORT = "EAAshort" + "s" * 50
 USER_LONG = "EAAlong" + "l" * 50
 
@@ -361,7 +361,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 
 # Behind the owner's HTTPS proxy, as on a VPS: the request arrives on localhost with forwarded headers.
 client = TestClient(main.app, base_url="http://localhost",
-                    headers={"x-forwarded-proto": "https", "x-forwarded-host": "javis.example.com"})
+                    headers={"x-forwarded-proto": "https", "x-forwarded-host": "jeevi.example.com"})
 check("callback and privacy page are public paths",
       "/messenger/oauth/callback" in main._AUTH_PUBLIC_EXACT and "/messenger/privacy" in main._AUTH_PUBLIC_EXACT)
 r = client.get("/messenger/privacy")
@@ -369,8 +369,8 @@ check("privacy page served as HTML", r.status_code == 200 and "Privacy policy" i
 r = client.get("/messenger/setup")
 d = r.json()
 check("setup gives the redirect address and the privacy address to paste into Meta",
-      d.get("oauth_redirect") == "https://javis.example.com/messenger/oauth/callback"
-      and d.get("privacy_url") == "https://javis.example.com/messenger/privacy", d)
+      d.get("oauth_redirect") == "https://jeevi.example.com/messenger/oauth/callback"
+      and d.get("privacy_url") == "https://jeevi.example.com/messenger/privacy", d)
 seen_start = []
 
 
@@ -417,7 +417,7 @@ d = r.json()
 res = {x["page_id"]: x for x in d.get("results", [])}
 check("finish connects only Pages from the login, with the long-lived user token",
       [c[0] for c in seen_connect] == [PAGE, "222333444555"] and seen_connect[0][1] == USER_LONG
-      and seen_connect[0][2] == "https://javis.example.com/messenger/webhook", seen_connect)
+      and seen_connect[0][2] == "https://jeevi.example.com/messenger/webhook", seen_connect)
 check("finish reports each Page on its own", d.get("ok") and res[PAGE]["ok"] and not res["222333444555"]["ok"]
       and res["222333444555"]["error"] == "lỗi 210", d)
 acc = channel_accounts.owner_of(PAGE, "messenger") or {}

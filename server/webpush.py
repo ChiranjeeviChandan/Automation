@@ -120,10 +120,10 @@ def lien_he() -> str:
     máy tính (Chrome/FCM) nhận thông báo bình thường còn iPhone thì im lặng tuyệt đối. Đúng
     lỗi chủ repo báo 27/08: bấm Gửi thử trên điện thoại thì máy tính hiện, điện thoại không.
 
-    Đổi được bằng biến môi trường JAVIS_PUSH_CONTACT (mailto:... hoặc https://...) cho ai
+    Đổi được bằng biến môi trường JEEVI_PUSH_CONTACT (mailto:... hoặc https://...) cho ai
     muốn để địa chỉ thật của mình.
     """
-    v = str(os.getenv("JAVIS_PUSH_CONTACT") or "").strip()
+    v = str(os.getenv("JEEVI_PUSH_CONTACT") or "").strip()
     if v.startswith("mailto:") or v.startswith("https://"):
         return v
     return "mailto:javis-os@users.noreply.github.com"
@@ -341,7 +341,7 @@ def huy_theo_phien(phien: str) -> int:
         return truoc - len(d["subs"])
 
 
-async def gui_het(tieu_de: str, than: str, url: str = "/", tag: str = "javis", phien_hop_le=None,
+async def gui_het(tieu_de: str, than: str, url: str = "/", tag: str = "jeevi", phien_hop_le=None,
                   quiet_if_visible: bool = False, session_id: str = "", nid: str = "") -> tuple:
     """Đẩy MỘT thông báo tới MỌI trình duyệt đã đăng ký. Trả (số_gửi_được, số_bị_dọn, chi_tiết).
 

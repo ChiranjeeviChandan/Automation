@@ -23,7 +23,7 @@ import re
 import tempfile
 import unicodedata
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-pronoun-test-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-pronoun-test-"))
 
 fails = []
 

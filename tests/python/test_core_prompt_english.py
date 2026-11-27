@@ -23,9 +23,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-SCRATCH = Path(tempfile.mkdtemp(prefix="javis-core-english-"))
-for key, relative in {"JAVIS_STATE_DIR": "state", "BRAINS_DIR": "brains", "OBSIDIAN_VAULT_PATH": "vault",
-                      "BRAIN_PATH": "brain", "SOURCES_PATH": "sources", "JAVIS_SESSIONS_DB": "sessions.sqlite3"}.items():
+SCRATCH = Path(tempfile.mkdtemp(prefix="jeevi-core-english-"))
+for key, relative in {"JEEVI_STATE_DIR": "state", "BRAINS_DIR": "brains", "OBSIDIAN_VAULT_PATH": "vault",
+                      "BRAIN_PATH": "brain", "SOURCES_PATH": "sources", "JEEVI_SESSIONS_DB": "sessions.sqlite3"}.items():
     os.environ[key] = str(SCRATCH / relative)
 
 try:
@@ -37,7 +37,7 @@ import channel_context  # noqa: E402
 import compaction  # noqa: E402
 import context_compiler as cc  # noqa: E402
 import context_runtime  # noqa: E402
-import javis_core  # noqa: E402
+import jeevi_core  # noqa: E402
 import lang  # noqa: E402
 import main_attachment_rendering as A  # noqa: E402
 import main_prompt_rendering as R  # noqa: E402
@@ -141,9 +141,9 @@ english("project documents", A.render_project_assets(lines, sections))
 english("chat documents", A.render_session_assets(lines, sections))
 english("project lessons guide", project_context.LEARN_GUIDE + project_context.BLOCK_NOTE + project_context.AGENT_GUIDE)
 check("the project lessons guide stays short", len(project_context.LEARN_GUIDE) <= 650, len(project_context.LEARN_GUIDE))
-english("Jeevi Core role", javis_core.definition()["body"])
-check("the Jeevi Core role stays small", len(javis_core.prompt_block()) < 2600, len(javis_core.prompt_block()))
-english("Jeevi Core naming lines", javis_core.identity_block(None))
+english("Jeevi Core role", jeevi_core.definition()["body"])
+check("the Jeevi Core role stays small", len(jeevi_core.prompt_block()) < 2600, len(jeevi_core.prompt_block()))
+english("Jeevi Core naming lines", jeevi_core.identity_block(None))
 english("resume wrapper", compaction.bootstrap_prompt(
     [{"role": "user", "content": "hi"}, {"role": "assistant", "content": "hello"}] * 3, "next", max_chars=1000)
     .replace("[KHÔI PHỤC NGỮ CẢNH HỘI THOẠI]", "").replace("[HẾT LỊCH SỬ]", "")

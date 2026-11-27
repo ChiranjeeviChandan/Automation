@@ -87,7 +87,7 @@ mcp_client.SessionPool._make = staticmethod(_make_gia)
 pool = mcp_client.SessionPool()
 mcp_client.pool = pool          # discover_resolved/warm_pool dùng biến module
 spec1 = mcp_client._conn_spec(conn(1))
-os.environ["JAVIS_MCP_DISCOVER_TIMEOUT"] = "0.15"      # ngắn hơn hẳn _LAU
+os.environ["JEEVI_MCP_DISCOVER_TIMEOUT"] = "0.15"      # ngắn hơn hẳn _LAU
 
 
 async def _kich_ban():
@@ -167,7 +167,7 @@ async def _kich_ban_treo():
 
 asyncio.run(_kich_ban_treo())
 
-os.environ.pop("JAVIS_MCP_DISCOVER_TIMEOUT", None)
+os.environ.pop("JEEVI_MCP_DISCOVER_TIMEOUT", None)
 
 print()
 if _fails:

@@ -2,7 +2,7 @@
 
     python tests/run.py kanban_cancel_from_chat
 
-Before this the chat tool `javis_task` could queue, answer, accept and fix work but not cancel it, so the owner had to
+Before this the chat tool `jeevi_task` could queue, answer, accept and fix work but not cancel it, so the owner had to
 open the Tasks page. Pinned here: op=cancel goes through the same `TasksFeature.cancel` as the page's button (a running
 job has its worker stopped, any other job moves to cancelled), the owner's reason lands in the job's log, an unknown
 id, a job of another brain and a job that already ended are refused, and the tool is gated exactly like op=fix.
@@ -14,7 +14,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-cancel-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-cancel-"))
 
 import plugins_host  # noqa: E402
 import tasks as tasks_mod  # noqa: E402
@@ -62,7 +62,7 @@ def _log(feature, tid):
 
 def _plugin():
     spec = importlib.util.spec_from_file_location(
-        "javis_task_plugin_cancel", ROOT / "system" / "plugins" / "javis-task" / "plugin.py")
+        "jeevi_task_plugin_cancel", ROOT / "system" / "plugins" / "jeevi-task" / "plugin.py")
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
@@ -206,7 +206,7 @@ def test_cancel_is_gated_exactly_like_fix():
         ran.append(args.get("op"))
         return "ran"
 
-    tool = {"handler": handler, "min_mode": "safe", "name": "javis_task"}
+    tool = {"handler": handler, "min_mode": "safe", "name": "jeevi_task"}
 
     def outcome(op, mode, bot=False):
         tok = None
@@ -233,7 +233,7 @@ def test_cancel_is_gated_exactly_like_fix():
     assert outcome("cancel", "auto", bot=True) == (True, False)
     assert outcome("cancel", "full", bot=True) == (False, True)
     # Nothing to cap: cancel passes no level on to later work.
-    assert plugins_host._cap_job_level("javis_task", {"op": "cancel", "id": "k1"}, "auto") == (
+    assert plugins_host._cap_job_level("jeevi_task", {"op": "cancel", "id": "k1"}, "auto") == (
         {"op": "cancel", "id": "k1"}, "")
 
 

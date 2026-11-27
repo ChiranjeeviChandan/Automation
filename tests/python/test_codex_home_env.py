@@ -25,8 +25,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-TMP = Path(tempfile.mkdtemp(prefix="javis-codexhome-env-"))
-os.environ.setdefault("JAVIS_STATE_DIR", str(TMP / "state"))
+TMP = Path(tempfile.mkdtemp(prefix="jeevi-codexhome-env-"))
+os.environ.setdefault("JEEVI_STATE_DIR", str(TMP / "state"))
 os.environ.pop("CODEX_HOME", None)
 HOME = TMP / "home"
 HOME.mkdir()
@@ -50,7 +50,7 @@ env = claude_cli.codex_env()
 check("codex_env sets CODEX_HOME = <home>/.codex", env.get("CODEX_HOME") == str(HOME / ".codex"), env.get("CODEX_HOME"))
 check("the folder exists so Codex can canonicalize it", (HOME / ".codex").is_dir())
 check("codex_env does not touch the server's own environment", "CODEX_HOME" not in os.environ)
-check("the rest of the environment is carried over", env.get("JAVIS_STATE_DIR") == os.environ["JAVIS_STATE_DIR"])
+check("the rest of the environment is carried over", env.get("JEEVI_STATE_DIR") == os.environ["JEEVI_STATE_DIR"])
 
 # ---- 2. user-set CODEX_HOME wins ----
 os.environ["CODEX_HOME"] = str(TMP / "custom")

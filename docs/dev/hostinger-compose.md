@@ -16,14 +16,14 @@ Rules for that file:
 - The `guard` service carries a compact copy of `docker/guard.py`, written by `tools/sync_guard.py`.
   Edit `docker/guard.py`, then run the tool.
 
-## Service `javis`
+## Service `jeevi`
 
-**Names come from `JAVIS_NAME`.** The container name and the Traefik router and service names all
-use `${JAVIS_NAME:-javis}`. A second instance on the same VPS needs another name (for example
-`javis-shop`): otherwise Docker reports the container name as taken, and Traefik, whose router
+**Names come from `JEEVI_NAME`.** The container name and the Traefik router and service names all
+use `${JEEVI_NAME:-jeevi}`. A second instance on the same VPS needs another name (for example
+`jeevi-shop`): otherwise Docker reports the container name as taken, and Traefik, whose router
 names are machine-wide, keeps only one of two routers with the same name, so one domain dies.
 
-**The Hostinger target is set inside `command`.** `JAVIS_DEPLOY_TARGET=hostinger` is part of the
+**The Hostinger target is set inside `command`.** `JEEVI_DEPLOY_TARGET=hostinger` is part of the
 command line instead of `environment`, so it does not become a useless field in Docker Manager's
 Environment form. For the same reason the environment block lists only what an installer needs:
 port, paths, state and brain already have the right defaults in the image.
@@ -39,7 +39,7 @@ Traefik reaches Jeevi over the Docker network and the Caddy gateway over `127.0.
 keeps working, while the unencrypted `http://<ip>:7777` path, where the password travels in the
 clear, is closed. With `DOMAIN_NAME` empty the port stays open to the outside, because it is the
 only way in. If the domain has no HTTPS yet and access is urgent: clear `DOMAIN_NAME` and Redeploy,
-and the port opens again. A second instance must use another host port (`JAVIS_HOST_PORT=7778`).
+and the port opens again. A second instance must use another host port (`JEEVI_HOST_PORT=7778`).
 
 **Traefik labels and the Open button (0.302.0).** hPanel's Open button follows the concrete
 `Host(...)` rule in the labels. Older versions wrote `Host(`localhost`)` when `DOMAIN_NAME` was
@@ -72,19 +72,19 @@ variables, cannot arrive on its own and kill the button again. Do not patch the 
 
 What does not change: Jeevi runs normally even when Watchtower is broken. It is a separate
 container, so a failure costs only the button. On "Partially running", read the log of the
-`javis-watchtower` container; if it cannot be fixed, update with Redeploy as before. The Updates
+`jeevi-watchtower` container; if it cannot be fixed, update with Redeploy as before. The Updates
 page in the app says the same.
 
 Settings worth knowing:
 
-- `WATCHTOWER_HTTP_API_PERIODIC_POLLS: ${JAVIS_AUTO_UPDATE:-false}` is the fourth Environment
+- `WATCHTOWER_HTTP_API_PERIODIC_POLLS: ${JEEVI_AUTO_UPDATE:-false}` is the fourth Environment
   field and the only `${...}` added for Watchtower. It is an installer's choice, not a technical
   default: when on, Jeevi restarts whenever a new version exists, cutting background work and open
   chats. Empty means off, and updates happen through the button.
 - `WATCHTOWER_HTTP_API_UPDATE_TIMEOUT: 30m`: the default 10 minutes ran out on a slow disk.
 - No `traefik.*` routing labels: it is an internal container with nothing to expose.
-- `command: ${JAVIS_NAME:-javis}`: it watches this instance's container only. With a fixed
-  `javis`, the Watchtower of one instance would update and restart the container of another.
+- `command: ${JEEVI_NAME:-jeevi}`: it watches this instance's container only. With a fixed
+  `jeevi`, the Watchtower of one instance would update and restart the container of another.
 
 ## Service `gateway` (0.300.0)
 
@@ -112,8 +112,8 @@ someone pointing random DNS names at the IP cannot make it request certificates.
 `gateway-data` volume keeps issued certificates across Redeploy, which avoids new requests and the
 Let's Encrypt rate limit.
 
-**No new Environment field.** The gateway only reads `DOMAIN_NAME`, `JAVIS_HOST_PORT` and
-`JAVIS_NAME`, which already exist.
+**No new Environment field.** The gateway only reads `DOMAIN_NAME`, `JEEVI_HOST_PORT` and
+`JEEVI_NAME`, which already exist.
 
 **The status volume (0.304.0).** The gateway writes what it is doing (idle, busy or serving, plus
 the names it serves) into `gateway-status`. Jeevi mounts it read-only, so the page opened by IP
@@ -129,13 +129,13 @@ later gateways stay idle, so later instances use the shared proxy `docker-compos
 
 Deploy the compose once more as a new stack in Docker Manager and change all three values:
 
-| | `DOMAIN_NAME` | `JAVIS_NAME` | `JAVIS_HOST_PORT` |
+| | `DOMAIN_NAME` | `JEEVI_NAME` | `JEEVI_HOST_PORT` |
 | --- | --- | --- | --- |
 | Stack 1 | `shop.srv1782015.hstgr.cloud` | empty | empty |
-| Stack 2 | `home.srv1782015.hstgr.cloud` | `javis-home` | `7778` |
+| Stack 2 | `home.srv1782015.hstgr.cloud` | `jeevi-home` | `7778` |
 
-All three must differ between stacks. The same `JAVIS_NAME` makes Docker report the container name
-as in use, the same `JAVIS_HOST_PORT` reports the port as taken, and the same `DOMAIN_NAME` makes
+All three must differ between stacks. The same `JEEVI_NAME` makes Docker report the container name
+as in use, the same `JEEVI_HOST_PORT` reports the port as taken, and the same `DOMAIN_NAME` makes
 two instances fight over one link. Hostinger's wildcard DNS `*.hstgr.cloud` already exists, so any
 subdomain resolves at once.
 

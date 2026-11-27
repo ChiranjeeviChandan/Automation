@@ -276,7 +276,7 @@ def contact_for(bot: dict, account_id: str, chat_id: str) -> dict:
     if channel not in CHANNELS:
         return {}
     s = channels.spec(channel)
-    if not (s and s.nl("tra_loi_tu_javis")):
+    if not (s and s.nl("tra_loi_tu_jeevi")):
         return {}
     if c["account_id"] not in chatbot_store.account_ids_of(bot):
         return {}
@@ -319,12 +319,12 @@ def turn_tool(mode: str) -> Optional[Tuple[dict, dict]]:
     async def _call(args):
         return await ask(turn_context.current() or {}, (args or {}).get("question"), mode_now)
 
-    spec = {"fn": TOOL, "server": "javis", "name": TOOL, "description": TOOL_DESCRIPTION,
+    spec = {"fn": TOOL, "server": "jeevi", "name": TOOL, "description": TOOL_DESCRIPTION,
             "schema": {"type": "object", "properties": {"question": {
                 "type": "string",
                 "description": "The question for the staff, short and complete on its own (what, which item, how "
                                "many, which day)."}}, "required": ["question"]}}
-    entry = {"call": _call, "source_type": "builtin", "source_id": "javis-core", "effect": "danger",
+    entry = {"call": _call, "source_type": "builtin", "source_id": "jeevi-core", "effect": "danger",
              "required_mode": "full", "health": "healthy"}
     return spec, entry
 

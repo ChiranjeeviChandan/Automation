@@ -14,7 +14,7 @@ Jeevi を普通のアプリのようにインストールできます。ファ�
 - **Windows 10/11:** [JeeviOS-Setup.exe](https://github.com/blogminhquy/javis-os/releases/download/desktop/JeeviOS-Setup.exe) をダウンロードし、ダブルクリックして最後まで Next を押します。インストールの進行状況は Setup ウィンドウの中に手順ごとに表示され（数分）、別の黒いウィンドウは開きません。完了するとデスクトップとスタートメニューに JEEVI OS アイコンができます。
 - **macOS 11 以降:** **ターミナル**を開き（Launchpad で Terminal と入力）、次の 1 行を貼り付けて Enter を押します。この方法でインストールすると macOS の警告は表示されません:
   ```
-  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-javis.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-jeevi.sh | bash
   ```
   このコマンドは Jeevi をダウンロードし、**JEEVI OS** を **Applications** にコピーして、そのターミナルウィンドウ内でそのままインストールします（Jeevi の管理者アカウントの設定と、Mac のパスワードを一度求められることがあります）。終わったら Launchpad から JEEVI OS を開きます。
 
@@ -24,7 +24,7 @@ Jeevi を普通のアプリのようにインストールできます。ファ�
 
 **Windows: 警告画面なしでインストールする方法（おすすめ）。** Windows 用インストーラーはまだコード署名されていないため、ブラウザーでダウンロードすると初回はブロックされます。代わりに 1 行を貼り付ければ、Jeevi ロゴ付きの同じインストーラーがブロックされずに開きます。スタートを押して `PowerShell` と入力して開き、次の 1 行を貼り付けて Enter を押します:
 ```
-irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-javis.ps1 | iex
+irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-jeevi.ps1 | iex
 ```
 
 インストーラーがパソコンで何を変更するか、誰が署名するか、Jeevi が何をどこへ送るかは、[Code signing policy](../../../docs/code-signing-policy.md) · [Privacy policy](../../../PRIVACY.md)（英語）をご覧ください。
@@ -49,9 +49,9 @@ irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/window
    ```
 3. （任意。HTTPS + ドメインを使う場合）**Environment** 欄に次を設定します。
    ```
-   DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud
+   DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud
    ```
-   （ホスト名は hPanel → VPS で確認できます。例：`javis.srv1782015.hstgr.cloud`。）
+   （ホスト名は hPanel → VPS で確認できます。例：`jeevi.srv1782015.hstgr.cloud`。）
 4. **Deploy** を押します。1-3 分待ちます。**Open** ボタン（または `https://<DOMAIN_NAME>`）でアプリを開きます。
 5. 初回起動時に、管理者アカウントの作成を求める画面が表示されます。そのあと、コンテナのターミナルで Claude Code に一度だけサインインします：`claude auth login --claudeai`。
 
@@ -70,7 +70,7 @@ http://localhost:7777 を開きます。Caddy 経由で HTTPS を使う場合は
 
 1. Python 3.12 + Node 22 をインストールします。
 2. プロジェクトのフォルダで `setup.bat` を一度実行します。.venv を作成し、依存関係をインストールし、2 つの CLI エンジン（Claude Code、Codex）もインストールしてくれます。
-3. `start-javis.bat` でバックグラウンド実行します（停止は `stop-javis.bat`）。
+3. `start-jeevi.bat` でバックグラウンド実行します（停止は `stop-jeevi.bat`）。
 4. http://localhost:7777 を開きます。
 
 ## 起動したら

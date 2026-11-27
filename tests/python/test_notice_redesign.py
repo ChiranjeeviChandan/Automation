@@ -4,7 +4,7 @@ the menu is enough").
 
     python tests/run.py notice_redesign
 
-- notice_text: a headline skips lines that narrate the work, a JAVIS_NOTIFY block gives the title and is never shown;
+- notice_text: a headline skips lines that narrate the work, a JEEVI_NOTIFY block gives the title and is never shown;
 - a scheduled job that ran fine is a result: delivered to its chat or channel, never a red dot in the bell; it rings
   only when the run says the owner must act; a final failure rings, a network retry does not; a plain reminder rings;
 - a notice whose content sits in a chat with its own unread dot is not filed in the bell, unless it needs the owner;
@@ -18,8 +18,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-STATE = tempfile.mkdtemp(prefix="javis-notice-redesign-")
-os.environ["JAVIS_STATE_DIR"] = STATE
+STATE = tempfile.mkdtemp(prefix="jeevi-notice-redesign-")
+os.environ["JEEVI_STATE_DIR"] = STATE
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -48,9 +48,9 @@ check("a done line is not narration", not NT.is_narration("Em đã gửi 3 tin n
 check("a request to the owner is not narration", not NT.is_narration("Tôi cần bạn duyệt đơn này"))
 check("English openers are narration", NT.is_narration("I'll check the list first") and NT.is_narration("Let me look"))
 body = ("Em kiểm tra lượt đến hạn.\n\n**Đã gửi 2 tin nhắc** cho khách đến hạn hôm nay.\n- Chị Lan: gia hạn\n"
-        '<!-- JAVIS_NOTIFY: {"title": "Đã nhắc 2 khách đến hạn", "line": "Chị Lan, anh Tú", "act": false} -->')
+        '<!-- JEEVI_NOTIFY: {"title": "Đã nhắc 2 khách đến hạn", "line": "Chị Lan, anh Tú", "act": false} -->')
 clean, meta = NT.split_block(body)
-check("the block is taken out of the text", "JAVIS_NOTIFY" not in clean and "Đã gửi 2 tin nhắc" in clean, clean)
+check("the block is taken out of the text", "JEEVI_NOTIFY" not in clean and "Đã gửi 2 tin nhắc" in clean, clean)
 check("the block gives title, line and act", meta == {"title": "Đã nhắc 2 khách đến hạn", "line": "Chị Lan, anh Tú",
                                                       "act": False, "why": ""}, meta)
 check("without the block the headline is the first reporting line",
@@ -63,9 +63,9 @@ check("a card line keeps a markdown link's words only", NT.summary(_link, "Xong.
       NT.summary(_link, "Xong."))
 check("a headline keeps a markdown link's words only",
       NT.headline("[Báo cáo tuần](https://x.io/r?id=1) đã xong") == "Báo cáo tuần đã xong")
-broken, m2 = NT.split_block("Kết quả\n<!-- JAVIS_NOTIFY: {not json} -->")
+broken, m2 = NT.split_block("Kết quả\n<!-- JEEVI_NOTIFY: {not json} -->")
 check("a broken block is removed and ignored", broken == "Kết quả" and m2 == {}, (broken, m2))
-check("act true is read", NT.split_block('x <!-- JAVIS_NOTIFY: {"title":"t","act":true} -->')[1]["act"] is True)
+check("act true is read", NT.split_block('x <!-- JEEVI_NOTIFY: {"title":"t","act":true} -->')[1]["act"] is True)
 check("a long job name is cut at a word", NT.short_name("Theo dõi phản hồi nhóm Zalo học viên và báo cáo các phàn "
                                                          "nàn mới đáng chú ý mỗi giờ").endswith("…"))
 
@@ -90,7 +90,7 @@ async def fake_send(chat_id, text, viec=None, web="", brain="", dedup="", notice
     return True, ""
 
 
-brain = Path(tempfile.mkdtemp(prefix="javis-notice-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="jeevi-notice-brain-"))
 deps = reminders.RemindersDeps(
     brain_root=lambda _b: str(brain), atomic_write_text=lambda p, t: Path(p).write_text(t, encoding="utf-8"),
     send_telegram=fake_send, build_system_prompt=lambda _b: "", aux_model=lambda: None,
@@ -103,7 +103,7 @@ async def task_ok(_b, _t, _m="", **_kw):
 
 feat._run_task = task_ok
 run(feat._fire(str(brain), {"id": "r1", "mode": "task", "text": "Nhắc khách đến hạn", "label": "Nhắc khách", "chat_id": "web:x"}))
-check("the channel never sees the block", "JAVIS_NOTIFY" not in sent[-1]["text"], sent[-1]["text"])
+check("the channel never sees the block", "JEEVI_NOTIFY" not in sent[-1]["text"], sent[-1]["text"])
 check("the firing passes the run's own headline to the bell",
       sent[-1]["notice"].get("title") == "Đã nhắc 2 khách đến hạn" and sent[-1]["notice"].get("level") == "info",
       sent[-1]["notice"])
@@ -119,7 +119,7 @@ import main  # noqa: E402
 from starlette.testclient import TestClient  # noqa: E402
 
 main.cfgmod.gate_active = lambda: False
-BR = Path(tempfile.mkdtemp(prefix="javis-notice-main-"))
+BR = Path(tempfile.mkdtemp(prefix="jeevi-notice-main-"))
 KB = main._brain_key(str(BR))
 cfg = main.cfgmod.read_settings()
 cfg["telegram"] = {"enabled": True, "token": "x", "chat_id": "111", "owner_chat_id": "111"}
@@ -166,15 +166,15 @@ run(main._bao_nhac_hen("", "Khách Lan khiếu nại", brain=str(BR),
 it = items().get("Khách Lan khiếu nại") or {}
 check("a run that says the owner must act rings", it and not it.get("read") and it.get("summary") == "Đòi hoàn tiền", it)
 
-# A JAVIS_NOTIFY block reaching _notify_owner directly (webhook, any producer): taken out, used as the title.
+# A JEEVI_NOTIFY block reaching _notify_owner directly (webhook, any producer): taken out, used as the title.
 sid = main.get_store().create_session(brain=KB)
 out.clear()
-run(main._notify_owner("web:" + sid, 'Đã xử lý.\n<!-- JAVIS_NOTIFY: {"title": "Webhook: 1 đơn mới", "act": true, "why": "customer"} -->',
+run(main._notify_owner("web:" + sid, 'Đã xử lý.\n<!-- JEEVI_NOTIFY: {"title": "Webhook: 1 đơn mới", "act": true, "why": "customer"} -->',
                        kind="report", source="webhook"))
-check("no channel ever shows the block", out and all("JAVIS_NOTIFY" not in o[1] for o in out), out)
+check("no channel ever shows the block", out and all("JEEVI_NOTIFY" not in o[1] for o in out), out)
 check("act in the block files an urgent notice with its title", (items().get("Webhook: 1 đơn mới") or {}).get("level") == "urgent")
 # Owner, 2026-11-23: an urgent claim with no reason from the list is lowered to important.
-run(main._notify_owner("web:" + sid, 'Đã xử lý.\n<!-- JAVIS_NOTIFY: {"title": "Webhook: 2 đơn mới", "act": true} -->',
+run(main._notify_owner("web:" + sid, 'Đã xử lý.\n<!-- JEEVI_NOTIFY: {"title": "Webhook: 2 đơn mới", "act": true} -->',
                        kind="report", source="webhook"))
 check("act without a reason is not urgent",
       main._act_level({"act": True, "why": ""}, "", source="webhook", title="Webhook: 2 đơn mới") == "important"
@@ -228,9 +228,9 @@ check("rail-unread.js is loaded", "/static/rail-unread.js" in html)
 ru = (D / "rail-unread.js").read_text(encoding="utf-8")
 check("rail-unread.js reads both counts", "/sessions/unread-summary" in ru and "/teams/unread" in ru)
 check("rail-unread.js listens to chat, partner and team events",
-      all(e in ru for e in ("javis:session-read", "javis:agent-read", "javis:team-event", "javis:chat-activity")))
+      all(e in ru for e in ("jeevi:session-read", "jeevi:agent-read", "jeevi:team-event", "jeevi:chat-activity")))
 app = (D / "app.js").read_text(encoding="utf-8")
-check("app.js turns chat_unread into javis:chat-activity", '"chat_unread"' in app and "javis:chat-activity" in app)
+check("app.js turns chat_unread into jeevi:chat-activity", '"chat_unread"' in app and "jeevi:chat-activity" in app)
 nj = (D / "notifications.js").read_text(encoding="utf-8")
 check("a card shows the summary line, not the title twice", "function dongPhu(item)" in nj and "item.summary" in nj)
 check("a title cut at 120 characters drops its whole first line, no cut-off tail under it",

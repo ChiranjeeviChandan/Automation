@@ -10,7 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 TEST_ROOT = Path(tempfile.mkdtemp(prefix="imp-api-"))
-for key, value in {"JAVIS_STATE_DIR": TEST_ROOT / "state", "BRAINS_DIR": TEST_ROOT / "brains",
+for key, value in {"JEEVI_STATE_DIR": TEST_ROOT / "state", "BRAINS_DIR": TEST_ROOT / "brains",
                    "OBSIDIAN_VAULT_PATH": TEST_ROOT / "vault", "BRAIN_PATH": TEST_ROOT / "brain",
                    "SOURCES_PATH": TEST_ROOT / "sources"}.items():
     os.environ[key] = str(value)

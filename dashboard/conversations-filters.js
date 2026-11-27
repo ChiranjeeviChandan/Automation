@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  var KEY = "javis.inbox.filters";
+  var KEY = "jeevi.inbox.filters";
   // 2026-10-25, from the owner's Pancake screenshots: "waiting" is "need reply" sorted waiting-longest first ("đợi phản hồi
   // lâu nhất"), one more choice in the status dropdown. "The customer left a phone number or email" was its own on/off
   // filter (`contact`) in the Filter menu until the quick row's "Has phone" took its place (2026-11-24, see `KINDS`).
@@ -118,7 +118,7 @@
     if (s.tagsAny.length) q += "&tags_any=" + s.tagsAny.join(",");
     if (s.tagsNone.length) q += "&tags_none=" + s.tagsNone.join(",");
     // A quick range is turned into days at every request, so "last 7 days" moves with the calendar.
-    var DR = window.JavisDateRange, d = s.when && (DR ? DR.dates(s.when) : s.when.from ? s.when : null);
+    var DR = window.JeeviDateRange, d = s.when && (DR ? DR.dates(s.when) : s.when.from ? s.when : null);
     if (d && d.from && d.to) q += "&from=" + d.from + "&to=" + d.to;
     if (s.lastBy) q += "&last_by=" + s.lastBy;
     if (s.pinned) q += "&pinned=1";
@@ -250,7 +250,7 @@
         '<span class="ht-rm-t"><span>' + esc(tt("ht.rm_tag_new")) + '</span></span></button>';
   }
 
-  window.JavisConvFilters = {
+  window.JeeviConvFilters = {
     emptyState: emptyState, sanitize: sanitize, load: load, save: save, activeCount: activeCount, query: query,
     tagChips: tagChips, tagChip: tagChip, tagColor: tagColor,
     TAG_COLORS: TAG_COLORS, rowMenuItems: rowMenuItems, infoActItems: infoActItems, rowMenuHtml: rowMenuHtml, chatKind: chatKind, platformActs: platformActs, tagMenuHtml: tagMenuHtml, WHOS: WHOS,

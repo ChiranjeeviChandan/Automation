@@ -74,7 +74,7 @@ function napVoice(SRGia, ua, getUserMedia) {
   const src = fs.readFileSync(path.join(ROOT, "dashboard", "voice.js"), "utf8");
   const AudioGia = function () { return { play: () => Promise.resolve(), setAttribute() {} }; };
   return new Function("window", "localStorage", "navigator", "document", "Audio",
-    src + "; return JavisVoice;")(win, win.localStorage, nav, doc, AudioGia);
+    src + "; return JeeviVoice;")(win, win.localStorage, nav, doc, AudioGia);
 }
 
 const cho = (ms) => new Promise(r => setTimeout(r, ms));
@@ -87,8 +87,8 @@ const UA_PC = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 Chrome/128.0 Saf
   {
     const { SRGia, d: sr } = nhanDangGia();
     const { getUserMedia, d: mic } = micGia();
-    const JavisVoice = napVoice(SRGia, UA_ANDROID, getUserMedia);
-    const v = new JavisVoice({});
+    const JeeviVoice = napVoice(SRGia, UA_ANDROID, getUserMedia);
+    const v = new JeeviVoice({});
     check("Android: nhận ra là điện thoại", v._laDiDong() === true);
     v.startListening();
     await cho(20);
@@ -109,8 +109,8 @@ const UA_PC = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 Chrome/128.0 Saf
   {
     const { SRGia } = nhanDangGia();
     const { getUserMedia, d: mic } = micGia();
-    const JavisVoice = napVoice(SRGia, UA_ANDROID, getUserMedia);
-    const v = new JavisVoice({});
+    const JeeviVoice = napVoice(SRGia, UA_ANDROID, getUserMedia);
+    const v = new JeeviVoice({});
     await v._startMicMeter();               // giả cảnh ngắt lời lúc đọc đã mở luồng mic
     check("Android: lúc đọc thì CÓ mở luồng mic (ngắt lời còn sống)",
       mic.conSong() === 1 && !!v.micStream);
@@ -124,8 +124,8 @@ const UA_PC = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 Chrome/128.0 Saf
   {
     const { SRGia } = nhanDangGia();
     const { getUserMedia, d: mic } = micGia();
-    const JavisVoice = napVoice(SRGia, UA_ANDROID, getUserMedia);
-    const v = new JavisVoice({});
+    const JeeviVoice = napVoice(SRGia, UA_ANDROID, getUserMedia);
+    const v = new JeeviVoice({});
     v.handsFree = true;
     v.bargeEnabled = true;
     v._giuTaiKhiDoc();                       // đúng thứ _speakNext gọi lúc bắt đầu đọc
@@ -147,8 +147,8 @@ const UA_PC = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 Chrome/128.0 Saf
         resolve({ getTracks: () => [t] });
       };
     });
-    const JavisVoice = napVoice(SRGia, UA_ANDROID, getUserMedia);
-    const v = new JavisVoice({});
+    const JeeviVoice = napVoice(SRGia, UA_ANDROID, getUserMedia);
+    const v = new JeeviVoice({});
     v.handsFree = true; v.bargeEnabled = true;
     v._giuTaiKhiDoc();                       // Jeevi bắt đầu đọc -> xin mic, nhưng còn treo
     await cho(5);
@@ -165,8 +165,8 @@ const UA_PC = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 Chrome/128.0 Saf
   {
     const { SRGia } = nhanDangGia();
     const { getUserMedia, d: mic } = micGia();
-    const JavisVoice = napVoice(SRGia, UA_IPHONE, getUserMedia);
-    const v = new JavisVoice({});
+    const JeeviVoice = napVoice(SRGia, UA_IPHONE, getUserMedia);
+    const v = new JeeviVoice({});
     check("iPhone: nhận ra là điện thoại", v._laDiDong() === true);
     v.startListening();
     await cho(20);
@@ -177,8 +177,8 @@ const UA_PC = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 Chrome/128.0 Saf
   {
     const { SRGia, d: sr } = nhanDangGia();
     const { getUserMedia, d: mic } = micGia();
-    const JavisVoice = napVoice(SRGia, UA_PC, getUserMedia);
-    const v = new JavisVoice({});
+    const JeeviVoice = napVoice(SRGia, UA_PC, getUserMedia);
+    const v = new JeeviVoice({});
     check("PC: KHÔNG bị coi là điện thoại", v._laDiDong() === false);
     v.startListening();
     await cho(20);

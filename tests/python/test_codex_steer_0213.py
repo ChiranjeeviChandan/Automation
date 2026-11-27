@@ -24,8 +24,8 @@ import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-TMP = Path(tempfile.mkdtemp(prefix="javis-codex-steer-"))
-os.environ["JAVIS_STATE_DIR"] = str(TMP / "state")
+TMP = Path(tempfile.mkdtemp(prefix="jeevi-codex-steer-"))
+os.environ["JEEVI_STATE_DIR"] = str(TMP / "state")
 os.environ["CODEX_HOME"] = str(TMP / "codex-home")
 (TMP / "codex-home").mkdir()
 
@@ -44,13 +44,13 @@ def check(name, cond):
 
 # ---- pure helpers ----
 ov = []
-codex_steer._flatten("", {"mcp_servers": {"javis": {"url": "http://h/mcp", "startup_timeout_sec": 20,
+codex_steer._flatten("", {"mcp_servers": {"jeevi": {"url": "http://h/mcp", "startup_timeout_sec": 20,
                                                     "http_headers": {"Authorization": "Bearer x\"y",
                                                                      "X-Jeevi-Mode": "full"}}}}, ov)
 check("profile flattens into -c overrides, header names unquoted",
-      'mcp_servers.javis.url="http://h/mcp"' in ov and "mcp_servers.javis.startup_timeout_sec=20" in ov
-      and 'mcp_servers.javis.http_headers.Authorization="Bearer x\\"y"' in ov
-      and 'mcp_servers.javis.http_headers.X-Jeevi-Mode="full"' in ov)
+      'mcp_servers.jeevi.url="http://h/mcp"' in ov and "mcp_servers.jeevi.startup_timeout_sec=20" in ov
+      and 'mcp_servers.jeevi.http_headers.Authorization="Bearer x\\"y"' in ov
+      and 'mcp_servers.jeevi.http_headers.X-Jeevi-Mode="full"' in ov)
 try:
     codex_steer._flatten("", {"a.b": 1}, [])
     check("a dotted key cannot be passed with -c", False)
@@ -61,7 +61,7 @@ ei = codex_steer.exec_item({"type": "commandExecution", "id": "c1", "command": "
 check("commandExecution reads as exec's command_execution",
       ei == {"id": "c1", "type": "command_execution", "command": "ls", "aggregated_output": "x", "exit_code": 0,
              "status": "completed"})
-ei = codex_steer.exec_item({"type": "mcpToolCall", "id": "m1", "server": "javis", "tool": "pos_stats",
+ei = codex_steer.exec_item({"type": "mcpToolCall", "id": "m1", "server": "jeevi", "tool": "pos_stats",
                             "arguments": {"a": 1}, "status": "inProgress"})
 check("mcpToolCall reads as mcp_tool_call", ei["type"] == "mcp_tool_call" and ei["tool"] == "pos_stats"
       and ei["status"] == "in_progress")
@@ -78,7 +78,7 @@ cli0.steer = False
 check("not for an engine that is not the chat engine", not codex_steer.wanted(cli0))
 cli0.steer = True
 os.environ[codex_steer.ENV_SWITCH] = "0"
-check("JAVIS_CODEX_STEER=0 turns it off", not codex_steer.wanted(cli0))
+check("JEEVI_CODEX_STEER=0 turns it off", not codex_steer.wanted(cli0))
 del os.environ[codex_steer.ENV_SWITCH]
 si.INBOX.close("w0", token=tok)
 
@@ -168,16 +168,16 @@ if os.name == "nt":
     (TMP / "codex.cmd").write_text(f'@"{sys.executable}" "{fake}" %*\r\n', encoding="utf-8")
     fake = TMP / "codex.cmd"
 os.environ["FAKE_ARGV"] = str(TMP / "argv.jsonl")
-(TMP / "codex-home" / "javis.config.toml").write_text(
-    '[mcp_servers.javis]\nurl = "http://127.0.0.1:7777/hub/mcp"\nstartup_timeout_sec = 20\n'
-    '[mcp_servers.javis.http_headers]\n"Authorization" = "Bearer tok"\n"X-Jeevi-Mode" = "full"\n', encoding="utf-8")
+(TMP / "codex-home" / "jeevi.config.toml").write_text(
+    '[mcp_servers.jeevi]\nurl = "http://127.0.0.1:7777/hub/mcp"\nstartup_timeout_sec = 20\n'
+    '[mcp_servers.jeevi.http_headers]\n"Authorization" = "Bearer tok"\n"X-Jeevi-Mode" = "full"\n', encoding="utf-8")
 
 
 def new_cli(**kw):
     c = CodexCLI(cwd=str(TMP), tag="chat:t:1", model="gpt-5.5")
     c.cli_path = str(fake)
     c.steer = True
-    c.profile = "javis"
+    c.profile = "jeevi"
     c.transport = "ws"
     for k, v in kw.items():
         setattr(c, k, v)
@@ -219,8 +219,8 @@ check("app-server: the message sent while the command ran reached the same turn"
 argv = rows[0] if rows else []
 check("app-server: started as app-server with the profile as -c, never -p",
       argv[-1:] == ["app-server"] and "-p" not in argv
-      and 'mcp_servers.javis.url="http://127.0.0.1:7777/hub/mcp"' in argv
-      and 'mcp_servers.javis.http_headers.X-Jeevi-Mode="full"' in argv)
+      and 'mcp_servers.jeevi.url="http://127.0.0.1:7777/hub/mcp"' in argv
+      and 'mcp_servers.jeevi.http_headers.X-Jeevi-Mode="full"' in argv)
 tstart = next((r["thread/start"] for r in rows if isinstance(r, dict) and "thread/start" in r), {})
 check("app-server: model, sandbox and approval go in thread/start",
       tstart.get("model") == "gpt-5.5" and tstart.get("sandbox") == "danger-full-access"
@@ -281,7 +281,7 @@ check("background work stays on exec", any(e.get("content") == "EXEC PATH" for e
 # ---- 0.382.0: streamed text, instructions once, a warm process for the next turn ----
 import warm_pool  # noqa: E402
 
-os.environ["JAVIS_WARM_BUDGET_MB"] = "500"
+os.environ["JEEVI_WARM_BUDGET_MB"] = "500"
 os.environ["FAKE_NO_CMD"] = "1"
 os.environ["FAKE_DELTA"] = "1"
 
@@ -337,12 +337,12 @@ argv_log()
 check("a turn that ran a shell command hands its process back (adoption on POSIX, Stop on Windows)",
       st["slots"] == [] and any(e["type"] == "final" for e in r1))
 
-os.environ["JAVIS_WARM_BUDGET_MB"] = "0"
+os.environ["JEEVI_WARM_BUDGET_MB"] = "0"
 os.environ["FAKE_NO_CMD"] = "1"
 (r1,), st = asyncio.run(turns({"warm_key": "conv-z"}))
 argv_log()
 check("budget 0 turns the pool off", st["slots"] == [] and any(e["type"] == "final" for e in r1))
-for k in ("JAVIS_WARM_BUDGET_MB", "FAKE_NO_CMD", "FAKE_DELTA"):
+for k in ("JEEVI_WARM_BUDGET_MB", "FAKE_NO_CMD", "FAKE_DELTA"):
     os.environ.pop(k, None)
 
 # ---- wiring ----

@@ -95,7 +95,7 @@ class AppServer:
                 return
             self._spawn()
             await self.request("initialize", {
-                "clientInfo": {"name": "javis_os", "title": "Jeevi OS", "version": "1.0"},
+                "clientInfo": {"name": "jeevi_os", "title": "Jeevi OS", "version": "1.0"},
                 "capabilities": {"experimentalApi": True},
             }, timeout=INIT_TIMEOUT)
             self._write({"method": "initialized", "params": {}})
@@ -109,7 +109,7 @@ class AppServer:
             text=True, encoding="utf-8", errors="replace", bufsize=1,
             creationflags=_no_window(), env=_codex_env(self.codex_home),
         )
-        threading.Thread(target=self._reader, name="javis-codex-realtime", daemon=True).start()
+        threading.Thread(target=self._reader, name="jeevi-codex-realtime", daemon=True).start()
 
     def close(self):
         proc, self.proc = self.proc, None

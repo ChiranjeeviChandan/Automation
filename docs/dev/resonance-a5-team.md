@@ -19,7 +19,7 @@ Chủ dự án chọn một agent Cộng hưởng khác làm người review cho
 
 ## Vòng đời
 
-**Cặp và đội.** `team_pairs` lưu cặp theo `agent_key` (không theo slug, không theo tag), chỉ chủ dự án đổi. `create` gọi `_attach_team` NGAY sau dòng `goal_agents`, trong cùng giao dịch: cặp đang bật thì ghi `goal_team` (ghim mã bền của reviewer), hai dòng `team_calls` (4/4) và đặt `budget_calls = 8`. Tool `javis_goal` và `POST /goal-requests` đều đi qua `form_goal`, tức qua `create`. `assign_goal` (mục tiêu cũ) không gắn đội; sự kiện ghi `not_attached_legacy`.
+**Cặp và đội.** `team_pairs` lưu cặp theo `agent_key` (không theo slug, không theo tag), chỉ chủ dự án đổi. `create` gọi `_attach_team` NGAY sau dòng `goal_agents`, trong cùng giao dịch: cặp đang bật thì ghi `goal_team` (ghim mã bền của reviewer), hai dòng `team_calls` (4/4) và đặt `budget_calls = 8`. Tool `jeevi_goal` và `POST /goal-requests` đều đi qua `form_goal`, tức qua `create`. `assign_goal` (mục tiêu cũ) không gắn đội; sự kiện ghi `not_attached_legacy`.
 
 **Sổ vai.** `begin_action` suy vai từ loại hành động (`work` thì `maker`, `review` thì `reviewer`), kiểm `team_calls` TRƯỚC khi trừ, rồi tăng `calls_used` và phần vai trong cùng giao dịch; ghi `role` vào ý định. Mọi đường hoàn dùng vai đã ghi.
 

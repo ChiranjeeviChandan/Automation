@@ -29,7 +29,7 @@ check("Bash: ưu tiên description (câu model viết cho người đọc)",
 check("Bash không description: lấy command",
       ct({"name": "Bash", "input": {"command": "ls -la"}}) == "ls -la")
 check("Read: đường dẫn file", ct({"name": "Read", "input": {"file_path": "wiki/a.md"}}) == "wiki/a.md")
-dai = ct({"name": "Read", "input": {"file_path": "/root/.javis/brains/cua-hang/wiki/khach-hang/danh-sach.md"}})
+dai = ct({"name": "Read", "input": {"file_path": "/root/.jeevi/brains/cua-hang/wiki/khach-hang/danh-sach.md"}})
 check("đường dẫn tuyệt đối dài: chỉ giữ 3 đoạn cuối", dai == "…/wiki/khach-hang/danh-sach.md", dai)
 check("Grep: mẫu tìm", ct({"name": "Grep", "input": {"pattern": "doanh thu"}}) == "doanh thu")
 check("WebFetch: URL", ct({"name": "WebFetch", "input": {"url": "https://x.vn/a"}}) == "https://x.vn/a")
@@ -77,7 +77,7 @@ check("agy run_command: the cmd.exe /c wrapper is dropped",
 check("agy read_file: Path",
       ct({"name": "read_file", "input": {"Path": "wiki/a.md"}}) == "wiki/a.md")
 check("agy view_file: AbsolutePath, shortened",
-      ct({"input": {"AbsolutePath": "C:\\Users\\admin\\.javis\\brains\\shop\\wiki\\khach-hang.md", "StartLine": 1}})
+      ct({"input": {"AbsolutePath": "C:\\Users\\admin\\.jeevi\\brains\\shop\\wiki\\khach-hang.md", "StartLine": 1}})
       == "…/shop/wiki/khach-hang.md")
 check("agy write_to_file: TargetFile",
       ct({"input": {"TargetFile": "notes/x.md", "CodeContent": "# x"}}) == "notes/x.md")
@@ -91,8 +91,8 @@ check("agy toolSummary (written by the model for a human) comes before the comma
 check("keys match whatever their case",
       ct({"input": {"FILE_PATH": "a.md"}}) == "a.md" and ct({"input": {"Command": "ls"}}) == "ls")
 check("agy MCP call: nested Arguments still give a label",
-      ct({"input": {"ServerName": "javis", "ToolName": "javis_run_tool",
-                    "Arguments": {"name": "javis_workflow", "args": {"op": "runs"}}}}) in ("javis_workflow",))
+      ct({"input": {"ServerName": "jeevi", "ToolName": "jeevi_run_tool",
+                    "Arguments": {"name": "jeevi_workflow", "args": {"op": "runs"}}}}) in ("jeevi_workflow",))
 
 # Không có gạch dài trong file mới
 SRC = (SERVER / "tool_label.py").read_text(encoding="utf-8")

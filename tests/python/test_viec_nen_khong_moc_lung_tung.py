@@ -89,7 +89,7 @@ check("nhấc được khoi_viec", m is not None)
 ns = {"json": __import__("json")}
 exec(m.group(0) if m else "", ns)
 k = ns["khoi_viec"]({"kind": "task", "status": "done", "title": "Lấy giá -->x", "id": "t1"})
-check("khối đúng khuôn JAVIS_VIEC", k.startswith("<!-- JAVIS_VIEC: {") and k.endswith(" -->"), k)
+check("khối đúng khuôn JEEVI_VIEC", k.startswith("<!-- JEEVI_VIEC: {") and k.endswith(" -->"), k)
 check("tên việc chứa '-->' không làm vỡ khối", k.count("-->") == 1, k)
 check("strip_control_blocks bóc khối cho Telegram/Zalo/hòm thư",
       channel_context.strip_control_blocks(k + "\nKết quả") == "Kết quả")
@@ -141,7 +141,7 @@ check("bản web bỏ câu đầu emoji và câu 'xem ở trang Việc'",
 check("bản đầy đủ (hòm thư) vẫn giữ tiêu đề", "Tổng hợp" in text)
 
 # Luồng Cộng sự: có cổng "chỉ khi chủ bảo"
-check("Cộng sự: việc nền chỉ khi chủ bảo rõ", "Việc nền (`javis_task`) CHỈ khi chủ bảo" in MAIN)
+check("Cộng sự: việc nền chỉ khi chủ bảo rõ", "Việc nền (`jeevi_task`) CHỈ khi chủ bảo" in MAIN)
 
 print(f"\n{len(fails)} FAIL" if fails else "\nTất cả xanh")
 sys.exit(1 if fails else 0)

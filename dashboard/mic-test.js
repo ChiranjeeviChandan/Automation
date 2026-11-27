@@ -32,7 +32,7 @@
   var api = { level: level, verdict: verdict, TEST_MS: TEST_MS };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof window === "undefined" || typeof document === "undefined") return;
-  window.JavisMicTest = api;
+  window.JeeviMicTest = api;
 
   var t = function (k, p) { try { return window.t ? window.t(k, p) : k; } catch (e) { return k; } };
   var running = false;
@@ -49,7 +49,7 @@
     var stream = null, ctx = null, peak = 0;
     try {
       var micOptions = { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 };
-      var dev = window.JavisAudioDevices;
+      var dev = window.JeeviAudioDevices;
       stream = await (dev ? dev.getMic(micOptions) : navigator.mediaDevices.getUserMedia({ audio: micOptions }));
       var AC = window.AudioContext || window.webkitAudioContext;
       ctx = new AC();
@@ -79,7 +79,7 @@
       bar.style.width = "0%";
       if (btn) btn.disabled = false;
       running = false;
-      try { if (window.JavisAudioDevices) window.JavisAudioDevices.refresh(); } catch (e) {}
+      try { if (window.JeeviAudioDevices) window.JeeviAudioDevices.refresh(); } catch (e) {}
     }
   }
 
@@ -110,7 +110,7 @@
           if (out) out.textContent = t("settings.vc_spk_fail");
         }
       };
-      var dev = window.JavisAudioDevices;
+      var dev = window.JeeviAudioDevices;
       // Where the context can be routed, the chime waits for the picked speaker, or it would start on the default
       // one. Elsewhere (Safari, iPhone) it plays at once, still inside the press, as before.
       if (dev && dev.applySpeaker && typeof ctx.setSinkId === "function") dev.applySpeaker(ctx).then(chime, chime);

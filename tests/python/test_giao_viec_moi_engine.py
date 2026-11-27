@@ -18,7 +18,7 @@ Chủ repo chọn sửa MÃ chứ không hạ tài liệu. File này canh cái s
 tự rủi ro:
 
 1. **Tool phải tới được tay engine API.** Đây là toàn bộ lý do tính năng tồn tại. Đường đi thật
-   là qua MCP Hub, và hiện lazy đang bật nên nó nằm sau `javis_search_tools`/`javis_run_tool` -
+   là qua MCP Hub, và hiện lazy đang bật nên nó nằm sau `jeevi_search_tools`/`jeevi_run_tool` -
    test phải đi đúng đường đó chứ không gọi tắt vào hàm.
 2. **Mức quyền mặc định là `full`** (đổi 2026-09-10, khi chủ repo bỏ luật "không giao tự động
    tiền/đơn/đăng bài/nhắn khách"). Trước đó tool từ chối thẳng mức full và mặc định `suggest`;
@@ -33,7 +33,7 @@ import os
 import pathlib
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-viec-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-viec-")
 
 import mcp_hub  # noqa: E402
 import plugins_host  # noqa: E402
@@ -48,7 +48,7 @@ def check(name, cond):
         _fails.append(name)
 
 
-_VAULT = pathlib.Path(tempfile.mkdtemp(prefix="javis-vault-"))
+_VAULT = pathlib.Path(tempfile.mkdtemp(prefix="jeevi-vault-"))
 (_VAULT / "Jeevi").mkdir(parents=True, exist_ok=True)
 
 
@@ -56,18 +56,18 @@ _VAULT = pathlib.Path(tempfile.mkdtemp(prefix="javis-vault-"))
 # 0. Plugin nạp được và khai đúng
 # ============================================================
 _mo_ta = {p.get("slug"): p for p in plugins_host.describe(None)}
-_pl = _mo_ta.get("javis-task") or {}
-check("có plugin javis-task", bool(_pl))
+_pl = _mo_ta.get("jeevi-task") or {}
+check("có plugin jeevi-task", bool(_pl))
 check("plugin nạp không lỗi", not _pl.get("error"))
 check("plugin bật sẵn (nếu tắt thì lời hứa vẫn thủng)", _pl.get("enabled") is True)
 check("đi theo app, không phải bản người dùng tự cài", _pl.get("source") == "bundled")
-check("khai đúng tool", _pl.get("tools") == ["javis_task"])
+check("khai đúng tool", _pl.get("tools") == ["jeevi_task"])
 # Hai chỗ khai min_mode: manifest (thứ trang Plugins HIỆN cho người dùng) và register_tool
 # (thứ thật sự ENFORCE). Gate chỉ đọc cái thứ hai. Lệch nhau là trang Plugins nói dối về quyền
 # của chính nó - người dùng đọc "chỉ đọc" rồi yên tâm, trong khi tool vẫn ghi được.
 check("CANARY: min_mode hiện ra khớp min_mode enforce thật",
       _pl.get("min_mode") == "safe"
-      and 'min_mode="safe"' in (ROOT / "system" / "plugins" / "javis-task" / "plugin.py")
+      and 'min_mode="safe"' in (ROOT / "system" / "plugins" / "jeevi-task" / "plugin.py")
       .read_text(encoding="utf-8"))
 
 
@@ -78,18 +78,18 @@ async def _chay():
     tools, route = await mcp_hub.discover_all("full", vault_root=str(_VAULT))
     ten = [t.get("fn") or t.get("name") for t in tools]
 
-    if "javis_search_tools" in ten:
+    if "jeevi_search_tools" in ten:
         # Lazy bật: mọi tool trừ nhóm hạt nhân nằm sau meta-tool. Đây là đường đi THẬT của
         # engine API khi đã đấu nhiều nguồn, nên phải test đúng nó chứ không gọi tắt vào hàm.
-        tim = await route["javis_search_tools"]["call"]({"query": "giao việc chạy nền kanban"})
-        check("CANARY: engine API tìm ra được tool giao việc", "javis_task" in tim)
-        _run = route["javis_run_tool"]["call"]
+        tim = await route["jeevi_search_tools"]["call"]({"query": "giao việc chạy nền kanban"})
+        check("CANARY: engine API tìm ra được tool giao việc", "jeevi_task" in tim)
+        _run = route["jeevi_run_tool"]["call"]
 
         async def goi(a):
-            return await _run({"name": "javis_task", "args": a})
+            return await _run({"name": "jeevi_task", "args": a})
     else:
-        check("CANARY: engine API thấy tool giao việc", "javis_task" in ten)
-        _c = (route.get("javis_task") or {}).get("call")
+        check("CANARY: engine API thấy tool giao việc", "jeevi_task" in ten)
+        _c = (route.get("jeevi_task") or {}).get("call")
 
         async def goi(a):
             return await _c(a)
@@ -118,7 +118,7 @@ async def _chay():
         atomic_write_text=lambda p, s: pathlib.Path(p).write_text(s, encoding="utf-8"),
         execute_workflow=None, workflows_dir=lambda b: str(_VAULT / "Jeevi" / "workflows"),
         build_system_prompt=lambda *a, **k: "", aux_model=lambda *a, **k: ("", ""),
-        aux_swap=None, safe_tools=[], state_dir=pathlib.Path(os.environ["JAVIS_STATE_DIR"]),
+        aux_swap=None, safe_tools=[], state_dir=pathlib.Path(os.environ["JEEVI_STATE_DIR"]),
         scheduler_brains=lambda: [str(_VAULT)], apply_mcp=None,
         mcp_allow_patterns=lambda *a, **k: [], report=None))
     check("tasks.current() trả đúng hàng đợi đang chạy", tasks_mod.current() is feat)
@@ -188,11 +188,11 @@ async def _chay():
     # Chế độ suggest (chỉ đọc): giao việc là hành động ghi, phải bị chặn ở TẦNG QUYỀN chứ không
     # phải trông vào tự giác của tool. Đây là lý do plugin khai min_mode=safe.
     _t2, _r2 = await mcp_hub.discover_all("suggest", vault_root=str(_VAULT))
-    if "javis_search_tools" in [x.get("fn") for x in _t2]:
-        out = await _r2["javis_run_tool"]["call"]({"name": "javis_task",
+    if "jeevi_search_tools" in [x.get("fn") for x in _t2]:
+        out = await _r2["jeevi_run_tool"]["call"]({"name": "jeevi_task",
                                                   "args": {"op": "add", "title": "lén giao việc"}})
     else:
-        out = await (_r2.get("javis_task") or {}).get("call")({"op": "add", "title": "lén giao việc"})
+        out = await (_r2.get("jeevi_task") or {}).get("call")({"op": "add", "title": "lén giao việc"})
     check("CANARY: chế độ chỉ-đọc CHẶN giao việc ở tầng quyền",
           "ERROR" in out and "quyền" in out)
     check("số việc trong kho không đổi sau lần bị chặn",
@@ -201,8 +201,8 @@ async def _chay():
     # Không biết brain nào thì PHẢI từ chối, không được âm thầm rơi về Brain Default - giao việc
     # nhầm brain là việc chạy trên dữ liệu của người khác. (Đúng lỗi image_gen từng dính.)
     _t3, _r3 = await mcp_hub.discover_all("full", vault_root=None)
-    if "javis_search_tools" in [x.get("fn") for x in _t3]:
-        out = await _r3["javis_run_tool"]["call"]({"name": "javis_task",
+    if "jeevi_search_tools" in [x.get("fn") for x in _t3]:
+        out = await _r3["jeevi_run_tool"]["call"]({"name": "jeevi_task",
                                                    "args": {"op": "add", "title": "việc lạc brain"}})
         check("CANARY: không biết brain thì TỪ CHỐI, không rơi về brain mặc định",
               "ERROR" in out and "brain" in out)
@@ -252,16 +252,16 @@ asyncio.run(_chay())
 # in-process), nên một thay đổi làm hỏng đúng đường đó sẽ không bị mục 1 phát hiện.
 _pt, _pr = plugins_host.plugin_tools("full", str(_VAULT), scope_vault=False)
 check("CANARY: đường Claude Code cũng có tool giao việc",
-      "javis_task" in [x["fn"] for x in _pt])
+      "jeevi_task" in [x["fn"] for x in _pt])
 check("mức full giao được trên cả đường đó",
-      "Đã giao việc" in asyncio.run(_pr["javis_task"]["call"](
+      "Đã giao việc" in asyncio.run(_pr["jeevi_task"]["call"](
           {"op": "add", "title": "chạy quảng cáo", "mode": "full", "chat_id": "web:x"})))
 
 # Chế độ chỉ-đọc phải chặn ở đường này nữa - min_mode nằm trong route của plugin_tools(mode).
 _pt2, _pr2 = plugins_host.plugin_tools("suggest", str(_VAULT), scope_vault=False)
-if "javis_task" in _pr2:
+if "jeevi_task" in _pr2:
     check("CANARY: đường Claude Code cũng chặn giao việc ở chế độ chỉ-đọc",
-          "ERROR" in asyncio.run(_pr2["javis_task"]["call"]({"op": "add", "title": "lén"})))
+          "ERROR" in asyncio.run(_pr2["jeevi_task"]["call"]({"op": "add", "title": "lén"})))
 else:
     check("chế độ chỉ-đọc thì tool giao việc không lộ ra ở đường Claude Code", True)
 
@@ -283,7 +283,7 @@ check("CANARY: CLAUDE.md kể cả WebFetch/WebSearch là của riêng engine CL
       "WebFetch" in _CL)
 check("CANARY: docs/10 không còn nói khác biệt duy nhất là chạy lệnh máy",
       "Khác biệt **duy nhất** là chạy được lệnh máy hay không" not in _DOC)
-check("docs/10 có nhắc tool giao việc cho engine API", "javis_task" in _DOC)
+check("docs/10 có nhắc tool giao việc cho engine API", "jeevi_task" in _DOC)
 
 print()
 if _fails:

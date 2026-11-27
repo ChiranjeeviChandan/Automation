@@ -13,7 +13,7 @@ import tempfile
 import time
 import unittest
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-auxcool-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-auxcool-"))
 
 import aux_engine  # noqa: E402
 import model_routing  # noqa: E402
@@ -59,7 +59,7 @@ class ClassifyTests(unittest.TestCase):
         self.assertEqual(aux_engine.cooldown_for("ReadTimeout: timed out"), aux_engine.COOLDOWN_DOWN_S)
         self.assertEqual(aux_engine.cooldown_for("404 model not found"), aux_engine.COOLDOWN_ACCESS_S)
         self.assertEqual(aux_engine.cooldown_for("401 invalid api key"), aux_engine.COOLDOWN_ACCESS_S)
-        self.assertEqual(aux_engine.cooldown_for("tool javis_read_file failed: no such file"), 0.0)
+        self.assertEqual(aux_engine.cooldown_for("tool jeevi_read_file failed: no such file"), 0.0)
 
     def test_retry_after_wins(self):
         self.assertEqual(aux_engine.cooldown_for("429, Retry-After: 42"), 42.0)
@@ -163,7 +163,7 @@ class PlanLimitTests(unittest.TestCase):
 
     def test_api_key_and_unrelated_errors_record_nothing(self):
         run(aux_engine._FallbackChain([Link("groq", events=[err("429 quota exceeded")]),
-                                       CodexCLI(events=[err("tool javis_read_file failed: no such file")]),
+                                       CodexCLI(events=[err("tool jeevi_read_file failed: no such file")]),
                                        CodexCLI(events=[err("503 UNAVAILABLE")]),
                                        Link("openrouter", events=[FINAL])]))
         self.assertEqual(set(plan_limits.doc().values()), {None}, "an API key has no plan, a broken tool is no refusal")

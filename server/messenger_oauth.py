@@ -20,7 +20,7 @@ this flow needs nothing outside the owner's Jeevi.
 
 Pending logins live in memory for 15 minutes and are keyed by an unguessable `state`. The user
 token never leaves this module or the server; results carry Page ids, names and pictures only.
-Endpoints are configurable (`JAVIS_FACEBOOK_WEB`) so tests can point the login address elsewhere.
+Endpoints are configurable (`JEEVI_FACEBOOK_WEB`) so tests can point the login address elsewhere.
 """
 from __future__ import annotations
 
@@ -60,7 +60,7 @@ def _c(vi: str, en: str) -> str:
 
 
 def _web() -> str:
-    return (os.environ.get("JAVIS_FACEBOOK_WEB") or "https://www.facebook.com").rstrip("/")
+    return (os.environ.get("JEEVI_FACEBOOK_WEB") or "https://www.facebook.com").rstrip("/")
 
 
 def _purge(now: float = 0.0) -> None:

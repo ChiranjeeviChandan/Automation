@@ -72,7 +72,7 @@ def state_dir() -> Path:
         import config
         return Path(config.STATE_DIR)
     except Exception:  # noqa: BLE001 - config failing to import must not stop a security record
-        return Path(os.getenv("JAVIS_STATE_DIR", str(Path(__file__).parent)))
+        return Path(os.getenv("JEEVI_STATE_DIR", str(Path(__file__).parent)))
 
 
 def _log_path() -> Path:

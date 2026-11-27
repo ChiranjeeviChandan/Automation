@@ -6,7 +6,7 @@ Only a pass on a real source may mark an adapter or action "production verified"
 
 ## Build under test
 
-- Branch `claude/openmausbot-jarvis-research-ewnzc6`, PR #747, version 0.274.0.
+- Branch `claude/openmausbot-jeevi-research-ewnzc6`, PR #747, version 0.274.0.
 - Stage the PR head at the time of staging, and write its exact SHA (`git rev-parse HEAD`) in the staging log before
   starting.
 - Last head checked in the build session: **346707cf** (code, version 0.274.0, `main` e36e060a merged in). Commits
@@ -120,8 +120,8 @@ Nothing above deletes the log. Export it first (Events, Export CSV) if a stop is
 3. **Approvals**: approve or reject what waits. A rejection cancels only that delivery.
 4. **Breakers**: a card saying sending is paused means repeated failures at one target. Fix the receiver, or point
    the action elsewhere.
-5. **Double effects**: search the receiver for repeated delivery ids (`X-Jeevi-Event-Id`, `javis_delivery`,
-   `_javis.delivery_id`). Any repeat is a defect: stop that action (step 1 above) and report it with the export.
+5. **Double effects**: search the receiver for repeated delivery ids (`X-Jeevi-Event-Id`, `jeevi_delivery`,
+   `_jeevi.delivery_id`). Any repeat is a defect: stop that action (step 1 above) and report it with the export.
 
 ## 1. Durability and recovery (M1), staging, 15 min
 

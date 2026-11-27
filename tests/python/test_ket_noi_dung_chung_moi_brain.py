@@ -9,7 +9,7 @@ vào bộ nhớ dài hạn, nên lần sau càng tin.
 
 Sự thật trong code: hub dựng tool từ mcp_store.resolved() cho MỌI vault như nhau, không có
 bộ lọc theo brain. Không thấy tool chỉ có hai lý do: nguồn đang tắt, hoặc nguồn hỏng lúc dò.
-File này canh (1) kiến trúc vẫn không lọc theo brain, (2) javis_connections nói ra hai lý do
+File này canh (1) kiến trúc vẫn không lọc theo brain, (2) jeevi_connections nói ra hai lý do
 đó thay vì để model tự bịa lý do thứ ba.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
@@ -18,7 +18,7 @@ import os
 import sys
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-mcpchung-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-mcpchung-"))
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -49,7 +49,7 @@ check("CANARY: kho kết nối không có cột brain",
 check("CANARY: trang Kết nối không có mục 'gắn nguồn cho brain' (mục đó không tồn tại)",
       "gắn nguồn" not in (ROOT / "dashboard" / "console.js").read_text(encoding="utf-8"))
 
-# ---- 2. javis_connections nói đúng bệnh ----------------------------------------
+# ---- 2. jeevi_connections nói đúng bệnh ----------------------------------------
 cid, err = mcp_store.add_connection("custom", {"label": "POS Thử", "url": "http://127.0.0.1:1/mcp"})
 check("dựng được một kết nối thử", bool(cid), err)
 ra = json.loads(mcp_hub._connections_json())
@@ -70,9 +70,9 @@ ra3 = json.loads(mcp_hub._connections_json())
 rec3 = next(r for r in ra3 if r.get("label") == "POS Thử")
 check("nguồn đang tắt thì nói đang tắt và bật lại là mọi brain dùng được",
       "ĐANG TẮT" in rec3.get("trang_thai", "") and "mọi brain" in rec3.get("trang_thai", ""))
-check("mô tả tool javis_connections cũng nói dùng chung cho mọi brain",
+check("mô tả tool jeevi_connections cũng nói dùng chung cho mọi brain",
       "DÙNG CHUNG cho mọi brain" in _hub)
-check("danh sách nguồn dò hụt được đưa vào javis_connections",
+check("danh sách nguồn dò hụt được đưa vào jeevi_connections",
       "_connections_json(include_ambient, hidden, bo_qua," in _hub)
 
 print()

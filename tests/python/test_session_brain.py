@@ -17,7 +17,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-sbrain-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-sbrain-")
 
 import session_brain       # noqa: E402
 import usage_parsers as up  # noqa: E402
@@ -83,18 +83,18 @@ check("server: khong con endpoint /metrics", '@app.get("/metrics")' not in main_
 check("server: khong con cache metrics", "_METRICS_CACHE" not in main_src)
 check("dashboard: app.js sach", not any(
     k in app_src for k in ("loadMetrics", "renderMetrics", "metricCards",
-                           "savedMetrics", "JAVIS_METRICS")))
+                           "savedMetrics", "JEEVI_METRICS")))
 check("dashboard: index.html khong con stub", "metricsStub" not in html_src)
 check("dashboard: style.css khong con .metric-", ".metric-" not in css_src)
-check("system prompt: khong con bat nhung JAVIS_METRICS", "JAVIS_METRICS" not in claude_md)
+check("system prompt: khong con bat nhung JEEVI_METRICS", "JEEVI_METRICS" not in claude_md)
 
-# Khối điều khiển JAVIS_* vẫn phải bị bóc trước khi ra kênh chữ thuần: ký ức cũ trong brain
-# còn nhắc JAVIS_METRICS nên model vẫn có thể lỡ nhúng - không được lọt nguyên xi ra Telegram.
+# Khối điều khiển JEEVI_* vẫn phải bị bóc trước khi ra kênh chữ thuần: ký ức cũ trong brain
+# còn nhắc JEEVI_METRICS nên model vẫn có thể lỡ nhúng - không được lọt nguyên xi ra Telegram.
 import channel_context  # noqa: E402
 out = channel_context.strip_control_blocks(
-    'Báo cáo xong.\n\n<!-- JAVIS_METRICS: [{"label":"Doanh thu","value":"250k"}] -->')
+    'Báo cáo xong.\n\n<!-- JEEVI_METRICS: [{"label":"Doanh thu","value":"250k"}] -->')
 check("khoi la van bi boc khoi kenh chu thuan",
-      "JAVIS_METRICS" not in out and "<!--" not in out and "Báo cáo xong." in out)
+      "JEEVI_METRICS" not in out and "<!--" not in out and "Báo cáo xong." in out)
 
 print()
 if fails:

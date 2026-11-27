@@ -28,7 +28,7 @@ import tempfile
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-push-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-push-"))
 
 from cryptography.hazmat.primitives import hashes, serialization  # noqa: E402
 from cryptography.hazmat.primitives.asymmetric import ec  # noqa: E402
@@ -53,7 +53,7 @@ raw = webpush.b64u_giai(k1)
 check("khoá là điểm P-256 dạng uncompressed 65 byte", len(raw) == 65 and raw[0] == 0x04, len(raw))
 check("khoá lưu ra file để sống qua lần khởi động sau", webpush.VAPID_FILE.exists())
 # Đổi khoá = mọi đăng ký cũ thành rác, nên nó phải nằm ở STATE_DIR chứ không trong cây mã nguồn.
-check("khoá nằm trong STATE_DIR", str(webpush.VAPID_FILE).startswith(os.environ["JAVIS_STATE_DIR"]))
+check("khoá nằm trong STATE_DIR", str(webpush.VAPID_FILE).startswith(os.environ["JEEVI_STATE_DIR"]))
 
 # ─────────── 2. Mã hoá đúng chuẩn, giải ngược lại được ───────────
 ua = ec.generate_private_key(ec.SECP256R1())
@@ -177,7 +177,7 @@ _GiaClient.ma_tra = {sub2["endpoint"]: 410}      # 410 = đăng ký đã chết
 httpx.AsyncClient = _GiaClient
 try:
     da_gui, da_don, chi_tiet = asyncio.new_event_loop().run_until_complete(
-        webpush.gui_het("Jeevi", "Doanh thu hôm nay 12 đơn", "/?mo_thu=abc", tag="javis-abc"))
+        webpush.gui_het("Jeevi", "Doanh thu hôm nay 12 đơn", "/?mo_thu=abc", tag="jeevi-abc"))
 finally:
     httpx.AsyncClient = that_client
 
@@ -206,7 +206,7 @@ check("CANARY: trình duyệt giải mã ra ĐÚNG nội dung đã gửi",
       mo["title"] == "Jeevi" and mo["body"] == "Doanh thu hôm nay 12 đơn", mo)
 # Không có url thì bấm vào thông báo chỉ mở trang chủ, người dùng lại phải tự đi tìm.
 check("gói mang theo đường về đúng mẩu thư", mo["url"] == "/?mo_thu=abc", mo.get("url"))
-check("gói mang tag để tin mới ĐÈ tin cũ, không xếp chồng", mo["tag"] == "javis-abc")
+check("gói mang tag để tin mới ĐÈ tin cũ, không xếp chồng", mo["tag"] == "jeevi-abc")
 
 
 # ─────────── 6. Claim `sub` của VAPID phải LIÊN HỆ ĐƯỢC ───────────
@@ -219,12 +219,12 @@ check("sub là mailto: hoặc https: theo RFC 8292",
       lh.startswith("mailto:") or lh.startswith("https://"), lh)
 claims_lh = json.loads(webpush.b64u_giai(webpush._jwt_vapid("https://web.push.apple.com/x").split(".")[1]))
 check("JWT gửi đi mang đúng địa chỉ đó", claims_lh["sub"] == lh, claims_lh.get("sub"))
-os.environ["JAVIS_PUSH_CONTACT"] = "mailto:toi@congty.vn"
-check("đổi được bằng JAVIS_PUSH_CONTACT", webpush.lien_he() == "mailto:toi@congty.vn")
-os.environ["JAVIS_PUSH_CONTACT"] = "khong-phai-url"
+os.environ["JEEVI_PUSH_CONTACT"] = "mailto:toi@congty.vn"
+check("đổi được bằng JEEVI_PUSH_CONTACT", webpush.lien_he() == "mailto:toi@congty.vn")
+os.environ["JEEVI_PUSH_CONTACT"] = "khong-phai-url"
 check("giá trị rác thì rơi về mặc định hợp lệ, không gửi rác cho Apple",
       webpush.lien_he().startswith("mailto:"), webpush.lien_he())
-os.environ.pop("JAVIS_PUSH_CONTACT", None)
+os.environ.pop("JEEVI_PUSH_CONTACT", None)
 
 check("nhận ra dịch vụ đẩy của Apple", "Apple" in webpush.ten_dich_vu("https://web.push.apple.com/x"))
 check("nhận ra dịch vụ đẩy của Google", "Google" in webpush.ten_dich_vu("https://fcm.googleapis.com/x"))

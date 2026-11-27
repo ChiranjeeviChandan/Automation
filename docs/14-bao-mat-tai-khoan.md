@@ -31,7 +31,7 @@ Tab **Tài khoản**:
 
 Tab **Bảo mật** (từ bản sau sự cố 09/11/2026):
 
-- **Tổng quan**: 2FA bật hay chưa, số thiết bị đang đăng nhập, lần đăng nhập gần nhất (giờ, IP, thiết bị), số lần đăng nhập sai trong 7 ngày, số token API. Dòng đỏ khi file cài đặt từng bị sửa từ ngoài Jeevi, dòng vàng khi `JAVIS_ADMIN_PASSWORD` hay `JAVIS_RESET_2FA` còn nằm trong biến môi trường.
+- **Tổng quan**: 2FA bật hay chưa, số thiết bị đang đăng nhập, lần đăng nhập gần nhất (giờ, IP, thiết bị), số lần đăng nhập sai trong 7 ngày, số token API. Dòng đỏ khi file cài đặt từng bị sửa từ ngoài Jeevi, dòng vàng khi `JEEVI_ADMIN_PASSWORD` hay `JEEVI_RESET_2FA` còn nằm trong biến môi trường.
 - **Xác thực 2 lớp**: bật, tắt, tạo lại mã khôi phục.
 - **Thiết bị đang đăng nhập**: mỗi trình duyệt một dòng (thiết bị, IP, lần hoạt động cuối). Đăng xuất từng cái, hoặc bấm **Đăng xuất mọi thiết bị khác** mà không cần đổi mật khẩu.
 - **Lịch sử đăng nhập và bảo mật**: mọi lần đăng nhập đúng và sai, đăng xuất, đổi tên hay mật khẩu, bật tắt 2FA, tạo token, đặt lại qua biến môi trường, file cài đặt bị sửa từ ngoài, lần trợ lý AI bị chặn khi định đụng file bí mật. Lọc theo Đăng nhập, Thay đổi, Cảnh báo.
@@ -46,10 +46,10 @@ Jeevi quyết định có ép đăng nhập hay không dựa vào cách server �
 | Chạy public (Docker/VPS/Hostinger), nghe `0.0.0.0`, `::` hoặc IP LAN | Có, tự bật |
 | Đã đặt mật khẩu trong trang Tài khoản | Có, ở mọi chế độ |
 
-Có thể ép cứng bằng biến môi trường `JAVIS_REQUIRE_LOGIN`:
+Có thể ép cứng bằng biến môi trường `JEEVI_REQUIRE_LOGIN`:
 
-- `JAVIS_REQUIRE_LOGIN=1` : luôn bắt buộc đăng nhập, kể cả localhost. Nên đặt khi bạn mở Jeevi qua tunnel (Cloudflare Tunnel, ngrok...) trên máy cá nhân.
-- `JAVIS_REQUIRE_LOGIN=0` : tắt bắt buộc đăng nhập.
+- `JEEVI_REQUIRE_LOGIN=1` : luôn bắt buộc đăng nhập, kể cả localhost. Nên đặt khi bạn mở Jeevi qua tunnel (Cloudflare Tunnel, ngrok...) trên máy cá nhân.
+- `JEEVI_REQUIRE_LOGIN=0` : tắt bắt buộc đăng nhập.
 
 Nguyên tắc an toàn (fail-closed): nếu server nghe địa chỉ **không phải** thuần localhost thì Jeevi mặc định coi là public và bật đăng nhập. Chi tiết biến môi trường xem [Cấu hình .env](16-cau-hinh-env.md).
 
@@ -62,8 +62,8 @@ Khi mở dashboard lần đầu trên server công khai mà chưa có admin, Jee
 **Cách 1 - Đặt sẵn admin bằng biến môi trường (khuyến nghị):**
 
 1. Trong cấu hình deploy (ví dụ compose của Hostinger), thêm 2 biến:
-   - `JAVIS_ADMIN_PASSWORD` : mật khẩu admin bạn chọn.
-   - `JAVIS_ADMIN_USER` : tên đăng nhập (tuỳ chọn, mặc định là `admin`).
+   - `JEEVI_ADMIN_PASSWORD` : mật khẩu admin bạn chọn.
+   - `JEEVI_ADMIN_USER` : tên đăng nhập (tuỳ chọn, mặc định là `admin`).
 2. Khởi động Jeevi. Lúc boot, Jeevi tự tạo admin từ 2 biến này và **đóng luôn** màn tạo tài khoản. Bạn mở app là vào thẳng màn đăng nhập.
 3. Đăng nhập bằng đúng user/password vừa đặt.
 
@@ -106,17 +106,17 @@ Khi đã có mật khẩu, khối **Tài khoản đăng nhập** hiện dòng "�
 - **Mở Jeevi từ máy khác (điện thoại, qua tunnel):** dòng này hiện cách làm trong nút (i): ra máy tính đang chạy Jeevi rồi bấm đúp file như trên.
 - **Docker, Hostinger, VPS:** dòng này hiện các bước đặt lại bằng biến môi trường bên dưới.
 
-Script không mở lại bộ cài đặt lần đầu (model, kênh, khoá API giữ nguyên). Nó cũng xoá `JAVIS_ADMIN_PASSWORD` và `JAVIS_ADMIN_USER` khỏi file `.env` của bản cài (bản Mac cài bằng `install.sh` có hai dòng này), vì để lại thì lần khởi động sau Jeevi sẽ đặt lại đúng mật khẩu cũ.
+Script không mở lại bộ cài đặt lần đầu (model, kênh, khoá API giữ nguyên). Nó cũng xoá `JEEVI_ADMIN_PASSWORD` và `JEEVI_ADMIN_USER` khỏi file `.env` của bản cài (bản Mac cài bằng `install.sh` có hai dòng này), vì để lại thì lần khởi động sau Jeevi sẽ đặt lại đúng mật khẩu cũ.
 
-Chạy bằng Docker/Hostinger (từ 0.77.1): đổi `JAVIS_ADMIN_PASSWORD` (và `JAVIS_ADMIN_USER` nếu muốn) trong ô Environment rồi Redeploy. Lúc khởi động, Jeevi thấy giá trị env khác lần trước nên đặt lại tài khoản admin theo nó: 2FA giữ nguyên, mọi phiên đăng nhập cũ bị huỷ. Env để nguyên thì không có gì thay đổi, nên mật khẩu bạn đổi trong dashboard không bị env ghi đè mỗi lần khởi động lại.
+Chạy bằng Docker/Hostinger (từ 0.77.1): đổi `JEEVI_ADMIN_PASSWORD` (và `JEEVI_ADMIN_USER` nếu muốn) trong ô Environment rồi Redeploy. Lúc khởi động, Jeevi thấy giá trị env khác lần trước nên đặt lại tài khoản admin theo nó: 2FA giữ nguyên, mọi phiên đăng nhập cũ bị huỷ. Env để nguyên thì không có gì thay đổi, nên mật khẩu bạn đổi trong dashboard không bị env ghi đè mỗi lần khởi động lại.
 
-VPS cài thẳng bằng `install.sh` (systemd): SSH vào máy chủ, sửa dòng `JAVIS_ADMIN_PASSWORD` trong file `.env` ở thư mục cài Jeevi thành mật khẩu mới (chưa có thì thêm), rồi chạy `sudo systemctl restart javis`. Jeevi đặt lại tài khoản theo giá trị mới như trên Hostinger.
+VPS cài thẳng bằng `install.sh` (systemd): SSH vào máy chủ, sửa dòng `JEEVI_ADMIN_PASSWORD` trong file `.env` ở thư mục cài Jeevi thành mật khẩu mới (chưa có thì thêm), rồi chạy `sudo systemctl restart jeevi`. Jeevi đặt lại tài khoản theo giá trị mới như trên Hostinger.
 
 Cách thủ công (máy không dùng env):
 
 1. Dừng container (hoặc dừng Jeevi).
 2. Xoá (hoặc làm rỗng) khối `"auth"` trong `settings.json` ở thư mục state (Docker: `/data/state/settings.json`).
-3. Đặt `JAVIS_ADMIN_PASSWORD` (và `JAVIS_ADMIN_USER` nếu muốn) rồi khởi động lại. Jeevi tạo lại admin từ biến môi trường lúc boot.
+3. Đặt `JEEVI_ADMIN_PASSWORD` (và `JEEVI_ADMIN_USER` nếu muốn) rồi khởi động lại. Jeevi tạo lại admin từ biến môi trường lúc boot.
 
 Bỏ qua bước 3 thì trang tạo tài khoản **không mở cho thiết bị khác**: máy đã có chủ mà mật khẩu mất thì chỉ trình duyệt trên chính máy chạy Jeevi tạo được tài khoản mới, hoặc mọi thiết bị trong 24 giờ sau khi chạy `python tools/reset_auth.py` trên máy chủ. Chặn như vậy để mật khẩu lỡ bị mất cũng không ai lạ vào tạo tài khoản được (vụ 22/11/2026). Mỗi lần chặn có cảnh báo trong nhật ký bảo mật, kèm IP thật của người thử.
 
@@ -137,7 +137,7 @@ Chỉ nên làm khi chạy máy cá nhân, tuyệt đối không làm trên VPS.
 3. Xác nhận ở hộp thoại "Tắt đăng nhập? Ai mở dashboard cũng dùng được."
 4. Jeevi xoá mật khẩu và **đăng xuất mọi phiên** đang mở.
 
-Lưu ý: nếu server vẫn đang chạy public (hoặc bạn đặt `JAVIS_REQUIRE_LOGIN=1`), tắt mật khẩu **không** làm dashboard mở toang, mà quay lại màn ép tạo tài khoản mới. Đăng nhập chỉ thật sự tắt khi server nghe localhost và không ép login.
+Lưu ý: nếu server vẫn đang chạy public (hoặc bạn đặt `JEEVI_REQUIRE_LOGIN=1`), tắt mật khẩu **không** làm dashboard mở toang, mà quay lại màn ép tạo tài khoản mới. Đăng nhập chỉ thật sự tắt khi server nghe localhost và không ép login.
 
 ### F. Đổi tên workspace
 
@@ -154,7 +154,7 @@ Các sự kiện sau được **báo ngay cho chủ** (chuông, thông báo đ�
 - Đăng nhập từ một mạng chưa từng thấy (cùng dải /24 thì không tính là mới, để điện thoại đổi trạm không báo liên tục).
 - Đăng nhập bằng mã khôi phục 2FA.
 - Đổi tên đăng nhập, đổi mật khẩu, bật hay tắt 2FA, tạo lại mã khôi phục, tạo token API, tắt đăng nhập.
-- Tài khoản được tạo hoặc đặt lại từ biến môi trường, 2FA bị gỡ bằng `JAVIS_RESET_2FA`.
+- Tài khoản được tạo hoặc đặt lại từ biến môi trường, 2FA bị gỡ bằng `JEEVI_RESET_2FA`.
 - **File cài đặt bị sửa từ bên ngoài Jeevi** (xem dưới).
 
 ### Phát hiện file cài đặt bị sửa từ ngoài
@@ -173,11 +173,11 @@ Lớp này chặn yêu cầu thẳng, không phải bức tường: mã chạy c
 
 Dấu hiệu: tên đăng nhập lạ, mật khẩu đúng mà báo sai, mã 2FA của bạn không còn đúng, báo động "file cài đặt bị sửa từ ngoài", hoặc thiết bị lạ trong tab Bảo mật. Làm theo thứ tự:
 
-1. **Lấy lại tài khoản.** Trên Hostinger: thêm `JAVIS_ADMIN_USER` và `JAVIS_ADMIN_PASSWORD` (mật khẩu MỚI) vào ô Environment rồi Redeploy. Jeevi đặt lại tài khoản, giữ 2FA và đăng xuất mọi phiên cũ.
-2. **2FA không phải của bạn?** Thêm `JAVIS_RESET_2FA=1` cùng lúc ở bước 1. Jeevi gỡ 2FA đúng một lần khi khởi động. Biến chỉ có tác dụng một lần cho mỗi giá trị; lần sau cần lại thì đặt giá trị khác, ví dụ ngày hôm đó (`JAVIS_RESET_2FA=2026-11-09`).
+1. **Lấy lại tài khoản.** Trên Hostinger: thêm `JEEVI_ADMIN_USER` và `JEEVI_ADMIN_PASSWORD` (mật khẩu MỚI) vào ô Environment rồi Redeploy. Jeevi đặt lại tài khoản, giữ 2FA và đăng xuất mọi phiên cũ.
+2. **2FA không phải của bạn?** Thêm `JEEVI_RESET_2FA=1` cùng lúc ở bước 1. Jeevi gỡ 2FA đúng một lần khi khởi động. Biến chỉ có tác dụng một lần cho mỗi giá trị; lần sau cần lại thì đặt giá trị khác, ví dụ ngày hôm đó (`JEEVI_RESET_2FA=2026-11-09`).
 3. **Đăng nhập, mở Tài khoản > Bảo mật.** Xem lịch sử đăng nhập (IP, thiết bị, giờ) và bấm **Đăng xuất mọi thiết bị khác**.
 4. **Bật lại 2FA** bằng điện thoại của bạn, cất 8 mã khôi phục vào nơi an toàn.
-5. **Xoá `JAVIS_ADMIN_PASSWORD` và `JAVIS_RESET_2FA` khỏi ô Environment** rồi Redeploy. Tài khoản không bị ảnh hưởng. Mật khẩu nằm ở ô đó dạng chữ thường nên đừng để lâu.
+5. **Xoá `JEEVI_ADMIN_PASSWORD` và `JEEVI_RESET_2FA` khỏi ô Environment** rồi Redeploy. Tài khoản không bị ảnh hưởng. Mật khẩu nằm ở ô đó dạng chữ thường nên đừng để lâu.
 6. **Tìm đường vào của kẻ lạ.** Người sửa được file cài đặt đã vào được máy chủ: kiểm tra SSH key lạ (`cat /root/.ssh/authorized_keys`), đổi mật khẩu root (`passwd`), đổi mật khẩu và bật 2FA cho tài khoản Hostinger, chặn cổng 7777 ở tường lửa nếu đã có tên miền HTTPS.
 7. **Đổi các khoá kết nối** lưu trong Jeevi (POS, Cloudflare, Gmail, Zalo, API key), ưu tiên cái chạm tới tiền và dữ liệu khách: người vào được máy chủ có thể đã đọc chúng.
 8. **Rà xem có để lại gì không**: việc định kỳ, nhắc hẹn, agent, plugin, MCP lạ; trên máy chủ chạy `crontab -l`.
@@ -200,9 +200,9 @@ Jeevi chặn hai đường đó bằng một cổng gác đứng trước cả c
 | Client không phải trình duyệt (không gửi `Origin`, ví dụ CLI, curl, MCP) | Cho qua |
 | Host là một địa chỉ IP | Bỏ qua bước kiểm Host |
 
-Allowlist gồm: `localhost`, `127.0.0.1`, `::1`, `0.0.0.0`, cộng tên miền riêng bạn đã đặt trong **Cài đặt → Tên miền & SSL**, cộng mọi tên trong biến môi trường `JAVIS_ALLOWED_HOSTS` (nhiều tên cách nhau dấu phẩy).
+Allowlist gồm: `localhost`, `127.0.0.1`, `::1`, `0.0.0.0`, cộng tên miền riêng bạn đã đặt trong **Cài đặt → Tên miền & SSL**, cộng mọi tên trong biến môi trường `JEEVI_ALLOWED_HOSTS` (nhiều tên cách nhau dấu phẩy).
 
-Khi nào bạn cần đụng tới: chạy Jeevi sau một reverse proxy với tên miền chưa khai trong app, mà lại **chưa** đặt mật khẩu. Lúc đó Jeevi coi tên miền đó là lạ và trả 403. Cách sửa: đặt mật khẩu (bật cổng đăng nhập là bước kiểm Host tự bỏ qua), hoặc thêm tên miền vào `JAVIS_ALLOWED_HOSTS`.
+Khi nào bạn cần đụng tới: chạy Jeevi sau một reverse proxy với tên miền chưa khai trong app, mà lại **chưa** đặt mật khẩu. Lúc đó Jeevi coi tên miền đó là lạ và trả 403. Cách sửa: đặt mật khẩu (bật cổng đăng nhập là bước kiểm Host tự bỏ qua), hoặc thêm tên miền vào `JEEVI_ALLOWED_HOSTS`.
 
 ## Chặn công cụ tìm kiếm và bot AI
 
@@ -226,7 +226,7 @@ curl -s -o /dev/null -w "%{http_code}\n" -A GPTBot https://ten-mien-cua-ban/
 
 Phải ra `403`. Mở bằng trình duyệt thì vẫn vào bình thường.
 
-Lớp này chỉ bắt bot TỰ KHAI tên. Bot giả làm Chrome thì vẫn chỉ thấy màn hình đăng nhập, nên mật khẩu và 2FA vẫn là lớp bảo vệ chính. Một dịch vụ bạn dùng bị chặn nhầm vì tên trùng danh sách thì đặt `JAVIS_BLOCK_BOTS=0` rồi khởi động lại: chỉ lớp 403 tắt, header `noindex` và `robots.txt` vẫn giữ.
+Lớp này chỉ bắt bot TỰ KHAI tên. Bot giả làm Chrome thì vẫn chỉ thấy màn hình đăng nhập, nên mật khẩu và 2FA vẫn là lớp bảo vệ chính. Một dịch vụ bạn dùng bị chặn nhầm vì tên trùng danh sách thì đặt `JEEVI_BLOCK_BOTS=0` rồi khởi động lại: chỉ lớp 403 tắt, header `noindex` và `robots.txt` vẫn giữ.
 
 ## Token API - cửa cho CLI và script
 
@@ -265,7 +265,7 @@ Những trường được mã hoá:
 | `backup.token` | GitHub PAT dùng sao lưu brain |
 | `voice.elevenlabs_key` | API key ElevenLabs |
 
-Khoá dùng để mã hoá nằm ở tệp **`.secret_key`** trong thư mục state (`JAVIS_STATE_DIR`, Docker: `/data/state/.secret_key`). Tệp này sinh một lần, không lên git.
+Khoá dùng để mã hoá nằm ở tệp **`.secret_key`** trong thư mục state (`JEEVI_STATE_DIR`, Docker: `/data/state/.secret_key`). Tệp này sinh một lần, không lên git.
 
 Hệ quả vận hành phải nhớ:
 
@@ -289,7 +289,7 @@ Hệ quả vận hành phải nhớ:
 | Chặn bot | `noindex` trên mọi câu trả lời, `/robots.txt`, và 403 cho bot AI, máy tìm kiếm, công cụ SEO, máy quét tự khai tên (xem mục riêng ở trên). |
 | Secret trên đĩa | API key và token trong `settings.json` mã hoá Fernet bằng `.secret_key` trong thư mục state. |
 
-Về cookie `secure`: mặc định Jeevi **không** ép cookie `secure` để chạy được cả HTTP lẫn HTTPS (tránh kẹt vòng đăng nhập sau proxy HTTP như đường dẫn dạng `http://host/PORT/`). Nếu bạn chắc chắn chạy HTTPS đầu-cuối, bật `JAVIS_SECURE_COOKIE=1` trong biến môi trường (xem [Cấu hình .env](16-cau-hinh-env.md)). Truy cập qua đúng tên miền riêng thì Jeevi tự bật `secure` mà không cần đặt biến này (dựa vào Host khớp tên miền, không suy từ `X-Forwarded-Proto`).
+Về cookie `secure`: mặc định Jeevi **không** ép cookie `secure` để chạy được cả HTTP lẫn HTTPS (tránh kẹt vòng đăng nhập sau proxy HTTP như đường dẫn dạng `http://host/PORT/`). Nếu bạn chắc chắn chạy HTTPS đầu-cuối, bật `JEEVI_SECURE_COOKIE=1` trong biến môi trường (xem [Cấu hình .env](16-cau-hinh-env.md)). Truy cập qua đúng tên miền riêng thì Jeevi tự bật `secure` mà không cần đặt biến này (dựa vào Host khớp tên miền, không suy từ `X-Forwarded-Proto`).
 
 ## Bảng tra nhanh nút và trạng thái
 
@@ -305,15 +305,15 @@ Về cookie `secure`: mặc định Jeevi **không** ép cookie `secure` để c
 | ✅ Đã lưu tài khoản. | Tài khoản đăng nhập | Đặt mật khẩu thành công |
 | ⚠ Mật khẩu tối thiểu 8 ký tự. | Tài khoản đăng nhập | Giao diện chặn trước khi gửi lên server, cùng ngưỡng với server |
 | ⚠ Sai mật khẩu hiện tại. | Tài khoản đăng nhập | Ô **Mật khẩu hiện tại** gõ sai, không có gì bị đổi |
-| **Quên mật khẩu?** | Màn đăng nhập | Bấm vào hiện hướng dẫn chạy `reset-auth.bat` (Mac: `reset-auth.command`), hoặc đổi `JAVIS_ADMIN_PASSWORD` trên máy chủ |
+| **Quên mật khẩu?** | Màn đăng nhập | Bấm vào hiện hướng dẫn chạy `reset-auth.bat` (Mac: `reset-auth.command`), hoặc đổi `JEEVI_ADMIN_PASSWORD` trên máy chủ |
 | **Quên mật khẩu hiện tại?** | Tài khoản, dưới nút Đổi mật khẩu | Windows/Mac: mở thư mục và chọn sẵn file reset. Máy chủ: hiện các bước trong nút (i) |
 
 ## Mẹo
 
-- **Luôn đặt admin trước khi công khai.** Cách chắc nhất là đặt `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` khi deploy, để server không có lúc nào trống admin.
+- **Luôn đặt admin trước khi công khai.** Cách chắc nhất là đặt `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` khi deploy, để server không có lúc nào trống admin.
 - **Đặt mật khẩu đủ dài.** Tối thiểu 8 ký tự; dùng cụm dài, khó đoán.
 - **Chạy qua HTTPS khi truy cập từ xa.** Dùng tên miền riêng (ví dụ Hostinger `*.hstgr.cloud`) hoặc Cloudflare Tunnel thay vì phơi cổng 7777 thô ra Internet. Cách trỏ tên miền và bật HTTPS xem [Thương hiệu & tên miền riêng](15-thuong-hieu-ten-mien.md).
-- **Localhost + tunnel tự chạy thì bật `JAVIS_REQUIRE_LOGIN=1`.** Khi máy chỉ nghe localhost nhưng bạn tự chạy tunnel (cloudflared, ngrok...) bên ngoài Jeevi, Jeevi không tự biết là đang public, nên hãy ép login thủ công. Dùng mục **Truy cập từ xa** trong Cài đặt thì không cần: Jeevi biết tunnel đang bật, tự bắt đăng nhập và chỉ chạy khi đã có mật khẩu.
+- **Localhost + tunnel tự chạy thì bật `JEEVI_REQUIRE_LOGIN=1`.** Khi máy chỉ nghe localhost nhưng bạn tự chạy tunnel (cloudflared, ngrok...) bên ngoài Jeevi, Jeevi không tự biết là đang public, nên hãy ép login thủ công. Dùng mục **Truy cập từ xa** trong Cài đặt thì không cần: Jeevi biết tunnel đang bật, tự bắt đăng nhập và chỉ chạy khi đã có mật khẩu.
 - **Bật xác thực 2 lớp (2FA) ngay sau lần đăng nhập đầu.** Lộ mật khẩu thì kẻ lạ vẫn thiếu mã TOTP trên điện thoại bạn.
 - **Sao lưu `.secret_key` cùng `settings.json`.** Thiếu một trong hai là phải nhập lại toàn bộ API key.
 
@@ -326,31 +326,31 @@ Lỗi của các bản trước 0.28.3, đã sửa. Trang đang mở còn giữ 
 Đúng như thiết kế. Đổi mật khẩu huỷ mọi phiên cũ để người đang mượn máy bạn không dùng tiếp được; đăng nhập lại bằng mật khẩu mới là xong.
 
 **Nhập đúng user/password nhưng vẫn quay lại màn đăng nhập (kẹt vòng đăng nhập).**
-Thường do cookie `secure` bị bật trong khi bạn đang truy cập qua HTTP (nhiều proxy phục vụ HTTP dạng `http://host/PORT/`). Đừng bật `JAVIS_SECURE_COOKIE` trừ khi bạn chắc chắn HTTPS đầu-cuối. Nếu đã lỡ bật, gỡ biến này rồi khởi động lại server.
+Thường do cookie `secure` bị bật trong khi bạn đang truy cập qua HTTP (nhiều proxy phục vụ HTTP dạng `http://host/PORT/`). Đừng bật `JEEVI_SECURE_COOKIE` trừ khi bạn chắc chắn HTTPS đầu-cuối. Nếu đã lỡ bật, gỡ biến này rồi khởi động lại server.
 
 **Bị báo "Quá nhiều lần sai - thử lại sau ít phút."**
 Bạn (hoặc ai đó cùng IP) đã sai mật khẩu quá số lần cho phép. Đợi khoảng 5 phút rồi thử lại. Khởi động lại server cũng xoá bộ đếm này.
 
 **Mọi thao tác đều trả 403 "host không được phép".**
-Bạn đang vào Jeevi bằng một tên miền mà Jeevi chưa biết, trong lúc chưa đặt mật khẩu. Thêm tên miền đó vào `JAVIS_ALLOWED_HOSTS`, hoặc nhập nó ở **Cài đặt → Tên miền & SSL**, hoặc đơn giản là đặt mật khẩu.
+Bạn đang vào Jeevi bằng một tên miền mà Jeevi chưa biết, trong lúc chưa đặt mật khẩu. Thêm tên miền đó vào `JEEVI_ALLOWED_HOSTS`, hoặc nhập nó ở **Cài đặt → Tên miền & SSL**, hoặc đơn giản là đặt mật khẩu.
 
 **Thao tác nào cũng báo 403 "cross-origin request bị chặn".**
-Bạn đang gọi API Jeevi từ một trang khác (script, tiện ích, iframe của bên thứ ba). Đây là lớp chống CSRF chặn đúng việc của nó. Nếu đó là công cụ của chính bạn, thêm hostname của nó vào `JAVIS_ALLOWED_HOSTS`.
+Bạn đang gọi API Jeevi từ một trang khác (script, tiện ích, iframe của bên thứ ba). Đây là lớp chống CSRF chặn đúng việc của nó. Nếu đó là công cụ của chính bạn, thêm hostname của nó vào `JEEVI_ALLOWED_HOSTS`.
 
 **Quên mật khẩu.**
-Trên Windows và Mac, thư mục cài Jeevi có sẵn **`reset-auth.bat`** (Windows) và **`reset-auth.command`** (Mac). Bấm đúp là mật khẩu cũ bị xoá; mở lại Jeevi rồi vào Tài khoản đặt mật khẩu mới. Đang đăng nhập sẵn thì vào **Tài khoản**, bấm **Quên mật khẩu hiện tại?** để Jeevi mở đúng thư mục. Nếu không dùng được script: sửa/xoá phần `auth` trong `settings.json` ở thư mục state (Docker: `/data/state`) rồi khởi động lại; hoặc đặt lại admin bằng `JAVIS_ADMIN_PASSWORD` sau khi đã xoá phần `auth` cũ. Xoá tay mà không đặt `JAVIS_ADMIN_PASSWORD` thì chỉ tạo được tài khoản mới từ trình duyệt trên chính máy chạy Jeevi (xem mục C).
+Trên Windows và Mac, thư mục cài Jeevi có sẵn **`reset-auth.bat`** (Windows) và **`reset-auth.command`** (Mac). Bấm đúp là mật khẩu cũ bị xoá; mở lại Jeevi rồi vào Tài khoản đặt mật khẩu mới. Đang đăng nhập sẵn thì vào **Tài khoản**, bấm **Quên mật khẩu hiện tại?** để Jeevi mở đúng thư mục. Nếu không dùng được script: sửa/xoá phần `auth` trong `settings.json` ở thư mục state (Docker: `/data/state`) rồi khởi động lại; hoặc đặt lại admin bằng `JEEVI_ADMIN_PASSWORD` sau khi đã xoá phần `auth` cũ. Xoá tay mà không đặt `JEEVI_ADMIN_PASSWORD` thì chỉ tạo được tài khoản mới từ trình duyệt trên chính máy chạy Jeevi (xem mục C).
 
 **Đổi máy/khôi phục backup xong thì mọi API key trống trơn.**
 Bạn chép `settings.json` mà không chép `.secret_key` đi cùng. Không có cách khôi phục: nhập lại key ở trang Models, Kênh và Cài đặt. Lần sau nhớ mang cả hai tệp.
 
 **Tắt đăng nhập rồi mà vẫn bị hỏi tài khoản.**
-Vì server vẫn đang public (hoặc `JAVIS_REQUIRE_LOGIN=1`). Ở chế độ này Jeevi không cho tắt đăng nhập hoàn toàn, mà bắt tạo lại tài khoản. Muốn dùng không mật khẩu thì phải chạy server nghe thuần localhost.
+Vì server vẫn đang public (hoặc `JEEVI_REQUIRE_LOGIN=1`). Ở chế độ này Jeevi không cho tắt đăng nhập hoàn toàn, mà bắt tạo lại tài khoản. Muốn dùng không mật khẩu thì phải chạy server nghe thuần localhost.
 
 ## Liên quan
 
 - [Bắt đầu & thiết lập lần đầu](01-bat-dau-thiet-lap.md) - dựng Jeevi và tạo admin lần đầu.
 - [Thương hiệu & tên miền riêng](15-thuong-hieu-ten-mien.md) - trỏ tên miền và bật HTTPS tự động.
-- [Cấu hình .env](16-cau-hinh-env.md) - danh sách biến môi trường bảo mật (`JAVIS_HOST`, `JAVIS_REQUIRE_LOGIN`, `JAVIS_ADMIN_USER/PASSWORD`, `JAVIS_SECURE_COOKIE`, `JAVIS_ALLOWED_HOSTS`, `JAVIS_STATE_DIR`).
+- [Cấu hình .env](16-cau-hinh-env.md) - danh sách biến môi trường bảo mật (`JEEVI_HOST`, `JEEVI_REQUIRE_LOGIN`, `JEEVI_ADMIN_USER/PASSWORD`, `JEEVI_SECURE_COOKIE`, `JEEVI_ALLOWED_HOSTS`, `JEEVI_STATE_DIR`).
 - [Plugins](20-plugins.md) - vì sao plugin do bạn cài phải bật riêng bằng biến môi trường.
 - [Jeevi CLI (terminal)](24-cli-terminal.md) - dùng token API để gọi Jeevi từ máy khác.
 - [Khắc phục sự cố & FAQ](17-khac-phuc-su-co.md) - các lỗi thường gặp khác.

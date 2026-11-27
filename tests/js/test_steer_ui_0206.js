@@ -15,9 +15,9 @@ check("typed text during a turn is sent as an add-on, not dropped",
   /if \(!\(_tuGiong \|\| handsFree\)\) \{\s*const _goal = [^\n]*\n\s*if \(guiBoSung\(msg, atts, _goal\)/.test(app)
   && !/if \(!\(_tuGiong \|\| handsFree\)\) return;/.test(app));
 // 2026-11-16: a running /goal round is no longer stopped by typed text; the text joins the goal.
-check("typed text during a /goal round joins the goal, no stop", /window\.JavisLenh\.gopBoSung\(sid, msg\)/.test(app)
+check("typed text during a /goal round joins the goal, no stop", /window\.JeeviLenh\.gopBoSung\(sid, msg\)/.test(app)
   && !/dangCoMucTieu\(\) && !\(_tuGiong \|\| handsFree\)\) \{\s*chatInput\.value = ""; chatInput\.style\.height = "auto";\s*stopCurrent\(\)/.test(app));
-check("steer_read tells the goal its round read the message", /window\.JavisLenh\.boSungDaDoc\(data\.session_id\)/.test(app)
+check("steer_read tells the goal its round read the message", /window\.JeeviLenh\.boSungDaDoc\(data\.session_id\)/.test(app)
   && /data\.mode === "goal" \? "app\.steer_goal"/.test(app));
 const g = app.slice(app.indexOf("function guiBoSung(msg, atts, goal) {"), app.indexOf("function trangThaiBoSung(data) {"));
 check("guiBoSung sends action steer with the chat id", /action: "steer", session_id: sid, message: chu, client_id: cid, goal: !!goal/.test(g));

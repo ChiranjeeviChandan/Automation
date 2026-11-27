@@ -13,7 +13,7 @@ import os
 import tempfile
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-empty-answer-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-empty-answer-")
 
 import main  # noqa: E402
 from starlette.testclient import TestClient  # noqa: E402

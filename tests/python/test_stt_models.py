@@ -5,7 +5,7 @@
 Owner: "pick the vendor's best Whisper by itself when they upgrade, no hand update in Jeevi". Locks:
   - the ranking per vendor on realistic lists: newest full-size model, never English-only, preview, diarize or lite;
   - a sentence never waits for the list (the default is used, the list is fetched in the background);
-  - discovery is off in tests (JAVIS_NO_STT_MODEL_DISCOVERY) and a pinned model always wins;
+  - discovery is off in tests (JEEVI_NO_STT_MODEL_DISCOVERY) and a pinned model always wins;
   - a discovered model the vendor refuses is retried with the default, then left aside for a day;
   - Groq, OpenAI and Gemini ears really send the discovered model;
   - SELF-SCORING (stt_gate): a new model is scored against the one in use on the same sentences and taken only when
@@ -18,13 +18,13 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-stt-models-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-stt-models-")
 
 import stt  # noqa: E402
 import stt_gate  # noqa: E402
 import stt_models as sm  # noqa: E402
 
-STATE = Path(os.environ["JAVIS_STATE_DIR"])
+STATE = Path(os.environ["JEEVI_STATE_DIR"])
 GATE = {"ok": True, "reason": "not_worse", "current": {}, "candidate": {}}
 GATE_CALLS = []
 

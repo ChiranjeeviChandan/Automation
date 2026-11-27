@@ -15,8 +15,8 @@ Chưa đo VPS thì không kết luận đã hết lag.
 - Lệnh: `python tools/team_adaptive_bench.py --out exports/reviews/team-adaptive/t4-bench-2026-10-15.json` (mặc định).
 - Dữ liệu: 12 nhóm x 1.500 tin = 18.000 tin, 8 trợ lý (4 bật Auto), mỗi nhóm 4 thành viên, 1.500 reaction của chủ seed
   thẳng vào kho (outbox còn chờ chiếu), 12 ngữ cảnh nhóm ngủ đông và 12 ngữ cảnh đến hạn, 8 phiên chat riêng.
-- Engine giả: mỗi lượt 5 ms. Nhịp nền của scheduler dừng (`JAVIS_PULSE_TICK_PAUSED=1`), bench gọi tick trực tiếp. Không đặt
-  `JAVIS_RESONANCE_CALL_CEILING`. Số câu SQL đếm bằng trace callback của sqlite3 trên mọi kết nối.
+- Engine giả: mỗi lượt 5 ms. Nhịp nền của scheduler dừng (`JEEVI_PULSE_TICK_PAUSED=1`), bench gọi tick trực tiếp. Không đặt
+  `JEEVI_RESONANCE_CALL_CEILING`. Số câu SQL đếm bằng trace callback của sqlite3 trên mọi kết nối.
 
 ## API tuần tự (30 lần mỗi route, thời gian phía server)
 

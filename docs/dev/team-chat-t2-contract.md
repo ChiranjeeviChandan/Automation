@@ -60,13 +60,13 @@ Cộng hưởng của trợ lý đang tắt, hay phản hồi có trước lúc 
 - Gói WS `team_message` (đã có) mang tin đã gắn `reaction` mới; khung lọc theo việc (`S.filterTask`) cũng phải nhận và vẽ lại tin
   đó nếu đang hiện.
 - Reaction của agent (trưởng nhóm, thành viên) đi qua lệnh có cấu trúc trong lượt của agent, không qua route:
-  `<!-- JAVIS_TEAM: {"op": "react", "message_id": 123, "value": "like", "reasons": [], "comment": ""} -->`. Host gán
+  `<!-- JEEVI_TEAM: {"op": "react", "message_id": 123, "value": "like", "reasons": [], "comment": ""} -->`. Host gán
   `source_kind` theo lượt; agent không thả lên tin của chính mình. Tin mang thêm `agent_reactions: [{"agent_key", "name",
   "source_kind", "value", "reasons", "comment"}]`; giao diện hiện thành chip riêng có tên agent, chỉ đọc, tách khỏi chip của chủ.
 
 ## 6. Giao diện dùng chung (`dashboard/reactions.js`)
 
-- `window.JavisReactions` (và `module.exports` cho node): `EMOJI` (bảng sáu emoji duy nhất của repo), `REASONS`, `AXES`,
+- `window.JeeviReactions` (và `module.exports` cho node): `EMOJI` (bảng sáu emoji duy nhất của repo), `REASONS`, `AXES`,
   `nextReaction(cur, pick)`, `chipHtml(R, opts)`, `pickerHtml(mid, R, opts)`, `statusHtml(R)`, `agentChipsHtml(list)`,
   `newNonce()`, `bindLongPress(root, selector, onOpen)`.
 - `teams.js`, `app.js` (bong bóng trả lời, bong bóng stream sau khi chốt, lịch sử) và `mobile-chat.js` dùng module này; không

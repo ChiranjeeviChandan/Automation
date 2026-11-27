@@ -13,7 +13,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-tunnel-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-tunnel-")
 
 import main  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402

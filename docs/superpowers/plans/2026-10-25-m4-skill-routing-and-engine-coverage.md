@@ -8,7 +8,7 @@ first; real engine smoke and pilots need the owner's go-ahead (Phase 2).
 
 - Jeevi routes skills in two ways. API engines get the lazy router (`lazy_skill_runtime`, deterministic scoring over
   name/aliases/summary) and the skill index in the system prompt (`skill_router.list_skills`), then load bodies with
-  `javis_use_skill`. CLI engines (Claude Code, Codex) also read `.claude/skills` natively and pick by description.
+  `jeevi_use_skill`. CLI engines (Claude Code, Codex) also read `.claude/skills` natively and pick by description.
 - Only Jeevi's own scoring is deterministic. Native CLI selection is model behaviour and can only be measured with
   real runs.
 - M2E/M3 overlays are body-only: the resolver refuses any frontmatter change.
@@ -38,7 +38,7 @@ reported as "not measured" until a real-engine pilot.
 ### U3. Telemetry: available, selected, observed use
 
 A per-turn receipt for the covered paths: which revision metadata the index offered (`available`), what the lazy router
-selected (`selected`), and which body `javis_use_skill` served (`observed_use`). No event does not prove the native
+selected (`selected`), and which body `jeevi_use_skill` served (`observed_use`). No event does not prove the native
 CLI did not read the skill; the report says so.
 
 ### U4. API engine trial adapter (spec 10.3 preferred V1 adapter)

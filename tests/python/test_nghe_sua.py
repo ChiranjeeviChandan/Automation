@@ -25,7 +25,7 @@ TV = ["Jeevi"]
 S = lambda s, tv=TV: nghe_sua.sua(s, tv)   # noqa: E731
 
 # ---- 1. Khoá âm: những cách máy nghe hay chép "Jeevi" phải về cùng một khoá ----
-for w in ("Jeevi", "Jivi", "Jeevy", "Jeevi", "Ji vi", "Di vi", "jivy"):
+for w in ("Jeevi", "Jivi", "Jeevy", "Jeevi", "Ji vi", "Di vi", "jeevit"):
     check(f"khoá âm của {w!r} trùng Jeevi", nghe_sua.khoa_am(w) == nghe_sua.khoa_am("Jeevi"))
 check("Java KHÔNG trùng khoá Jeevi", nghe_sua.khoa_am("Java") != nghe_sua.khoa_am("Jeevi"))
 

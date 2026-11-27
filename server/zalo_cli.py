@@ -47,7 +47,7 @@ TIMEOUT_MARK = "giây chưa xong"          # đuôi câu báo hết giờ; `is_t
 AUTO_INSTALL = True                       # test tắt cờ này để không cài thật
 INSTALL_TIMEOUT = 300                     # giây cho một lần `npm install`
 INSTALL_RETRY = 1800                      # cài hỏng thì chờ chừng này giây mới thử lại (không cài lại ở mọi câu trả lời)
-_INSTALL_MARK = ".javis-installed"        # ghi SAU KHI cài xong; cài dở (tắt máy giữa chừng) thì không có dấu này nên không dùng
+_INSTALL_MARK = ".jeevi-installed"        # ghi SAU KHI cài xong; cài dở (tắt máy giữa chừng) thì không có dấu này nên không dùng
 _install_state: dict = {"task": None, "failed_at": 0.0}
 _OLD_INSTALL_DIRS = ("zalo-agent-cli",)  # thư mục cài của gói cũ trong `tools/`, dọn sau khi cài xong bản mới
 
@@ -155,7 +155,7 @@ async def _install() -> bool:
         root.mkdir(parents=True, exist_ok=True)
         pkg = root / "package.json"
         if not pkg.exists():
-            pkg.write_text('{"name": "javis-zalo-cli", "private": true}\n', encoding="utf-8")
+            pkg.write_text('{"name": "jeevi-zalo-cli", "private": true}\n', encoding="utf-8")
         (root / _INSTALL_MARK).unlink(missing_ok=True)
     except OSError as e:
         print(f"[zalo-cli] không tạo được thư mục cài: {e}", file=sys.stderr)

@@ -1,6 +1,6 @@
 """Stop on a web chat drops what the stopped turn left to start by itself, and nothing else (PR #1736 redone).
 
-Before: messages typed while an answer ran started a new turn right after the owner pressed Stop, a javis_job op=then
+Before: messages typed while an answer ran started a new turn right after the owner pressed Stop, a jeevi_job op=then
 instruction of the stopped turn stayed pending for up to an hour and attached to a later turn's job, and a scheduled
 quota re-run of the chat still fired. The first fix cleared far more (every job's follow-up, GitHub fix rounds, waiting
 follow-ups of earlier jobs), so this one is narrow:
@@ -25,8 +25,8 @@ import time
 import types
 import uuid
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-stop-state-"))
-os.environ.setdefault("BRAINS_DIR", tempfile.mkdtemp(prefix="javis-stop-brains-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-stop-state-"))
+os.environ.setdefault("BRAINS_DIR", tempfile.mkdtemp(prefix="jeevi-stop-brains-"))
 
 import bot_gateway  # noqa: E402
 import chat_runtime  # noqa: E402
@@ -236,7 +236,7 @@ async def _stop_followups():
         tien_trinh_nen._VIEC.clear()
     tien_trinh_nen._nap()          # what was dropped is on disk too
     v = tien_trinh_nen._VIEC
-    check("Stop: the chat's pending javis_job op=then instruction is gone",
+    check("Stop: the chat's pending jeevi_job op=then instruction is gone",
           tien_trinh_nen._lay_loi_dan(f"web:{sid}") == "")
     check("Stop: another chat's pending instruction stays", tien_trinh_nen._lay_loi_dan("web:sid-other") == "other chat")
     check("Stop: a job started during the stopped turn keeps running but drops its follow-up",

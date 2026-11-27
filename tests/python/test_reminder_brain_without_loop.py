@@ -23,9 +23,9 @@ import tempfile
 from pathlib import Path
 
 # BRAINS_DIR and STATE_DIR must point at temp folders BEFORE main is imported (read at import).
-_STATE = tempfile.mkdtemp(prefix="javis-rem-noloop-state-")
-_BRAINS = tempfile.mkdtemp(prefix="javis-rem-noloop-brains-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-rem-noloop-state-")
+_BRAINS = tempfile.mkdtemp(prefix="jeevi-rem-noloop-brains-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 os.environ["BRAINS_DIR"] = _BRAINS
 
 import main  # noqa: E402
@@ -74,7 +74,7 @@ no_loop = Path(_BRAINS) / "TEST-NoLoop"
 check("setup: the loop-free brain has no loop", not main.loop_feature.list_loops(str(no_loop)))
 
 # A brain folder outside BRAINS_DIR, also with no loop.
-outside = Path(tempfile.mkdtemp(prefix="javis-rem-noloop-outside-"))
+outside = Path(tempfile.mkdtemp(prefix="jeevi-rem-noloop-outside-"))
 (outside / "Jeevi").mkdir(parents=True)
 
 rid_in = make_due(str(no_loop), "call the supplier")

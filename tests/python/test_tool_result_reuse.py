@@ -26,9 +26,9 @@ import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from unittest.mock import patch
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-reuse-")
-os.environ["JAVIS_API_STREAM_TOOLS"] = "0"   # plain JSON rounds keep the fake server short
-for _name in ("JAVIS_RESULT_REPEAT_REFS", "JAVIS_TOOL_RESULT_SHAPING", "JAVIS_TOOL_LOOP_BUDGET_CHARS"):
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-reuse-")
+os.environ["JEEVI_API_STREAM_TOOLS"] = "0"   # plain JSON rounds keep the fake server short
+for _name in ("JEEVI_RESULT_REPEAT_REFS", "JEEVI_TOOL_RESULT_SHAPING", "JEEVI_TOOL_LOOP_BUDGET_CHARS"):
     os.environ.pop(_name, None)
 
 import engine  # noqa: E402
@@ -116,11 +116,11 @@ check("switched off: a repeat goes out whole", off.text_for("read_doc", {}, BIG)
 
 
 # ───────────────────────── 2. the switches ─────────────────────────
-os.environ["JAVIS_RESULT_REPEAT_REFS"] = "0"
-check("JAVIS_RESULT_REPEAT_REFS=0 turns references off", RepeatResults().enabled is False)
-os.environ["JAVIS_RESULT_REPEAT_REFS"] = "1"
-check("JAVIS_RESULT_REPEAT_REFS=1 turns them on", RepeatResults().enabled is True)
-os.environ.pop("JAVIS_RESULT_REPEAT_REFS")
+os.environ["JEEVI_RESULT_REPEAT_REFS"] = "0"
+check("JEEVI_RESULT_REPEAT_REFS=0 turns references off", RepeatResults().enabled is False)
+os.environ["JEEVI_RESULT_REPEAT_REFS"] = "1"
+check("JEEVI_RESULT_REPEAT_REFS=1 turns them on", RepeatResults().enabled is True)
+os.environ.pop("JEEVI_RESULT_REPEAT_REFS")
 with patch.object(reuse_mod, "_shaping_on", return_value=False):
     check("the Off saving level turns references off", RepeatResults().enabled is False)
     check("the Off saving level leaves JSON as it is",
@@ -146,7 +146,7 @@ out = compact_json(jsonl, "pos_rows", on=True)
 check("several JSON values in a row stay several values",
       [json.loads(line) for line in out.split("\n")] == data["orders"])
 pretty = json.dumps(data, indent=2, ensure_ascii=False)
-for tool in ("javis_read_file", "javis_terminal", "javis_web_fetch", "javis_use_skill", "javis_edit_file"):
+for tool in ("jeevi_read_file", "jeevi_terminal", "jeevi_web_fetch", "jeevi_use_skill", "jeevi_edit_file"):
     check(f"{tool}: output is never re-formatted", compact_json(pretty, tool, on=True) == pretty)
 mixed = pretty + "\nWarning: rate limit close"
 check("JSON followed by other text is left alone", compact_json(mixed, "pos_report", on=True) == mixed)
@@ -195,7 +195,7 @@ async def _read_doc(args):
     return BIG if args.get("path") != "b.md" else OTHER
 
 
-TOOLS = [{"fn": "read_doc", "server": "javis", "name": "read_doc", "description": "read a document",
+TOOLS = [{"fn": "read_doc", "server": "jeevi", "name": "read_doc", "description": "read a document",
           "schema": {"type": "object", "properties": {"path": {"type": "string"}}}}]
 ROUTE = {"read_doc": {"call": _read_doc}}
 ASK = [{"role": "user", "content": "tóm tắt tài liệu"}]
@@ -240,9 +240,9 @@ check("Chat Completions: the repeat reaches the model as a reference",
 check("Chat Completions: the answer is unchanged", [e for e in evs if e["type"] == "text"][-1]["content"] == "Xong.")
 with_refs = request_chars(SEEN)
 
-os.environ["JAVIS_RESULT_REPEAT_REFS"] = "0"
+os.environ["JEEVI_RESULT_REPEAT_REFS"] = "0"
 run_cc(["a.md", "a.md", "b.md"])
-os.environ.pop("JAVIS_RESULT_REPEAT_REFS")
+os.environ.pop("JEEVI_RESULT_REPEAT_REFS")
 without_refs = request_chars(SEEN)
 check("Chat Completions: switched off, every copy goes out whole", tool_contents(SEEN[-1]) == [BIG, BIG, OTHER])
 check("Chat Completions: the turn sends fewer characters with references",
@@ -357,7 +357,7 @@ reuse_mod._LOG_POOL.submit(lambda: None).result(timeout=5)   # wait for the queu
 import mcp_hub  # noqa: E402
 stats = mcp_hub.result_size_stats(7)
 rows = {(row["source"], row["tool"]) for row in stats.get("by_tool") or []}
-check("repeat savings show up in the tool result meter", ("javis", "read_doc") in rows and stats["saved_chars"] > 0,
+check("repeat savings show up in the tool result meter", ("jeevi", "read_doc") in rows and stats["saved_chars"] > 0,
       (rows, stats.get("saved_chars")))
 
 
@@ -424,9 +424,9 @@ with patch.object(reuse_mod, "_shaping_on", return_value=True):
 
     class _Req:
         def __init__(self, turn_key, body):
-            self.headers = {"authorization": f"Bearer {mcp_hub.hub_token()}", "x-javis-mode": "full"}
+            self.headers = {"authorization": f"Bearer {mcp_hub.hub_token()}", "x-jeevi-mode": "full"}
             if turn_key:
-                self.headers["x-javis-turn"] = turn_key
+                self.headers["x-jeevi-turn"] = turn_key
             self._body = body
 
         async def json(self):
@@ -468,7 +468,7 @@ with patch.object(reuse_mod, "_shaping_on", return_value=True):
               {"type": "item.completed", "item": {"type": "agent_message", "text": "Xong."}},
               {"type": "turn.completed", "usage": {"input_tokens": 10, "output_tokens": 1}}]
     script = "import json\n" + "\n".join(f"print(json.dumps({json.dumps(ev)}), flush=True)" for ev in events)
-    codex = claude_cli.CodexCLI(cwd=os.environ["JAVIS_STATE_DIR"])
+    codex = claude_cli.CodexCLI(cwd=os.environ["JEEVI_STATE_DIR"])
     codex.cli_path = sys.executable
     codex._build_args = lambda: [sys.executable, "-c", script]
 
@@ -488,11 +488,11 @@ if claude_sdk_engine.ClaudeSDK.pre_tool_hooks_supported():
     check("Claude Code: the wrapper installs", claude_result_reuse.install())
     claude_secret_hook.install()
     check("Claude Code: the secret hook stays the outermost wrapper",
-          getattr(claude_sdk_engine.ClaudeSDK._options, "_javis_secret_hook", False))
+          getattr(claude_sdk_engine.ClaudeSDK._options, "_jeevi_secret_hook", False))
     top = claude_sdk_engine.ClaudeSDK._options
     claude_result_reuse.install()
     check("Claude Code: installing again stacks nothing", claude_sdk_engine.ClaudeSDK._options is top)
-    eng = claude_sdk_engine.ClaudeSDK(system_prompt="x", cwd=os.environ["JAVIS_STATE_DIR"], tag="chat")
+    eng = claude_sdk_engine.ClaudeSDK(system_prompt="x", cwd=os.environ["JEEVI_STATE_DIR"], tag="chat")
     pre_compact = (getattr(eng._options(), "hooks", None) or {}).get("PreCompact") or []
     check("Claude Code: a PreCompact hook is installed",
           any(claude_result_reuse.compact_hook in (m.hooks or []) for m in pre_compact))

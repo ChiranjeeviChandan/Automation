@@ -1,8 +1,8 @@
 // ============================================================
 // Jeevi - Sidebar "Lịch sử hội thoại" TRONG chat workspace (cột trái khi phóng to chat).
-// chat-zoom.js tạo khung <aside id="chatSide"> và gọi window.JavisChatSide.mount/refresh;
+// chat-zoom.js tạo khung <aside id="chatSide"> và gọi window.JeeviChatSide.mount/refresh;
 // module này render nội dung: + Hội thoại mới, tìm kiếm, danh sách nhóm theo thời gian,
-// đổi tên/xoá, highlight phiên đang mở. Mở phiên qua window.JavisSessions (app.js).
+// đổi tên/xoá, highlight phiên đang mở. Mở phiên qua window.JeeviSessions (app.js).
 // (Thay panel trượt bên phải cũ - nút "Lịch sử" góc phải giờ mở thẳng workspace.)
 //
 // 2026-11-09 (owner, design approved as an HTML mock-up): the four icons on each row (pin, move to project, rename,
@@ -17,11 +17,11 @@
   // Locale để định dạng số/ngày. Lấy từ i18n chứ KHÔNG khoá "vi-VN": người dùng đổi
   // ngôn ngữ giao diện thì ngày giờ phải đổi theo, nếu không thì nửa màn hình tiếng Anh
   // mà ngày vẫn dd/mm/yyyy kiểu Việt.
-  const LOC = () => (window.JavisI18n && JavisI18n.locale()) || "vi-VN";
+  const LOC = () => (window.JeeviI18n && JeeviI18n.locale()) || "vi-VN";
   function el(html) { var d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild; }
   function esc(s) { return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
-  function brain() { try { return (window.JavisSessions && window.JavisSessions.brain()) || "brain"; } catch (e) { return "brain"; } }
-  function currentId() { try { return (window.JavisSessions && window.JavisSessions.current()) || null; } catch (e) { return null; } }
+  function brain() { try { return (window.JeeviSessions && window.JeeviSessions.brain()) || "brain"; } catch (e) { return "brain"; } }
+  function currentId() { try { return (window.JeeviSessions && window.JeeviSessions.current()) || null; } catch (e) { return null; } }
 
   // 0.491.0: unread chats. The server marks a chat unread when Jeevi answered after the owner last looked at it; the
   // chat open on a visible screen counts as read, so its row never shows the dot and the server is told.
@@ -33,7 +33,7 @@
   // 2026-11-20 (owner): "a chat still working, already read, keeps the folder dot on; it should show only once it has
   // finished and is unread". A running chat shows its spinner, not a dot, and the chat on screen is being read, so
   // both are left out of every unread count the server makes (the `skip` query of /projects and the rail).
-  function isRunning(sid) { return !!(sid && window.JavisRunning && window.JavisRunning.has(sid)); }
+  function isRunning(sid) { return !!(sid && window.JeeviRunning && window.JeeviRunning.has(sid)); }
   // 2026-11-20 (owner: "thêm nút đánh dấu chưa đọc thì sẽ hiện lại các phần chấm đỏ, dễ kiểm soát những việc chưa hoàn
   // thành hơn"): "Mark as unread" also works on the chat open on screen. That chat is kept unread while it stays open,
   // so its dot shows at once, and is read again only once the owner opens another chat and comes back, or a new turn
@@ -46,7 +46,7 @@
   }
   function unreadSkipIds() {
     var ids = [];
-    if (window.JavisRunning) window.JavisRunning.forEach(function (id) { if (id && ids.length < 50) ids.push(String(id)); });
+    if (window.JeeviRunning) window.JeeviRunning.forEach(function (id) { if (id && ids.length < 50) ids.push(String(id)); });
     var cur = currentId();
     if (cur && chatOnScreen() && !isHeldUnread(cur) && ids.indexOf(cur) < 0) ids.push(cur);
     return ids;
@@ -122,7 +122,7 @@
   var hamTrangTri = null;
   // Cột trái có HAI tab: hội thoại và cây thư mục brain. Nhớ tab đã chọn qua localStorage -
   // ai dùng cây làm chính thì mỗi lần mở chat lại phải bấm sang là phiền vô ích.
-  var TAB_KEY = "javis.chatside.tab";
+  var TAB_KEY = "jeevi.chatside.tab";
   var tabHienTai = "chat", cayEl = null;
 
   function tabDaLuu() {
@@ -135,7 +135,7 @@
   // nhớ ở localStorage theo brain chứ không lưu server. Ba giá trị: "" = tất cả,
   // "none" = các cuộc chưa xếp nhóm, còn lại là id project ("none" là chuỗi cố định, không
   // bao giờ đụng id thật vì id là uuid hex).
-  var PROJ_KEY = "javis.chatside.project";
+  var PROJ_KEY = "jeevi.chatside.project";
   var projects = [];      // [{id,name,icon,session_count}] của brain đang xem
   var projBar = null;
   var ungroupedUnread = 0; // unread chats in no project (/projects ungrouped_unread), the dot on "Chưa xếp nhóm"
@@ -309,14 +309,14 @@
     rows.push({ sep: true });
     rows.push({ label: window.t("sess.proj_new"), run: function () { newProject(); } });
     // 0.454.0: drag the projects into the owner's own order (reorder-dialog.js), like the brain picker.
-    if (projects.length > 1 && window.JavisReorder) {
+    if (projects.length > 1 && window.JeeviReorder) {
       rows.push({ label: window.t("reorder.menu_projects"), icon: "arrow-up-down", run: function () { reorderProjects(); } });
     }
     openMenu(anchor, rows);
   }
 
   function reorderProjects() {
-    var R = window.JavisReorder, b = brain();
+    var R = window.JeeviReorder, b = brain();
     R.open({ title: window.t("reorder.title_projects"),
       items: projects.map(function (p) { return { id: p.id, label: p.name, icon: p.icon || "folder" }; }),
       save: function (ids) {
@@ -329,7 +329,7 @@
 
   // 0.454.0: drag the pinned chats into the owner's own order. `pins` are the pinned rows shown in the list.
   function reorderPins(pins) {
-    var R = window.JavisReorder;
+    var R = window.JeeviReorder;
     R.open({ title: window.t("reorder.title_pins"),
       items: pins.map(function (s) { return { id: s.id, label: s.title || s.preview || window.t("sess.untitled"), icon: "pin" }; }),
       save: function (ids) {
@@ -391,9 +391,9 @@
     if (!r || !r.id) return;
     chonProject(r.id);
     // Mở sẵn một hội thoại trống: bộ lọc vừa trỏ vào project mới nên tin đầu tiên rơi đúng
-    // vào đó (JavisProjects.claim). Rồi mở luôn khung project kèm banner chào - một project
+    // vào đó (JeeviProjects.claim). Rồi mở luôn khung project kèm banner chào - một project
     // rỗng thì chưa đổi được gì cho lượt chat nào, phải nói ra chỗ để đổ hướng dẫn vào.
-    try { if (window.JavisSessions) window.JavisSessions.new(); } catch (e) {}
+    try { if (window.JeeviSessions) window.JeeviSessions.new(); } catch (e) {}
     quenPhienProj();
     pdOnboard = true;
     openProjDrawer(r.id);
@@ -454,7 +454,7 @@
     var sid = currentId();
     var loc = curProject();
     var locThat = (loc && loc !== "none") ? loc : "";
-    // Chưa có phiên = khung chat trống. Tin sau sẽ được JavisProjects.claim() gắn vào đúng
+    // Chưa có phiên = khung chat trống. Tin sau sẽ được JeeviProjects.claim() gắn vào đúng
     // project đang lọc, nên chip báo trước điều đó là đúng chứ không phải đoán.
     if (!sid) return locThat;
     if (phienProj.sid === sid) return phienProj.pid;
@@ -657,7 +657,7 @@
     body.querySelector('[data-csp="manage"]').onclick = function (e) {
       e.preventDefault();
       dongChiaSe();
-      try { window.JavisNav.go("share"); } catch (err) {}
+      try { window.JeeviNav.go("share"); } catch (err) {}
     };
   }
 
@@ -930,7 +930,7 @@
   // repo báo 23/09 là dùng nhầm lẫn, gắn một chỗ rồi đi tìm ở chỗ kia. Nay cả hai nút mở
   // cùng một ngăn, trên đầu là công tắc hai phạm vi kèm số lượng, bấm là chuyển.
   var pdCongSu = null;     // {slug, name} khi ngăn kéo mở từ trang Cộng sự; null = không bày công tắc
-  var KHOA_PHAM_VI = "javis_pd_pham_vi";
+  var KHOA_PHAM_VI = "jeevi_pd_pham_vi";
 
   function phamViDaNho() {
     try { return localStorage.getItem(KHOA_PHAM_VI) === "cuoc" ? "cuoc" : "agent"; } catch (e) { return "agent"; }
@@ -1239,7 +1239,7 @@
   /** The one roomy box for writing or fixing a short text (text-edit-dialog.js). Falls back to prompt() only if the
    *  script did not load, so editing never disappears. */
   function editText(o) {
-    var E = window.JavisTextEdit;
+    var E = window.JeeviTextEdit;
     if (E && E.open) return E.open(o);
     var text = prompt(o.title, o.value || "");
     if (text == null) return Promise.resolve(false);
@@ -1252,7 +1252,7 @@
 
   // ── Tab "Đã học" (2026-11-13) ────────────────────────────────────────────────
   // What Jeevi learnt about the project while working in it: short notes (a fact, a settled decision, a term).
-  // Jeevi writes most of them itself (tool javis_project); here the owner reads, edits, removes and adds. A note the
+  // Jeevi writes most of them itself (tool jeevi_project); here the owner reads, edits, removes and adds. A note the
   // owner writes or edits becomes theirs: listed first and never dropped to make room.
   // 2026-11-19: 20 notes a page with a search box and a filter by kind; the text shows up to four lines and a tap opens
   // it whole in the edit box; adding and editing use that same box instead of an inline form and prompt().
@@ -1321,14 +1321,14 @@
         return learnedRowHtml(n.id, esc(n.text),
           '<span class="pd-ntag k-' + kind + '">' + esc(pdT(NOTE_KIND_KEY[kind])) + "</span>" +
           '<span class="pd-nsrc' + (n.source === "owner" ? " own" : "") + '">' +
-            esc(pdT(n.source === "owner" ? "proj.src_owner" : "proj.src_javis")) + "</span>",
+            esc(pdT(n.source === "owner" ? "proj.src_owner" : "proj.src_jeevi")) + "</span>",
           pdT("proj.note_edit"), pdT("proj.note_remove"));
       }).join("") : noMatchHtml()) +
       pagerHtml(sl);
   }
 
   function paneLearned(p) {
-    var info = window.JavisInfo;
+    var info = window.JeeviInfo;
     var explain = esc(pdT("proj.learned_info"));
     return '<div class="pd-pane" data-pane="learned">' +
       '<div class="pd-learn-head"><span class="pd-hint">' + esc(pdT("proj.learned_hint")) + "</span>" +
@@ -1445,7 +1445,7 @@
 
   // ── Tab "Đã học" of an ASSISTANT (2026-11-16) ─────────────────────────────────
   // Owner, 16/11/2026: bring the project's self-learning into the Cộng sự page. An assistant already learns lessons on
-  // its own (JAVIS_LESSON); this tab shows the ones it uses and lets the owner edit, remove and add, like the project
+  // its own (JEEVI_LESSON); this tab shows the ones it uses and lets the owner edit, remove and add, like the project
   // tab above. The server reads the same store the prompt reads (server/agent_learned.py), so the list is what the
   // assistant really uses. No scopes to pick and no promote button: that is what the owner removed in 0.190.0.
   // 2026-11-19: same pages, search and edit box as the project tab.
@@ -1505,7 +1505,7 @@
     var h = hocHienTai();
     if (!h) return '<div class="pd-empty pg-loading">' + esc(pdT("proj.loading")) + "…</div>";
     if (h.loi) return '<div class="pd-empty">' + esc(pdT("ags.err_learned")) + "</div>";
-    var info = window.JavisInfo;
+    var info = window.JeeviInfo;
     var explain = esc(pdT("ags.learned_info"));
     return '<div class="pd-pane" data-pane="learned">' +
       '<div class="pd-learn-head"><span class="pd-hint">' + esc(pdT("ags.learned_hint")) + "</span>" +
@@ -1679,7 +1679,7 @@
       "</div>";
   }
 
-  /** Mở một file của project ra đọc. Đường dẫn lưu theo TRẦN duyệt, đúng thứ JavisOpenNoteAt
+  /** Mở một file của project ra đọc. Đường dẫn lưu theo TRẦN duyệt, đúng thứ JeeviOpenNoteAt
    *  nhận, nên gọi thẳng chứ không ghép tiền tố lần nữa. Ba nấc y như chip "file đang mở"
    *  dưới khung chat (app.js reopenPinnedNote): trình sửa đính -> khung sửa bung giữa màn
    *  (điện thoại) -> trang Tệp tin. */
@@ -1688,10 +1688,10 @@
     var ten = f.name || String(f.path || "").split("/").pop();
     closeProjDrawer();          // trình sửa hiện ra SAU ngăn kéo, không đóng thì che mất
     try {
-      if (typeof window.JavisOpenNoteAt === "function" && window.JavisOpenNoteAt(f.path, ten)) return;
+      if (typeof window.JeeviOpenNoteAt === "function" && window.JeeviOpenNoteAt(f.path, ten)) return;
     } catch (e) {}
-    if (typeof window.JavisEditFile === "function") { window.JavisEditFile(f.path); return; }
-    if (typeof window.JavisOpenFiles === "function") window.JavisOpenFiles(f.path);
+    if (typeof window.JeeviEditFile === "function") { window.JeeviEditFile(f.path); return; }
+    if (typeof window.JeeviOpenFiles === "function") window.JeeviOpenFiles(f.path);
   }
 
   /** A folder row opens on the Files page. That page takes a path relative to the BRAIN root, while project and agent
@@ -1707,7 +1707,7 @@
         if (home && duong.indexOf(home) === 0) duong = duong.slice(home.length);
       } catch (e) {}
     }
-    if (typeof window.JavisOpenFiles === "function") window.JavisOpenFiles(folderPath(duong));
+    if (typeof window.JeeviOpenFiles === "function") window.JeeviOpenFiles(folderPath(duong));
   }
 
   function linkAnchor(l) {
@@ -1758,7 +1758,7 @@
     };
     var veTuDongLink = function (l) {
       return hangMuc({ tuDong: true, icon: "link", tenHtml: linkAnchor(l),
-                       sub: l.vai === "user" ? pdT("cts.from_you") : pdT("cts.from_javis"),
+                       sub: l.vai === "user" ? pdT("cts.from_you") : pdT("cts.from_jeevi"),
                        sao: l.url, saoTitle: pdT("common.copy_link") });
     };
     var v = listView("files");
@@ -1812,7 +1812,7 @@
   // on its next turn, on the chat's own branch (server: github_repos.seed_session). The picker is the Team chat's one
   // (team-github.js), saving to `<pdApi()>/repos` instead of a chat.
   function repoLogo() {
-    var G = window.JavisGithubRepos;
+    var G = window.JeeviGithubRepos;
     return G && G.logo ? G.logo : ic("git-branch");
   }
   function repoNames(p) { return ((p || {}).repos || []).map(function (r) { return r.full_name; }).filter(Boolean); }
@@ -1862,13 +1862,13 @@
     var box = pane.querySelector(".pd-repo-box");
     if (!box) return;
     // team-github.js rides in the lazy "teams" group (nap-cham.js): the chat page may not have it yet.
-    if (!window.JavisTeamGithub && window.JavisNapCham) {
+    if (!window.JeeviTeamGithub && window.JeeviNapCham) {
       box.innerHTML = '<div class="pd-empty pg-loading">' + esc(pdT("proj.loading")) + "…</div>";
-      try { await window.JavisNapCham.cho("teams"); } catch (e) {}
+      try { await window.JeeviNapCham.cho("teams"); } catch (e) {}
     }
     if (!box.isConnected) return;
-    if (!window.JavisTeamGithub) { box.innerHTML = '<div class="pd-empty">' + esc(pdT("proj.err_repo")) + "</div>"; return; }
-    window.JavisTeamGithub.panel(box, {
+    if (!window.JeeviTeamGithub) { box.innerHTML = '<div class="pd-empty">' + esc(pdT("proj.err_repo")) + "</div>"; return; }
+    window.JeeviTeamGithub.panel(box, {
       brain: brain,
       current: function () { return repoNames(pdDuLieu()); },
       save: luuRepos,
@@ -1940,7 +1940,7 @@
       var sao = row.querySelector(".pd-sao");
       if (sao) sao.onclick = function (ev) {
         ev.stopPropagation();
-        if (window.JavisCopy) window.JavisCopy(sao.dataset.sao, sao);
+        if (window.JeeviCopy) window.JeeviCopy(sao.dataset.sao, sao);
       };
       // Hàng TỰ DÒ chỉ mang đường dẫn, không có bản ghi nào phía sau để gỡ hay ghim.
       if (!row.dataset.id) {
@@ -2492,7 +2492,7 @@
     var nut = side.querySelector(".cside-new");
     if (nut) nut.onclick = function () {
       if (hamTaoMoi) { hamTaoMoi(); return; }
-      if (window.JavisSessions) window.JavisSessions.new();
+      if (window.JeeviSessions) window.JeeviSessions.new();
       closeDrawerIfNarrow();
     };
     if (!searchEl) return;
@@ -2522,9 +2522,9 @@
     side.querySelectorAll(".cside-pane").forEach(function (p) {
       p.classList.toggle("on", p.dataset.pane === tabHienTai);
     });
-    if (!window.JavisVaultPanel) return;
-    if (tabHienTai === "files" && cayEl) window.JavisVaultPanel.borrow(cayEl);
-    else window.JavisVaultPanel.giveBack();
+    if (!window.JeeviVaultPanel) return;
+    if (tabHienTai === "files" && cayEl) window.JeeviVaultPanel.borrow(cayEl);
+    else window.JeeviVaultPanel.giveBack();
   }
 
   function refresh() {
@@ -2569,7 +2569,7 @@
       return it ? it.getAttribute("data-sid") : "";
     };
     var tai = function (sid) {
-      try { if (sid && window.JavisSessions && window.JavisSessions.prefetch) window.JavisSessions.prefetch(sid); } catch (e) {}
+      try { if (sid && window.JeeviSessions && window.JeeviSessions.prefetch) window.JeeviSessions.prefetch(sid); } catch (e) {}
     };
     el.addEventListener("pointerover", function (e) {
       var sid = sidCua(e);
@@ -2594,7 +2594,7 @@
   }
 
   function openSession(id) {
-    if (window.JavisSessions) window.JavisSessions.open(id);
+    if (window.JeeviSessions) window.JeeviSessions.open(id);
     closeDrawerIfNarrow();
   }
 
@@ -2663,7 +2663,7 @@
       if (g !== lastGroup) {
         var head = el('<div class="cside-group">' + g + '</div>');
         // 0.454.0: the pinned group gets a Reorder button (two or more pinned chats).
-        if (s.pinned && pins.length > 1 && window.JavisReorder) {
+        if (s.pinned && pins.length > 1 && window.JeeviReorder) {
           var rb = el('<button type="button" class="cside-reorder" title="' + esc(window.t("reorder.title_pins")) +
             '" aria-label="' + esc(window.t("reorder.title_pins")) + '">' + ic("arrow-up-down") + '</button>');
           rb.onclick = function (ev) { ev.stopPropagation(); reorderPins(pins); };
@@ -2686,7 +2686,7 @@
       var ch = (kenhLoc && rawCh === kenhLoc) ? "" : rawCh.split("@")[0];
       var chLabel = (kenhLoc && laBot) ? window.t("sess.bot_badge")
         : (ch === "telegram" ? "TG" : (ch && ch !== "web" ? ch.slice(0, 8) : ""));
-      var isRun = !!(window.JavisRunning && window.JavisRunning.has(s.id));
+      var isRun = !!(window.JeeviRunning && window.JeeviRunning.has(s.id));
       // KHÔNG có icon riêng cho từng hội thoại. Hàng nào cũng là một cuộc trò chuyện nên icon
       // ở đây không phân loại được gì, chỉ thêm một nút phải bấm và một hàng nút chật thêm.
       // Icon để PHÂN LOẠI thì nằm ở Project - xem openProjMenu.
@@ -2738,7 +2738,7 @@
       listEl.appendChild(item);
     });
     // GitHub status icon per conversation (0.365.0, github-connect.js). Only chats with GitHub work get one.
-    try { if (window.JavisGithubRepos && window.JavisGithubRepos.decorate) window.JavisGithubRepos.decorate(listEl); } catch (e) {}
+    try { if (window.JeeviGithubRepos && window.JeeviGithubRepos.decorate) window.JeeviGithubRepos.decorate(listEl); } catch (e) {}
     // Endless list (2026-11-09, replaces "Xem thêm"): a loading line at the end; when it scrolls into view the next
     // PAGE loads by itself.
     if (hasMore) {
@@ -2751,8 +2751,8 @@
     // 2026-11-08: warm the first chats of the list once the page is idle (app.js prefetchMany), so the first tap on a
     // phone, which has no hover, finds them ready too.
     try {
-      if (window.JavisSessions && window.JavisSessions.prefetchMany) {
-        window.JavisSessions.prefetchMany(items.slice(0, 8).map(function (s) { return s.id; }));
+      if (window.JeeviSessions && window.JeeviSessions.prefetchMany) {
+        window.JeeviSessions.prefetchMany(items.slice(0, 8).map(function (s) { return s.id; }));
       }
     } catch (e) {}
   }
@@ -2799,7 +2799,7 @@
     try { r = await (await fetch("/sessions/" + encodeURIComponent(s.id) + "/delete", { method: "POST" })).json(); }
     catch (e) { r = { error: String(e) }; }
     if (r && r.error) return r;
-    if (s.id === currentId() && window.JavisSessions) window.JavisSessions.new();
+    if (s.id === currentId() && window.JeeviSessions) window.JeeviSessions.new();
     cached = null;
     taiLaiSau(s);
     return { ok: true };
@@ -3056,7 +3056,7 @@
     }
     if (act === "export") {
       dongMenuDong(false);
-      if (window.JavisLenh && window.JavisLenh.xuatHoiThoai) window.JavisLenh.xuatHoiThoai(s.id);
+      if (window.JeeviLenh && window.JeeviLenh.xuatHoiThoai) window.JeeviLenh.xuatHoiThoai(s.id);
       return;
     }
     if (act === "pin") { dongMenuDong(false); return togglePin(s, s.timKiem); }
@@ -3071,7 +3071,7 @@
       if (readTimers[s.id]) { clearTimeout(readTimers[s.id]); delete readTimers[s.id]; }
       return ketQua(await post("/sessions/" + encodeURIComponent(s.id) + "/unread", {}).then(function (r) {
         cached = null; taiLaiSau(s); refreshProjects();
-        try { if (window.JavisRailUnread) window.JavisRailUnread.refresh(); } catch (e) {}
+        try { if (window.JeeviRailUnread) window.JeeviRailUnread.refresh(); } catch (e) {}
         return r;
       }));
     }
@@ -3202,7 +3202,7 @@
     loadList();
   }
 
-  window.JavisChatSide = { mount: mount, refresh: refresh, tab: chonTab, unreadSkipQuery: unreadSkipQuery,
+  window.JeeviChatSide = { mount: mount, refresh: refresh, tab: chonTab, unreadSkipQuery: unreadSkipQuery,
                            chip: renderProjChip, moKhung: openProjDrawer,
                            moKhungCuoc: openCuocDrawer,
                            // Trang Cộng sự mở đúng ngăn kéo này cho MỘT trợ lý (nút "File &
@@ -3217,7 +3217,7 @@
   // Cầu nối cho app.js: hội thoại VỪA được mint id trong lúc đang mở một project thì tự rơi
   // vào project đó. Phải gắn nhãn ngay tại lúc bấm gửi vì id sinh ở phía client, còn hàng
   // trong DB thì tới lượt server xử lý mới có - endpoint tự tạo hàng khi nhận kèm brain.
-  window.JavisProjects = {
+  window.JeeviProjects = {
     current: curProject,
     // Returns the request (2026-11-15), so the first message of the chat waits for it: the server reads the chat's
     // project at the start of the turn to bring the project's GitHub repos in (main._seed_chat_repos).
@@ -3230,7 +3230,7 @@
   };
 
   // Cập nhật khi có lượt chat mới / đổi phiên / đổi brain
-  window.addEventListener("javis:sessions-changed", function (e) {
+  window.addEventListener("jeevi:sessions-changed", function (e) {
     // 0.491.0: every change of chat, every finished turn and every background message that lands: the chat on
     // screen is read, so its red dot goes out here and on the server.
     markCurrentRead();
@@ -3241,7 +3241,7 @@
   });
   document.addEventListener("visibilitychange", markCurrentRead);
   // Read in this tab or another one: the dot goes away here too.
-  window.addEventListener("javis:session-read", function (e) {
+  window.addEventListener("jeevi:session-read", function (e) {
     var sid = e && e.detail && e.detail.session_id;
     if (sid) clearDot(sid);
     refreshProjects();
@@ -3249,7 +3249,7 @@
   // Chip phải tự sống KHÔNG phụ thuộc cột trái: refresh() thoát sớm khi chưa mount sidebar,
   // mà chip còn đứng ở màn Jeevi nơi cột đó chưa bao giờ mount. Đổi phiên là đổi project có
   // hiệu lực, nên bỏ cache rồi vẽ lại.
-  window.addEventListener("javis:sessions-changed", function () {
+  window.addEventListener("jeevi:sessions-changed", function () {
     quenPhienProj();
     renderProjChip();
   });
@@ -3258,7 +3258,7 @@
   });
   // Đổi ngôn ngữ giao diện: phần khung dựng MỘT lần (nút đóng, nút đổi tên) không tự vẽ lại
   // như thân khung, nên bỏ hẳn node đi để lần mở sau dựng lại bằng từ điển mới.
-  window.addEventListener("javis:i18n", function () {
+  window.addEventListener("jeevi:i18n", function () {
     // Sidebar có thể đã dựng trước khi từ điển tải xong. Các nhãn cố định mang data-i18n
     // được applyDom cập nhật; project và danh sách là dữ liệu động nên vẽ lại tại đây.
     if (side) {

@@ -8,7 +8,7 @@ the user intends; it cannot be fixed to a frame I think up." Pinned here:
 1. The rules (`job_scorecard.step`): a failure that is the model's fault climbs one rung for the NEXT run; anything
    else leaves the rung alone; a run of successes tries one rung lower, and a failed try goes back up and remembers
    the floor. A job whose only signal is "it did not crash" is not lowered unless the owner asked to save.
-2. The owner's intent, said in chat (`javis_tune`): save, balanced, sure, for everything or for one job.
+2. The owner's intent, said in chat (`jeevi_tune`): save, balanced, sure, for everything or for one job.
 3. The engine layer asks the scorecard for the model of the job that is running, and tells it which link of the
    chain really answered: a pick the provider refused counts against that rung even though the job got done.
 4. Each runner reports its verdict: a learning batch, a loop's verify run, a Kanban job's acceptance check.
@@ -23,8 +23,8 @@ import os
 import tempfile
 import time
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-scorecard-"))
-os.environ["JAVIS_AUTO_BACKGROUND_PAUSED"] = "1"
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-scorecard-"))
+os.environ["JEEVI_AUTO_BACKGROUND_PAUSED"] = "1"
 
 import aux_engine  # noqa: E402
 import job_scorecard as sc  # noqa: E402
@@ -190,7 +190,7 @@ check("a pick that was only out of quota is not held against the model", nxt == 
 aux_engine._COOLDOWN.clear()
 
 # ============================================================
-# 3. The owner's side: intent, feedback, undo (the javis_tune tool)
+# 3. The owner's side: intent, feedback, undo (the jeevi_tune tool)
 # ============================================================
 def tune(**kw):
     return json.loads(job_tune.run(kw))
@@ -275,7 +275,7 @@ check("a Kanban job is scored by route, after its acceptance check, which runs o
       and "job_scorecard.settle(score)" in src)
 
 # a learning batch end to end, with a fake engine
-os.environ["JAVIS_AUTO_BACKGROUND_PAUSED"] = "1"
+os.environ["JEEVI_AUTO_BACKGROUND_PAUSED"] = "1"
 import main  # noqa: E402
 import config as cfgmod  # noqa: E402
 
@@ -344,10 +344,10 @@ check("so the next batch runs one rung up, and its good result is recorded",
 # ============================================================
 import mcp_hub  # noqa: E402
 
-check("a customer-facing bot never sees javis_tune", "javis_tune" in mcp_hub.OWNER_ONLY_TOOLS)
-_plug = (ROOT / "system" / "plugins" / "javis-tune" / "plugin.py").read_text(encoding="utf-8")
+check("a customer-facing bot never sees jeevi_tune", "jeevi_tune" in mcp_hub.OWNER_ONLY_TOOLS)
+_plug = (ROOT / "system" / "plugins" / "jeevi-tune" / "plugin.py").read_text(encoding="utf-8")
 check("the plugin registers the tool with the four operations",
-      'ctx.register_tool(\n        "javis_tune"' in _plug and all(o in job_tune.OPS for o in ("status", "intent", "feedback", "undo")))
+      'ctx.register_tool(\n        "jeevi_tune"' in _plug and all(o in job_tune.OPS for o in ("status", "intent", "feedback", "undo")))
 
 if _fails:
     print(f"\nFAIL - {len(_fails)} check(s)")

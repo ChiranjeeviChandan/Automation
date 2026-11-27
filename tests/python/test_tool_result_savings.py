@@ -16,7 +16,7 @@ import os
 import random
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-savings-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-savings-"))
 
 import config  # noqa: E402
 import engine  # noqa: E402
@@ -137,14 +137,14 @@ check("the fixture is as heavy as the real thing (ten orders, tens of thousands 
 # ---- job 1: "show me the ten latest orders" ----
 old = engine._clip_tool_result(raw, ten="pos__list_orders")
 new = as_model("pos__list_orders", {})
-ref = json.loads(new)["javis_stored_result"]["ref"]
-listing = as_model("javis_query", {"ref": ref, "fields": ["id", "status", "total_price", "customer.name"]})
+ref = json.loads(new)["jeevi_stored_result"]["ref"]
+listing = as_model("jeevi_query", {"ref": ref, "fields": ["id", "status", "total_price", "customer.name"]})
 check("before: the cut hid nine of the ten orders", orders_visible_in(old) <= 1, orders_visible_in(old))
 got = json.loads(listing)["records"]
 check("after: all ten orders, the asked fields, exact values",
       [(r["id"], r["total_price"]) for r in got] == [(o["id"], o["total_price"]) for o in ORDERS[:PAGE_SIZE]])
 check("after: the first answer names every non-empty field so the model can ask for them",
-      {"id", "status", "total_price", "customer", "items"} <= set(json.loads(new)["javis_stored_result"]["fields"]))
+      {"id", "status", "total_price", "customer", "items"} <= set(json.loads(new)["jeevi_stored_result"]["fields"]))
 rows.append(("ten latest orders", len(raw), len(old), len(new) + len(listing),
              f"{orders_visible_in(old)} of 10 visible", "10 of 10, exact"))
 check("job 1 costs less than the old cut and a tenth of the raw result",
@@ -152,10 +152,10 @@ check("job 1 costs less than the old cut and a tenth of the raw result",
 
 # ---- job 2: "revenue of the month by status" (300 orders, 30 pages) ----
 _calls.clear()
-answer = as_model("javis_query", {"tool": "pos__list_orders", "args": {}, "pages": 100,
+answer = as_model("jeevi_query", {"tool": "pos__list_orders", "args": {}, "pages": 100,
                                   "sql": "SELECT status, COUNT(*), SUM(total_price) FROM records GROUP BY status ORDER BY status"})
 doc = json.loads(answer)
-check("after: every page was read by code, none by the model", len(_calls) == 30 and doc["javis_query"]["source"]["complete"] is True)
+check("after: every page was read by code, none by the model", len(_calls) == 30 and doc["jeevi_query"]["source"]["complete"] is True)
 check("after: counts per status are exact", {r[0]: r[1] for r in doc["rows"]} == TRUE_BY_STATUS, doc["rows"])
 check("after: the revenue total is exact", sum(r[2] for r in doc["rows"]) == TRUE_REVENUE)
 raw_month = sum(len(page_text(n)) for n in range(1, 31))
@@ -166,7 +166,7 @@ rows.append(("month by status, 300 orders", raw_month, old_month, len(answer),
              f"{seen_old} of 300 visible", "300 of 300, exact"))
 check("job 2 puts under 1% of the old cut into the conversation", len(answer) < old_month * 0.01, (len(answer), old_month))
 
-follow = as_model("javis_query", {"ref": doc["javis_query"]["ref"], "sql":
+follow = as_model("jeevi_query", {"ref": doc["jeevi_query"]["ref"], "sql":
                                   "SELECT i.name, SUM(i.quantity) q FROM records_items i GROUP BY 1 ORDER BY q DESC LIMIT 3"})
 true_items = {}
 for o in ORDERS:

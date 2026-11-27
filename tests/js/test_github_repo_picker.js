@@ -72,9 +72,9 @@ function makeEnv(o) {
   const view = () => ({ ok: true, repos: env.attached.map((n) => ({ full_name: n, default_branch: "main", base_branch: "main" })), icon: null });
   const win = {
     t: (k, v) => k + (v ? JSON.stringify(v) : ""),
-    JavisSessions: { brain: () => "brain", current: () => env.sid },
-    JavisComposerMenu: { register(it) { env.item = it; }, openItem(id) { env.opened.push(id); } },
-    JavisAttach: { note(s) { env.notes.push(s); } },
+    JeeviSessions: { brain: () => "brain", current: () => env.sid },
+    JeeviComposerMenu: { register(it) { env.item = it; }, openItem(id) { env.opened.push(id); } },
+    JeeviAttach: { note(s) { env.notes.push(s); } },
     matchMedia: () => ({ matches: false }),
     addEventListener() {}, dispatchEvent() {},
   };
@@ -105,7 +105,7 @@ function makeEnv(o) {
   };
   vm.createContext(ctx);
   vm.runInContext(SRC, ctx);
-  env.api = win.JavisGithubRepos;
+  env.api = win.JeeviGithubRepos;
   env.chip = () => elems.ghChip || null;
   env.chipHtml = () => (elems.ghChip ? elems.ghChip.innerHTML.replace(/&quot;/g, '"') : "");
   // A box as the + menu hands one to the panel; `click(attr, i)` is a tap on the element carrying that attribute.

@@ -10,7 +10,7 @@ now += 29999;
 assert.equal(gate.waiting(), false, 'still awake just before 30 seconds');
 now += 2;
 assert.equal(gate.waiting(), true);
-for (const text of ['mua ngay hôm nay', 'ừ', 'Ich habe dich', 'anh vừa xem Jeevi trên TV', 'Javiscript']) {
+for (const text of ['mua ngay hôm nay', 'ừ', 'Ich habe dich', 'anh vừa xem Jeevi trên TV', 'Jeevicript']) {
   assert.equal(gate.preview(text), false);
   assert.equal(gate.accept(text), false);
 }

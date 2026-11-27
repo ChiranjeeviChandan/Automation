@@ -3,7 +3,7 @@
     python tests/run.py codex_bg_turn_key
 
 The bug: `aux_engine._build_codex` never set `hub_turn`, so the Codex process of a scheduled job called the hub without
-`X-Jeevi-Turn`. The hub bound "nobody", and `javis_team` op=dispatch refused with "không rõ ai đang giao việc (lượt
+`X-Jeevi-Turn`. The hub bound "nobody", and `jeevi_team` op=dispatch refused with "không rõ ai đang giao việc (lượt
 không có danh tính)". A 5am reminder "wake the marketing team" ran, failed that check, and the team never started.
 
 Pinned here, with no model and no network:
@@ -18,7 +18,7 @@ import os
 import tempfile
 from unittest.mock import patch
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-codex-bg-turn-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-codex-bg-turn-"))
 
 import aux_engine  # noqa: E402
 import config as cfgmod  # noqa: E402
@@ -36,11 +36,11 @@ def check(name, cond, extra=""):
 
 class _Base:
     """The Claude engine a reminder builds before the swap: only the fields `_build_codex` reads."""
-    cwd = tempfile.mkdtemp(prefix="javis-codex-bg-cwd-")
+    cwd = tempfile.mkdtemp(prefix="jeevi-codex-bg-cwd-")
     tag = "reminder:r_test"
     system_prompt = "x"
-    javis_vault = cwd
-    javis_mode = "full"
+    jeevi_vault = cwd
+    jeevi_mode = "full"
 
 
 def _settings(hub=True):
@@ -51,7 +51,7 @@ def _override(args):
     return [a for a in args if str(a).startswith(turn_context.CODEX_HEADER_KEY + "=")]
 
 
-def _build(hub=True, profile="javis-test"):
+def _build(hub=True, profile="jeevi-test"):
     with patch.object(cfgmod, "read_settings", lambda: _settings(hub)):
         return aux_engine._build_codex({"provider": aux_engine.CODEX, "model": ""}, _Base(), "full", _Base.tag,
                                        (lambda: profile) if profile else None)
@@ -81,18 +81,18 @@ tok = turn_context.bind(turn_context.make("reminder", job="reminder:x"))
 try:
     check("2 hub off -> hub_turn off", cc.hub_turn is False)
     check("2 hub off -> no override", not _override(cc._build_args()))
-    # Brain and level overrides would be a `javis` entry with headers and no url: Codex refuses the whole config.
-    half = [a for a in cc._build_args() if str(a).startswith("mcp_servers.javis.")]
-    check("2 hub off -> no mcp_servers.javis override at all (no half entry)", not half, half)
+    # Brain and level overrides would be a `jeevi` entry with headers and no url: Codex refuses the whole config.
+    half = [a for a in cc._build_args() if str(a).startswith("mcp_servers.jeevi.")]
+    check("2 hub off -> no mcp_servers.jeevi override at all (no half entry)", not half, half)
 finally:
     turn_context.reset(tok)
 
 cc = _build(profile=None)
-half = [a for a in cc._build_args() if str(a).startswith("mcp_servers.javis.")]
-check("3 no profile -> no mcp_servers.javis override at all", not half, half)
+half = [a for a in cc._build_args() if str(a).startswith("mcp_servers.jeevi.")]
+check("3 no profile -> no mcp_servers.jeevi override at all", not half, half)
 cc = _build()
 check("1 hub on -> brain and level overrides still set",
-      any(str(a).startswith("mcp_servers.javis.http_headers.X-Jeevi-Mode=") for a in cc._build_args()))
+      any(str(a).startswith("mcp_servers.jeevi.http_headers.X-Jeevi-Mode=") for a in cc._build_args()))
 
 cc = _build(profile=None)
 tok = turn_context.bind(turn_context.make("reminder", job="reminder:x"))

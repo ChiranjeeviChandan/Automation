@@ -848,9 +848,9 @@ def catch_up(conn: dict, messages: List[dict], now: Optional[float] = None) -> i
                 if _own_already_stored(cid, ev) or echo:
                     continue
             # Issue #1775: an own message Jeevi sent with a Zalo tool is its work, not the owner typing.
-            sent_by_javis = ev["sender_type"] == "human" and zalo_sent_ledger.take(cid, ev)
+            sent_by_jeevi = ev["sender_type"] == "human" and zalo_sent_ledger.take(cid, ev)
             ev["metadata"] = dict(ev.get("metadata") or {}, recovered=True,
-                                  **(zalo_sent_ledger.MARK if sent_by_javis else {}))
+                                  **(zalo_sent_ledger.MARK if sent_by_jeevi else {}))
             r = conversations.ghi_su_kien(ev, late=True)
             if not (r.get("ok") and not r.get("trung")):
                 continue
@@ -858,7 +858,7 @@ def catch_up(conn: dict, messages: List[dict], now: Optional[float] = None) -> i
             if known is None:
                 known = set()
             known.add(ev["external_message_id"])
-            if ev["sender_type"] == "human" and not sent_by_javis:
+            if ev["sender_type"] == "human" and not sent_by_jeevi:
                 key = (cid, chat)
                 _TAY[key] = max(float(_TAY.get(key) or 0), at)
     if written:

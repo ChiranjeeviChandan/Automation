@@ -221,7 +221,7 @@ import tempfile  # noqa: E402
 
 import config    # noqa: E402
 
-_brain = tempfile.mkdtemp(prefix="javis-mediagc-")
+_brain = tempfile.mkdtemp(prefix="jeevi-mediagc-")
 
 
 def _tao(rel, mb, tuoi_ngay):
@@ -490,7 +490,7 @@ for _dong in ("attachments/", "Attachments/", "*attachments/", "*Attachments/", 
     check(f"gitignore co dong {_dong}", _dong + "\n" in git_brain._GITIGNORE)
 
 if git_brain.has_git():
-    _repo = tempfile.mkdtemp(prefix="javis-mediagit-")
+    _repo = tempfile.mkdtemp(prefix="jeevi-mediagit-")
 
     def _g(*a):
         return subprocess.run(["git", "-C", _repo, *a], capture_output=True, text=True,
@@ -564,7 +564,7 @@ Sửa hằng `_GITIGNORE` (dòng 63-74) thành:
 _GITIGNORE = (
     "# Jeevi brain - KHÔNG commit: khoá, log thô (có thể chứa secret), nhật ký nền.\n"
     "# Git chỉ version TRI THỨC ĐÃ CHƯNG CẤT (facts/wiki/skills/MEMORY.md) → undo sạch, an toàn.\n"
-    ".javis-learn.lock\n"
+    ".jeevi-learn.lock\n"
     "Jeevi/learn-staging/\n"
     "Jeevi/learn-log/\n"
     "Jeevi/loop-log/\n"

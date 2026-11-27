@@ -80,12 +80,12 @@
    stopping and its audio going to POST /stt, then the rewrite. Now the bar turns to "transcribing" the moment stop is
    pressed, and the recorder stops and uploads right then, while the recognizer is still closing. The recording is also
    made at a speech bitrate (32 kbit/s Opus, not on iOS), about a quarter of the browser's default size, so a long
-   dictation uploads faster. With localStorage "javis.debug.dictate" = "1" the console shows how long each step took.
+   dictation uploads faster. With localStorage "jeevi.debug.dictate" = "1" the console shows how long each step took.
 
    2026-11-22: the phone path works like the ChatGPT and Claude apps, and stop gives the text back at once (owner: "ở
    điện thoại ấn vào thì nó không chép được lời và không nhìn thấy cái sóng âm", "chức năng viết lại lời đang bị quá
    chậm", ChatGPT and Claude transcribe smoothly with their own model and are fast on stop).
-   - The ear answer is remembered across page loads (localStorage "javis.dictate.ear") and asked as soon as the script
+   - The ear answer is remembered across page loads (localStorage "jeevi.dictate.ear") and asked as soon as the script
      loads. A press made before the first answer of a fresh page used to count as "no ear", so a phone ran the browser's
      recognizer (no meter, and in an iPhone app often no words at all) instead of recording for the model.
    - Text an ear heard (a speech model: the ChatGPT plan, Groq, OpenAI, Gemini) is already what the ChatGPT app shows on
@@ -134,10 +134,10 @@
     return out.reduce(joinText, "");
   }
 
-  // Set localStorage "javis.debug.dictate" to "1" to print each result list in the console: the shape real phones
+  // Set localStorage "jeevi.debug.dictate" to "1" to print each result list in the console: the shape real phones
   // send is what decides the rules above.
   function debugOn() {
-    try { return typeof localStorage !== "undefined" && localStorage.getItem("javis.debug.dictate") === "1"; }
+    try { return typeof localStorage !== "undefined" && localStorage.getItem("jeevi.debug.dictate") === "1"; }
     catch (e) { return false; }
   }
 
@@ -177,7 +177,7 @@
   }
 
   // The last answer of GET /voice/ear survives a reload (2026-11-22, see the note at the top). Only "upload" or "".
-  var EAR_KEY = "javis.dictate.ear";
+  var EAR_KEY = "jeevi.dictate.ear";
   function storedEar() {
     try {
       var v = typeof localStorage !== "undefined" ? localStorage.getItem(EAR_KEY) : null;
@@ -644,6 +644,6 @@
     recentMessages: recentMessages, isPhoneUA: isPhoneUA, plan: plan, isPhone: isPhone, isIOS: isIOS,
     isAndroid: isAndroid, recorderOptions: recorderOptions, nothingKey: nothingKey,
     ear: function () { return earKind; }, warm: askEar };
-  if (typeof window !== "undefined") window.JavisDictate = api;
+  if (typeof window !== "undefined") window.JeeviDictate = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

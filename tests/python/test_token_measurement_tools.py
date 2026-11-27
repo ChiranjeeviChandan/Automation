@@ -49,7 +49,7 @@ check("the sample set loads and has no literal banned dash",
       and "\u2014" not in (ROOT / "tools/eval/sample_set.json").read_text(encoding="utf-8"))
 
 # ───────────────────────── 2. a run against a fake Jeevi ─────────────────────────
-STATE = Path(tempfile.mkdtemp(prefix="javis-qe-"))
+STATE = Path(tempfile.mkdtemp(prefix="jeevi-qe-"))
 EVENTS = STATE / "usage-events.jsonl"
 EVENTS.write_text(json.dumps({"in": 999, "out": 9}) + "\n", encoding="utf-8")   # older activity: not counted
 ANSWERS = {"good": "Doanh thu tuần này 3 triệu, 12 đơn hàng.", "bad": "Mình chưa rõ."}
@@ -57,7 +57,7 @@ MODE = {"answer": "good"}
 SEEN = []
 
 
-class _Javis(BaseHTTPRequestHandler):
+class _Jeevi(BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
@@ -74,7 +74,7 @@ class _Javis(BaseHTTPRequestHandler):
         self.wfile.write(raw)
 
 
-srv = ThreadingHTTPServer(("127.0.0.1", 0), _Javis)
+srv = ThreadingHTTPServer(("127.0.0.1", 0), _Jeevi)
 threading.Thread(target=srv.serve_forever, daemon=True).start()
 url = f"http://127.0.0.1:{srv.server_address[1]}"
 SET = STATE / "set.json"

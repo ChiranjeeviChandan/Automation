@@ -138,7 +138,7 @@ Thao tác này an toàn: chỉ di chuyển khi thư mục đích chưa có, khô
 
 - Mặc định là **Giữ dấu**: ảnh mang sẵn dấu ghi rằng ảnh do AI sinh ra. Facebook đọc dấu này để gắn nhãn "Nội dung do AI tạo" lên bài.
 - Bấm **Gỡ dấu** thì ảnh mới tạo không còn dấu, nhãn trên nền tảng thường không hiện nữa. Ảnh đã tạo trước đó không đổi.
-- Dù bật hay tắt, nhãn tác giả `javisos.com` vẫn được giữ, và bạn vẫn phải tự chịu trách nhiệm công bố nội dung AI theo luật và điều khoản của nền tảng nơi bạn đăng.
+- Dù bật hay tắt, nhãn tác giả `jeevios.com` vẫn được giữ, và bạn vẫn phải tự chịu trách nhiệm công bố nội dung AI theo luật và điều khoản của nền tảng nơi bạn đăng.
 
 ### Tab Chung: Ngôn ngữ và múi giờ
 
@@ -166,9 +166,9 @@ Mở máy lên mà `localhost:7777` báo **ERR_CONNECTION_REFUSED** thì mở l�
 
 - **Windows đang chặn mục khởi động này.** Task Manager, thẻ **Startup**, khi bạn bấm Disable thì nó không xoá gì cả, chỉ ghi một cờ để Windows bỏ qua. Nhiều phần mềm "dọn máy, tăng tốc khởi động" cũng tắt bằng đúng cờ đó mà không hỏi. Bấm **Bật tự khởi động** lại là Jeevi tự gỡ cờ.
 - **Thư mục cài đặt đã đổi chỗ**, lệnh khởi động còn trỏ đường dẫn cũ. Bấm bật lại để cập nhật.
-- **Thiếu `start-javis.vbs` hoặc `.venv\Scripts\python.exe`.** Chạy lại `setup.bat` để dựng lại phần thiếu.
+- **Thiếu `start-jeevi.vbs` hoặc `.venv\Scripts\python.exe`.** Chạy lại `setup.bat` để dựng lại phần thiếu.
 
-Nếu thẻ ghi **Bật** không kèm cảnh báo nào mà mở máy vẫn không lên, mở `server\javis.log` trong thư mục cài đặt: đó là nơi server ghi lỗi khi nó có chạy nhưng chết giữa chừng.
+Nếu thẻ ghi **Bật** không kèm cảnh báo nào mà mở máy vẫn không lên, mở `server\jeevi.log` trong thư mục cài đặt: đó là nơi server ghi lỗi khi nó có chạy nhưng chết giữa chừng.
 
 Về Second Brain (bộ nhớ, Wiki, cấu trúc vault), xem [Second Brain: bộ nhớ, Wiki, INGEST](13-second-brain-bo-nho-wiki.md).
 
@@ -204,7 +204,7 @@ Hostinger thì vào Docker Manager bấm **Redeploy** (stack đọc lại compos
 
 Tải lại trang là nút hiện ra. Không muốn có Watchtower thì cập nhật tay vẫn được: `docker compose up -d --pull always`.
 
-**Muốn Jeevi TỰ cập nhật, khỏi bấm nút**: thêm `JAVIS_AUTO_UPDATE=true` vào `.env` (Hostinger: ô Environment) rồi dựng lại. Mặc định tắt có chủ ý, vì tự cập nhật là app tự khởi động lại bất cứ lúc nào có bản mới, cắt ngang việc nền đang chạy. Chu kỳ mặc định 24 giờ, đổi bằng `JAVIS_AUTO_UPDATE_INTERVAL` (giây).
+**Muốn Jeevi TỰ cập nhật, khỏi bấm nút**: thêm `JEEVI_AUTO_UPDATE=true` vào `.env` (Hostinger: ô Environment) rồi dựng lại. Mặc định tắt có chủ ý, vì tự cập nhật là app tự khởi động lại bất cứ lúc nào có bản mới, cắt ngang việc nền đang chạy. Chu kỳ mặc định 24 giờ, đổi bằng `JEEVI_AUTO_UPDATE_INTERVAL` (giây).
 
 Khung Cập nhật tự phân biệt các trường hợp này và ghi đúng cách xử lý cho máy bạn.
 
@@ -230,7 +230,7 @@ Bên dưới khung cập nhật là nhật ký phiên bản: từng bản có g�
 
 Khi Jeevi chạy công khai (nghe trên `0.0.0.0`, tức VPS/Docker/Hostinger) mà chưa có tài khoản admin, màn chạy lần đầu chỉ hỏi tên đăng nhập và mật khẩu. Nghĩa là **ai mở link trước khi có admin sẽ tạo được admin**, mà bộ não lại chạy với toàn quyền trên máy. Vì vậy:
 
-- **Cách khuyến nghị:** khi deploy, đặt sẵn hai biến môi trường `JAVIS_ADMIN_USER` và `JAVIS_ADMIN_PASSWORD` (`install.sh` đã hỏi sẵn hai giá trị này). Jeevi tự tạo tài khoản admin lúc khởi động, mở app ra là màn đăng nhập luôn, không có khoảng trống nào. Chi tiết biến môi trường xem [Cấu hình .env](16-cau-hinh-env.md).
+- **Cách khuyến nghị:** khi deploy, đặt sẵn hai biến môi trường `JEEVI_ADMIN_USER` và `JEEVI_ADMIN_PASSWORD` (`install.sh` đã hỏi sẵn hai giá trị này). Jeevi tự tạo tài khoản admin lúc khởi động, mở app ra là màn đăng nhập luôn, không có khoảng trống nào. Chi tiết biến môi trường xem [Cấu hình .env](16-cau-hinh-env.md).
 - **Nếu không đặt env:** mở app và tạo tài khoản ngay sau khi deploy, đừng để server public trống admin.
 - **Sau lần đăng nhập đầu:** bật xác thực 2 lớp (2FA) ở trang **Tài khoản**. Xem [Bảo mật & tài khoản](14-bao-mat-tai-khoan.md).
 
@@ -269,7 +269,7 @@ Khi Jeevi chạy công khai (nghe trên `0.0.0.0`, tức VPS/Docker/Hostinger) m
 - **Báo "Đã có tài khoản - hãy đăng nhập":** admin đã được tạo trước đó (ví dụ qua env). Dùng màn đăng nhập với tài khoản/mật khẩu đã đặt.
 - **Claude báo chưa đăng nhập:** vào **Models**, ở thẻ Claude Code bấm **Kết nối Claude**, mở link, dán mã nếu trang hiện mã rồi bấm **Xác nhận mã**. Máy còn chạy kiểu đăng nhập cũ thì bấm **Chuyển sang token dài hạn**. Đường lui: chạy `claude auth login --claudeai` trong terminal server.
 - **Claude báo token sắp hết hạn hoặc đã hết hạn:** vào **Models**, thẻ Claude Code, bấm **Lấy token mới** rồi đăng nhập claude.ai thêm một lần.
-- **Quên mật khẩu admin:** ở màn đăng nhập bấm "Quên mật khẩu?" để xem hướng dẫn. Trên Windows bấm đúp `reset-auth.bat` trong thư mục cài Jeevi (Mac: `reset-auth.command`): mật khẩu cũ bị xoá, mở lại Jeevi rồi vào Tài khoản đặt mật khẩu mới. Trên máy chủ thì đổi `JAVIS_ADMIN_PASSWORD` rồi khởi động lại. Xem thêm [Bảo mật & tài khoản](14-bao-mat-tai-khoan.md).
+- **Quên mật khẩu admin:** ở màn đăng nhập bấm "Quên mật khẩu?" để xem hướng dẫn. Trên Windows bấm đúp `reset-auth.bat` trong thư mục cài Jeevi (Mac: `reset-auth.command`): mật khẩu cũ bị xoá, mở lại Jeevi rồi vào Tài khoản đặt mật khẩu mới. Trên máy chủ thì đổi `JEEVI_ADMIN_PASSWORD` rồi khởi động lại. Xem thêm [Bảo mật & tài khoản](14-bao-mat-tai-khoan.md).
 - **Sai quá nhiều lần khi đăng nhập, bị báo "Quá nhiều lần sai":** Jeevi khóa tạm để chống dò mật khẩu. Đợi ít phút rồi thử lại.
 - **Bấm cập nhật nhưng báo "Đang cập nhật rồi, chờ chút.":** một lần cập nhật khác đang chạy. Chờ tiến trình chạy xong rồi thử lại.
 - **Docker/VPS báo "image Docker còn đang đóng gói":** bản mới vừa phát hành, image Docker thường xong sau 2 đến 5 phút. Thử lại sau ít phút. Nếu Watchtower chạy xong mà không thay được bản mới, trang báo lý do và nút bấm lại được ngay.

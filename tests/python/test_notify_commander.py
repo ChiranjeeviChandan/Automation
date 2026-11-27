@@ -3,7 +3,7 @@ Jeevi Core", "1. Tự động  2. Mặc định chỉ tin khẩn", "chấm theo 
 
     python tests/run.py notify_commander
 
-Spec: docs/dev/2026-10-javis-core-chi-huy-thong-bao.md sections 3 to 6. No network, no model.
+Spec: docs/dev/2026-10-jeevi-core-chi-huy-thong-bao.md sections 3 to 6. No network, no model.
 - every group defaults to "urgent only" (assistant suggestions: "important", owner 2026-11-14); reminders, questions, customers waiting and "Jeevi is not usable" ring;
   the rest is kept in the bell as filtered (read, no push, not copied to Jeevi Core's chat or the owner's Telegram);
   a chat that asked for the work still gets it;
@@ -11,7 +11,7 @@ Spec: docs/dev/2026-10-javis-core-chi-huy-thong-bao.md sections 3 to 6. No netwo
 - feedback in the Resonance emoji set plus "Needed" / "Not needed": Jeevi Core changes rules on its own, says so in
   its chat, never silences an urgent kind by itself, and every change can be undone;
 - the owner's "off" drops a group; Core's "off" still lets urgent notices ring;
-- routes /inbox/react and /notify/policy*, the `javis_notify` chat tool (owner only), the bell's filter UI.
+- routes /inbox/react and /notify/policy*, the `jeevi_notify` chat tool (owner only), the bell's filter UI.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
 import asyncio
@@ -22,8 +22,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-STATE = tempfile.mkdtemp(prefix="javis-notify-cmd-")
-os.environ["JAVIS_STATE_DIR"] = STATE
+STATE = tempfile.mkdtemp(prefix="jeevi-notify-cmd-")
+os.environ["JEEVI_STATE_DIR"] = STATE
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -55,7 +55,7 @@ def run(coro):
 
 main.cfgmod.gate_active = lambda: False
 client = TestClient(main.app, base_url="http://127.0.0.1")
-BR = Path(tempfile.mkdtemp(prefix="javis-notify-brain-"))
+BR = Path(tempfile.mkdtemp(prefix="jeevi-notify-brain-"))
 KB = main._brain_key(str(BR))
 cfg = main.cfgmod.read_settings()
 cfg.setdefault("telegram", {}).update({"enabled": True, "token": "123:abc", "chat_id": "111"})
@@ -74,7 +74,7 @@ async def fake_push(*a, **k):
 
 main._gui_qua_kenh = fake_channel
 main.webpush.gui_het = fake_push
-core = main.javis_core.default_session(main.get_store(), KB, same_brain=main._cung_brain)
+core = main.jeevi_core.default_session(main.get_store(), KB, same_brain=main._cung_brain)
 
 
 def items():
@@ -154,7 +154,7 @@ check("an urgent notice is never filtered as a repeat", len(rep) == 5 and not an
 # ---- 3. feedback and Jeevi Core's own changes ----
 sent.clear()
 # A system notice has no brain: Jeevi Core speaks in the default brain's Core chat.
-core0 = main.javis_core.default_session(main.get_store(), main._brain_key("brain"), same_brain=main._cung_brain)
+core0 = main.jeevi_core.default_session(main.get_store(), main._brain_key("brain"), same_brain=main._cung_brain)
 pos = next(x for x in inbox.danh_sach(300) if x["title"] == "Kết nối POS hỏng lần 1")
 r = client.post("/inbox/react", json={"id": pos["id"], "value": "angry", "axis": "not_needed"}).json()
 check("'Not needed' on a kind: Core filters that kind and says so in its chat",
@@ -204,9 +204,9 @@ check("...and rings", not items()["Ngân sách API đã dùng 85%"].get("filtere
 NP.set_mode("job", "all", set_by="owner")
 run(main._notify_owner("", "Việc 'Sao lưu ảnh' xong", kind="answer", quiet=True))
 bk = items()["Việc 'Sao lưu ảnh' xong"]
-cite = client.post("/javis-core/cite", json={"source": "inbox", "id": bk["id"], "brain": "brain"}).json()
+cite = client.post("/jeevi-core/cite", json={"source": "inbox", "id": bk["id"], "brain": "brain"}).json()
 csid = cite.get("id")
-cmsg = [m for m in main.get_store().get_messages(csid) if f"javis-cite:inbox:{bk['id']}" in str(m.get("content") or "")]
+cmsg = [m for m in main.get_store().get_messages(csid) if f"jeevi-cite:inbox:{bk['id']}" in str(m.get("content") or "")]
 check("'Open in Jeevi Core' puts the notice in Core's chat with the item's marker", cite.get("ok") and len(cmsg) == 1, cite)
 sent.clear()
 rr = client.post(f"/sessions/{csid}/messages/{cmsg[0]['id']}/reaction?brain=brain",
@@ -219,7 +219,7 @@ rr = client.post(f"/sessions/{csid}/messages/{cmsg[0]['id']}/reaction?brain=brai
 check("the same nonce sent again is a replay and changes nothing more", rr.status_code == 200 and
       len([c for c in NP.status(100)["changes"] if "sao lưu ảnh" in str(c.get("target"))]) == 1)
 plain = main.get_store().create_session(brain=KB)
-main.get_store().append_message(plain, "assistant", f"Không phải chat Core <!-- javis-cite:inbox:{bk['id']} -->")
+main.get_store().append_message(plain, "assistant", f"Không phải chat Core <!-- jeevi-cite:inbox:{bk['id']} -->")
 pm = main.get_store().get_messages(plain)[-1]
 n0 = len(NP.status(100)["changes"])
 client.post(f"/sessions/{plain}/messages/{pm['id']}/reaction?brain=brain",
@@ -230,8 +230,8 @@ sent.clear()
 run(main._notify_owner("", "Nhắc bạn: kiểm kho", kind="report", source="reminder", brain=str(BR)))
 rem = items()["Nhắc bạn: kiểm kho"]
 check("a notice that lands in Jeevi Core's chat carries its marker there (so it can take emoji), not on Telegram",
-      any(c == "web:" + core and f"javis-cite:inbox:{rem['id']}" in t for c, t in sent) and
-      all("javis-cite" not in t for c, t in sent if c == "111"), sent)
+      any(c == "web:" + core and f"jeevi-cite:inbox:{rem['id']}" in t for c, t in sent) and
+      all("jeevi-cite" not in t for c, t in sent if c == "111"), sent)
 
 # ---- 4. off ----
 NP.set_mode("update", "off", set_by="owner")
@@ -250,7 +250,7 @@ check("route: the policy lists groups, rules and changes with a sentence each",
 check("the rules store is in the state dir", (Path(STATE) / "notify_policy.json").is_file())
 
 # ---- 5. the chat tool ----
-spec = importlib.util.spec_from_file_location("javis_notify_plugin", ROOT / "system/plugins/javis-notify/plugin.py")
+spec = importlib.util.spec_from_file_location("jeevi_notify_plugin", ROOT / "system/plugins/jeevi-notify/plugin.py")
 plug = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(plug)
 out = plug._chay({"op": "set", "group": "Kết nối", "mode": "off"}, None)
@@ -267,11 +267,11 @@ cid = NP.status()["changes"][0]["id"]
 check("tool: undo by id", plug._chay({"op": "undo", "id": cid}, None).startswith("Đã hoàn tác"))
 check("tool: bad input is an error", plug._chay({"op": "set", "group": "xyz", "mode": "all"}, None).startswith("ERROR") and
       plug._chay({"op": "nope"}, None).startswith("ERROR"))
-check("the tool is the owner's only (a customer bot never sees it)", "javis_notify" in mcp_hub.OWNER_ONLY_TOOLS)
-yml = (ROOT / "system/plugins/javis-notify/plugin.yaml").read_text(encoding="utf-8")
-check("the plugin ships enabled at the safe level", "slug: javis-notify" in yml and "enabled: true" in yml and "min_mode: safe" in yml)
-core_md = (ROOT / "system/agents/javis-core.md").read_text(encoding="utf-8")
-check("Jeevi Core's role says it is the notification commander and uses javis_notify", "javis_notify" in core_md)
+check("the tool is the owner's only (a customer bot never sees it)", "jeevi_notify" in mcp_hub.OWNER_ONLY_TOOLS)
+yml = (ROOT / "system/plugins/jeevi-notify/plugin.yaml").read_text(encoding="utf-8")
+check("the plugin ships enabled at the safe level", "slug: jeevi-notify" in yml and "enabled: true" in yml and "min_mode: safe" in yml)
+core_md = (ROOT / "system/agents/jeevi-core.md").read_text(encoding="utf-8")
+check("Jeevi Core's role says it is the notification commander and uses jeevi_notify", "jeevi_notify" in core_md)
 
 # ---- 6. the bell ----
 js = (ROOT / "dashboard/notifications.js").read_text(encoding="utf-8")
@@ -282,7 +282,7 @@ check("bell: filtered notices leave the main list for a 'Filtered (N)' view",
       "!!x.filtered === loc" in js and '"noti.filtered_n"' in js and "data-noti-filtered" in js)
 check("bell: only Needed / Not needed on a notice, sent to /inbox/react; no emoji there (they go on it in Jeevi Core)",
       'data-react-a="needed"' in js and 'data-react-a="not_needed"' in js and '"/inbox/react"' in js and
-      "JavisReactions" not in js and "data-react-v" not in js and "noti-emo" not in js)
+      "JeeviReactions" not in js and "data-react-v" not in js and "noti-emo" not in js)
 check("bell: a Filter tab with each group's mode, rules and undo", 'id="notiTabFilter"' in html and '"/notify/policy/group"' in js and
       '"/notify/policy/undo"' in js and '"/notify/policy/rule"' in js)
 keys = set()
@@ -292,7 +292,7 @@ for m in re.finditer(r'"(noti\.[a-z_]*[a-z])"', js):
 keys |= {f"noti.grp_{g}" for g in NP.GROUPS} | {f"noti.mode_{m}" for m in NP.MODES} | {"noti.filter_btn"}
 miss = sorted(k for k in keys if k not in vi or k not in en)
 check("every noti.* key the bell uses is in vi and en", not miss, miss)
-check("long explanations sit behind (i): the filter's text is only in an info pair", "JavisInfo.pair(" in js and
+check("long explanations sit behind (i): the filter's text is only in an info pair", "JeeviInfo.pair(" in js and
       len(vi["noti.filter_info"]) > 100)
 check("short texts stay under 100 characters", all(len(vi[k]) <= 100 and len(en[k]) <= 100 for k in keys if k != "noti.filter_info"),
       [k for k in keys if k != "noti.filter_info" and (len(vi.get(k, "")) > 100 or len(en.get(k, "")) > 100)])
@@ -307,7 +307,7 @@ check("cache versions bumped", _ver("notifications.js") >= 11 and _ver("style.cs
 
 dashes = [chr(0x2014), chr(0x2013)]
 texts = [Path(__file__).read_text(encoding="utf-8"), (SERVER / "notify_policy.py").read_text(encoding="utf-8"),
-         (ROOT / "system/plugins/javis-notify/plugin.py").read_text(encoding="utf-8"), yml] + [vi[k] + en[k] for k in keys]
+         (ROOT / "system/plugins/jeevi-notify/plugin.py").read_text(encoding="utf-8"), yml] + [vi[k] + en[k] for k in keys]
 check("no em or en dash in the new code and strings", not any(d in t for t in texts for d in dashes))
 
 print()

@@ -284,7 +284,7 @@ Z.AUTO_INSTALL = False
 # ============================================================
 # 4. Chạy tiến trình con thật: HOME đúng, đọc đủ đầu ra, hết giờ thì giết
 # ============================================================
-home = tempfile.mkdtemp(prefix="javis-zcli-")
+home = tempfile.mkdtemp(prefix="jeevi-zcli-")
 code = "import os,sys;print(os.environ['HOME']);print(os.environ['USERPROFILE']);sys.stderr.write('loi')"
 rc, out, err = asyncio.run(Z.run([sys.executable, "-c", code], home))
 check("CANARY: tiến trình con nhận HOME và USERPROFILE là thư mục phiên (không thì CLI đòi quét QR lại)",

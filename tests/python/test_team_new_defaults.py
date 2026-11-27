@@ -12,7 +12,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-team-new-defaults-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-team-new-defaults-"))
 
 from fastapi.testclient import TestClient  # noqa: E402
 import main as M  # noqa: E402
@@ -28,7 +28,7 @@ def check(name, cond, extra=""):
         fails.append(name)
 
 
-brain = Path(tempfile.mkdtemp(prefix="javis-brain-team-new-defaults-")).resolve()
+brain = Path(tempfile.mkdtemp(prefix="jeevi-brain-team-new-defaults-")).resolve()
 (brain / "agents").mkdir()
 (brain / "agents" / "lan.md").write_text("---\nname: Lan\nrole: Thành viên\n---\nBạn là Lan.\n", encoding="utf-8")
 M._TEAM_API.deps.spawn = lambda coro: coro.close() if hasattr(coro, "close") else None

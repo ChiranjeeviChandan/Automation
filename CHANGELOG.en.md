@@ -201,7 +201,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ### Improved
 - **Antigravity answers as fast as Claude and ChatGPT from the second turn on.** Each chat keeps an Antigravity process running and resumes its own conversation, so later turns neither restart it nor reread all the rules and history: the first word arrives after about 2 to 3 seconds instead of 10 or more.
 - **Antigravity remembers the whole of a long chat,** files it read and commands it ran included, instead of only the last 45,000 characters of history.
-- On Windows a long question no longer detours through a context file. If Antigravity loses the thread, Jeevi sends the full context again within the same turn; set `JAVIS_AGY_RESUME=0` to go back to the old way.
+- On Windows a long question no longer detours through a context file. If Antigravity loses the thread, Jeevi sends the full context again within the same turn; set `JEEVI_AGY_RESUME=0` to go back to the old way.
 
 ## [0.631.6] - 2026-11-24
 ### Improved
@@ -216,7 +216,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.631.4] - 2026-11-23
 ### Improved
 - **Jeevi restarts about 13 seconds faster.** The Docker image now ships its code precompiled, so an update no longer leaves you waiting before you can use it.
-- **The chat turn right after Jeevi trims a long conversation no longer starts from cold.** Jeevi opens the new session ahead of time as soon as it knows the next turn needs one. Switch it off with `JAVIS_WARM_NEW_THREAD=0`.
+- **The chat turn right after Jeevi trims a long conversation no longer starts from cold.** Jeevi opens the new session ahead of time as soon as it knows the next turn needs one. Switch it off with `JEEVI_WARM_NEW_THREAD=0`.
 - **The dashboard opens lighter.** The code for the Partners page, the Skill editor and the Messenger card loads only when you open those pages, about 10% less code to run at start. The three counters on the home screen also stop downloading the whole agent list.
 - **Jeevi now records why a chat turn had to wait** (new chat, just trimmed, idle too long, settings changed), so the next fix lands on the real slow spot.
 
@@ -315,7 +315,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.628.1] - 2026-11-22
 ### Security
 - **A lost password no longer lets a stranger create an account.** On a machine that had an owner, a missing password locks the account form for remote visitors. It opens only on the machine running Jeevi, or for 24 hours after `python tools/reset_auth.py`. A blocked try shows up as an alert in the security log.
-- **With `JAVIS_ADMIN_PASSWORD` set, the account comes back at once** when the password goes missing, without a restart. Turning sign-in off on purpose still holds until the next start.
+- **With `JEEVI_ADMIN_PASSWORD` set, the account comes back at once** when the password goes missing, without a restart. Turning sign-in off on purpose still holds until the next start.
 - **Saving settings can no longer erase the owner's password,** except through the sign-in off switch and the reset tool. A save that tries is blocked and raises an alert.
 - **The security log records the visitor's real IP** behind Cloudflare and proxies, not Cloudflare's. The wrong-password lockout also counts per real visitor, so someone guessing passwords no longer locks the owner out too.
 - Tests run on a machine in use no longer touch its real settings, brain folders or password.
@@ -357,13 +357,13 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 
 ## [0.624.0] - 2026-11-22
 ### Added
-- **Jeevi can run read-only scripts (`javis_code`).** The model writes a short Python script that chains several read calls (paging, looking up each order, joining two sources), computes, and returns only the result, so raw data no longer costs tokens in the chat.
+- **Jeevi can run read-only scripts (`jeevi_code`).** The model writes a short Python script that chains several read calls (paging, looking up each order, joining two sources), computes, and returns only the result, so raw data no longer costs tokens in the chat.
 - **Read only and isolated.** The script runs in its own process with no keys, no files and no network, and can call only plainly read-only tools through the usual permission checks.
-- **Safe caps.** At most 40 calls and 120 seconds per run. If it cannot run, the model calls the tools itself as before. Turn it off with `JAVIS_CODE_MODE=0`.
+- **Safe caps.** At most 40 calls and 120 seconds per run. If it cannot run, the model calls the tools itself as before. Turn it off with `JEEVI_CODE_MODE=0`.
 
 ## [0.623.0] - 2026-11-22
 ### Added
-- **The number of images a bot sends per reply is adjustable.** The default stays at 4. A machine that needs more (showing a room or product samples) sets `JAVIS_BOT_MAX_IMAGES`, up to 20, then restarts Jeevi.
+- **The number of images a bot sends per reply is adjustable.** The default stays at 4. A machine that needs more (showing a room or product samples) sets `JEEVI_BOT_MAX_IMAGES`, up to 20, then restarts Jeevi.
 ### Improved
 - **The bot can step aside when staff answer from the Zalo OA app or the Page inbox.** It still does not by default. With a number in the bot's "Step aside after you type" box, after a staff member answers a customer there the bot stays out of that chat for that many minutes and then answers again by itself. The channel's welcome message and automatic reply do not count as staff.
 ### Fixed
@@ -579,7 +579,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 
 ## [0.602.1] - 2026-11-19
 ### Fixed
-- **Calling `javis_team` no longer says "does not exist" when the hub runs in lazy mode.** With many tools the hub hides most behind its search tool, but assistants call them by name and got an error. A call by name now reaches the right tool, through the same permission layer. The quick reminder cancel works again in lazy mode too.
+- **Calling `jeevi_team` no longer says "does not exist" when the hub runs in lazy mode.** With many tools the hub hides most behind its search tool, but assistants call them by name and got an error. A call by name now reaches the right tool, through the same permission layer. The quick reminder cancel works again in lazy mode too.
 
 ## [0.602.0] - 2026-11-19
 ### Improved
@@ -1013,7 +1013,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.557.1] - 2026-11-13
 ### Fixed
 - **Jeevi no longer vanishes (404) after an update.** On a VPS with a slow disk, Watchtower ran out of time while deleting the old container and gave up without creating the new one, so Jeevi was gone from Docker until a Redeploy.
-- New `javis-guard` container: when Jeevi has been gone or stopped halfway for 2 minutes, it creates it again (on the new version) or starts it again. A Jeevi you stop yourself is left alone.
+- New `jeevi-guard` container: when Jeevi has been gone or stopped halfway for 2 minutes, it creates it again (on the new version) or starts it again. A Jeevi you stop yourself is left alone.
 - An update from the button now gets 30 minutes instead of 10. Redeploy once to get the new compose file.
 
 ## [0.557.0] - 2026-11-13
@@ -1169,7 +1169,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 - **To make a job wait for an earlier result, say so in the request.** A job with words such as "after ... is done", "one after another" or "in sequence" waits for every job before it, and no later job starts ahead of it.
 ### Improved
 - **The job strip on top of the chat shows every running job**, not only one.
-- To go back to one job at a time, set the environment variable `JAVIS_TEAM_JOBS=1`.
+- To go back to one job at a time, set the environment variable `JEEVI_TEAM_JOBS=1`.
 
 ## [0.549.1] - 2026-11-12
 ### Fixed
@@ -1196,7 +1196,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 
 ## [0.547.3] - 2026-11-12
 ### Fixed
-- **A root install on Linux no longer breaks Claude with "exit code 1".** A fresh install creates a regular account `javis` and runs Jeevi under it, because Claude Code refuses Full access under root.
+- **A root install on Linux no longer breaks Claude with "exit code 1".** A fresh install creates a regular account `jeevi` and runs Jeevi under it, because Claude Code refuses Full access under root.
 - **A clone inside `/root` is moved to `/opt`**, since no other account can enter `/root`. The installer says where it went.
 - **A machine installed earlier keeps the account it has.** `./update.sh` run as root works as before.
 
@@ -1352,8 +1352,8 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.533.0] - 2026-11-11
 ### Added
 - **Large tool results no longer lose their middle.** Jeevi stores the full copy, hands the model a compact view with a reference, and the model reads back exactly what it needs. Reports stop missing orders and cost fewer tokens on every brain.
-- **Computed by code, not by eye.** The `javis_query` tool pages through a source by itself, then sums, counts and ranks with read-only SQL. A large or a small model gets the same number.
-- **A scout on the background model.** A read across several sources can go to the background model (`javis_scout`); only its findings return to the chat. A scout reads, it never sends or creates.
+- **Computed by code, not by eye.** The `jeevi_query` tool pages through a source by itself, then sums, counts and ranks with read-only SQL. A large or a small model gets the same number.
+- **A scout on the background model.** A read across several sources can go to the background model (`jeevi_scout`); only its findings return to the chat. A scout reads, it never sends or creates.
 - **Recurring jobs remember how to get their numbers.** After the same run on two different days, Jeevi fetches the data itself next time. When the dates are not certain, the job runs as before.
 ### Improved
 - **Tool search answers are smaller**, and Suggestions on the Usage page says how much of the tool results stayed out of the conversation.
@@ -1574,7 +1574,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ### Security
 - **A leaked admin link stays out of Google.** Every Jeevi page now carries `noindex`, the login screen and share links included.
 - **AI bots cannot read Jeevi.** GPTBot, ClaudeBot, PerplexityBot, SEO tools and scanners such as Shodan and Censys get a 403 and see nothing. Jeevi also serves a `/robots.txt` that forbids them.
-- Real browsers, link previews in Zalo or Telegram, webhooks and Jeevi Gate work as before. To turn the blocking off, set `JAVIS_BLOCK_BOTS=0`.
+- Real browsers, link previews in Zalo or Telegram, webhooks and Jeevi Gate work as before. To turn the blocking off, set `JEEVI_BLOCK_BOTS=0`.
 
 ## [0.518.1] - 2026-11-09
 ### Security
@@ -1617,7 +1617,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ### Security
 - **New Security tab on the Account page.** See 2FA, the devices signed in (IP, browser, last activity) and the history of successful and failed sign-ins and every account change. Sign out one device or all others without changing the password.
 - **Instant alerts on account changes.** Username, password or 2FA changes and sign-ins from a new network reach the owner's bell and Telegram right away. If the settings file is edited outside Jeevi, every device is signed out and a red warning shows.
-- **The AI assistant can no longer touch secret files** (settings, encryption key, sessions) at any permission level. To remove 2FA when locked out, add `JAVIS_RESET_2FA=1` and redeploy.
+- **The AI assistant can no longer touch secret files** (settings, encryption key, sessions) at any permission level. To remove 2FA when locked out, add `JEEVI_RESET_2FA=1` and redeploy.
 - **Hostinger: port 7777 closes to the Internet once an HTTPS domain is set**, leaving only the encrypted way in.
 
 ## [0.514.0] - 2026-11-09
@@ -1653,7 +1653,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 
 ## [0.510.0] - 2026-11-08
 ### Added
-- **The seven API-key brains show the "Plan" card in the chat too.** OpenRouter, OpenAI, Anthropic API, Gemini, Groq, DeepSeek and Ollama get a `javis_plan` tool: for a job of three steps or more the model lists the steps and ticks each one off, like Claude Code, Codex and Grok Build. Ordinary questions do not use it.
+- **The seven API-key brains show the "Plan" card in the chat too.** OpenRouter, OpenAI, Anthropic API, Gemini, Groq, DeepSeek and Ollama get a `jeevi_plan` tool: for a job of three steps or more the model lists the steps and ticks each one off, like Claude Code, Codex and Grok Build. Ordinary questions do not use it.
 - It costs about 200 tokens a request for the tool description (cached by most providers), plus one short tool round each time the list is updated. Switch it off in the composer "+" menu, "Plan long jobs (API brains)". Only the owner's chat gets it, not customer bots or background jobs.
 
 ## [0.509.0] - 2026-11-08
@@ -1784,12 +1784,12 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.501.0] - 2026-11-08
 ### Improved
 - **Every model time cap is gone.** Grok no longer stops at minute 15, a single Claude Code or ChatGPT command is no longer cut at one hour, and background work and Teams run until done. The Stop button still ends anything at any moment.
-- To bring a cap back, set the matching environment variable (seconds), such as `JAVIS_GROK_TIMEOUT` or `JAVIS_BG_MAX_WALL_S`. Old Grok builds that cannot auto-approve tools keep a 15-minute net so they never hang forever.
+- To bring a cap back, set the matching environment variable (seconds), such as `JEEVI_GROK_TIMEOUT` or `JEEVI_BG_MAX_WALL_S`. Old Grok builds that cannot auto-approve tools keep a 15-minute net so they never hang forever.
 
 ## [0.500.5] - 2026-11-08
 ### Fixed
 - **Antigravity CLI no longer stops at minute 15.** Heavy, many-step work now runs until done, like Claude Code and Codex. The Stop button still ends a turn at any moment.
-- To set a cap again, use the `JAVIS_AGY_TIMEOUT` environment variable (seconds). The read-only mode keeps a 15-minute net because it does not auto-approve tools.
+- To set a cap again, use the `JEEVI_AGY_TIMEOUT` environment variable (seconds). The read-only mode keeps a 15-minute net because it does not auto-approve tools.
 
 ## [0.500.4] - 2026-11-07
 ### Fixed
@@ -1803,7 +1803,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 
 ## [0.500.2] - 2026-11-07
 ### Fixed
-- **A merged PR no longer sticks on "waiting for CI".** When a PR was merged while Jeevi had lost its GitHub connection, the chat kept the working-branch icon forever. It now shows as merged, and `javis_github` no longer reports "waiting for CI" for a merged PR.
+- **A merged PR no longer sticks on "waiting for CI".** When a PR was merged while Jeevi had lost its GitHub connection, the chat kept the working-branch icon forever. It now shows as merged, and `jeevi_github` no longer reports "waiting for CI" for a merged PR.
 
 ## [0.500.1] - 2026-11-07
 ### Fixed
@@ -1820,7 +1820,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 
 ## [0.498.0] - 2026-11-07
 ### Improved
-- **Partner voice calls keep longer instructions.** The partner file text sent into a call grows from 4,000 to 12,000 characters and memory from 2,000 to 6,000, adjustable with `JAVIS_VOICE_AGENT_BODY_CHARS` and `JAVIS_VOICE_AGENT_MEMORY_CHARS`. Rules placed between `<!-- JAVIS_VOICE_RULES_START -->` and `<!-- JAVIS_VOICE_RULES_END -->` in the partner file always move to the top and are never cut.
+- **Partner voice calls keep longer instructions.** The partner file text sent into a call grows from 4,000 to 12,000 characters and memory from 2,000 to 6,000, adjustable with `JEEVI_VOICE_AGENT_BODY_CHARS` and `JEEVI_VOICE_AGENT_MEMORY_CHARS`. Rules placed between `<!-- JEEVI_VOICE_RULES_START -->` and `<!-- JEEVI_VOICE_RULES_END -->` in the partner file always move to the top and are never cut.
 - **Partners do not make up figures on a call.** Every partner call carries a rule that is never cut: changing facts come from tools, and a task is reported done only when a tool returned success.
 
 ## [0.497.0] - 2026-11-07
@@ -1910,7 +1910,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 
 ## [0.488.0] - 2026-11-06
 ### Added
-- **Change a share link's address.** The pencil edits both the name and the part after `/s/`, like `/s/vibecode-javis`. The random-code link you already sent keeps working.
+- **Change a share link's address.** The pencil edits both the name and the part after `/s/`, like `/s/vibecode-jeevi`. The random-code link you already sent keeps working.
 - **View counts per link.** Each row shows views, people, the last 7 days, the last view and a 14-day chart. Link-preview bots and your own opens while signed in are not counted.
 ### Improved
 - **A tidier Share links page.** Actions are icons like the Tasks page, with filters (Files, Conversations, Never viewed) and sorting (Newest, Most viewed, Recently viewed), and revoking asks first.
@@ -2042,7 +2042,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.481.6] - 2026-11-05
 ### Security
 - **A pack that says it replaces another no longer switches itself on.** Only the official store's release keeps the old pack's on state. The install screen names the pack it removes and hands plugin data to.
-- **A page on another localhost port can no longer send commands to Jeevi.** A dev server or another app on the same machine cannot open the terminal or call the API. The CORS opening for every localhost port now needs `JAVIS_DEV_CORS=1`.
+- **A page on another localhost port can no longer send commands to Jeevi.** A dev server or another app on the same machine cannot open the terminal or call the API. The CORS opening for every localhost port now needs `JEEVI_DEV_CORS=1`.
 - **A shared note's link no longer serves images from the brain's inbox/, memory/ or hidden folders.**
 - **Custom MCP tools named forward, share, trash, transfer and the like count as writes**, so they do not run at Read only.
 - **Running the Docker workflow by hand only publishes an image from main.**
@@ -2101,9 +2101,9 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ### Added
 - **Full-access background work on an API key gets a real terminal.** Tasks, reminders and workflows at Full access can now run commands in the brain (ffmpeg, python, video-building scripts...) and still search and read the web, the same as on Claude Code. Long commands run in the background and Jeevi reports back to the chat that asked, or to Jeevi Core, when they finish. Auto, Suggest and isolated loops still get no shell.
 ### Improved
-- The ceiling for your own work is now 500 rounds (was 150 in chats, 30 in background work); set `JAVIS_MAX_TOOL_ROUNDS_CODING=0` for no limit. Bots talking to customers stay at 30.
+- The ceiling for your own work is now 500 rounds (was 150 in chats, 30 in background work); set `JEEVI_MAX_TOOL_ROUNDS_CODING=0` for no limit. Bots talking to customers stay at 30.
 - A smarter brake against stuck models: waiting on a running job (polling a video render) is no longer cut on the 5th call while the result keeps changing, and a model cycling A-B-A-B without progress is stopped early.
-- Long turns no longer overflow the model's context: older tool results are trimmed past a budget while the newest stay whole. Tune with `JAVIS_TOOL_LOOP_BUDGET_CHARS`.
+- Long turns no longer overflow the model's context: older tool results are trimmed past a budget while the newest stay whole. Tune with `JEEVI_TOOL_LOOP_BUDGET_CHARS`.
 
 ## [0.477.0] - 2026-11-05
 ### Added
@@ -2154,7 +2154,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 - **Codex no longer double counts tokens.** Codex sometimes repeats its usage report for the same request, and Jeevi added every repeat, inflating the turn's tokens. Only the real increase counts now. Idea and first version by kubintran (#999).
 - **Codex thread rotation sees the real thread size.** Jeevi used the whole turn total, so a turn with many tool rounds looked like a huge thread. It now uses the input of the last request as Codex measured it, falling back to the old number when there is no measurement. Rotation stays on as before.
 ### Improved
-- **Large JSON results from `javis_run_tool` can be fetched in parts.** The model names the pointer, fields and page it needs, saving context. The tool still runs exactly once through the gateway; on any error or unknown shape the original result is returned.
+- **Large JSON results from `jeevi_run_tool` can be fetched in parts.** The model names the pointer, fields and page it needs, saving context. The tool still runs exactly once through the gateway; on any error or unknown shape the original result is returned.
 
 ## [0.471.0] - 2026-11-05
 ### Added
@@ -2181,18 +2181,18 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 
 ## [0.468.2] - 2026-11-05
 ### Fixed
-- **Reinstalling a Store agent brings it back on the Partners page.** Renaming or editing a pack's agent, uninstalling and installing again used to skip it silently. Your copy is kept and the pack's copy is added under a new name (for example `javis-vu-2`), named on screen.
+- **Reinstalling a Store agent brings it back on the Partners page.** Renaming or editing a pack's agent, uninstalling and installing again used to skip it silently. Your copy is kept and the pack's copy is added under a new name (for example `jeevi-vu-2`), named on screen.
 - **Deleting a pack's agents, workflows or skills in the app makes the Store stop saying "Installed".** The card offers Install again.
 - **Uninstalling a pack cleans up its skills fully,** including a turned-off skill and the copy Claude Code loads, so a removed skill no longer loads in the background.
 - **A brain still on the old `Jeevi/agents` folder** no longer loses its agents when a Store agent is installed.
 
 ## [0.468.1] - 2026-11-05
 ### Fixed
-- **Scheduled jobs running on ChatGPT (Codex) can hand work to a Team.** A reminder or Kanban job whose background brain was Codex called `javis_team` without the turn identity, so it was refused with "the turn has no identity" and the team never started. The background turn now carries the turn key to the hub, as a chat turn does, so the team picks up the job on time.
+- **Scheduled jobs running on ChatGPT (Codex) can hand work to a Team.** A reminder or Kanban job whose background brain was Codex called `jeevi_team` without the turn identity, so it was refused with "the turn has no identity" and the team never started. The background turn now carries the turn key to the hub, as a chat turn does, so the team picks up the job on time.
 
 ## [0.468.0] - 2026-11-05
 ### Added
-- **A long chat turn rings the bell and your phone when it ends.** A turn of 3 minutes or more, or one Jeevi opens itself after background work, leaves its answer in the inbox and sends a push notification. A device showing Jeevi right now shows no notification. Change the mark with `JAVIS_LONG_TURN_NOTIFY_S` (0 turns it off).
+- **A long chat turn rings the bell and your phone when it ends.** A turn of 3 minutes or more, or one Jeevi opens itself after background work, leaves its answer in the inbox and sends a push notification. A device showing Jeevi right now shows no notification. Change the mark with `JEEVI_LONG_TURN_NOTIFY_S` (0 turns it off).
 ### Fixed
 - **Long background commands (renders, video edits) now report back when done, on every engine.** Jeevi could not see Claude Code's, and could miss those of Codex, Grok and Antigravity, so nothing was reported and "carry on when it is done" was dropped. Now every background command of a chat is tracked: when one ends, the chat gets the news with the new files, and Jeevi carries on with what was promised.
 - **Background work running past 30 minutes is no longer killed.** When the wait runs out the chat is freed, while the work keeps running and is watched until it ends.
@@ -2264,7 +2264,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 
 ## [0.453.0] - 2026-11-04
 ### Fixed
-- **Claude Code waits for its background work to finish, then carries on.** A turn where Claude Code started a background command or a sub-agent used to end at its first answer, and the result never came back (reported from Windows Server in #898). Now the turn stays open until the work is done, and Claude Code reads the result and answers on in the same chat. It waits up to 30 minutes; change it with `JAVIS_CLAUDE_BG_WAIT`.
+- **Claude Code waits for its background work to finish, then carries on.** A turn where Claude Code started a background command or a sub-agent used to end at its first answer, and the result never came back (reported from Windows Server in #898). Now the turn stays open until the work is done, and Claude Code reads the result and answers on in the same chat. It waits up to 30 minutes; change it with `JEEVI_CLAUDE_BG_WAIT`.
 - **Antigravity no longer wrongly says it "could not read the context file".** Newer `agy` did read the whole file, but Jeevi did not recognise how it reports that. Antigravity also sends the prompt over stdin again instead of the file detour. Thanks to @nxbgda1-ship-it (#983).
 
 ## [0.452.0] - 2026-11-04
@@ -2632,7 +2632,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.416.0] - 2026-10-30
 ### Improved
 - **Jeevi opens faster: first visit from 6.3 to 5.1 seconds, later visits from 1.55 to 1.37 seconds.** Measured on a simulated phone over 4G. 35% less to download when the app opens (1.7 MB down to 1.1 MB):
-  - **The server minifies the interface before sending it.** Comments and extra whitespace are dropped: JS is 44% lighter, CSS 49%. The source stays as it is, line numbers included, so error reports still point at the right line. Set `JAVIS_MINIFY=0` to turn it off.
+  - **The server minifies the interface before sending it.** Comments and extra whitespace are dropped: JS is 44% lighter, CSS 49%. The source stays as it is, line numbers included, so error reports still point at the right line. Set `JEEVI_MINIFY=0` to turn it off.
   - **Fonts ship with Jeevi.** The page no longer calls Google Fonts when it opens, so text appears sooner, and still looks right when the machine running Jeevi cannot reach Google.
   - **Fewer duplicate requests when the app opens.** Settings were asked for 9 times in a row; now 3.
 - **The Health page has a new Recent interface errors section.** Errors that happen in the browser of anyone using Jeevi (computer or phone) are sent here automatically, grouped, with the version and device type. If something odd happens, a screenshot of this section is enough for the developer to fix it. Only technical details, never chat content.
@@ -2717,7 +2717,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 - A **Filter** tab in the bell: each group picks Everything, Important and up, Urgent only or Off; see the kinds with their own rule; undo changes.
 - Every notice has two buttons, **Needed** and **Not needed**. To rate it with an emoji, press **Open in Jeevi Core** and put the emoji on it in the chat like on any answer. Jeevi Core adjusts itself from it, says so in its chat, and never hides an urgent notice by itself.
 - A kind that rings a 3rd time within 6 hours is filtered as "repeated" after that.
-- Say it in the Jeevi Core chat, for example "turn off Zalo sign-in notices", and Jeevi Core changes it with the new `javis_notify` tool.
+- Say it in the Jeevi Core chat, for example "turn off Zalo sign-in notices", and Jeevi Core changes it with the new `jeevi_notify` tool.
 
 ## [0.402.0] - 2026-10-29
 ### Fixed
@@ -2859,7 +2859,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ### Improved
 - **Jeevi now sets up a browser right after install.** If the machine has no Chrome or Edge, Jeevi downloads a compact Chromium (about 100 MB) in the background on first start, so nobody has to find the button on the Tools page. Jeevi stays usable while it downloads.
 - Machines that already have Chrome or Edge use it as is and download nothing. If you pressed Remove on the browser, Jeevi respects that and does not download it again.
-- To turn the automatic download off, set the environment variable `JAVIS_SKIP_BROWSER=1`.
+- To turn the automatic download off, set the environment variable `JEEVI_SKIP_BROWSER=1`.
 
 ## [0.372.0] - 2026-10-28
 ### Added
@@ -3224,12 +3224,12 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.306.0] - 2026-10-24
 ### Improved
 - **Installing on Windows or macOS starts Jeevi with the computer and opens the browser.** The dashboard opens right after install, and from then on every login starts Jeevi and opens the dashboard with nothing to click. Before, you had to turn this on yourself, and then Jeevi only ran hidden, so after starting the computer you could not see it.
-- To stop it: on Windows press Turn off on the Start with the computer card (Settings) or run `javis-autostart.bat uninstall`; on macOS run `./bin/javis-autostart.sh uninstall`.
+- To stop it: on Windows press Turn off on the Start with the computer card (Settings) or run `jeevi-autostart.bat uninstall`; on macOS run `./bin/jeevi-autostart.sh uninstall`.
 - A Windows machine that already had auto-start keeps running hidden as before; turn it off and on once to add the dashboard opening.
 
 ## [0.304.0] - 2026-10-24
 ### Fixed
-- **A Hostinger Ubuntu 26 VPS gets HTTPS with nothing to fill in, and this time it works.** 0.302.0 picked the wrong name: the HTTPS gateway got a certificate for one link while Jeevi checked another, so Open stayed on the IP page with no HTTPS. The gateway now serves both `javis.srvXXXX.hstgr.cloud` and `srvXXXX.hstgr.cloud`, and Jeevi tries exactly those two.
+- **A Hostinger Ubuntu 26 VPS gets HTTPS with nothing to fill in, and this time it works.** 0.302.0 picked the wrong name: the HTTPS gateway got a certificate for one link while Jeevi checked another, so Open stayed on the IP page with no HTTPS. The gateway now serves both `jeevi.srvXXXX.hstgr.cloud` and `srvXXXX.hstgr.cloud`, and Jeevi tries exactly those two.
 ### Improved
 - **Settings, Domain says which step the VPS link is at:** working (with an open button), waiting for its certificate (with a reminder to open ports 80, 443 in hPanel's Firewall), or a VPS with Traefik that needs the `DOMAIN_NAME` line.
 
@@ -3237,9 +3237,9 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ### Fixed
 - **Hostinger's Open button no longer opens localhost.** Without `DOMAIN_NAME`, Open now goes to `http://<vps-ip>:7777` and reaches Jeevi right away. The install file used to put `localhost` where the domain goes, so Open pointed at the clicker's own computer.
 ### Added
-- **Open goes straight to the VPS link after install.** On a Hostinger VPS without Traefik (Ubuntu 26) there is nothing to fill in: Jeevi reads the VPS name, issues HTTPS for `https://javis.srvXXXX.hstgr.cloud`, and a page opened by IP moves there once it works. Like an app installed from Hostinger's Catalog.
+- **Open goes straight to the VPS link after install.** On a Hostinger VPS without Traefik (Ubuntu 26) there is nothing to fill in: Jeevi reads the VPS name, issues HTTPS for `https://jeevi.srvXXXX.hstgr.cloud`, and a page opened by IP moves there once it works. Like an app installed from Hostinger's Catalog.
 ### Improved
-- **Jeevi suggests the Hostinger VPS's free link.** In Settings, Domain, Jeevi finds the VPS's `srvXXXX.hstgr.cloud` name and shows the line `DOMAIN_NAME=javis.srvXXXX.hstgr.cloud` with a copy button. Paste it into Environment and Redeploy for HTTPS and the right Open link.
+- **Jeevi suggests the Hostinger VPS's free link.** In Settings, Domain, Jeevi finds the VPS's `srvXXXX.hstgr.cloud` name and shows the line `DOMAIN_NAME=jeevi.srvXXXX.hstgr.cloud` with a copy button. Paste it into Environment and Redeploy for HTTPS and the right Open link.
 
 ## [0.300.0] - 2026-10-24
 ### Fixed
@@ -3355,7 +3355,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ### Fixed
 - **Background work is more reliable.** Reminders fire on time in every brain, including brains with no loop. A network error right after the machine wakes is now recorded as failed and retried a few minutes later, without re-sending what already went out. When the Claude plan names its reset time (for example 1:50am), Jeevi schedules the retry itself. Loops remember earlier rounds, so they stop repeating a suggestion.
 - **Teams work more smoothly.** Members read Excel files (every sheet, formula results, error cells) and see which PDF pages are scans, without per-command approvals. An approved command is no longer blocked again, and approval cards show the real command. Steps that must run in order do, and a job with steps left is never marked Done.
-- **Projects and partners work on every channel.** A project's rules apply on the CLI and Telegram too, and stay when the conversation moves to a new session; the `javis` command gains `--project`. On Telegram, start with `@partner-name` to have that partner answer, `/agent name` hands it the whole chat, `/agent off` brings Jeevi back.
+- **Projects and partners work on every channel.** A project's rules apply on the CLI and Telegram too, and stay when the conversation moves to a new session; the `jeevi` command gains `--project`. On Telegram, start with `@partner-name` to have that partner answer, `/agent name` hands it the whole chat, `/agent off` brings Jeevi back.
 - **The GitHub backup no longer pushes partners' raw run logs or the text extracted from attachments.** Copies pushed before stay in the repo; once every machine is updated you can delete them on GitHub.
 
 ### Improved
@@ -3410,13 +3410,13 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 - **npx connections no longer break for good after their first install.** If Jeevi had just restarted while a connection was still downloading its package, it could be cut off halfway, leaving a half-installed copy that failed with MODULE_NOT_FOUND forever. Jeevi now waits for the first install, cleans up half-installed copies, and after each restart tries every connection and tells you once if any is not working. A connection still on its first install shows a yellow dot instead of red. (Contributed by @dev23072005.)
 - **An agent with an old Codex model no longer changes your main model.** This covers assistant chats on the dashboard and turns sent through `/chat`: Jeevi fixes only that assistant's or that session's model.
 ### Added
-- **Call one specific assistant through `/chat` and the `javis` command.** An outside app that adds `agent=<slug>` (or `javis --agent <slug>`) runs that turn with the assistant's prompt, skills and model, in its own session, and lessons are recorded as in a dashboard chat. An assistant or brain that does not exist gets a clear error instead of silently running the main model. (Contributed by @QuanAMG.)
+- **Call one specific assistant through `/chat` and the `jeevi` command.** An outside app that adds `agent=<slug>` (or `jeevi --agent <slug>`) runs that turn with the assistant's prompt, skills and model, in its own session, and lessons are recorded as in a dashboard chat. An assistant or brain that does not exist gets a clear error instead of silently running the main model. (Contributed by @QuanAMG.)
 
 ## [0.269.0] - 2026-10-21
 ### Fixed
 - **The Update button works again when Jeevi runs as a normal user.** Since 0.267.0, a machine running the Jeevi service as a non-root user failed every update with "Interactive authentication required" and stayed on the old version. Jeevi now falls back to a way that needs no admin rights: it downloads the new version while the old one keeps running, then restarts once. Machines running as root are unchanged.
 - If the machine still does not allow it, the screen shows the manual update command and one command (`sudo loginctl enable-linger`) that makes the button work from then on.
-- **Note:** a machine stuck on 0.267.0 or 0.268.0 needs one manual update to reach this version (`git pull --ff-only`, install the libraries, `sudo systemctl restart javis`). After that the Update button works as usual.
+- **Note:** a machine stuck on 0.267.0 or 0.268.0 needs one manual update to reach this version (`git pull --ff-only`, install the libraries, `sudo systemctl restart jeevi`). After that the Update button works as usual.
 
 ## [0.268.0] - 2026-10-21
 ### Fixed
@@ -3426,8 +3426,8 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ### Fixed
 - **Teams stop asking for approval when an assistant only reads files.** In an "approval needed" team, a chained read (`cd ...; cat ...; sed -n ...; grep "a\|b" ...`) used to count as an outside action and stop the task for the owner. Each command in the chain is now checked on its own: reading, searching and printing run straight away. Writing files, deleting, running code and sending still wait for approval.
 - **The Team chat no longer freezes on a phone.** A send that hit a flaky network could leave the send button locked until the app was closed. Every server call now gives up after 30 seconds and says the network dropped; press send again (it is never sent twice). Coming back to the app after more than 20 seconds reloads the open team.
-- **A VPS running a self-built image is now told how to update.** Jeevi moved from a computer to a VPS by packing the image on the spot (a name like `javis-cwi:pc-0.206.0`) stayed on its old version whatever you pressed, because that image lives in no registry. The Updates page now says so and shows how to switch to the official image once, keeping all your data. The steps are in DEPLOY.md, Updating section.
-- **Updating on a VPS no longer leaves Jeevi switched off.** On a systemd install, stopping the service also killed the updater halfway, so Jeevi stopped and never came back. The updater now moves out on its own first, then stops the service. Installs with their own name (`JAVIS_NAME`, for example `javis-shop`) now stop and start their own service.
+- **A VPS running a self-built image is now told how to update.** Jeevi moved from a computer to a VPS by packing the image on the spot (a name like `jeevi-cwi:pc-0.206.0`) stayed on its old version whatever you pressed, because that image lives in no registry. The Updates page now says so and shows how to switch to the official image once, keeping all your data. The steps are in DEPLOY.md, Updating section.
+- **Updating on a VPS no longer leaves Jeevi switched off.** On a systemd install, stopping the service also killed the updater halfway, so Jeevi stopped and never came back. The updater now moves out on its own first, then stops the service. Installs with their own name (`JEEVI_NAME`, for example `jeevi-shop`) now stop and start their own service.
 
 ## [0.266.0] - 2026-10-21
 ### Improved
@@ -3465,13 +3465,13 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 - **Calling several members in one message makes them answer at the same time.** Before, @ three members meant waiting for each one in turn. For the old way (each reads the previous answer first), open the team's Advanced section and set "When one message calls several members" to One by one.
 - **When the leader splits a job, the members work at the same time**, up to 3 per round, and the summary comes once all are done. If one member hits an error, the others' parts are kept and Retry only redoes the failed part.
 - **Teams of the same brain can run tool work side by side.** Before, every step that read or wrote files in one brain waited in line. Now each working folder allows up to 3 turns at once, and a team with its own pinned folder never waits for another team. When they run together, each member is told to edit only the files of its own part.
-- For the stricter old behavior set `JAVIS_TEAM_TOOL_SLOTS=1` (one writer at a time) or `JAVIS_TEAM_JOB_PARALLEL=1` (one step at a time).
+- For the stricter old behavior set `JEEVI_TEAM_TOOL_SLOTS=1` (one writer at a time) or `JEEVI_TEAM_JOB_PARALLEL=1` (one step at a time).
 
 ## [0.257.0] - 2026-10-20
 ### Improved
 - **One assistant can work in several teams at once.** Before, an assistant answering in one team made every other team wait, sometimes up to 30 minutes. Each team now has its own thread, so they run in parallel. Within one team an assistant still answers one message at a time.
-- **More teams run jobs at once:** up from 2 to 4. Change it with `JAVIS_TEAM_PARALLEL`.
-- **A brake so a subscription plan is not overloaded.** Each plan engine (Claude Code, ChatGPT, Grok, Antigravity) runs at most 3 team turns at once, each API-key engine at most 6. Turns over the limit wait, nothing is lost. Change with `JAVIS_TEAM_CLI_SLOTS` and `JAVIS_TEAM_API_SLOTS`.
+- **More teams run jobs at once:** up from 2 to 4. Change it with `JEEVI_TEAM_PARALLEL`.
+- **A brake so a subscription plan is not overloaded.** Each plan engine (Claude Code, ChatGPT, Grok, Antigravity) runs at most 3 team turns at once, each API-key engine at most 6. Turns over the limit wait, nothing is lost. Change with `JEEVI_TEAM_CLI_SLOTS` and `JEEVI_TEAM_API_SLOTS`.
 - One limit remains: **Work steps with tools** of teams in the same brain still take turns, so two teams never overwrite the same file. A later release loosens this.
 
 ## [0.256.0] - 2026-10-20
@@ -3485,7 +3485,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 - A new file at the project root no longer lands in the brain folder by mistake.
 - At the Plan level the command tool no longer appears.
 ### Improved
-- A turn on the Code page can use up to 150 tool rounds (normal chat stays at 30), and with 10 left Jeevi is told to sum up and wrap up. Change it with `JAVIS_MAX_TOOL_ROUNDS_CODING`.
+- A turn on the Code page can use up to 150 tool rounds (normal chat stays at 30), and with 10 left Jeevi is told to sum up and wrap up. Change it with `JEEVI_MAX_TOOL_ROUNDS_CODING`.
 ### Security
 - The terminal does not carry Jeevi's API keys and its output has secrets masked. Commands that could wreck the whole machine (deleting system folders, formatting disks, `sudo`, shutting down) are blocked at every level. Every command is logged.
 
@@ -3542,7 +3542,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.242.0] - 2026-10-20
 ### Added
 - **Open Jeevi from your phone or another computer, even when it runs on a Windows or macOS machine at home.** Settings has a new **Remote access** section: turn it on and you get an HTTPS link, with no VPS, no router port and no terminal. The microphone and voice work over that link.
-- **Two ways:** a **Quick link** that works right away with no account (it changes on every restart), or **Your own domain** for a fixed link like `https://javis.yourdomain.com`: paste the command Cloudflare shows into the token box and Jeevi picks out the token and reads back your hostname.
+- **Two ways:** a **Quick link** that works right away with no account (it changes on every restart), or **Your own domain** for a fixed link like `https://jeevi.yourdomain.com`: paste the command Cloudflare shows into the token box and Jeevi picks out the token and reads back your hostname.
 - Jeevi downloads Cloudflare's `cloudflared` tool in the right build for the machine, turns it back on after a restart or an update, and reconnects when the network drops.
 - **Safety:** it only turns on once a login password is set; while it is on, login cannot be switched off; if the password is removed, the tunnel stops. The token is stored encrypted and never sent to the browser.
 
@@ -3561,7 +3561,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 - **Understands Vietnamese prices:** amounts with the dong sign, VND, millions written the Vietnamese way (full word or the short tr form), thousands written as 250k, as well as $ and USD.
 - **No crying wolf:** times like "3 minutes ago" that tick on their own do not count as a change; a line where only the price moved is reported as "Updated"; a restart never repeats an alert. A failing page is retried less and less often, and after 5 failures in a row the watch pauses and tells you exactly once.
 - **Create one by asking in chat** ("watch this page, tell me below $20") or on the **Page watch** tab of the Recurring work page. Optional AI summary on each change, off by default.
-- Technical details: new module `web_watch.py` (store `web_watch.sqlite3`), tool `javis_watch` (plugin `javis-watch`, owner only, customer bots never see it), `/watch` routes, tab `dashboard/web-watch.js`. Addresses pointing into a private network are blocked at every redirect hop. Docs: `docs/en/32-page-watch.md`. The idea comes from OpenMuse's `page-diff.ts` (CopilotKit, MIT license), rewritten for Jeevi.
+- Technical details: new module `web_watch.py` (store `web_watch.sqlite3`), tool `jeevi_watch` (plugin `jeevi-watch`, owner only, customer bots never see it), `/watch` routes, tab `dashboard/web-watch.js`. Addresses pointing into a private network are blocked at every redirect hop. Docs: `docs/en/32-page-watch.md`. The idea comes from OpenMuse's `page-diff.ts` (CopilotKit, MIT license), rewritten for Jeevi.
 
 ## [0.238.0] - 2026-10-20
 ### Fixed
@@ -3580,7 +3580,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 - **Background jobs can ask you a question and carry on with your answer.** A job missing some information used to stop under "Needs you" with nowhere to reply. Pressing Retry ran it again from scratch, and it asked the very same thing. Now the question comes back to the chat where you gave the job, Telegram and Zalo included. Answer it and the job carries on.
 - **Answer wherever is handy:** the box right under the question in the web chat, the answer box on the job's card on the Work page, or just reply in chat and Jeevi routes it to the right job.
 - **The job continues instead of starting over.** The next run reads the question, your answer and what the previous run already finished. Asking and answering does not use up an attempt. A job that asks several times keeps every round in its detail drawer.
-- Technical details: questions live in the job's `metadata.qa`, a new `POST /kanban/task/answer` endpoint, and `javis_task` gains `op=answer` so every engine can pass an answer on. The idea comes from OpenMuse's `ask_user` mechanism (CopilotKit, MIT license), rewritten for Jeevi.
+- Technical details: questions live in the job's `metadata.qa`, a new `POST /kanban/task/answer` endpoint, and `jeevi_task` gains `op=answer` so every engine can pass an answer on. The idea comes from OpenMuse's `ask_user` mechanism (CopilotKit, MIT license), rewritten for Jeevi.
 
 ## [0.234.0] - 2026-10-19
 ### Fixed
@@ -3689,7 +3689,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.213.0] - 2026-10-18
 ### Added
 - **Send more while Jeevi is working, now on Telegram, Discord, Slack, Lark, Messenger and Zalo too:** before, the bot replied "still on the previous message, send /stop" and dropped yours. Now it is kept, nothing is lost.
-- **Codex (ChatGPT plan) now reads the new message within the turn**, on the web and the channels, like Enter in the Codex app: no more waiting for the current work to finish. Turn it off with `JAVIS_CODEX_STEER=0` if needed.
+- **Codex (ChatGPT plan) now reads the new message within the turn**, on the web and the channels, like Enter in the Codex app: no more waiting for the current work to finish. Turn it off with `JEEVI_CODEX_STEER=0` if needed.
 - **On chat channels the bot answers with one short line** saying whether Jeevi reads it at the next step (Claude Code, Codex, the API-key brains) or right after the current answer (Grok, Antigravity).
 - **/stop ends the current work and drops what was waiting.** Customer-facing bots keep their old way: silent, follow-up messages merged into the next turn.
 
@@ -4099,7 +4099,7 @@ Format: each release is a `## [x.y.z] - date` block, with changes grouped under 
 ## [0.162.0] - 2026-10-15
 ### Security
 - **Plugins you install load by default**, no environment variable needed. Each plugin still runs only after you click **Enable** on its card (a plugin Jeevi creates from chat always starts disabled), and the permission level still decides every tool call.
-- To block user plugins on a machine altogether (a shared server, bots for strangers), set `JAVIS_ENABLE_USER_PLUGINS=false` and restart.
+- To block user plugins on a machine altogether (a shared server, bots for strangers), set `JEEVI_ENABLE_USER_PLUGINS=false` and restart.
 
 ## [0.160.0] - 2026-10-15
 ### Improved
@@ -4331,8 +4331,8 @@ Thanks to @sirschnake for contributing the German translation (#618).
 
 ## [0.96.1] - 2026-10-11
 ### Fixed
-- **Updating no longer locks you out.** On servers that set the account from the environment (Docker, Hostinger) where `JAVIS_ADMIN_PASSWORD` carried a stray space, from 0.92.1 the first boot after an update took the environment password as changed and reset the account. The password you had changed in the dashboard was overwritten and the username became `admin`. Updating now leaves the account alone; only a real change of the environment value resets it.
-- **If your server was already reset:** sign in with `admin` (or your `JAVIS_ADMIN_USER` value, if you set one) and the password in `JAVIS_ADMIN_PASSWORD` on Hostinger, without the stray space. Then change the name and password back in Settings.
+- **Updating no longer locks you out.** On servers that set the account from the environment (Docker, Hostinger) where `JEEVI_ADMIN_PASSWORD` carried a stray space, from 0.92.1 the first boot after an update took the environment password as changed and reset the account. The password you had changed in the dashboard was overwritten and the username became `admin`. Updating now leaves the account alone; only a real change of the environment value resets it.
+- **If your server was already reset:** sign in with `admin` (or your `JEEVI_ADMIN_USER` value, if you set one) and the password in `JEEVI_ADMIN_PASSWORD` on Hostinger, without the stray space. Then change the name and password back in Settings.
 
 ## [0.96.0] - 2026-10-11
 ### Added
@@ -4372,7 +4372,7 @@ Thanks to the user who sent the bug report along with a patch tested on a Mac.
 ### Fixed
 - **Signing in no longer fails on capital letters or invisible spaces.** Usernames ignore case now, so "Phong" and "phong" both work. A stray space before or after the password, which phone keyboards often add, no longer reads as a wrong password.
 - **When the password is right but the browser does not keep the session, Jeevi says so**, with the usual causes, instead of silently returning to an empty sign-in form.
-- **On a server that sets the account from its environment, the wrong-password message points out that the username is `JAVIS_ADMIN_USER`** (default admin). Resetting the password through Hostinger also resets the username, which is easy to miss.
+- **On a server that sets the account from its environment, the wrong-password message points out that the username is `JEEVI_ADMIN_USER`** (default admin). Resetting the password through Hostinger also resets the username, which is easy to miss.
 ### Improved
 - **The first-run screen is readable on the light theme.** Brain names, card borders and the Claude sign-in command used to be nearly invisible on a light background. On a public server, the admin account section now says it is required right away instead of a red line at the bottom.
 
@@ -4496,7 +4496,7 @@ Thanks to the user who sent the bug report along with a patch tested on a Mac.
 ## [0.85.1] - 2026-10-07
 ### Improved
 - **The Docker edition installs Antigravity CLI and Grok Build by itself.** These two cards on the Models page used to say "CLI not installed" with a command to type, and a Hostinger install has nowhere to type it. Jeevi now installs them at startup, once, and keeps them across updates.
-- While installing, the card says "Jeevi is installing" instead of showing a command. If the install fails (no Internet on the server), the card says so and how to retry. Turn it off with `JAVIS_AUTO_INSTALL_CLIS=0`.
+- While installing, the card says "Jeevi is installing" instead of showing a command. If the install fails (no Internet on the server), the card says so and how to retry. Turn it off with `JEEVI_AUTO_INSTALL_CLIS=0`.
 
 ## [0.85.0] - 2026-10-07
 ### Added
@@ -4600,7 +4600,7 @@ Thanks to the user who sent the bug report along with a patch tested on a Mac.
 
 ## [0.77.1] - 2026-10-05
 ### Fixed
-- **Changing the admin password on Hostinger now works.** `JAVIS_ADMIN_PASSWORD` used to apply only when no admin existed, so changing it in the Environment box and redeploying still said "Wrong username or password". Now, when the env value differs from last time, Jeevi resets the account to it; 2FA stays on and old sessions are signed out.
+- **Changing the admin password on Hostinger now works.** `JEEVI_ADMIN_PASSWORD` used to apply only when no admin existed, so changing it in the Environment box and redeploying still said "Wrong username or password". Now, when the env value differs from last time, Jeevi resets the account to it; 2FA stays on and old sessions are signed out.
 - An unchanged env touches nothing, so a password you change in the dashboard is not overwritten on every restart. This is also the way to recover a forgotten password on a VPS, no SSH needed.
 ### Improved
 - **An eye button on the sign-in password field** so you can check what you typed.

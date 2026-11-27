@@ -1,4 +1,4 @@
-"""The host side of javis_scout: `main._scout_run` builds a READ-ONLY run on the background model.
+"""The host side of jeevi_scout: `main._scout_run` builds a READ-ONLY run on the background model.
 
     python tests/run.py scout_runner      (no network, no engine is spawned)
 
@@ -12,7 +12,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-scout-runner-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-scout-runner-")
 
 import main          # noqa: E402
 import mcp_hub       # noqa: E402
@@ -59,14 +59,14 @@ def _fake_swap(cli, mode=None, tag=None):
 main.claude_engine = lambda **kw: _CLI(**kw)
 main._apply_mcp = _fake_apply
 main._aux_swap = _fake_swap
-main._loop_mcp_allow = lambda: ["mcp__javis"]
+main._loop_mcp_allow = lambda: ["mcp__jeevi"]
 BRAIN = tempfile.mkdtemp(prefix="scout-runner-brain-")
 
 check("the host handed its runner to scout.py at import", scout._runner is main._scout_run and scout.available())
 out = asyncio.run(main._scout_run(BRAIN, "PROMPT", "scout-quick", 123))
 kw = _seen["engine_kw"]
 check("the report and the token count come back", out["text"] == "FINDINGS: 42" and out["usage"] == {"input": 1500, "output": 100}, out)
-check("only read tools and the hub are allowed", kw["allowed_tools"] == ["Read", "Glob", "Grep", "LS", "mcp__javis"], kw["allowed_tools"])
+check("only read tools and the hub are allowed", kw["allowed_tools"] == ["Read", "Glob", "Grep", "LS", "mcp__jeevi"], kw["allowed_tools"])
 check("no write or shell tool is in the allowlist",
       not {"Write", "Edit", "Bash", "WebFetch", "Task"} & set(kw["allowed_tools"]))
 check("the scout has its own short prompt, not the brain's", kw["system_prompt"] == scout.SYSTEM_PROMPT and len(kw["system_prompt"]) < 2500)
@@ -102,7 +102,7 @@ item = main._tool_result_insight()
 check("switched off with large results: a warning that says so", item and item["level"] == "warn" and "20" in item["detail"], item)
 mcp_hub.result_size_stats = _real_stats
 from fastapi.testclient import TestClient  # noqa: E402
-os.environ.setdefault("JAVIS_REQUIRE_LOGIN", "0")
+os.environ.setdefault("JEEVI_REQUIRE_LOGIN", "0")
 resp = TestClient(main.app).get("/connect/result-stats?days=3")
 check("the stats endpoint answers", resp.status_code in (200, 401, 403) and (resp.status_code != 200 or "saved_pct" in resp.json()),
       (resp.status_code, resp.text[:120]))

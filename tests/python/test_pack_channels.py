@@ -18,8 +18,8 @@ import os
 import tempfile
 from pathlib import Path
 
-STATE = tempfile.mkdtemp(prefix="javis-pack-channels-")
-os.environ["JAVIS_STATE_DIR"] = STATE
+STATE = tempfile.mkdtemp(prefix="jeevi-pack-channels-")
+os.environ["JEEVI_STATE_DIR"] = STATE
 
 import packs  # noqa: E402
 import channels  # noqa: E402

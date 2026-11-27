@@ -384,7 +384,7 @@ The **file body** (below the second `---`) is exactly the "Task description" you
 
 **The result says the Claude CLI is not installed.** The brain is not ready on the machine. See [Getting started & first-run setup](01-getting-started.md) and [Troubleshooting & FAQ](17-troubleshooting.md).
 
-**Running on ChatGPT reports `bwrap: Failed to make / slave: Permission denied`.** Codex (ChatGPT) wraps all of its file reads and writes in bubblewrap, and bubblewrap cannot start inside a Docker container, so the background job cannot read a single file. The Docker image since version 0.25.9 already disables that particular sandbox (`JAVIS_CODEX_SANDBOX=off`), so **updating to a newer build** is enough. If you build your own container, set that environment variable, or move background work to the Claude brain. Details in [.env configuration](16-env-configuration.md).
+**Running on ChatGPT reports `bwrap: Failed to make / slave: Permission denied`.** Codex (ChatGPT) wraps all of its file reads and writes in bubblewrap, and bubblewrap cannot start inside a Docker container, so the background job cannot read a single file. The Docker image since version 0.25.9 already disables that particular sandbox (`JEEVI_CODEX_SANDBOX=off`), so **updating to a newer build** is enough. If you build your own container, set that environment variable, or move background work to the Claude brain. Details in [.env configuration](16-env-configuration.md).
 
 **A loop complains that there is no business data.** It can only read real numbers once you connect a source. Go to [Connections & business data](09-connections-and-business-data.md) to connect a POS, ads account or sales channel. With no source, the iteration stops and says so in one line.
 

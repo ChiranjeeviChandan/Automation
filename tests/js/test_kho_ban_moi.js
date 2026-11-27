@@ -35,14 +35,14 @@ globalThis.Alpine = win.Alpine;
 new Function("window", "document", "fetch",
   fs.readFileSync(path.join(ROOT, "dashboard", "packs.js"), "utf8"))(
   win, doc, () => Promise.resolve({}));
-const P = win.JavisPacks || {};
+const P = win.JeeviPacks || {};
 
 check("packs.js phoi ra coBanMoi / nutThe / theKho",
   typeof P.coBanMoi === "function" && typeof P.nutThe === "function"
   && typeof P.theKho === "function");
 
 const goi = (o) => Object.assign(
-  { id: "javis.x", kind: "connector", name: { vi: "X" }, description: { vi: "mo ta" },
+  { id: "jeevi.x", kind: "connector", name: { vi: "X" }, description: { vi: "mo ta" },
     tier: "data", verified: true, nguon: "kho", author: { name: "Jeevi" } }, o);
 
 // ---- 1. Phep so: dung 4 tinh huong, khong phai 1 ----

@@ -22,9 +22,9 @@ import os
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="javis-pvp-")
-os.environ.setdefault("JAVIS_STATE_DIR", _STATE)
-_BRAINS = tempfile.mkdtemp(prefix="javis-pvp-brains-")
+_STATE = tempfile.mkdtemp(prefix="jeevi-pvp-")
+os.environ.setdefault("JEEVI_STATE_DIR", _STATE)
+_BRAINS = tempfile.mkdtemp(prefix="jeevi-pvp-brains-")
 os.environ["BRAINS_DIR"] = _BRAINS
 
 import main  # noqa: E402

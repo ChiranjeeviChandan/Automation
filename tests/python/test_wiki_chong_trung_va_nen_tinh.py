@@ -38,8 +38,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_TMP = tempfile.mkdtemp(prefix="javis-wikidup-")
-os.environ.setdefault("JAVIS_STATE_DIR", _TMP)
+_TMP = tempfile.mkdtemp(prefix="jeevi-wikidup-")
+os.environ.setdefault("JEEVI_STATE_DIR", _TMP)
 
 import learn  # noqa: E402
 

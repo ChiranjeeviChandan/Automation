@@ -33,16 +33,16 @@
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
   // Nút "i" (info-tip.js, 0.175.0): có thì lời giải thích ẩn sau nút cạnh tiêu đề; không có (test Node) thì vẽ thẳng ra.
-  function infoBtn() { var J = typeof window !== "undefined" && window.JavisInfo; return J ? J.btn(tw("info.more")) : ""; }
+  function infoBtn() { var J = typeof window !== "undefined" && window.JeeviInfo; return J ? J.btn(tw("info.more")) : ""; }
   function infoBody(html) {
-    var J = typeof window !== "undefined" && window.JavisInfo;
+    var J = typeof window !== "undefined" && window.JeeviInfo;
     return J ? J.body(html) : '<div class="info-body">' + html + "</div>";
   }
 
 
   function brain() {
     try {
-      if (typeof window !== "undefined" && window.JavisSessions && window.JavisSessions.brain) return window.JavisSessions.brain();
+      if (typeof window !== "undefined" && window.JeeviSessions && window.JeeviSessions.brain) return window.JeeviSessions.brain();
       return (window.currentBrainPath && window.currentBrainPath()) || "brain";
     } catch (e) { return "brain"; }
   }
@@ -185,7 +185,7 @@
   }
 
   /* 0.190.0 (owner, 16/10/2026): the A3 "Lessons" list (proposals, active lessons with Revoke, history) is no longer on
-     the assistant's column. People never used it; lessons are handled in chat with the javis_memory tool. Method
+     the assistant's column. People never used it; lessons are handled in chat with the jeevi_memory tool. Method
      lessons still surface as cards in the chat itself (chat-resonance.js). */
 
   /* Khối trên trang Cài đặt (T0): chỉ còn tóm tắt và đường sang trang Cộng sự, nơi bật, tắt từng trợ lý. Trợ lý mất
@@ -250,7 +250,7 @@
   /* Phiên đang mở của trang (đổi khi người dùng mở cuộc khác), rơi về phiên lúc gắn khối. */
   function currentSession() {
     try {
-      var cur = window.JavisSessions && window.JavisSessions.current && window.JavisSessions.current();
+      var cur = window.JeeviSessions && window.JeeviSessions.current && window.JeeviSessions.current();
       if (cur) return String(cur);
     } catch (e) {}
     return S.sessionId;
@@ -287,10 +287,10 @@
         var goals = (gr.j && gr.j.goals) || [];
         host.innerHTML = panelHtml(row, session, goals, (res.j && res.j.agents) || []);
         wire(host, row);
-        if (window.JavisResonance) {
+        if (window.JeeviResonance) {
           goals.forEach(function (g) {
             var el = host.querySelector('.rsa-card[data-goal="' + g.goal_id + '"]');
-            if (el) { el._goal = g; el.innerHTML = window.JavisResonance.viewHtml(g); }
+            if (el) { el._goal = g; el.innerHTML = window.JeeviResonance.viewHtml(g); }
           });
         }
       });
@@ -304,7 +304,7 @@
      lại TRẠNG THÁI THẬT, kể cả khi lỗi (409 agent cần xác nhận, rớt mạng). */
   function toggleAgent(slug, enabled) {
     function done(out) {
-      try { window.dispatchEvent(new CustomEvent("javis:resonance-agents-changed")); } catch (e) {}
+      try { window.dispatchEvent(new CustomEvent("jeevi:resonance-agents-changed")); } catch (e) {}
       return out;
     }
     return postJson("/resonance/agents/toggle?brain=" + q(brain()), { slug: slug, enabled: !!enabled })
@@ -318,7 +318,7 @@
      toggleAgent this always fires the reload event, so every place shows the REAL state afterwards. */
   function confirmPack(packId) {
     function done(out) {
-      try { window.dispatchEvent(new CustomEvent("javis:resonance-agents-changed")); } catch (e) {}
+      try { window.dispatchEvent(new CustomEvent("jeevi:resonance-agents-changed")); } catch (e) {}
       return out;
     }
     return postJson("/resonance/agents/confirm?brain=" + q(brain()), { pack: packId, same: true })
@@ -342,7 +342,7 @@
         // T0: phát sự kiện trong tab (dòng trợ lý ở cột trái đổi ngay, không chờ gói WS) rồi vẽ lại bảng này.
         postJson("/resonance/agents/confirm?brain=" + q(brain()), { agent_key: row.agent_key, same: same })
           .then(function () {
-            try { window.dispatchEvent(new CustomEvent("javis:resonance-agents-changed")); } catch (e) {}
+            try { window.dispatchEvent(new CustomEvent("jeevi:resonance-agents-changed")); } catch (e) {}
             refresh();
           }, function () { refresh(); });
       });
@@ -368,16 +368,16 @@
     host.addEventListener("click", function (ev) {
       // T0: bật, tắt từng trợ lý ở trang Cộng sự; trang Cài đặt chỉ đưa đường sang đó.
       var go = ev.target && ev.target.closest && ev.target.closest(".rsa-goto-ws");
-      // Mở đúng tab Trợ lý (JavisNav.go thì rơi vào tab đang nhớ dở, có thể là Quy trình).
+      // Mở đúng tab Trợ lý (JeeviNav.go thì rơi vào tab đang nhớ dở, có thể là Quy trình).
       if (go) {
         // 2026-11-23: workspace.js is a lazy file. Load its group, then open the tab.
         var openTab = function () {
           try {
-            if (window.JavisWorkspace && window.JavisWorkspace.openTab) window.JavisWorkspace.openTab("agent");
-            else window.JavisNav.go("workspace");
+            if (window.JeeviWorkspace && window.JeeviWorkspace.openTab) window.JeeviWorkspace.openTab("agent");
+            else window.JeeviNav.go("workspace");
           } catch (e) {}
         };
-        try { if (window.JavisNapCham) window.JavisNapCham.goi("congviec", openTab); else openTab(); } catch (e) {}
+        try { if (window.JeeviNapCham) window.JeeviNapCham.goi("congviec", openTab); else openTab(); } catch (e) {}
         return;
       }
       var btn = ev.target && ev.target.closest && ev.target.closest(".rsa-assign");
@@ -396,7 +396,7 @@
     block.addEventListener("mouseenter", sync);
     block.addEventListener("focusin", function (ev) { if (!host.contains(ev.target)) sync(); });
     // Trợ lý vừa được bật, tắt ở tab này hay tab khác (gói WS resonance_agents): tóm tắt đổi theo.
-    window.addEventListener("javis:resonance-agents-changed", sync);
+    window.addEventListener("jeevi:resonance-agents-changed", sync);
     sync();
   }
 
@@ -406,11 +406,11 @@
   }
   // Người dùng mở một cuộc khác của cùng trợ lý (tab Lịch sử): hỏi lại host phiên MỚI có dùng được Cộng hưởng không.
   if (typeof window !== "undefined" && window.addEventListener) {
-    window.addEventListener("javis:sessions-changed", function () {
+    window.addEventListener("jeevi:sessions-changed", function () {
       if (S.host && S.host.isConnected && currentSession() !== S.lastSid) refresh();
     });
     // T0: công tắc trên dòng trợ lý (hay tab khác) vừa đổi trạng thái: bảng bên phải hỏi lại host.
-    window.addEventListener("javis:resonance-agents-changed", function () {
+    window.addEventListener("jeevi:resonance-agents-changed", function () {
       if (S.host && S.host.isConnected) refresh();
     });
   }
@@ -420,6 +420,6 @@
     toggleAgent: toggleAgent,
     missingByPack: missingByPack, packConfirmHtml: packConfirmHtml, confirmPack: confirmPack,
     settingsHtml: settingsHtml, toggleNoteKey: toggleNoteKey, supportHtml: supportHtml };
-  if (typeof window !== "undefined") window.JavisResonanceAgent = api;
+  if (typeof window !== "undefined") window.JeeviResonanceAgent = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

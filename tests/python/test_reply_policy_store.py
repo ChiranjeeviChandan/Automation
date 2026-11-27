@@ -10,7 +10,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-rp-store-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-rp-store-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -193,7 +193,7 @@ s = st.stats("A")
 check("xoá bot: không còn dòng nào", s["decisions"] == 0 and s["cases"] == 0 and s["lessons"] == 0, s)
 check("xoá bot A không đụng bot B", st.count_cases("B") == 1)
 
-check("kho nằm trong thư mục state, không phải trong repo", str(st.db_path()).startswith(os.environ["JAVIS_STATE_DIR"]))
+check("kho nằm trong thư mục state, không phải trong repo", str(st.db_path()).startswith(os.environ["JEEVI_STATE_DIR"]))
 
 # ---- #1286: one-time clean-up of labels written before the labeler fix ----------------------------------------
 import sqlite3  # noqa: E402

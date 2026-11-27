@@ -45,12 +45,12 @@ global.window = {
   t: (k) => k,
   getComputedStyle: (e) => ({ overflowY: e._oy || "auto" }),
   scrollTo: (x) => { global.window.daCuonTaiLieu = x.top; },
-  JavisWsSend: (o) => GUI.push(o),
-  JavisSessions: { current: () => "" },
+  JeeviWsSend: (o) => GUI.push(o),
+  JeeviSessions: { current: () => "" },
 };
 
 const A = require(path.join(ROOT, "dashboard", "ui-actions.js"));
-const UI = global.window.JavisUiActions;
+const UI = global.window.JeeviUiActions;
 
 async function cuon(target) {
   GUI = [];

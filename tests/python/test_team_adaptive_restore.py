@@ -20,7 +20,7 @@ from contextlib import closing, redirect_stderr, redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ta-restore-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ta-restore-")
 TEMP = Path(tempfile.mkdtemp(prefix="ta-restore-"))
 
 sys.path.insert(0, str(ROOT / "tools"))
@@ -374,9 +374,9 @@ def section_rerun_cli():
 
     def run(argv, env=None):
         out, err = io.StringIO(), io.StringIO()
-        old = os.environ.get("JAVIS_STATE_DIR")
+        old = os.environ.get("JEEVI_STATE_DIR")
         if env is not None:
-            os.environ["JAVIS_STATE_DIR"] = env
+            os.environ["JEEVI_STATE_DIR"] = env
         try:
             with redirect_stdout(out), redirect_stderr(err):
                 try:
@@ -385,9 +385,9 @@ def section_rerun_cli():
                     code = ex.code
         finally:
             if old is None:
-                os.environ.pop("JAVIS_STATE_DIR", None)
+                os.environ.pop("JEEVI_STATE_DIR", None)
             else:
-                os.environ["JAVIS_STATE_DIR"] = old
+                os.environ["JEEVI_STATE_DIR"] = old
         return code, out.getvalue(), err.getvalue()
 
     d = fixture("cli", judge=True, pre156=True)
@@ -404,7 +404,7 @@ def section_rerun_cli():
 
     d = fixture("cli-env")
     code, out, err = run(["--to", "0.154.0", "--yes"], env=str(d))
-    check("CLI không --state-dir: dùng JAVIS_STATE_DIR", code == 0 and live(d) == RESTORED, (code, out, err))
+    check("CLI không --state-dir: dùng JEEVI_STATE_DIR", code == 0 and live(d) == RESTORED, (code, out, err))
     code, out, err = run(["--to", "0.154.0", "--yes"], env="")
     check("CLI thiếu thư mục state: mã 2, nói rõ", code == 2 and "--state-dir" in err, (code, err))
     code, out, err = run(["--to", "0.153.0", "--state-dir", str(d), "--yes"])

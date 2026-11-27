@@ -5,7 +5,7 @@
    27/08/2026: cùng MỘT công tắc giọng mà có tới ba chỗ bấm - nút loa ở header, nút loa trên
    thanh nhập chat, và công tắc trong Cài đặt nhanh. Bỏ nút header để lấy chỗ cho hòm thư.
    02/09/2026: chủ repo chốt "không cần nút bật tắt loa nữa, chỉ cần mic, bật mic là bật loa".
-   Nút thanh nhập (#ttsToggleBar) bỏ nốt; app.js gọi window.JavisTts.set() theo mic.
+   Nút thanh nhập (#ttsToggleBar) bỏ nốt; app.js gọi window.JeeviTts.set() theo mic.
    01/10/2026 (0.65.19): công tắc trong Cài đặt nhanh (#qsTts) bỏ nốt vì trùng nút mic: bấm mic
    là gọi Jeevi (bật loa), cúp máy là tắt. quick-settings.js vẫn phải chịu được khi thiếu nó.
 
@@ -51,20 +51,20 @@ check("app.js không còn khai const ttsToggle", !/const\s+ttsToggle\s*=/.test(a
 check("quick-settings KHÔNG còn tra cứu #ttsToggleBar (nút đã gỡ, tra cứu là null)",
   !/\$\("ttsToggleBar"\)/.test(qs));
 check("mobile-chat.js không còn nhắc tới #ttsToggleBar như một nút thật", !/getElementById\("ttsToggleBar"\)/.test(mob));
-check("quick-settings phơi window.JavisTts.set cho mic gọi", /window\.JavisTts = \{ set: applyState/.test(qs));
+check("quick-settings phơi window.JeeviTts.set cho mic gọi", /window\.JeeviTts = \{ set: applyState/.test(qs));
 // 15/09: loa KHÔNG còn nhớ qua reload nữa. Mỗi lần nạp trang bắt đầu TẮT, và chỉ thao tác bật
-// MIC mới bật đọc. Test cũ soi chuỗi "javis.ttsEnabled" nên vẫn xanh nhờ một hàm persist() đã
+// MIC mới bật đọc. Test cũ soi chuỗi "jeevi.ttsEnabled" nên vẫn xanh nhờ một hàm persist() đã
 // chết - đúng kiểu xanh giả: nó canh một lời hứa mà sản phẩm không còn giữ.
 check("mỗi lần nạp trang loa bắt đầu TẮT", /var enabled = false;/.test(qs));
 check("không còn đọc/ghi lựa chọn cũ trong localStorage",
-  qs.indexOf("javis.ttsEnabled") === -1 && !/localStorage\.(get|set)Item/.test(qs));
+  qs.indexOf("jeevi.ttsEnabled") === -1 && !/localStorage\.(get|set)Item/.test(qs));
 check("chỉ MIC bật được loa (công tắc Cài đặt nhanh phải hỏi handsFreeActive)",
   /qs\.checked && micDangBat\(\)/.test(qs) && /handsFreeActive/.test(qs));
 check("voice.js cũng không còn ghi lựa chọn qua reload",
-  read("dashboard/voice.js").indexOf("javis.ttsEnabled") === -1);
+  read("dashboard/voice.js").indexOf("jeevi.ttsEnabled") === -1);
 check("CANARY: quick-settings chịu được khi không còn #qsTts (tra cứu null thì thôi, không chết)",
   /var qs = \$\("qsTts"\); if \(!qs\) return;/.test(qs) && /var qs = \$\("qsTts"\); if \(qs\)/.test(qs));
-check("app.js bật loa theo mic", /window\.JavisTts\.set\(handsFree\)/.test(app));
+check("app.js bật loa theo mic", /window\.JeeviTts\.set\(handsFree\)/.test(app));
 
 // ---- 4. cache-bust: sửa file nào thì bump file đó, không thì trình duyệt xài bản cũ ----
 const v = (f) => Number((html.match(new RegExp(f.replace(/\./g, "\\.").replace("-", "\\-") + "\\?v=(\\d+)")) || [])[1] || 0);

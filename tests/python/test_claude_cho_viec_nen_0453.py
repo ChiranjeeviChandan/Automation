@@ -15,7 +15,7 @@ import tempfile
 from types import SimpleNamespace
 from unittest.mock import patch
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-bgwait-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-bgwait-"))
 import claude_agent_sdk as sdk
 import claude_bg_wait as eng
 import claude_warm
@@ -84,8 +84,8 @@ class Client:
 
 
 async def run_case(client, env=None, limit=3.0):
-    e = {"JAVIS_CLAUDE_RESULT_TIMEOUT": "30", "JAVIS_CLAUDE_IDLE_TIMEOUT": "0", "JAVIS_CLAUDE_FIRST_TIMEOUT": "0",
-         "JAVIS_WARM_BUDGET_MB": "0.0001"}
+    e = {"JEEVI_CLAUDE_RESULT_TIMEOUT": "30", "JEEVI_CLAUDE_IDLE_TIMEOUT": "0", "JEEVI_CLAUDE_FIRST_TIMEOUT": "0",
+         "JEEVI_WARM_BUDGET_MB": "0.0001"}
     e.update(env or {})
     with patch.object(sdk, "ClaudeSDKClient", return_value=client), \
          patch.object(ClaudeSDK, "is_available", return_value=True), \
@@ -163,9 +163,9 @@ async def main():
         await q.put(answer("Đang build."))
         await q.put(result("Đang build."))
     c = Client(endless)
-    evs = await run_case(c, env={"JAVIS_CLAUDE_BG_WAIT": "0.3"})
-    check("past JAVIS_CLAUDE_BG_WAIT the turn ends and says why",
-          len(finals(evs)) == 1 and "JAVIS_CLAUDE_BG_WAIT" in streamed(evs), streamed(evs))
+    evs = await run_case(c, env={"JEEVI_CLAUDE_BG_WAIT": "0.3"})
+    check("past JEEVI_CLAUDE_BG_WAIT the turn ends and says why",
+          len(finals(evs)) == 1 and "JEEVI_CLAUDE_BG_WAIT" in streamed(evs), streamed(evs))
     # 2026-11-04: closing the process would kill the task still running (the render the owner waits for). It is kept
     # alive until the task finishes, then closed (claude_warm._linger).
     await asyncio.sleep(0.1)
@@ -177,11 +177,11 @@ async def main():
         await asyncio.sleep(0.02)
     check("the kept process closes once its task finishes", c.closed)
 
-    # 5. JAVIS_CLAUDE_BG_WAIT=0 brings back the old behaviour.
+    # 5. JEEVI_CLAUDE_BG_WAIT=0 brings back the old behaviour.
     c = Client(endless)
-    evs = await run_case(c, env={"JAVIS_CLAUDE_BG_WAIT": "0"})
-    check("JAVIS_CLAUDE_BG_WAIT=0: the turn ends at the first result", len(finals(evs)) == 1
-          and "JAVIS_CLAUDE_BG_WAIT" not in streamed(evs))
+    evs = await run_case(c, env={"JEEVI_CLAUDE_BG_WAIT": "0"})
+    check("JEEVI_CLAUDE_BG_WAIT=0: the turn ends at the first result", len(finals(evs)) == 1
+          and "JEEVI_CLAUDE_BG_WAIT" not in streamed(evs))
 
     # 6. A failed result never waits.
     async def failed(q):

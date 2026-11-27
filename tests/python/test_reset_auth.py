@@ -9,7 +9,7 @@ the steps. The reset clears the password for good ("coi như mất mật khẩu 
 Pinned here:
 1. tools/reset_auth.py empties `auth` (password and 2FA) but keeps setup_done and every other setting, so the
    first-run wizard (which would ask for the AI brain again) does not come back.
-2. It removes JAVIS_ADMIN_PASSWORD / JAVIS_ADMIN_USER from .env: install.sh writes them on macOS, and leaving them
+2. It removes JEEVI_ADMIN_PASSWORD / JEEVI_ADMIN_USER from .env: install.sh writes them on macOS, and leaving them
    would bring the old password back at the next start (provision_admin_from_env).
 3. It never writes over a settings.json it could not read.
 4. GET /auth/reset-help offers the button only to a browser on this machine; POST /auth/reset-help/open only REVEALS
@@ -24,9 +24,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-resetauth-")
-os.environ.pop("JAVIS_ADMIN_PASSWORD", None)
-os.environ.pop("JAVIS_ADMIN_USER", None)
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-resetauth-")
+os.environ.pop("JEEVI_ADMIN_PASSWORD", None)
+os.environ.pop("JEEVI_ADMIN_USER", None)
 
 sys.path.insert(0, str(ROOT / "tools"))
 import reset_auth  # noqa: E402
@@ -41,15 +41,15 @@ def check(name, cond, extra=""):
 
 
 # ---- 1-3. the tool ----
-state = Path(tempfile.mkdtemp(prefix="javis-reset-state-"))
+state = Path(tempfile.mkdtemp(prefix="jeevi-reset-state-"))
 settings = state / "settings.json"
 before = {"setup_done": True, "workspace_name": "Shop", "model": {"engine": "codex"},
           "auth": {"username": "quy", "password_hash": "ab" * 32, "salt": "cd" * 16,
                    "totp": {"enabled": True, "secret": "enc:xyz"}, "env_applied": {"hash": "x"}}}
 settings.write_text(json.dumps(before), encoding="utf-8")
 env = state / ".env"
-env.write_text('ANTHROPIC_API_KEY="k"\nJAVIS_ADMIN_USER="admin"\nexport JAVIS_ADMIN_PASSWORD="old pass"\n'
-               "JAVIS_ADMIN_PASSWORD_HINT=keep\n", encoding="utf-8")
+env.write_text('ANTHROPIC_API_KEY="k"\nJEEVI_ADMIN_USER="admin"\nexport JEEVI_ADMIN_PASSWORD="old pass"\n'
+               "JEEVI_ADMIN_PASSWORD_HINT=keep\n", encoding="utf-8")
 
 rc = reset_auth.main(["--state-dir", str(state), "--env-file", str(env)])
 after = json.loads(settings.read_text(encoding="utf-8"))
@@ -59,9 +59,9 @@ check("setup_done and other settings are kept",
       after.get("setup_done") is True and after.get("workspace_name") == "Shop" and after.get("model") == {"engine": "codex"})
 env_after = env.read_text(encoding="utf-8")
 check("admin lines removed from .env, export form included",
-      "JAVIS_ADMIN_PASSWORD=" not in env_after.replace("JAVIS_ADMIN_PASSWORD_HINT=", "")
-      and "JAVIS_ADMIN_USER" not in env_after, env_after)
-check("other .env lines are kept", 'ANTHROPIC_API_KEY="k"' in env_after and "JAVIS_ADMIN_PASSWORD_HINT=keep" in env_after)
+      "JEEVI_ADMIN_PASSWORD=" not in env_after.replace("JEEVI_ADMIN_PASSWORD_HINT=", "")
+      and "JEEVI_ADMIN_USER" not in env_after, env_after)
+check("other .env lines are kept", 'ANTHROPIC_API_KEY="k"' in env_after and "JEEVI_ADMIN_PASSWORD_HINT=keep" in env_after)
 check("no temp file left behind", not [p for p in state.iterdir() if p.name.endswith(".tmp")])
 
 settings.write_text("{not json", encoding="utf-8")

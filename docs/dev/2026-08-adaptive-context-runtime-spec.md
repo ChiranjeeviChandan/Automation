@@ -302,7 +302,7 @@ Quy ước:
 
 ### 7.3 Storage
 
-Dùng SQLite trong `JAVIS_STATE_DIR`, ví dụ `capabilities.db`:
+Dùng SQLite trong `JEEVI_STATE_DIR`, ví dụ `capabilities.db`:
 
 ```sql
 CREATE TABLE capabilities (

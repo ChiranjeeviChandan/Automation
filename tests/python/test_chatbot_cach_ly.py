@@ -37,8 +37,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="javis-cachly-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-cachly-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -114,7 +114,7 @@ check("và nó vẫn KHÔNG đụng tới quy định của Agent", QUY_DINH in 
 # ============================================================
 # B1. Hub khoá đường đọc file trong vault
 # ============================================================
-GOC = Path(tempfile.mkdtemp(prefix="javis-cachly-brains-"))
+GOC = Path(tempfile.mkdtemp(prefix="jeevi-cachly-brains-"))
 (GOC / "brain-bot").mkdir()
 (GOC / "brain-bot" / "gia.md").write_text("Gói 3 tháng 6 triệu.\n", encoding="utf-8")
 (GOC / "brain-chu").mkdir()

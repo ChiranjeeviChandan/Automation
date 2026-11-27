@@ -108,7 +108,7 @@ harness._CodexGia = _CodexTienDo
 mp = _Patch()
 try:
     import pathlib
-    ws, _store = harness._chay_mot_luot(mp, pathlib.Path(tempfile.mkdtemp(prefix="javis-codex-td-")))
+    ws, _store = harness._chay_mot_luot(mp, pathlib.Path(tempfile.mkdtemp(prefix="jeevi-codex-td-")))
 finally:
     mp.undo()
 khung = [(g.get("type"), g.get("tool") or g.get("content")) for g in ws.sent

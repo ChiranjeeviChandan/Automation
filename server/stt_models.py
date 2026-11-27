@@ -22,7 +22,7 @@ Rails, because "newest" is not always "works":
   - a discovered model the vendor refuses is retried once with the default; when the default then hears, the new model
     is set aside for a day (`mark_bad`) and the log says so;
   - the owner's own pin (`voice.stt_model` for Groq) always wins;
-  - `JAVIS_NO_STT_MODEL_DISCOVERY=1` turns discovery off (the test runner sets it, so no test calls a vendor).
+  - `JEEVI_NO_STT_MODEL_DISCOVERY=1` turns discovery off (the test runner sets it, so no test calls a vendor).
 Ranking is by the vendor's own naming (version numbers, mini/turbo/preview words), which vendors have kept for years;
 whether the newest one hears Vietnamese mixed with English at least as well is measured by stt_gate, not guessed.
 """
@@ -45,7 +45,7 @@ BAD_TTL = 24 * 3600          # a discovered model the vendor refused is left asi
 REJECT_TTL = 30 * 24 * 3600  # a model that scored worse than the one in use is not scored again this long
 GATE_RETRY = 3600            # nothing could be measured: try the score again in an hour
 LIST_TIMEOUT = 15.0
-OFF_ENV = "JAVIS_NO_STT_MODEL_DISCOVERY"
+OFF_ENV = "JEEVI_NO_STT_MODEL_DISCOVERY"
 
 _CACHE: dict = {}            # (vendor, key fingerprint) -> {"model": str, "next": epoch}
 _BAD: dict = {}              # (vendor, model) -> epoch until which it is not used

@@ -21,8 +21,8 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-team-goal-")
-TEMP = Path(tempfile.mkdtemp(prefix="javis-team-goal-w-"))
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-team-goal-")
+TEMP = Path(tempfile.mkdtemp(prefix="jeevi-team-goal-w-"))
 
 import sessions  # noqa: E402
 import task_store  # noqa: E402
@@ -40,7 +40,7 @@ def check(name, cond, extra=""):
 
 
 def directive(**op):
-    return f"\n<!-- JAVIS_TEAM: {json.dumps(op, ensure_ascii=False)} -->"
+    return f"\n<!-- JEEVI_TEAM: {json.dumps(op, ensure_ascii=False)} -->"
 
 
 class Admin:
@@ -241,7 +241,7 @@ check("G1d bước plan: cấp lại giữa bước thì lệnh quản trị b�
 r, tm, ts, ss, fake, admin, T, new_team = world("prio")
 T2 = new_team("prio-khac", mem=("tu",), leader="ag_tu")
 r.max_parallel_teams = 1
-# 17/11/2026: jobs no longer wait in line unless the machine sets a cap (JAVIS_TEAM_JOBS); the priority star orders the
+# 17/11/2026: jobs no longer wait in line unless the machine sets a cap (JEEVI_TEAM_JOBS); the priority star orders the
 # line only then, so this test runs with one job at a time.
 r.team_jobs = 1
 order = []

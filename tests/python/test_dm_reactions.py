@@ -16,9 +16,9 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-dm-react-")
-os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
-BR = Path(tempfile.mkdtemp(prefix="javis-dm-react-brain-"))
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-dm-react-")
+os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
+BR = Path(tempfile.mkdtemp(prefix="jeevi-dm-react-brain-"))
 (BR / "agents").mkdir()
 for slug, name in (("lan", "Lan"), ("minh", "Minh")):
     (BR / "agents" / f"{slug}.md").write_text(f"---\nname: {name}\nrole: Trợ lý\n---\nBạn là {name}.\n",
@@ -167,7 +167,7 @@ check("trang Trò chuyện chính: lưu, agent rỗng, trạng thái 'Đã nhậ
 
 # turn_saved sau khi lưu lượt
 sent.clear()
-mid_saved = asyncio.run(main._persist_turn(store, S_LAN, str(BR), "hỏi tiếp", "Trả lời mới.\n<!-- JAVIS_ASK: {} -->"))
+mid_saved = asyncio.run(main._persist_turn(store, S_LAN, str(BR), "hỏi tiếp", "Trả lời mới.\n<!-- JEEVI_ASK: {} -->"))
 ts_ev = [e for e in sent if e.get("type") == "turn_saved"]
 saved = store.message_row(S_LAN, mid_saved) if isinstance(mid_saved, int) else None
 check("_persist_turn trả mã tin câu trả lời", isinstance(mid_saved, int) and saved and saved["role"] == "assistant")

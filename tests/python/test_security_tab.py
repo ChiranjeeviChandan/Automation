@@ -10,7 +10,7 @@ This file pins what now exists:
 2. Sign-in from a network never seen before is an alert for the owner.
 3. Security tab data (/auth/security): devices signed in, sign out one or all others; browser session only.
 4. settings.json account block edited outside Jeevi: every session ends, the event is logged and alerted.
-5. JAVIS_RESET_2FA turns 2FA off once per value.
+5. JEEVI_RESET_2FA turns 2FA off once per value.
 6. AI engines are refused when a command or a tool call touches a secret file (secret_guard.py).
 7. Hostinger compose: port 7777 listens on 127.0.0.1 once DOMAIN_NAME is set.
 """
@@ -20,10 +20,10 @@ import os
 import tempfile
 import time
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-sec-tab-")
-os.environ["JAVIS_REQUIRE_LOGIN"] = "1"
-os.environ.pop("JAVIS_ADMIN_PASSWORD", None)
-os.environ.pop("JAVIS_RESET_2FA", None)
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-sec-tab-")
+os.environ["JEEVI_REQUIRE_LOGIN"] = "1"
+os.environ.pop("JEEVI_ADMIN_PASSWORD", None)
+os.environ.pop("JEEVI_RESET_2FA", None)
 
 from fastapi.testclient import TestClient   # noqa: E402
 import config as c          # noqa: E402
@@ -168,22 +168,22 @@ set_account(pw="matkhau-moi-1", user="owner")
 check("a write through Jeevi is not an outside edit", c.auth_guard_check(grace=0) is None)
 
 # ============================================================
-# 5. JAVIS_RESET_2FA
+# 5. JEEVI_RESET_2FA
 # ============================================================
 c.totp_set(secret=totp.sinh_secret(), enabled=True, recovery=["aaaa-bbbb"], last_step=0)
 check("2FA on before the reset", c.totp_enabled())
 c.new_session()
-os.environ["JAVIS_RESET_2FA"] = "1"
-check("JAVIS_RESET_2FA turns 2FA off", c.reset_2fa_from_env() == "reset" and not c.totp_enabled())
+os.environ["JEEVI_RESET_2FA"] = "1"
+check("JEEVI_RESET_2FA turns 2FA off", c.reset_2fa_from_env() == "reset" and not c.totp_enabled())
 check("and ends every session", len(c.SESSIONS) == 0)
 check("account itself is kept", c.verify_password("matkhau-moi-1") and c.read_settings()["auth"]["username"] == "owner")
 c.totp_set(secret=totp.sinh_secret(), enabled=True, recovery=["cccc-dddd"], last_step=0)
 check("same value left in the environment does NOT wipe the new 2FA", c.reset_2fa_from_env() == "" and c.totp_enabled())
-os.environ["JAVIS_RESET_2FA"] = "2026-11-09"
+os.environ["JEEVI_RESET_2FA"] = "2026-11-09"
 check("a new value applies again", c.reset_2fa_from_env() == "reset" and not c.totp_enabled())
-os.environ["JAVIS_RESET_2FA"] = "0"
+os.environ["JEEVI_RESET_2FA"] = "0"
 check("'0' does nothing", c.reset_2fa_from_env() == "")
-os.environ.pop("JAVIS_RESET_2FA", None)
+os.environ.pop("JEEVI_RESET_2FA", None)
 check("the reset never counts as an outside edit", c.auth_guard_check(grace=0) is None)
 
 # ============================================================
@@ -193,7 +193,7 @@ st = str(c.STATE_DIR)
 for cmd in (f"cat {st}/settings.json", f"cd {st} && sed -i 's/a/b/' settings.json",
             "python3 -c \"print(open('/data/state/.secret_key').read())\"", "cat /data/state/se\"tt\"ings.json",
             "cat ~/.codex/auth.json", "cat ~/.claude/.credentials.json", "echo k >> /root/.ssh/authorized_keys",
-            "grep token $JAVIS_STATE_DIR/settings.json", f"cp {st}/.sessions.json /tmp/x"):
+            "grep token $JEEVI_STATE_DIR/settings.json", f"cp {st}/.sessions.json /tmp/x"):
     check(f"guard refuses: {cmd[:50]}", secret_guard.check_text(cmd) != "")
 for cmd in ("cat .vscode/settings.json", "npm test", "ls /data/state", "git status", "python -m pytest tests/"):
     check(f"guard lets through: {cmd}", secret_guard.check_text(cmd) == "")
@@ -202,12 +202,12 @@ check("Claude Read of settings.json in the state dir refused",
 check("Claude Grep with the state dir as path refused",
       secret_guard.check_tool("Grep", {"path": st, "pattern": "settings"}) != "")
 check("Claude Edit of a note in the brain allowed", secret_guard.check_tool("Edit", {"file_path": "/brains/x/a.md"}) == "")
-wd = tempfile.mkdtemp(prefix="javis-sec-term-")
+wd = tempfile.mkdtemp(prefix="jeevi-sec-term-")
 out = coding_terminal.chay(f"cat {st}/settings.json", "sec-test", [wd])
-check("javis_terminal refuses it at every level", out.startswith("ERROR") and "file bí mật" in out, out[:120])
-check("javis_terminal refusal is in the security log", events("agent_secret_blocked"))
+check("jeevi_terminal refuses it at every level", out.startswith("ERROR") and "file bí mật" in out, out[:120])
+check("jeevi_terminal refusal is in the security log", events("agent_secret_blocked"))
 out = coding_terminal.chay("echo hello", "sec-test", [wd])
-check("javis_terminal still runs ordinary commands", "hello" in out, out[:120])
+check("jeevi_terminal still runs ordinary commands", "hello" in out, out[:120])
 
 import asyncio  # noqa: E402
 import claude_cli  # noqa: E402
@@ -215,14 +215,14 @@ import claude_secret_hook  # noqa: E402
 import claude_sdk_engine  # noqa: E402
 claude_secret_hook.install()
 check("hook installed on ClaudeSDK._options without editing the pinned claude_sdk_engine.py",
-      getattr(claude_sdk_engine.ClaudeSDK._options, "_javis_secret_hook", False))
+      getattr(claude_sdk_engine.ClaudeSDK._options, "_jeevi_secret_hook", False))
 opts = claude_sdk_engine.ClaudeSDK(system_prompt="x", cwd=wd, tag="chat:t")._options()
 pre = (getattr(opts, "hooks", None) or {}).get("PreToolUse") or []
 check("every Claude turn carries the secret-guard PreToolUse hook",
       any(claude_secret_hook.secret_guard_hook in (m.hooks or []) for m in pre))
 check("installing twice does not stack the wrapper",
       claude_secret_hook.install() and not getattr(getattr(claude_sdk_engine.ClaudeSDK._options, "__wrapped__", None),
-                                                   "_javis_secret_hook", False))
+                                                   "_jeevi_secret_hook", False))
 deny = asyncio.run(claude_secret_hook.secret_guard_hook(
     {"tool_name": "Bash", "tool_input": {"command": f"cat {st}/settings.json"}}, "t1", None))
 check("hook denies Bash on settings.json",
@@ -238,7 +238,7 @@ check("claude_cli installs the hook where it builds every Claude engine",
 # ============================================================
 yml = (ROOT / "docker-compose.hostinger.yml").read_text(encoding="utf-8")
 check("Hostinger compose binds 7777 to 127.0.0.1 when DOMAIN_NAME is set",
-      '"${DOMAIN_NAME:+127.0.0.1:}${JAVIS_HOST_PORT:-7777}:7777"' in yml)
+      '"${DOMAIN_NAME:+127.0.0.1:}${JEEVI_HOST_PORT:-7777}:7777"' in yml)
 
 # ============================================================
 # 8. Dashboard: Security tab with devices and history

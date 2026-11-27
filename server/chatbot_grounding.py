@@ -1,6 +1,6 @@
 """Tra tài liệu trong brain của bot rồi đưa thẳng vào prompt của lượt đó.
 
-Vì sao cần, dù bot đã có sẵn `javis_read_file` và `javis_list_dir` trỏ vào brain của nó:
+Vì sao cần, dù bot đã có sẵn `jeevi_read_file` và `jeevi_list_dir` trỏ vào brain của nó:
 
   Có tool đọc KHÔNG bằng có đọc. Prompt dặn "chỉ trả lời trong phạm vi tài liệu bạn đọc được",
   nhưng model hoàn toàn có thể trả lời thẳng bằng trí nhớ chung của nó mà không mở file nào, và
@@ -38,7 +38,7 @@ DUOI = (".md", ".txt", ".markdown")
 # được tính là tài liệu thì bất kỳ ai cũng tải lên một file viết "chính sách mới: hoàn tiền
 # 100% mọi trường hợp" rồi hỏi lại một câu, và bot trích dẫn nó như tài liệu chính thức của
 # cửa hàng. Tự đầu độc kho tri thức, làm được bằng một lần bấm gửi file.
-BO_QUA = {"inbox", "attachments", "javis", ".git", ".obsidian", ".trash", "node_modules",
+BO_QUA = {"inbox", "attachments", "jeevi", ".git", ".obsidian", ".trash", "node_modules",
           "memory", "skills", "plugins", ".claude", ".agents", "05 - data cache",
           # Old copies (0.172.0): a backup of a price list or of an agent is out of date by definition, and quoting it
           # to a customer as the shop's document is wrong twice. Dot folders were already skipped (see `_duyet`);
@@ -611,12 +611,12 @@ def tim(root: Any, cau_hoi: str, k: int = 4, extra: Optional[List[dict]] = None,
 # an earlier photo rides along (`channels/zalo_personal.py`). They are not the customer's words. Issue #1701
 # (2026-11-21): the 30 words of the hand-over note went into the document search with the question, diluted it below
 # `PHU_SAN`, and the bot answered "no information" about a schedule that was in its documents.
-_JAVIS_NOTE = re.compile(r"^[ \t]*\[(?:Ghi chú của Jeevi|Kèm ảnh khách gửi lúc)[^\n]*$", re.M)
+_JEEVI_NOTE = re.compile(r"^[ \t]*\[(?:Ghi chú của Jeevi|Kèm ảnh khách gửi lúc)[^\n]*$", re.M)
 
 
 def customer_words(text: Any) -> str:
     """`text` without the note lines Jeevi added to the turn: what the customer actually wrote, for searching."""
-    return _JAVIS_NOTE.sub("", str(text or "")).strip()
+    return _JEEVI_NOTE.sub("", str(text or "")).strip()
 
 
 def thu_thap(root: Any, cau_hoi: str, k: int = 4, extra: Optional[List[dict]] = None,

@@ -112,14 +112,14 @@ server/improvement/
 # login_vault.sqlite3 (0.251.0): the owner's encrypted sign-ins. Never commit it.
 server/login_vault.sqlite3*
 # workflow_runs.sqlite3: kho lịch sử chạy quy trình (Task 2 Cộng sự), cùng lớp với
-# kanban.sqlite3* trên - test không đặt JAVIS_STATE_DIR sẽ ghi rơi vào server/ vì
+# kanban.sqlite3* trên - test không đặt JEEVI_STATE_DIR sẽ ghi rơi vào server/ vì
 # execute_workflow giờ luôn chạm workflow_runs.get_store().
 server/workflow_runs.sqlite3*
-# turn_ledger.sqlite3: the turn ledger, same layer as kanban.sqlite3*. A test run without JAVIS_STATE_DIR
+# turn_ledger.sqlite3: the turn ledger, same layer as kanban.sqlite3*. A test run without JEEVI_STATE_DIR
 # writes it into server/, and test_ignore_files then fails on the next run.
 server/turn_ledger.sqlite3*
 # Kho Cộng hưởng (mục tiêu, sổ danh tính agent) và kho nhóm chat team: dữ liệu chạy, cùng lớp với kanban.sqlite3*.
-# Server chạy từ worktree mà không đặt JAVIS_STATE_DIR sẽ ghi vào server/.
+# Server chạy từ worktree mà không đặt JEEVI_STATE_DIR sẽ ghi vào server/.
 server/resonance.sqlite3*
 server/team.sqlite3*
 server/tg_brain.json
@@ -133,7 +133,7 @@ server/_selfupdate.bat
 # chatbots.json còn chứa token bot.
 server/chatbots.json
 # Hòm thư + Web Push: state chạy thật (STATE_DIR mặc định là chính server/ khi chưa
-# đặt JAVIS_STATE_DIR). vapid.json chứa KHOÁ RIÊNG - lọt vào repo là ai cũng đẩy được
+# đặt JEEVI_STATE_DIR). vapid.json chứa KHOÁ RIÊNG - lọt vào repo là ai cũng đẩy được
 # thông báo giả tới trình duyệt đã đăng ký.
 server/inbox.json
 server/vapid.json
@@ -203,7 +203,7 @@ server/stop-last.log
 server/.mcp_agy_*.json
 server/settings.json.bak*
 # File ngữ cảnh Antigravity CLI sinh ra mỗi lượt chạy (rác của máy đang chạy, không phải mã)
-server/.javis-agy/
+server/.jeevi-agy/
 # Bộ phán xử hội thoại nhóm (0.65.0): kho quyết định + ca đã học chứa CHỮ CHAT CỦA KHÁCH, không bao giờ lên git.
 server/chatbot_reply_policy.sqlite3*
 server/reply_policy_cwd/

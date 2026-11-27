@@ -1,14 +1,14 @@
 {
-"cli/javis_cli/__main__.py": [
+"cli/jeevi_cli/__main__.py": [
 "cau"
 ],
-"cli/javis_cli/client.py": [
-"LoiJavis",
+"cli/jeevi_cli/client.py": [
+"LoiJeevi",
 "_kiem",
 "_loi_mang",
 "dong"
 ],
-"cli/javis_cli/commands.py": [
+"cli/jeevi_cli/commands.py": [
 "_dang_chay",
 "_in_ket_qua",
 "cau",
@@ -21,14 +21,14 @@
 "loai",
 "muc"
 ],
-"cli/javis_cli/config.py": [
+"cli/jeevi_cli/config.py": [
 "DUONG_DAN",
 "_ghi",
 "danh_sach",
 "dat_mac_dinh",
 "luu"
 ],
-"cli/javis_cli/render.py": [
+"cli/jeevi_cli/render.py": [
 "chu",
 "duong_chay",
 "loi",
@@ -2438,7 +2438,7 @@
 "server/codex_models.py": [
 "muc",
 "muc_cho",
-"muc_javis"
+"muc_jeevi"
 ],
 "server/codex_realtime.py": [
 "_chu"
@@ -3488,7 +3488,7 @@
 "loi_engine",
 "loi_het_luot",
 "luc",
-"luot_javis",
+"luot_jeevi",
 "ma_khoi_phuc",
 "meta_moi",
 "moi",
@@ -3755,7 +3755,7 @@
 "server/openai_oauth.py": [
 "_cung_tai_khoan",
 "_han_cua",
-"_la_token_cua_javis",
+"_la_token_cua_jeevi",
 "_nhan_token_tu_codex",
 "cuoi"
 ],
@@ -4178,7 +4178,7 @@
 "_url_tai_nguyen",
 "chen_polyfill_luu_tru",
 "chu",
-"chu_javis_hien",
+"chu_jeevi_hien",
 "chu_nguoi_go",
 "dau",
 "dich",
@@ -4190,7 +4190,7 @@
 "gom",
 "khoi",
 "muc",
-"nhan_javis",
+"nhan_jeevi",
 "nhan_nguoi",
 "noi_dung",
 "phan",

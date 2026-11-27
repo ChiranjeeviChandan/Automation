@@ -18,10 +18,10 @@ class El {
 const document={hidden:false,createElement:()=>new El(),
   getElementById:id=>id==='chatArea'?new El():(els.get(id)||null),
   addEventListener:(name,fn)=>{listeners[name]=fn;}};
-const window={JavisVoiceAdaptive:{Controller:class extends Controller{constructor(){super({now:()=>now});}}},JavisVoice:{ghepDuoiTam:(a,b)=>a+' '+b},t:k=>k};
-const ctx={window,document,localStorage:{getItem:k=>k==='javis.adaptive'?'natural':null,setItem(){}},setInterval:fn=>interval=fn,setTimeout(){}};
+const window={JeeviVoiceAdaptive:{Controller:class extends Controller{constructor(){super({now:()=>now});}}},JeeviVoice:{ghepDuoiTam:(a,b)=>a+' '+b},t:k=>k};
+const ctx={window,document,localStorage:{getItem:k=>k==='jeevi.adaptive'?'natural':null,setItem(){}},setInterval:fn=>interval=fn,setTimeout(){}};
 vm.runInNewContext(src,ctx);
-const ui=window.JavisAdaptiveUI({browserMode:()=>true,capable:()=>true,handsFree:()=>true,connected:()=>true,speaking:()=>false,
+const ui=window.JeeviAdaptiveUI({browserMode:()=>true,capable:()=>true,handsFree:()=>true,connected:()=>true,speaking:()=>false,
   managed:on=>managed.push(on),cancelCapture(){},draft(){},state(){},stop(){},interrupt(){},accept:()=>true,
   expireAttention(){},keepAttention(){},openAttention(){},listen(){},send:t=>sends.push(t)});
 assert.equal(ui.enabled(),false,'a stored "natural" no longer turns the adaptive timing on');

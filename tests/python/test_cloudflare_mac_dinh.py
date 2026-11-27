@@ -84,7 +84,7 @@ with tempfile.TemporaryDirectory() as td:
     kho = Path(td) / "packs"
     kho.mkdir()
     goc_dir, packs.PACKS_DIR = packs.PACKS_DIR, kho
-    goc_env = os.environ.pop("JAVIS_DISABLE_PACKS", None)
+    goc_env = os.environ.pop("JEEVI_DISABLE_PACKS", None)
     try:
         lam_goi(kho, "javis.cloudflare", "cloudflare")
         lam_goi(kho, "javis.cloudflare-oauth", "cloudflare-oauth")
@@ -107,7 +107,7 @@ with tempfile.TemporaryDirectory() as td:
     finally:
         packs.PACKS_DIR = goc_dir
         if goc_env is not None:
-            os.environ["JAVIS_DISABLE_PACKS"] = goc_env
+            os.environ["JEEVI_DISABLE_PACKS"] = goc_env
         lam_moi()
 
 if _fails:

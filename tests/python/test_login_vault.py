@@ -219,11 +219,11 @@ def test_fetch_sends_cookies_only_to_their_host_on_every_hop(monkeypatch):
     assert final == "https://tracker.example/next" and "ok" in text
     assert seen[0] == ("https://shop.vn/a", "sid=SECRET")
     assert seen[1] == ("https://tracker.example/next", "")
-    assert "Chrome/" in ua[0] and "JavisWatch" not in ua[0]           # a signed-in fetch looks like a browser
+    assert "Chrome/" in ua[0] and "JeeviWatch" not in ua[0]           # a signed-in fetch looks like a browser
     assert nav == ["navigate", "navigate"]                            # Facebook answers 400 without Sec-Fetch-*
     seen.clear(); ua.clear(); nav.clear()
     asyncio.run(ww.fetch("https://shop.vn/a"))
-    assert "JavisWatch" in ua[0] and seen[0][1] == ""                 # an anonymous watch still says who it is
+    assert "JeeviWatch" in ua[0] and seen[0][1] == ""                 # an anonymous watch still says who it is
     assert nav == ["", ""]                                            # and does not pretend to be a browser
 
 
@@ -330,8 +330,8 @@ def test_old_watch_database_gets_the_login_column(tmp_path):
 
 
 def _plugin():
-    p = ROOT / "system" / "plugins" / "javis-login" / "plugin.py"
-    spec = importlib.util.spec_from_file_location("javis_login_plugin", p)
+    p = ROOT / "system" / "plugins" / "jeevi-login" / "plugin.py"
+    spec = importlib.util.spec_from_file_location("jeevi_login_plugin", p)
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
@@ -360,7 +360,7 @@ def test_tool_returns_page_text_never_cookies(tmp_path, monkeypatch):
 
 def test_bots_never_get_the_tool():
     import mcp_hub
-    assert "javis_login" in mcp_hub.OWNER_ONLY_TOOLS
+    assert "jeevi_login" in mcp_hub.OWNER_ONLY_TOOLS
 
 
 if __name__ == "__main__":

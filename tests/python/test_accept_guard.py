@@ -16,7 +16,7 @@ import sys
 import tempfile
 import threading
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-accepttest-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-accepttest-")
 
 import accept_guard      # noqa: E402
 import grok_cli          # noqa: E402

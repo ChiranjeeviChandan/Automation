@@ -22,7 +22,7 @@ from _paths import ROOT, SERVER  # noqa: E402,F401
 import os
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-proj-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-proj-"))
 
 import sessions  # noqa: E402
 
@@ -36,7 +36,7 @@ def check(name, condition, detail=""):
         _fails.append(name)
 
 
-st = sessions.SessionStore(os.path.join(tempfile.mkdtemp(prefix="javis-proj-db-"), "s.db"))
+st = sessions.SessionStore(os.path.join(tempfile.mkdtemp(prefix="jeevi-proj-db-"), "s.db"))
 
 # ============================================================
 # 1. Instructions: save, edit, clear, and TRUNCATE AT SAVE TIME

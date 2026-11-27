@@ -7,60 +7,60 @@
 #   File NÀY cũng chạy trên Hostinger được, nhưng file kia gọn hơn và có sẵn nhãn Traefik.
 #
 # CÀI TRÊN VPS BẤT KỲ (DigitalOcean/Vultr... - HTTPS bằng Caddy, xem DEPLOY.md):
-#   1) docker compose run --rm javis claude auth login --claudeai   # ĐĂNG NHẬP CLAUDE 1 LẦN
+#   1) docker compose run --rm jeevi claude auth login --claudeai   # ĐĂNG NHẬP CLAUDE 1 LẦN
 #   2) docker compose up -d
 #
-# ⚠️ BẢO MẬT: chạy public (0.0.0.0) tự BẬT JAVIS_REQUIRE_LOGIN → mở app ra là màn TẠO TÀI KHOẢN
+# ⚠️ BẢO MẬT: chạy public (0.0.0.0) tự BẬT JEEVI_REQUIRE_LOGIN → mở app ra là màn TẠO TÀI KHOẢN
 #    / ĐĂNG NHẬP, không ai vào điều khiển Claude được khi chưa có mật khẩu.
 #
 # Muốn build từ source thay vì pull image:  docker compose -f docker-compose.build.yml up -d --build
 #
 # NHIỀU BẢN JEEVI TRÊN CÙNG MỘT VPS (mỗi bản một tên miền riêng): xem
 #   docker-compose.multi.yml + docker-compose.proxy.yml (và mục "Nhiều bản" trong DEPLOY.md).
-#   Tóm tắt: mỗi bản chạy ở THƯ MỤC RIÊNG với .env riêng đặt JAVIS_NAME + JAVIS_HOST_PORT khác nhau.
+#   Tóm tắt: mỗi bản chạy ở THƯ MỤC RIÊNG với .env riêng đặt JEEVI_NAME + JEEVI_HOST_PORT khác nhau.
 # ============================================================================
 services:
-  javis:
+  jeevi:
     image: ghcr.io/blogminhquy/javis-os:latest
     # Tên container LẤY TỪ BIẾN, không đóng cứng: hai bản Jeevi trên cùng một VPS mà cùng tên
     # container là con thứ hai chết ngay lúc `up` ("name is already in use"), kể cả khi đã chạy ở
     # thư mục khác - Docker đặt tên container theo phạm vi TOÀN MÁY chứ không theo project.
-    container_name: ${JAVIS_NAME:-javis}
+    container_name: ${JEEVI_NAME:-jeevi}
     restart: unless-stopped
     pull_policy: always
     environment:
       # Các mặc định cổng/state/brain đã nằm trong Docker image; compose chỉ giữ
       # token thật sự cần chia sẻ giữa app và Watchtower.
-      WATCHTOWER_TOKEN: ${WATCHTOWER_TOKEN:-javis-update}   # để nút "Cập nhật" gọi được Watchtower
+      WATCHTOWER_TOKEN: ${WATCHTOWER_TOKEN:-jeevi-update}   # để nút "Cập nhật" gọi được Watchtower
       # Tài khoản quản trị đặt SẴN lúc deploy. Điền hai dòng này vào file `.env` nằm cạnh
       # compose là xong: server boot lên đã có admin, không còn khoảng trống nào.
       # Bỏ trống thì lần đầu mở app sẽ ra màn tạo tài khoản, và trên server public ai mở link
       # trước sẽ tạo được admin - phải tạo ngay sau khi deploy. Vào được rồi nên bật 2FA.
-      JAVIS_ADMIN_USER: ${JAVIS_ADMIN_USER:-}
-      JAVIS_ADMIN_PASSWORD: ${JAVIS_ADMIN_PASSWORD:-}
+      JEEVI_ADMIN_USER: ${JEEVI_ADMIN_USER:-}
+      JEEVI_ADMIN_PASSWORD: ${JEEVI_ADMIN_PASSWORD:-}
     ports:
       # Cổng MÁY CHỦ lấy từ biến (trong container vẫn luôn là 7777). Bản thứ hai đặt
-      # JAVIS_HOST_PORT=7778 là hết đụng cổng.
+      # JEEVI_HOST_PORT=7778 là hết đụng cổng.
       #
-      # JAVIS_BIND = địa chỉ nghe trên máy chủ. Mặc định 0.0.0.0 (y như trước: mở ra Internet, vào
-      # được bằng http://<ip>:<cổng>). Chạy sau proxy chung thì đặt JAVIS_BIND=127.0.0.1 để chỉ
+      # JEEVI_BIND = địa chỉ nghe trên máy chủ. Mặc định 0.0.0.0 (y như trước: mở ra Internet, vào
+      # được bằng http://<ip>:<cổng>). Chạy sau proxy chung thì đặt JEEVI_BIND=127.0.0.1 để chỉ
       # proxy vào được, còn cổng này thành lối gỡ rối qua SSH tunnel.
       #
       # Vì sao là BIẾN chứ không phải một dòng ports trong file override: compose NỐI CHỒNG danh
       # sách ports của các file -f chứ không thay thế, nên khai lại ở override là ra hai binding
       # cùng một cổng và Docker báo "port is already allocated".
-      - "${JAVIS_BIND:-0.0.0.0}:${JAVIS_HOST_PORT:-7777}:7777"
+      - "${JEEVI_BIND:-0.0.0.0}:${JEEVI_HOST_PORT:-7777}:7777"
     volumes:
-      - javis-data:/data                       # state: settings/mật khẩu/sessions/loop (có secret → KHÔNG git)
-      - javis-brains:/brains                   # MỌI second brain (kiến thức của bạn) - bền qua mọi update
+      - jeevi-data:/data                       # state: settings/mật khẩu/sessions/loop (có secret → KHÔNG git)
+      - jeevi-brains:/brains                   # MỌI second brain (kiến thức của bạn) - bền qua mọi update
       # ↑ Muốn BACKUP brain lên GitHub: đổi dòng trên thành bind-mount thư mục thật trên VPS, vd:
       #     - ./brains:/brains
       #   rồi 1 lần cấp quyền cho user non-root của container:  sudo chown -R 10001:10001 ./brains
       #   Sau đó: cd brains && git init && git add -A && git commit -m backup && git push
-      - claude-auth:/home/javis/.claude        # token đăng nhập Claude (giữ qua mọi update!)
-      - codex-auth:/home/javis/.codex          # token đăng nhập ChatGPT/Codex (codex login - giữ qua update)
+      - claude-auth:/home/jeevi/.claude        # token đăng nhập Claude (giữ qua mọi update!)
+      - codex-auth:/home/jeevi/.codex          # token đăng nhập ChatGPT/Codex (codex login - giữ qua update)
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request,os,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:'+os.getenv('JAVIS_PORT','7777')+'/health',timeout=4).status==200 else 1)"]
+      test: ["CMD", "python", "-c", "import urllib.request,os,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:'+os.getenv('JEEVI_PORT','7777')+'/health',timeout=4).status==200 else 1)"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -70,14 +70,14 @@ services:
   #   docker compose --profile tunnel up -d  &&  docker compose logs tunnel | grep trycloudflare
   tunnel:
     image: cloudflare/cloudflared:latest
-    container_name: ${JAVIS_NAME:-javis}-tunnel
+    container_name: ${JEEVI_NAME:-jeevi}-tunnel
     restart: unless-stopped
     profiles: ["tunnel"]
     depends_on:
-      - javis
-    # `javis` ở đây là TÊN SERVICE trong compose, không phải tên container - mỗi project có mạng
+      - jeevi
+    # `jeevi` ở đây là TÊN SERVICE trong compose, không phải tên container - mỗi project có mạng
     # riêng nên tên này không đụng nhau giữa các bản, giữ nguyên là đúng.
-    command: tunnel --no-autoupdate --url http://javis:7777
+    command: tunnel --no-autoupdate --url http://jeevi:7777
     # URL cố định: tạo named tunnel ở Cloudflare Zero Trust → TUNNEL_TOKEN env → đổi command thành:
     #   command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
 
@@ -99,28 +99,28 @@ services:
   # tự thương lượng phiên bản API. Ghim major `:1`, xem giải thích trong docker-compose.hostinger.yml.
   watchtower:
     image: ghcr.io/nicholas-fedor/watchtower:1
-    container_name: ${JAVIS_NAME:-javis}-watchtower
+    container_name: ${JEEVI_NAME:-jeevi}-watchtower
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       WATCHTOWER_HTTP_API_ENDPOINTS: update                 # nhận lệnh cập nhật từ nút bấm
-      WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_TOKEN:-javis-update}
+      WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_TOKEN:-jeevi-update}
       # TỰ đi tìm bản mới theo chu kỳ, KHÔNG chờ ai bấm nút. Mặc định TẮT có chủ ý: bật lên là
       # Jeevi tự khởi động lại bất cứ lúc nào có image mới, cắt ngang việc nền và phiên chat
-      # đang chạy. Muốn hoàn toàn tự động thì đặt trong .env:  JAVIS_AUTO_UPDATE=true
-      # (chu kỳ mặc định 24h, đổi bằng JAVIS_AUTO_UPDATE_INTERVAL tính bằng GIÂY).
-      WATCHTOWER_HTTP_API_PERIODIC_POLLS: ${JAVIS_AUTO_UPDATE:-false}
-      WATCHTOWER_POLL_INTERVAL: ${JAVIS_AUTO_UPDATE_INTERVAL:-86400}
+      # đang chạy. Muốn hoàn toàn tự động thì đặt trong .env:  JEEVI_AUTO_UPDATE=true
+      # (chu kỳ mặc định 24h, đổi bằng JEEVI_AUTO_UPDATE_INTERVAL tính bằng GIÂY).
+      WATCHTOWER_HTTP_API_PERIODIC_POLLS: ${JEEVI_AUTO_UPDATE:-false}
+      WATCHTOWER_POLL_INTERVAL: ${JEEVI_AUTO_UPDATE_INTERVAL:-86400}
       WATCHTOWER_CLEANUP: "true"                            # dọn image cũ sau khi update
       # One update from the button may take this long: pulling the image AND removing the old
       # container. Watchtower's default is 10 minutes; on a VPS with a slow disk it ran out while
       # Docker was still deleting the old container, Watchtower gave up without creating the new
       # one, and Jeevi was gone (404) until a Redeploy (owner report 2026-11-13). See `guard`.
       WATCHTOWER_HTTP_API_UPDATE_TIMEOUT: 30m
-    # Theo dõi ĐÚNG container của bản này. Để trống hay ghi cứng "javis" thì trên VPS nhiều bản,
+    # Theo dõi ĐÚNG container của bản này. Để trống hay ghi cứng "jeevi" thì trên VPS nhiều bản,
     # Watchtower của bản này sẽ đi cập nhật (và restart) container của bản khác.
-    command: ${JAVIS_NAME:-javis}
+    command: ${JEEVI_NAME:-jeevi}
 
   # Brings Jeevi back when an update leaves it gone or stopped (owner report 2026-11-13).
   #
@@ -129,23 +129,23 @@ services:
   # one, while Docker often finishes the removal anyway: no Jeevi container at all, the domain answers
   # 404. The guard keeps a copy of how Jeevi was created and, after 2 minutes of that state, creates
   # it again (on the new image Watchtower already pulled) or starts it again. A Jeevi you stop by hand
-  # is left alone. Logs: docker logs javis-guard
+  # is left alone. Logs: docker logs jeevi-guard
   #
   # Same Docker socket as Watchtower, but no network at all (network_mode: none). The code is
   # docker/guard.py, copied in below by tools/sync_guard.py: edit that file, not this block.
   # Do not want it: docker compose up -d --scale guard=0
   guard:
     image: python:3.12-alpine
-    container_name: ${JAVIS_NAME:-javis}-guard
+    container_name: ${JEEVI_NAME:-jeevi}-guard
     restart: unless-stopped
     network_mode: none
     depends_on:
-      - javis          # `docker compose down` stops the guard first, so it never sees Jeevi "vanish"
+      - jeevi          # `docker compose down` stops the guard first, so it never sees Jeevi "vanish"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - guard-data:/guard
     environment:
-      JAVIS_NAME: ${JAVIS_NAME:-javis}
+      JEEVI_NAME: ${JEEVI_NAME:-jeevi}
     entrypoint: ["python", "-u", "-c"]
     command:
       - |
@@ -157,11 +157,11 @@ services:
         import sys
         import time
         import urllib.parse
-        NAME = os.environ.get("JAVIS_NAME") or "javis"
-        SOCKET = os.environ.get("JAVIS_GUARD_SOCKET") or "/var/run/docker.sock"
-        STORE = os.environ.get("JAVIS_GUARD_DIR") or "/guard"
-        EVERY = float(os.environ.get("JAVIS_GUARD_EVERY") or 15)
-        GRACE = float(os.environ.get("JAVIS_GUARD_GRACE") or 120)
+        NAME = os.environ.get("JEEVI_NAME") or "jeevi"
+        SOCKET = os.environ.get("JEEVI_GUARD_SOCKET") or "/var/run/docker.sock"
+        STORE = os.environ.get("JEEVI_GUARD_DIR") or "/guard"
+        EVERY = float(os.environ.get("JEEVI_GUARD_EVERY") or 15)
+        GRACE = float(os.environ.get("JEEVI_GUARD_GRACE") or 120)
         def log(msg):
           print(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "[guard]", msg, flush=True)
         class DockerConnection(http.client.HTTPConnection):
@@ -362,8 +362,8 @@ services:
           main()
 
 volumes:
-  javis-data:
-  javis-brains:
+  jeevi-data:
+  jeevi-brains:
   claude-auth:
   codex-auth:
   guard-data:

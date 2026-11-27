@@ -143,7 +143,7 @@ const del = CON.slice(CON.indexOf("async function _neDeleteCur("), CON.indexOf("
 check("xoá file -> rút khỏi vệt", /_neLichSu\.filter\(n => n\.rel !== rel\)/.test(del));
 check("xoá file -> con trỏ vệt được kéo về chỗ hợp lệ", del.indexOf("_neViTri = Math.min(") >= 0);
 check("đổi brain -> xoá sạch vệt (mọi bước thuộc brain cũ)",
-  /JavisPin\.clear\(\);[\s\S]{0,300}_neLichSu = \[\]; _neViTri = -1;/.test(CON));
+  /JeeviPin\.clear\(\);[\s\S]{0,300}_neLichSu = \[\]; _neViTri = -1;/.test(CON));
 
 // Đóng trình sửa thì GIỮ vệt: đóng ra chat về chính note đó rồi mở lại là luồng thường gặp.
 const dong = CON.slice(CON.indexOf("function closeNote()"), CON.indexOf("async function _neRenameCur("));

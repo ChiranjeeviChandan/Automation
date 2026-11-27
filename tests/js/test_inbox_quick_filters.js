@@ -35,8 +35,8 @@ const ctx = { window: win, console, encodeURIComponent, String, Object, Array, N
 vm.createContext(ctx);
 vm.runInContext(MOD, ctx);
 vm.runInContext(V5SRC, ctx);
-const V = win.JavisInboxV5;
-const F = win.JavisConvFilters;
+const V = win.JeeviInboxV5;
+const F = win.JeeviConvFilters;
 const I = (n) => "[" + n + "]";
 
 // ---- 1. the row's HTML ----

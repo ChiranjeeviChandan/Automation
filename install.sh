@@ -6,9 +6,9 @@
 # seeds .env, and registers a systemd service (or falls back to nohup).
 #
 # NHIEU BAN TREN CUNG MOT MAY: clone vao THU MUC KHAC roi dat hai bien truoc khi chay.
-#   JAVIS_NAME=javis-shop JAVIS_PORT=7778 ./install.sh
-# JAVIS_NAME dat ten dich vu systemd (javis-shop.service); JAVIS_PORT la cong nghe.
-# Bo trong ca hai = javis.service + cong 7777, y het truoc day.
+#   JEEVI_NAME=jeevi-shop JEEVI_PORT=7778 ./install.sh
+# JEEVI_NAME dat ten dich vu systemd (jeevi-shop.service); JEEVI_PORT la cong nghe.
+# Bo trong ca hai = jeevi.service + cong 7777, y het truoc day.
 # ============================================================================
 set -euo pipefail
 
@@ -22,11 +22,11 @@ APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$APP_DIR"
 
 # Ten dich vu + cong cua BAN NAY. Truoc day ca hai deu dong cung, nen cai ban thu hai la ghi de
-# /etc/systemd/system/javis.service cua ban thu nhat va hai ban tranh nhau cong 7777.
-SVC="${JAVIS_NAME:-javis}"
-PORT="${JAVIS_PORT:-7777}"
+# /etc/systemd/system/jeevi.service cua ban thu nhat va hai ban tranh nhau cong 7777.
+SVC="${JEEVI_NAME:-jeevi}"
+PORT="${JEEVI_PORT:-7777}"
 case "$SVC" in
-  *[!A-Za-z0-9._-]*) err "JAVIS_NAME may only contain letters, digits, '.', '_' and '-' (got: $SVC)"; exit 1;;
+  *[!A-Za-z0-9._-]*) err "JEEVI_NAME may only contain letters, digits, '.', '_' and '-' (got: $SVC)"; exit 1;;
 esac
 
 SUDO=""; [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1 && SUDO="sudo"
@@ -42,9 +42,9 @@ SUDO=""; [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1 && SUDO="sudo"
 # An install that ALREADY exists is never moved to another account: its Claude sign-in, brains and state live under
 # the account it has run as. The unit's User= (or, with no unit, the owner of .env) decides, so a second run of this
 # script keeps whatever the first one chose.
-#   JAVIS_USER=name        the account to create or use (default: javis)
-#   JAVIS_INSTALL_DIR=/x   where to move a clone the account cannot reach, e.g. one under /root (default: /opt/<folder>)
-#   JAVIS_RUN_AS_ROOT=1    keep the old behaviour and run as root
+#   JEEVI_USER=name        the account to create or use (default: jeevi)
+#   JEEVI_INSTALL_DIR=/x   where to move a clone the account cannot reach, e.g. one under /root (default: /opt/<folder>)
+#   JEEVI_RUN_AS_ROOT=1    keep the old behaviour and run as root
 RUN_AS=""                               # set = root installs on behalf of this regular account
 RUN_USER="$(whoami)"; RUN_HOME="$HOME"  # the account the service runs as, and its home
 UNIT_FILE="${UNIT_FILE:-/etc/systemd/system/$SVC.service}"
@@ -60,13 +60,13 @@ own() { [ -z "$RUN_AS" ] || chown -R "$RUN_AS": "$@"; }
 pick_run_user() {
   local want fresh=0 dest
   [ "$(id -u)" -eq 0 ] && [ "$(uname -s)" = "Linux" ] || return 0
-  if [ "${JAVIS_RUN_AS_ROOT:-0}" = "1" ]; then want=root
+  if [ "${JEEVI_RUN_AS_ROOT:-0}" = "1" ]; then want=root
   elif [ -f "$UNIT_FILE" ]; then want="$(sed -n 's/^User=//p' "$UNIT_FILE" | head -1)"; want="${want:-root}"
   elif [ -f .env ]; then want="$(stat -c %U .env 2>/dev/null || echo root)"
   else
-    want="${JAVIS_USER:-javis}"; fresh=1
+    want="${JEEVI_USER:-jeevi}"; fresh=1
     case "$want" in
-      *[!a-z0-9_-]*|[!a-z_]*|"") err "JAVIS_USER must be a plain account name such as 'javis' (got: $want)"; exit 1;;
+      *[!a-z0-9_-]*|[!a-z_]*|"") err "JEEVI_USER must be a plain account name such as 'jeevi' (got: $want)"; exit 1;;
     esac
   fi
   if [ "$want" != root ] && ! command -v runuser >/dev/null 2>&1; then
@@ -89,14 +89,14 @@ pick_run_user() {
   [ -n "$RUN_HOME" ] || { err "The account '$want' has no home folder."; exit 1; }
   # A clone under /root (mode 700) cannot be entered by any other account. A fresh clone holds no data yet, so move it.
   if ! as_user test -x "$(dirname "$APP_DIR")"; then
-    dest="${JAVIS_INSTALL_DIR:-/opt/$(basename "$APP_DIR")}"
+    dest="${JEEVI_INSTALL_DIR:-/opt/$(basename "$APP_DIR")}"
     if [ "$fresh" != 1 ]; then
       err "The account '$RUN_AS' cannot reach $APP_DIR. Move the folder somewhere it can (for example /opt) and re-run."
       exit 1
     fi
     if [ -e "$dest" ]; then
       err "The account '$RUN_AS' cannot reach $APP_DIR, and $dest already exists."
-      err "Set JAVIS_INSTALL_DIR=<another folder> and re-run, or JAVIS_RUN_AS_ROOT=1 to run as root."
+      err "Set JEEVI_INSTALL_DIR=<another folder> and re-run, or JEEVI_RUN_AS_ROOT=1 to run as root."
       exit 1
     fi
     mkdir -p "$(dirname "$dest")"
@@ -113,8 +113,8 @@ pick_run_user() {
 pick_run_user "$@"
 
 # A Node.js tarball and the links to it go where the service account can reach them.
-if [ -n "$RUN_AS" ]; then NODE_DIR=/opt/javis-node; LINK_DIR=/usr/local/bin; TAR_OWNER="--no-same-owner"
-else NODE_DIR="$HOME/.javis/node"; LINK_DIR="$HOME/.local/bin"; TAR_OWNER=""; fi
+if [ -n "$RUN_AS" ]; then NODE_DIR=/opt/jeevi-node; LINK_DIR=/usr/local/bin; TAR_OWNER="--no-same-owner"
+else NODE_DIR="$HOME/.jeevi/node"; LINK_DIR="$HOME/.local/bin"; TAR_OWNER=""; fi
 
 # --- 1. python3 >= 3.10 + venv + pip ---
 # HARD FLOOR 3.10: uvicorn pinned in requirements.txt needs >=3.10 (every release from
@@ -323,7 +323,7 @@ if [ -t 0 ]; then
     fi
   fi
 fi
-grep -q '^JAVIS_HOST=' .env || echo "JAVIS_HOST=127.0.0.1" >> .env
+grep -q '^JEEVI_HOST=' .env || echo "JEEVI_HOST=127.0.0.1" >> .env
 own .env
 
 # --- 7b. Tài khoản quản trị: ĐẶT SẴN ngay lúc cài ---
@@ -370,7 +370,7 @@ PY
 _env_has() { grep -qE "^[[:space:]]*$1=[\"']?[^\"'[:space:]]" .env 2>/dev/null; }
 
 ADMIN_PW_SINH=""      # chỉ có giá trị khi script TỰ SINH - để in ra đúng một lần ở cuối
-if _env_has JAVIS_ADMIN_PASSWORD; then
+if _env_has JEEVI_ADMIN_PASSWORD; then
   ok "Admin account already set in .env - keeping it"
 else
   ADMIN_USER="admin"
@@ -395,8 +395,8 @@ else
     # bỏ trống là đẩy người dùng về đúng cái màn đọc-log mà bước này sinh ra để xoá đi.
     ADMIN_PW="$(_gen_pw)"; ADMIN_PW_SINH="$ADMIN_PW"
   fi
-  _env_set JAVIS_ADMIN_USER "$ADMIN_USER"
-  _env_set JAVIS_ADMIN_PASSWORD "$ADMIN_PW"
+  _env_set JEEVI_ADMIN_USER "$ADMIN_USER"
+  _env_set JEEVI_ADMIN_PASSWORD "$ADMIN_PW"
   chmod 600 .env
   ok "Admin account saved in .env"
 fi
@@ -411,11 +411,11 @@ fi
 # khoản. Cờ này KHÔNG phải rào bảo mật và không tự bật gì cả: 2FA chỉ thật sự bật sau khi
 # người dùng quét QR và nhập đúng một mã, vì bật trước lúc họ chứng minh app sinh đúng mã là
 # tự khoá họ ra ngoài chính máy vừa cài.
-if ! _env_has JAVIS_SETUP_2FA && [ -t 0 ]; then
+if ! _env_has JEEVI_SETUP_2FA && [ -t 0 ]; then
   read -rp "  Turn on two-factor sign-in (Google Authenticator)? [y/N]: " TFA || true
   case "${TFA:-}" in
     [yY]*)
-      _env_set JAVIS_SETUP_2FA 1
+      _env_set JEEVI_SETUP_2FA 1
       ok "Noted - the first time you open the dashboard, the Account page will show the QR code to scan"
       ;;
     *) log "Skipped - you can turn it on any time under Dashboard → Account" ;;
@@ -441,14 +441,14 @@ own "$APP_DIR"
 
 # --- 9. service: systemd if available, else nohup ---
 PY="$APP_DIR/.venv/bin/python"
-# 0.306.0, chủ repo 24/10/2026: "mặc định cài javis trên win hoặc trên mac os thì cài khởi động cùng trình duyệt".
-# macOS: dùng LaunchAgent (bin/javis-autostart.sh) thay cho nohup: đăng nhập máy là server tự chạy, rồi dashboard tự
-# mở trên trình duyệt; cài xong cũng mở luôn. Không muốn: JAVIS_NO_AUTOSTART=1 (chạy nohup như cũ, không mở gì).
-# Bản thứ hai (JAVIS_NAME) vẫn đi nohup: LaunchAgent dùng một nhãn chung com.javis.os, hai bản sẽ đè nhau.
-if [ "$(uname -s)" = "Darwin" ] && [ "${JAVIS_NO_AUTOSTART:-0}" != "1" ] && [ -z "${JAVIS_NAME:-}" ] && [ -f "$APP_DIR/bin/javis-autostart.sh" ]; then
+# 0.306.0, chủ repo 24/10/2026: "mặc định cài jeevi trên win hoặc trên mac os thì cài khởi động cùng trình duyệt".
+# macOS: dùng LaunchAgent (bin/jeevi-autostart.sh) thay cho nohup: đăng nhập máy là server tự chạy, rồi dashboard tự
+# mở trên trình duyệt; cài xong cũng mở luôn. Không muốn: JEEVI_NO_AUTOSTART=1 (chạy nohup như cũ, không mở gì).
+# Bản thứ hai (JEEVI_NAME) vẫn đi nohup: LaunchAgent dùng một nhãn chung com.jeevi.os, hai bản sẽ đè nhau.
+if [ "$(uname -s)" = "Darwin" ] && [ "${JEEVI_NO_AUTOSTART:-0}" != "1" ] && [ -z "${JEEVI_NAME:-}" ] && [ -f "$APP_DIR/bin/jeevi-autostart.sh" ]; then
   log "Installing login auto-start (LaunchAgent, port $PORT)..."
-  JAVIS_PORT="$PORT" bash "$APP_DIR/bin/javis-autostart.sh" install
-  ok "Starts at login and opens the dashboard. Turn off: ./bin/javis-autostart.sh uninstall"
+  JEEVI_PORT="$PORT" bash "$APP_DIR/bin/jeevi-autostart.sh" install
+  ok "Starts at login and opens the dashboard. Turn off: ./bin/jeevi-autostart.sh uninstall"
 elif command -v systemctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then
   log "Installing systemd service ($SVC.service, port $PORT)..."
   $SUDO tee "/etc/systemd/system/$SVC.service" >/dev/null <<UNIT
@@ -462,9 +462,9 @@ StartLimitIntervalSec=0
 Type=simple
 User=$RUN_USER
 WorkingDirectory=$APP_DIR/server
-Environment="JAVIS_HOST=127.0.0.1"
-Environment="JAVIS_PORT=$PORT"
-Environment="JAVIS_STATE_DIR=$APP_DIR/server"
+Environment="JEEVI_HOST=127.0.0.1"
+Environment="JEEVI_PORT=$PORT"
+Environment="JEEVI_STATE_DIR=$APP_DIR/server"
 Environment="PATH=$APP_DIR/.venv/bin:/usr/local/bin:/usr/bin:/bin"
 ExecStart=$PY -m uvicorn main:app --host 127.0.0.1 --port $PORT
 Restart=always
@@ -488,16 +488,16 @@ else
     # runuser stays behind as the parent of the server. setsid takes it out of this terminal's session, so closing
     # the SSH window does not hang it up and take Jeevi with it. The subshell hands its place to it (exec) with its
     # own output going nowhere, so `./install.sh | tee` still ends. The log redirect sits inside the account's own
-    # shell: javis.log is not left owned by root.
+    # shell: jeevi.log is not left owned by root.
     DETACH=""; command -v setsid >/dev/null 2>&1 && DETACH="setsid"
-    ( cd "$APP_DIR/server" && export JAVIS_STATE_DIR="$APP_DIR/server" JAVIS_PORT="$PORT" && \
+    ( cd "$APP_DIR/server" && export JEEVI_STATE_DIR="$APP_DIR/server" JEEVI_PORT="$PORT" && \
       exec $DETACH runuser -u "$RUN_AS" -- env HOME="$RUN_HOME" USER="$RUN_AS" LOGNAME="$RUN_AS" \
         bash -c 'exec nohup "$0" -m uvicorn main:app --host 127.0.0.1 --port "$1" > "$2" 2>&1' \
-        "$PY" "$PORT" "$APP_DIR/server/javis.log" ) </dev/null >/dev/null 2>&1 &
+        "$PY" "$PORT" "$APP_DIR/server/jeevi.log" ) </dev/null >/dev/null 2>&1 &
   else
-    ( cd "$APP_DIR/server" && JAVIS_STATE_DIR="$APP_DIR/server" JAVIS_PORT="$PORT" nohup "$PY" -m uvicorn main:app --host 127.0.0.1 --port "$PORT" > "$APP_DIR/server/javis.log" 2>&1 & )
+    ( cd "$APP_DIR/server" && JEEVI_STATE_DIR="$APP_DIR/server" JEEVI_PORT="$PORT" nohup "$PY" -m uvicorn main:app --host 127.0.0.1 --port "$PORT" > "$APP_DIR/server/jeevi.log" 2>&1 & )
   fi
-  ok "Started. Logs: $APP_DIR/server/javis.log"
+  ok "Started. Logs: $APP_DIR/server/jeevi.log"
 fi
 
 echo ""

@@ -2,7 +2,7 @@
 
     python tests/run.py chatbot_queue_guard
 
-What was wrong: a dedicated bot at the "can write" level sees javis_schedule, javis_task and javis_job. The 2026-11-05
+What was wrong: a dedicated bot at the "can write" level sees javis_schedule, jeevi_task and jeevi_job. The 2026-11-05
 fix capped the LEVEL of the work they queue, but that work then ran as one of the owner's background jobs: outside the
 bot's brain, with the tools a bot never gets. A customer's message was enough to leave the bot's sandbox.
 
@@ -14,7 +14,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-botq-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-botq-")
 
 import plugins_host  # noqa: E402
 import turn_context  # noqa: E402
@@ -68,14 +68,14 @@ for level in ("auto", "suggest"):
     _a, why = as_bot(lambda: cap("javis_schedule", {"op": "list"}, level))
     check(f"bot at {level}: javis_schedule list still works", not why, why)
     for op in ("add", "answer", "accept", "fix", "cancel"):
-        _a, why = as_bot(lambda: cap("javis_task", {"op": op, "title": "t", "id": "k1"}, level))
-        check(f"bot at {level}: javis_task {op} is refused", why.startswith("ERROR"), why)
-    _a, why = as_bot(lambda: cap("javis_task", {"op": "list"}, level))
-    check(f"bot at {level}: javis_task list still works", not why, why)
+        _a, why = as_bot(lambda: cap("jeevi_task", {"op": op, "title": "t", "id": "k1"}, level))
+        check(f"bot at {level}: jeevi_task {op} is refused", why.startswith("ERROR"), why)
+    _a, why = as_bot(lambda: cap("jeevi_task", {"op": "list"}, level))
+    check(f"bot at {level}: jeevi_task list still works", not why, why)
     for op in ("then", "cancel"):
-        _a, why = as_bot(lambda: cap("javis_job", {"op": op, "then": "do x"}, level))
-        check(f"bot at {level}: javis_job {op} is refused", why.startswith("ERROR"), why)
-    a, why = as_bot(lambda: cap("javis_web_search", {"q": "x"}, level))
+        _a, why = as_bot(lambda: cap("jeevi_job", {"op": op, "then": "do x"}, level))
+        check(f"bot at {level}: jeevi_job {op} is refused", why.startswith("ERROR"), why)
+    a, why = as_bot(lambda: cap("jeevi_web_search", {"q": "x"}, level))
     check(f"bot at {level}: other tools are untouched", a == {"q": "x"} and not why, (a, why))
 
 a, why = as_bot(lambda: cap("javis_schedule", dict(CREATE), "full"))
@@ -85,8 +85,8 @@ check("a gated Team step keeps its own approval path", not why, why)
 
 a, why = as_owner(lambda: cap("javis_schedule", dict(CREATE), "auto"))
 check("owner turn at auto: still allowed, level capped at auto", not why and a.get("muc_quyen") == "auto", (a, why))
-a, why = as_owner(lambda: cap("javis_task", {"op": "add", "title": "t"}, "auto"))
-check("owner turn at auto: javis_task add still allowed", not why and a.get("mode") == "auto", (a, why))
+a, why = as_owner(lambda: cap("jeevi_task", {"op": "add", "title": "t"}, "auto"))
+check("owner turn at auto: jeevi_task add still allowed", not why and a.get("mode") == "auto", (a, why))
 a, why = cap("javis_schedule", dict(CREATE), "auto")
 check("no turn bound (background loop): old rule only", not why and a.get("muc_quyen") == "auto", (a, why))
 

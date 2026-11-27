@@ -15,7 +15,7 @@ với model là cứ giao việc cho chắc.
 
 Test canh cái vế vừa thêm, ở cả BA nơi model thật sự đọc:
   1. Khối prompt kênh (`channel_context`) - mọi lượt chat đều được chèn.
-  2. Mô tả tool `javis_task` - thứ engine API đọc ngay lúc quyết định gọi hay không.
+  2. Mô tả tool `jeevi_task` - thứ engine API đọc ngay lúc quyết định gọi hay không.
   3. `CLAUDE.md` - system prompt gốc.
 Thiếu một trong ba thì luật hở đúng ở engine đi qua đường đó.
 """
@@ -55,7 +55,7 @@ check("không chắc thì HỎI trước khi tạo", "ASK ONE QUESTION" in khoi)
 check("VẪN cấm hứa suông (luật cũ không bị cuốn theo)",
       "DO NOT PROMISE WHAT YOU CANNOT DO" in khoi)
 check("VẪN còn lối giao việc nền cho yêu cầu thật của user",
-      "javis_task" in khoi)
+      "jeevi_task" in khoi)
 
 # ============================================================
 # 2. Mô tả tool - đường mà engine API đọc lúc quyết định
@@ -71,17 +71,17 @@ class _Ctx:
         mo_ta[ten] = desc
 
 
-sys.path.insert(0, str(ROOT / "system" / "plugins" / "javis-task"))
-import plugin as javis_task_plugin  # noqa: E402
+sys.path.insert(0, str(ROOT / "system" / "plugins" / "jeevi-task"))
+import plugin as jeevi_task_plugin  # noqa: E402
 
 try:
-    javis_task_plugin.register(_Ctx())
+    jeevi_task_plugin.register(_Ctx())
 except TypeError:
     # Chữ ký register_tool đổi: đọc thẳng file nguồn để test không mù theo.
-    mo_ta["javis_task"] = (ROOT / "system" / "plugins" / "javis-task" / "plugin.py").read_text(encoding="utf-8")
+    mo_ta["jeevi_task"] = (ROOT / "system" / "plugins" / "jeevi-task" / "plugin.py").read_text(encoding="utf-8")
 
-desc = mo_ta.get("javis_task", "")
-check("tool javis_task có mô tả", bool(desc))
+desc = mo_ta.get("jeevi_task", "")
+check("tool jeevi_task có mô tả", bool(desc))
 check("mô tả tool nêu cổng 'chỉ khi NGƯỜI DÙNG bảo làm'",
       "CHỈ op=add khi NGƯỜI DÙNG bảo làm" in desc)
 check("mô tả tool cấm giao việc cho 'bước tiếp theo' tự nghĩ ra",

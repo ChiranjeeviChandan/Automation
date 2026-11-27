@@ -100,7 +100,7 @@ def env_sach() -> Dict[str, str]:
     # Không màu, không trình phân trang, không hỏi mật khẩu: output là để model đọc, và một lệnh
     # đứng chờ nhập mật khẩu git là một lệnh treo tới hết giờ.
     env.update({"TERM": "dumb", "PAGER": "cat", "GIT_PAGER": "cat", "NO_COLOR": "1",
-                "GIT_TERMINAL_PROMPT": "0", "PYTHONUNBUFFERED": "1", "JAVIS_TERMINAL": "1"})
+                "GIT_TERMINAL_PROMPT": "0", "PYTHONUNBUFFERED": "1", "JEEVI_TERMINAL": "1"})
     return env
 
 
@@ -206,7 +206,7 @@ def _secret_hit(cmd: str) -> str:
         import secret_guard
         hit = secret_guard.check_text(cmd)
         if hit:
-            secret_guard.note_blocked("javis_terminal", hit, cmd)
+            secret_guard.note_blocked("jeevi_terminal", hit, cmd)
             return "ERROR: " + secret_guard.refusal(hit)
     except Exception:  # noqa: BLE001 - the guard failing must not stop ordinary commands
         pass
@@ -318,11 +318,11 @@ def can_chay_nen(cmd: str) -> str:
     if re.search(r"(^|\s)(nohup|setsid|disown)(\s|$)", s) or re.search(r"[^&]&\s*$", s):
         return ("Lệnh tự đẩy mình xuống nền (&, nohup, setsid). Ở đây tiến trình đó sẽ bị dọn khi "
                 "lệnh kết thúc và không ai thấy log. Gọi lại với background=true (bỏ & và nohup), "
-                "rồi xem log bằng javis_process.")
+                "rồi xem log bằng jeevi_process.")
     for p in _CAN_CHAY_NEN:
         if p.search(s):
             return ("Lệnh này chạy mãi không tự thoát (dev server, watch, tail -f). Chạy tiền cảnh là "
-                    "treo tới hết giờ. Gọi lại với background=true, rồi dùng javis_process "
+                    "treo tới hết giờ. Gọi lại với background=true, rồi dùng jeevi_process "
                     "action=log để xem nó in gì.")
     return ""
 
@@ -346,7 +346,7 @@ def cat_output(text: str, duong_dan_day_du: str = "") -> str:
         return text
     dau = int(OUTPUT_TOI_DA * TY_LE_DAU)
     duoi = OUTPUT_TOI_DA - dau
-    goi_y = (f" Bản đầy đủ: {duong_dan_day_du} (đọc bằng javis_terminal, ví dụ "
+    goi_y = (f" Bản đầy đủ: {duong_dan_day_du} (đọc bằng jeevi_terminal, ví dụ "
              f"sed -n '1,200p' hoặc grep trên file đó)." if duong_dan_day_du else "")
     return (text[:dau] + f"\n\n… [đã cắt {len(text) - OUTPUT_TOI_DA:,} trên {len(text):,} ký tự ở "
             f"giữa.{goi_y}] …\n\n" + text[-duoi:])
@@ -488,11 +488,11 @@ def _kich_ban_posix(command: str, sid: str, cwd: str, goc0: str, ghi_trang_thai:
     dong.append(f"cd -- {q(cwd)} 2>/dev/null || cd -- {q(goc0)}")
     dong.append(command)
     if ghi_trang_thai:
-        dong += ["__javis_rc=$?",
+        dong += ["__jeevi_rc=$?",
                  f"pwd -P > {q(str(d / 'cwd'))} 2>/dev/null",
                  f"export -p > {q(str(d / 'env.sh.tmp'))} 2>/dev/null && "
                  f"mv -f {q(str(d / 'env.sh.tmp'))} {q(str(snap))}",
-                 "exit $__javis_rc"]
+                 "exit $__jeevi_rc"]
     f = d / f"cmd-{uuid.uuid4().hex[:8]}.sh"
     f.write_text("\n".join(dong) + "\n", encoding="utf-8")
     return f
@@ -514,7 +514,7 @@ def _argv(command: str, sid: str, cwd: str, goc0: str, ghi_trang_thai: bool) -> 
                    f"{q(d / 'cwd')}\nexit $__c\n")
         return [ps, "-NoProfile", "-NonInteractive", "-Command", kb], None, ""
     return [], None, ("Máy này không có bash lẫn PowerShell nên không có terminal. Dùng "
-                      "javis_run_command (chạy một chương trình, không qua shell).")
+                      "jeevi_run_command (chạy một chương trình, không qua shell).")
 
 
 # ---------------------------------------------------------------------------------------
@@ -624,7 +624,7 @@ def chay(command: str, sid: str, goc: List[str], timeout: Optional[float] = None
     dau = [f"exit={rc} ({giay:.1f}s)"]
     if het_gio:
         dau.append(f"HẾT GIỜ: lệnh chạy quá {int(tran)} giây nên đã bị dừng. Lệnh dài thì chạy nền "
-                   f"(background=true) rồi xem log bằng javis_process.")
+                   f"(background=true) rồi xem log bằng jeevi_process.")
     if bao:
         dau.append(bao)
     if not rieng:
@@ -713,7 +713,7 @@ def chay_nen(command: str, sid: str, goc: List[str], workdir: str = "", brain_ro
         tong = [v for v in _NEN.values() if v.dang_chay]
     if len(cua_phien) >= NEN_MOI_PHIEN:
         return (f"ERROR: phiên này đã có {len(cua_phien)} tiến trình nền đang chạy (trần "
-                f"{NEN_MOI_PHIEN}). Dừng bớt bằng javis_process action=kill.")
+                f"{NEN_MOI_PHIEN}). Dừng bớt bằng jeevi_process action=kill.")
     if len(tong) >= NEN_TOAN_HE:
         return f"ERROR: cả máy đã có {len(tong)} tiến trình nền của Jeevi (trần {NEN_TOAN_HE})."
     cwd, _ = _cwd_phien(sid, goc)
@@ -759,9 +759,9 @@ def chay_nen(command: str, sid: str, goc: List[str], workdir: str = "", brain_ro
     tt.cap_nhat()
     trang = "đã thoát ngay" if tt.rc is not None else "đang chạy"
     them = ("Xong là Jeevi tự báo vào khung chat này." if job_id else
-            "Jeevi không tự báo khi nó xong; dùng javis_process action=wait hoặc poll để biết.")
+            "Jeevi không tự báo khi nó xong; dùng jeevi_process action=wait hoặc poll để biết.")
     out = [f"Đã bật nền: {tt.id} ({trang}, pid {p.pid}). Log: {tt.log}",
-           f"Xem: javis_process action=log process_id={tt.id}. Dừng: action=kill. {them}"]
+           f"Xem: jeevi_process action=log process_id={tt.id}. Dừng: action=kill. {them}"]
     if tt.rc is not None:
         out.append(f"exit={tt.rc}\n" + _duoi_log(tt, 40))
     return "\n".join(out)
@@ -793,7 +793,7 @@ def _mo_ta(tt: TienTrinh) -> str:
 
 def quan_ly(action: str, sid: str, process_id: str = "", offset: int = 0, limit: int = 0,
             timeout: float = 0) -> str:
-    """javis_process: list | poll | log | wait | kill."""
+    """jeevi_process: list | poll | log | wait | kill."""
     a = str(action or "list").strip().lower()
     _don_nen()
     if a == "list":

@@ -1,4 +1,4 @@
-"""tool_finder: the ranking behind javis_search_tools in the lazy tier.
+"""tool_finder: the ranking behind jeevi_search_tools in the lazy tier.
 
     python tests/run.py tool_finder
 
@@ -11,7 +11,7 @@ from _paths import ROOT, SERVER  # noqa: E402,F401
 import os
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-toolfinder-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-toolfinder-"))
 
 import tool_finder  # noqa: E402
 
@@ -63,8 +63,8 @@ def _pool():
         tool("google-sheets", "sheets_get_values", "Read cell values from a Google Sheets spreadsheet.",
              "Google Sheets"),
         tool("google-sheets", "sheets_append", "Append rows to a Google Sheets spreadsheet.", "Google Sheets"),
-        tool("javis", "javis_use_skill", _SKILL_DESC, "Jeevi"),
-        tool("javis", "javis_search_tools", "Search tools.", "Jeevi"),
+        tool("jeevi", "jeevi_use_skill", _SKILL_DESC, "Jeevi"),
+        tool("jeevi", "jeevi_search_tools", "Search tools.", "Jeevi"),
     ]
     return pool
 
@@ -99,11 +99,11 @@ check("đơn hàng: an order tool first", fns and "order" in fns[0])
 # ---- the skill loader no longer wins on description length ----
 for q in ("doanh thu POS", "chi phí quảng cáo Google Ads", "đơn hàng hôm nay"):
     fns, _ = top(q)
-    check(f"'{q}': javis_use_skill is not first", fns and fns[0] != "javis__javis_use_skill")
+    check(f"'{q}': jeevi_use_skill is not first", fns and fns[0] != "jeevi__jeevi_use_skill")
 
 # ---- meta tools are never results ----
-check("meta tool javis_search_tools never listed",
-      all(t["fn"] != "javis__javis_search_tools" for t, _s in IDX.search("search tools")["hits"]))
+check("meta tool jeevi_search_tools never listed",
+      all(t["fn"] != "jeevi__jeevi_search_tools" for t, _s in IDX.search("search tools")["hits"]))
 
 # ---- exact name ----
 fns, _ = top("zalo_get_history", k=5)
@@ -135,7 +135,7 @@ groups = tool_finder.group_hits(res["hits"])
 check("three shops' revenue tool: one group of three",
       any(len(g) == 3 and g[0]["name"] == "pos_statistic_revenue" for g in groups))
 
-# ---- names for javis_run_tool ----
+# ---- names for jeevi_run_tool ----
 fns_all = [t["fn"] for t in POOL]
 s = tool_finder.suggest_names("zalo_get_history", fns_all)
 check("suggest_names: bare tool name -> every account's copy",

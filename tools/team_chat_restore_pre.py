@@ -175,12 +175,12 @@ def restore(state_dir: str, *, _fail_on: str = "") -> dict:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Khôi phục kho Kanban, kho phiên và kho nhóm về trước 0.140.0 "
                                              "(chạy khi Jeevi đã tắt).")
-    ap.add_argument("--state-dir", default=os.environ.get("JAVIS_STATE_DIR", ""),
-                    help="thư mục state của Jeevi (mặc định JAVIS_STATE_DIR)")
+    ap.add_argument("--state-dir", default=os.environ.get("JEEVI_STATE_DIR", ""),
+                    help="thư mục state của Jeevi (mặc định JEEVI_STATE_DIR)")
     ap.add_argument("--yes", action="store_true", help="xác nhận Jeevi đã tắt và chấp nhận mất thay đổi sau lúc nâng")
     a = ap.parse_args(argv)
     if not a.state_dir:
-        print("Thiếu --state-dir (hay biến JAVIS_STATE_DIR).", file=sys.stderr)
+        print("Thiếu --state-dir (hay biến JEEVI_STATE_DIR).", file=sys.stderr)
         return 2
     if not a.yes:
         print("Tắt Jeevi trước, rồi chạy lại với --yes. Việc Kanban, tin chat và nhóm sau lúc nâng lên 0.140.0 sẽ không "

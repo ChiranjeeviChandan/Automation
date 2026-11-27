@@ -7,7 +7,7 @@ injection away from that edit.
 
 This module answers one question for a shell command, a file path or a tool call: does it touch a secret file of Jeevi?
 It is used at every permission level by:
-- the shell of the API engines (`coding_terminal.kiem_rao_cung`, tool javis_terminal);
+- the shell of the API engines (`coding_terminal.kiem_rao_cung`, tool jeevi_terminal);
 - a PreToolUse hook of the Claude Code engine (claude_sdk_engine.py) on Bash, Read, Edit, Write, Grep, Glob...
 
 It is a tripwire, not a wall: an engine running code as the same OS user can always build the path in pieces. It stops
@@ -45,7 +45,7 @@ def _state_dirs() -> List[str]:
         out.append(str(Path(config.STATE_DIR)))
     except Exception:  # noqa: BLE001
         pass
-    env = os.getenv("JAVIS_STATE_DIR", "")
+    env = os.getenv("JEEVI_STATE_DIR", "")
     if env:
         out.append(env)
     out.append("/data/state")
@@ -77,7 +77,7 @@ def check_text(text: str) -> str:
         if f"{home}/{name}" in low:
             return f"~/{home}/{name}"
     # settings.json only next to the state directory: alone it is also a project's .vscode/settings.json.
-    mentions_state = any(d.lower() in low for d in _state_dirs()) or "javis_state_dir" in low
+    mentions_state = any(d.lower() in low for d in _state_dirs()) or "jeevi_state_dir" in low
     if mentions_state and re.search(r"(^|[/\s=*?])settings(\.json|\*|\b)", low):
         return "settings.json"
     return ""

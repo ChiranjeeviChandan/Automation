@@ -8,7 +8,7 @@ Khoá:
   - realtime/start: v3, webrtc, includeStartupContext=false (không cho Codex soi máy), giọng
     mặc định juniper, handoff do client lo, lịch sử chat vào initialItems, bộ nhớ vào prompt;
   - answer SDP về qua thông báo thread/realtime/sdp;
-  - dịch thông báo: lời người dùng nháp/chốt, lời Jeevi, turn_done, handoff thành ask_javis
+  - dịch thông báo: lời người dùng nháp/chốt, lời Jeevi, turn_done, handoff thành ask_jeevi
     (yêu cầu quá ngắn ghép câu vừa nói), lượt Codex tự mở bị interrupt;
   - kết quả bộ não đi appendSpeech đã lột markdown, ngắn; chữ gõ đi appendText;
   - make_provider chọn chatgpt không cần key, chưa nối ChatGPT thì báo lỗi dễ hiểu;
@@ -19,7 +19,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-chatgptlive-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-chatgptlive-"))
 
 import codex_realtime  # noqa: E402
 import voice_live  # noqa: E402
@@ -140,8 +140,8 @@ async def main():
     fake.push("thread/realtime/itemAdded", item={"type": "handoff_request", "handoff_id": "h1",
                                                  "input_transcript": "Doanh thu hôm nay của cửa hàng là bao nhiêu"})
     ev = await asyncio.wait_for(agen.__anext__(), 2)
-    check("handoff thành tool_call ask_javis mang yêu cầu",
-          ev["type"] == "tool_call" and ev["name"] == "ask_javis" and ev["id"] == "h1"
+    check("handoff thành tool_call ask_jeevi mang yêu cầu",
+          ev["type"] == "tool_call" and ev["name"] == "ask_jeevi" and ev["id"] == "h1"
           and ev["args"]["request"] == "Doanh thu hôm nay của cửa hàng là bao nhiêu")
 
     fake.push("thread/realtime/transcript/done", role="user", text="Mở dashboard Facebook Ads cho anh")
@@ -163,7 +163,7 @@ async def main():
     fake.push("thread/realtime/transcript/done", role="assistant", text="x")
     await asyncio.wait_for(agen.__anext__(), 2)
     prov.SPEECH_GAP = 0
-    await prov.send_tool_result("h1", "ask_javis",
+    await prov.send_tool_result("h1", "ask_jeevi",
                                 "## Doanh thu\n\n| Ngày | Tiền |\n|---|---|\n| Hôm nay | **12.500.000** |\n\nTăng [8%](http://x) so với hôm qua. " + "Rất dài. " * 200)
     for _ in range(100):
         if call(fake, "thread/realtime/appendSpeech"):

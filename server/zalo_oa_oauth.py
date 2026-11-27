@@ -39,7 +39,7 @@ import localefmt
 import zalo_oa_bot
 
 CALLBACK_PATH = "/zalo-oa/oauth/callback"
-PERMISSION_URL = os.getenv("JAVIS_ZALO_OA_PERMISSION", "https://oauth.zaloapp.com/v4/oa/permission")
+PERMISSION_URL = os.getenv("JEEVI_ZALO_OA_PERMISSION", "https://oauth.zaloapp.com/v4/oa/permission")
 TTL = 15 * 60
 
 _lock = threading.Lock()

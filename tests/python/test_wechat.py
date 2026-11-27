@@ -27,7 +27,7 @@ import tempfile
 import time
 import types
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-wechat-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-wechat-")
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -63,7 +63,7 @@ AES_KEY_B = "ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210zyxwvut"
 GH = "gh_0123456789ab"
 GH_B = "gh_ba9876543210"
 OPENID = "oABCD1234efgh5678ijkl9012mnop"
-TOKEN = "javistoken0123456789abcdef012345"
+TOKEN = "jeevitoken0123456789abcdef012345"
 
 # ---- Fake WeChat -------------------------------------------------------------------------
 state = {"n": 0, "access": "", "sent": [], "raw": [], "bad": set(), "whitelist": True, "typing": 0,
@@ -223,7 +223,7 @@ check("unknown code keeps WeChat's message", wc._explain_error(99999, "boom") ==
 s = channels.spec("wechat")
 check("wechat is a bot channel in the registry", s is not None and s.kind == "bot")
 check("wechat carries a bot, private only, sends text and images",
-      s.nl("bot") and not s.nl("nhom") and s.nl("gui_chu") and s.nl("gui_file") and s.nl("tra_loi_tu_javis"), s.nang_luc)
+      s.nl("bot") and not s.nl("nhom") and s.nl("gui_chu") and s.nl("gui_file") and s.nl("tra_loi_tu_jeevi"), s.nang_luc)
 ui = {k["id"]: k for k in channels.cho_giao_dien()}
 check("UI entry carries the webhook path, a guide and a logo",
       ui.get("wechat", {}).get("webhook") == "/wechat/webhook" and ui["wechat"]["huong_dan"].get("vi") == "36-wechat.md"
@@ -413,7 +413,7 @@ check("40001 on send asks for a new token once and retries", ok and state["n"] =
       (ok, err, state["n"], state["forced"]))
 
 # Images go out as an uploaded media; documents are refused in words.
-_img = os.path.join(tempfile.mkdtemp(prefix="javis-wechat-f-"), "chai.png")
+_img = os.path.join(tempfile.mkdtemp(prefix="jeevi-wechat-f-"), "chai.png")
 open(_img, "wb").write(b"\x89PNG\r\n\x1a\n" + b"0" * 64)
 _pdf = _img[:-4] + ".pdf"
 open(_pdf, "wb").write(b"%PDF-1.4")

@@ -45,7 +45,7 @@ _NODE_ID_RE = re.compile(r"^[a-zA-Z0-9_-]{1,64}$")
 def workflow_status(meta: Any) -> str:
     """"active" or "off" for a workflow's frontmatter, whatever YAML made of it.
 
-    A hand-written `status: off` (the javis-builder template wrote it unquoted until 0.107.0)
+    A hand-written `status: off` (the jeevi-builder template wrote it unquoted until 0.107.0)
     is read by YAML 1.1 as the boolean False, and `status: on` as True. The toggle compared
     with "active" and the UI got False. A missing status is "off", matching the Studio list."""
     raw = meta.get("status") if isinstance(meta, dict) else None

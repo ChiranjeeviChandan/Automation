@@ -14,7 +14,7 @@
 - **Windows 10/11：** 下载 [JeeviOS-Setup.exe](https://github.com/blogminhquy/javis-os/releases/download/desktop/JeeviOS-Setup.exe)，双击并一路点 Next。安装进度会直接显示在 Setup 窗口里，一步一步进行（几分钟），不再弹出单独的黑色窗口。完成后桌面和开始菜单会出现 JEEVI OS 图标。
 - **macOS 11 及以上：** 打开**终端**（在启动台输入 Terminal），粘贴下面这一行并按回车。用这种方式安装，macOS 不会弹出警告：
   ```
-  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-javis.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-jeevi.sh | bash
   ```
   这条命令会下载 Jeevi，把 **JEEVI OS** 复制到 **Applications**，并直接在这个终端窗口里完成安装（可能会让你设置 Jeevi 管理员账号，并输入一次 Mac 密码）。之后从启动台打开 JEEVI OS 即可。
 
@@ -24,7 +24,7 @@
 
 **Windows：不出现警告界面的安装方式（推荐）。** Windows 安装程序暂未进行代码签名，所以用浏览器下载时第一次会被拦截。改为粘贴一行命令，就能得到同一个带 Jeevi 标志的安装程序，不会被拦截：点击开始，输入 `PowerShell` 并打开，粘贴下面这一行并按回车：
 ```
-irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-javis.ps1 | iex
+irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-jeevi.ps1 | iex
 ```
 
 安装程序会在你的电脑上改动什么、由谁签名、Jeevi 会把什么发送到哪里：[Code signing policy](../../../docs/code-signing-policy.md) · [Privacy policy](../../../PRIVACY.md)（英文）。
@@ -49,9 +49,9 @@ irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/window
    ```
 3. （可选，用于 HTTPS + 域名）在 **Environment** 框中设置：
    ```
-   DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud
+   DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud
    ```
-   （主机名可在 hPanel → VPS 中找到，例如 `javis.srv1782015.hstgr.cloud`。）
+   （主机名可在 hPanel → VPS 中找到，例如 `jeevi.srv1782015.hstgr.cloud`。）
 4. 点击 **Deploy**。等待 1-3 分钟。用 **Open** 按钮打开应用（或访问 `https://<DOMAIN_NAME>`）。
 5. 首次运行时，界面会要求你创建一个管理员账号。之后，在容器终端里登录一次 Claude Code：`claude auth login --claudeai`。
 
@@ -70,7 +70,7 @@ docker compose -f docker-compose.yml up -d
 
 1. 安装 Python 3.12 + Node 22。
 2. 在项目文件夹中运行一次 `setup.bat`，它会创建 .venv、安装依赖，并为你安装两个 CLI 引擎（Claude Code、Codex）。
-3. 运行 `start-javis.bat` 在后台启动（用 `stop-javis.bat` 停止）。
+3. 运行 `start-jeevi.bat` 在后台启动（用 `stop-jeevi.bat` 停止）。
 4. 打开 http://localhost:7777。
 
 ## 运行起来之后

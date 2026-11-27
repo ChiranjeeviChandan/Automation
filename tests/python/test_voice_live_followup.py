@@ -9,7 +9,7 @@ lần hai, ra hai bong bóng kết quả khác chữ, rồi lời đọc lại t
   - câu nói thêm chỉ là xác nhận/nhắc báo: không chạy bộ não lần nữa, không bong bóng;
   - câu nói thêm có yêu cầu thật: chạy SONG SONG với việc đang chạy (0.71.2; trước đó xếp hàng chờ việc
     đầu xong, nên hỏi giữa chừng im re mấy phút), kèm việc đang chạy làm ngữ cảnh;
-    bộ não trả JAVIS_NOOP thì không bong bóng, không đọc;
+    bộ não trả JEEVI_NOOP thì không bong bóng, không đọc;
   - lời model đọc lại kết quả (đã có bong bóng đầy đủ) không thành bong bóng thứ hai, không vào lịch sử;
   - lời Jeevi sau khi người dùng nói tiếp vẫn hiện như thường.
 Câu hỏi tiến độ và lời tự lên tiếng khi việc chạy lâu nằm ở test_voice_live_progress.py.
@@ -40,15 +40,15 @@ class FollowupWordsTests(unittest.TestCase):
         self.assertFalse(voice_live.is_same_request("", "xem lịch"))
 
     def test_noop_result(self):
-        self.assertTrue(voice_live.is_noop_result("JAVIS_NOOP"))
-        self.assertTrue(voice_live.is_noop_result("`JAVIS_NOOP`\n"))
-        self.assertFalse(voice_live.is_noop_result("Số đơn huỷ hôm nay là 3. " * 10 + "JAVIS_NOOP"))
+        self.assertTrue(voice_live.is_noop_result("JEEVI_NOOP"))
+        self.assertTrue(voice_live.is_noop_result("`JEEVI_NOOP`\n"))
+        self.assertFalse(voice_live.is_noop_result("Số đơn huỷ hôm nay là 3. " * 10 + "JEEVI_NOOP"))
         self.assertFalse(voice_live.is_noop_result("Số đơn huỷ hôm nay là 3."))
 
     def test_chatgpt_ack_is_silent_and_prompt_says_no_redelegation(self):
         self.assertIn("đang chờ", voice_live.CHATGPT_LIVE_PROMPT)
         live = voice_live.ChatGPTLive(app_server_getter=lambda: None)
-        asyncio.run(live.send_tool_ack("h2", "ask_javis", "x"))   # không gọi app-server nào
+        asyncio.run(live.send_tool_ack("h2", "ask_jeevi", "x"))   # không gọi app-server nào
 
 
 def acked(prov, cid):
@@ -58,12 +58,12 @@ def acked(prov, cid):
 class LiveRouteFollowupTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
     async def test_ack_followup_runs_brain_once_and_readback_is_not_a_bubble(self):
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_javis",
+            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_jeevi",
                               "args": {"request": "Kiểm tra số tiền trên TTS Dropship"}})
             await h.until(lambda: len(h.asks) == 1, "bộ não chạy việc đầu")
             await prov.q.put({"type": "transcript", "role": "user", "text": "Ok, xem xong kiểm tra xong thì báo anh nhé",
                               "final": True})
-            await prov.q.put({"type": "tool_call", "id": "h2", "name": "ask_javis",
+            await prov.q.put({"type": "tool_call", "id": "h2", "name": "ask_jeevi",
                               "args": {"request": "Ok, xem xong kiểm tra xong thì báo anh nhé"}})
             await h.until(lambda: acked(prov, "h2"), "xác nhận câu nói thêm")
             h.release(0)
@@ -85,12 +85,12 @@ class LiveRouteFollowupTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
         self.assertEqual(sum(f["type"] == "tool_result" for f in frames), 1, "đúng một bong bóng kết quả")
         said = [f["text"] for f in frames if f["type"] == "transcript" and f.get("role") == "assistant"]
         self.assertEqual(said, ["Dạ không có gì ạ."], "lời đọc lại kết quả không thành bong bóng thứ hai")
-        javis = [m["content"] for m in saved if m["role"] == "assistant"]
-        self.assertEqual(javis, ["- Hoa hồng đã về: **21.234.050 đ**", "Dạ không có gì ạ."])
+        jeevi = [m["content"] for m in saved if m["role"] == "assistant"]
+        self.assertEqual(jeevi, ["- Hoa hồng đã về: **21.234.050 đ**", "Dạ không có gì ạ."])
 
     async def test_typed_text_after_result_shows_the_reply(self):
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_javis", "args": {"request": "Doanh thu hôm nay"}})
+            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_jeevi", "args": {"request": "Doanh thu hôm nay"}})
             await h.until(lambda: len(h.asks) == 1, "việc đầu")
             h.release(0)
             await h.until(lambda: len(prov.results) == 1, "kết quả")
@@ -106,10 +106,10 @@ class LiveRouteFollowupTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
 
     async def test_real_followup_runs_alongside_first_with_context(self):
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_javis",
+            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_jeevi",
                               "args": {"request": "Doanh thu hôm nay"}})
             await h.until(lambda: len(h.asks) == 1, "việc đầu")
-            await prov.q.put({"type": "tool_call", "id": "h2", "name": "ask_javis",
+            await prov.q.put({"type": "tool_call", "id": "h2", "name": "ask_jeevi",
                               "args": {"request": "thêm cả số đơn huỷ nữa"}})
             # Từ 0.71.2: không chờ việc đầu. Trước đó câu này nằm im tới khi việc đầu xong.
             await h.until(lambda: len(h.asks) == 2, "việc nói thêm chạy song song, không chờ việc đầu")
@@ -128,9 +128,9 @@ class LiveRouteFollowupTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
     async def test_duplicate_handoff_of_running_request_runs_brain_once(self):
         async def script(prov, h):
             q = "Jeevi ơi, xem giúp anh trong brain có những ghi chú nào"
-            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_javis", "args": {"request": q}})
+            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_jeevi", "args": {"request": q}})
             await h.until(lambda: len(h.asks) == 1, "việc đầu")
-            await prov.q.put({"type": "tool_call", "id": "h2", "name": "ask_javis", "args": {"request": q}})
+            await prov.q.put({"type": "tool_call", "id": "h2", "name": "ask_jeevi", "args": {"request": q}})
             await h.until(lambda: acked(prov, "h2"), "handoff lặp được đóng")
             h.release(0)
             await h.until(lambda: len(prov.results) == 1, "kết quả")
@@ -140,10 +140,10 @@ class LiveRouteFollowupTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
 
     async def test_followup_noop_result_is_silent(self):
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_javis",
+            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_jeevi",
                               "args": {"request": "Doanh thu hôm nay"}})
             await h.until(lambda: len(h.asks) == 1, "việc đầu")
-            await prov.q.put({"type": "tool_call", "id": "h2", "name": "ask_javis",
+            await prov.q.put({"type": "tool_call", "id": "h2", "name": "ask_jeevi",
                               "args": {"request": "vậy hả, để anh ngồi chờ"}})
             await h.until(lambda: len(h.asks) == 2, "việc nói thêm chạy song song")
             h.release(1)
@@ -151,22 +151,22 @@ class LiveRouteFollowupTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
             h.release(0)
             await h.until(lambda: len(prov.results) == 1, "kết quả việc đầu")
 
-        prov, frames, asks, saved = await self.run_route(script, ["Doanh thu 12 triệu.", "JAVIS_NOOP"])
-        self.assertEqual([cid for cid, _ in prov.results], ["h1"], "JAVIS_NOOP không được đọc ra loa")
+        prov, frames, asks, saved = await self.run_route(script, ["Doanh thu 12 triệu.", "JEEVI_NOOP"])
+        self.assertEqual([cid for cid, _ in prov.results], ["h1"], "JEEVI_NOOP không được đọc ra loa")
         self.assertEqual([f["text"] for f in frames if f["type"] == "tool_result"], ["Doanh thu 12 triệu."])
-        self.assertFalse(any("JAVIS_NOOP" in m["content"] for m in saved), "JAVIS_NOOP không vào lịch sử")
+        self.assertFalse(any("JEEVI_NOOP" in m["content"] for m in saved), "JEEVI_NOOP không vào lịch sử")
         running = sum(f["type"] == "tool" and f.get("status") == "running" for f in frames)
         done = sum(f["type"] == "tool" and f.get("status") == "done" for f in frames)
         self.assertEqual(running, done, "thanh gọi không kẹt ở Đang làm việc")
 
     async def test_request_after_result_is_a_new_task(self):
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_javis",
+            await prov.q.put({"type": "tool_call", "id": "h1", "name": "ask_jeevi",
                               "args": {"request": "Doanh thu hôm nay"}})
             await h.until(lambda: len(h.asks) == 1, "việc đầu")
             h.release(0)
             await h.until(lambda: len(prov.results) == 1, "kết quả đầu")
-            await prov.q.put({"type": "tool_call", "id": "h2", "name": "ask_javis", "args": {"request": "ok báo anh nhé"}})
+            await prov.q.put({"type": "tool_call", "id": "h2", "name": "ask_jeevi", "args": {"request": "ok báo anh nhé"}})
             await h.until(lambda: len(h.asks) == 2, "việc mới")
             h.release(1)
             await h.until(lambda: len(prov.results) == 2, "kết quả hai")

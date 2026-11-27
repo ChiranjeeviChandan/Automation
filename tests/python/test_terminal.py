@@ -55,7 +55,7 @@ check("WS terminal đòi ĐÚNG session đăng nhập như /ws",
       and "javis_session" in _than)
 check("CANARY: WS terminal KHÔNG nhận token API (_token_ok là đường của script, không phải shell)",
       "_token_ok" not in _than)
-check("WS terminal tôn trọng công tắc tắt JAVIS_TERMINAL", "terminal.bat()" in _than)
+check("WS terminal tôn trọng công tắc tắt JEEVI_TERMINAL", "terminal.bat()" in _than)
 check("/terminal/status + /terminal/close không nằm trong danh sách khỏi đăng nhập",
       "/terminal" not in re.search(r"_AUTH_PUBLIC_EXACT = \((.*?)\)", SRC, re.S).group(1)
       and "/terminal" not in re.search(r"_AUTH_LOCAL_EXACT = \((.*?)\)", SRC, re.S).group(1))
@@ -68,17 +68,17 @@ check("rời tab chỉ GỠ NGƯỜI XEM, không giết shell",
 # ============================================================
 # 2. Công tắc + cấu hình
 # ============================================================
-_cu = os.environ.get("JAVIS_TERMINAL")
+_cu = os.environ.get("JEEVI_TERMINAL")
 try:
-    os.environ.pop("JAVIS_TERMINAL", None)
+    os.environ.pop("JEEVI_TERMINAL", None)
     check("mặc định terminal BẬT", terminal.bat() is True)
     for v in ("0", "off", "false", "no", "OFF"):
-        os.environ["JAVIS_TERMINAL"] = v
-        check(f"JAVIS_TERMINAL={v} -> tắt", terminal.bat() is False)
+        os.environ["JEEVI_TERMINAL"] = v
+        check(f"JEEVI_TERMINAL={v} -> tắt", terminal.bat() is False)
 finally:
-    os.environ.pop("JAVIS_TERMINAL", None)
+    os.environ.pop("JEEVI_TERMINAL", None)
     if _cu is not None:
-        os.environ["JAVIS_TERMINAL"] = _cu
+        os.environ["JEEVI_TERMINAL"] = _cu
 
 check("shell_argv() luôn trả ít nhất một lệnh", len(terminal.shell_argv()) >= 1)
 check("che_do() ra 'pty' trên POSIX / 'ong' trên Windows",

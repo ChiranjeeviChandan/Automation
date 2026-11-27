@@ -15,8 +15,8 @@ import tempfile
 import time
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="javis-resonance-m3-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-resonance-m3-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 
 import resonance as R  # noqa: E402
 import resonance_store as RS  # noqa: E402
@@ -32,7 +32,7 @@ def check(name, cond):
 
 BRAIN = str(Path(tempfile.mkdtemp(prefix="brain-m3-")).resolve())
 (Path(BRAIN) / "Jeevi").mkdir(parents=True)
-P = RS.Principal("agent", "javis", BRAIN)
+P = RS.Principal("agent", "jeevi", BRAIN)
 OWNER = RS.Principal("owner", "owner", BRAIN)
 store = RS.GoalStore()
 import _resonance_agent as RA  # noqa: E402  - A1: Cộng hưởng bật theo agent, không theo brain
@@ -218,7 +218,7 @@ try:
 except R.GoalRejected as _e:
     _rej = "path" in str(_e)
 check("đường dẫn ra ngoài brain bị từ chối ngay lúc lập mục tiêu, nói rõ vì sao", _rej)
-g_out = R.GoalRecord(id="g_out", brain_id=BRAIN, owner="javis", revision=1, output_root=BRAIN,
+g_out = R.GoalRecord(id="g_out", brain_id=BRAIN, owner="jeevi", revision=1, output_root=BRAIN,
                      criteria=({"id": "c1", "description": "File ngoài brain", "evaluator": "artifact_contract",
                                 "params": {"path": "../ngoai-brain.md"}},))
 check("evaluator vẫn tự vệ: khung lỗi lọt tới thì unknown (lỗi evaluator), không đọc ngoài brain",
@@ -422,7 +422,7 @@ check("no_paid_provider_fallback: blocked engine_blocked, báo người dùng l�
 # ═══════════════════════ test_idle_does_not_call_model ═══════════════════════
 clock_i = Clock(4_000_000_000.0)
 for w in store.due_wakeups(clock_i()):
-    store.clear_wake(RS.Principal("agent", "javis", w["brain_id"]), w["goal_id"], w["kind"])
+    store.clear_wake(RS.Principal("agent", "jeevi", w["brain_id"]), w["goal_id"], w["kind"])
 deps_i, built_i, eng_i = make_deps(clock=clock_i)
 n_i = asyncio.run(R.tick(store, clock_i(), lambda b: deps_i))
 check("idle_does_not_call_model: không có lịch tới hạn thì tick không dựng engine nào", n_i == 0 and built_i["n"] == 0)
@@ -575,7 +575,7 @@ check("P1-4 nhận lịch bằng CAS", store.claim_wake(P, g_lw.id, "work", w_lw
 check("P1-4 nhận lại cùng lịch lần hai thì không được", not store.claim_wake(P, g_lw.id, "work", w_lw["due_at"], now_lw + 900))
 for w in store.due_wakeups(now_lw + 5000, limit=500):   # chỉ để lại lịch của mục tiêu đang thử
     if w["goal_id"] != g_lw.id:
-        store.clear_wake(RS.Principal("agent", "javis", w["brain_id"]), w["goal_id"], w["kind"])
+        store.clear_wake(RS.Principal("agent", "jeevi", w["brain_id"]), w["goal_id"], w["kind"])
 store2 = RS.GoalStore()          # "khởi động lại": kho mới trên cùng SQLite
 check("P1-4 sau khởi động lại: chưa tới hạn nhận lại thì chưa chạy",
       not any(w["goal_id"] == g_lw.id for w in store2.due_wakeups(now_lw + 10)))

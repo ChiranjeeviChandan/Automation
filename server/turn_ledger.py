@@ -53,8 +53,8 @@ _path: Optional[Path] = None
 
 
 def resume_on() -> bool:
-    """JAVIS_RESUME_AFTER_RESTART=0 gives the old behaviour back (the same switch as the team runner's)."""
-    return str(os.environ.get("JAVIS_RESUME_AFTER_RESTART", "1")).strip().lower() not in ("0", "false", "off", "no")
+    """JEEVI_RESUME_AFTER_RESTART=0 gives the old behaviour back (the same switch as the team runner's)."""
+    return str(os.environ.get("JEEVI_RESUME_AFTER_RESTART", "1")).strip().lower() not in ("0", "false", "off", "no")
 
 
 def configure(path) -> None:

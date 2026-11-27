@@ -15,9 +15,9 @@
 - **KHÔNG dùng pytest.** Test là script chạy thẳng, dùng `check(name, cond)` + `_fails` + `sys.exit(1)`. Mẫu chuẩn: `server/test_loop_ambient.py:23-30` và `:117-120`.
 - **Lệnh chạy test:** `cd server && ../.venv/Scripts/python.exe test_<name>.py`. Venv ở GỐC repo, KHÔNG phải `server/.venv`.
 - **Test mới phải đặt tên `server/test_*.py`** thì CI (`.github/workflows/ci.yml:29-39`) mới glob thấy. Đặt chỗ khác là CI bỏ qua.
-- **Preamble test, thứ tự load-bearing** (env TRƯỚC import, vì module đọc `JAVIS_STATE_DIR` lúc import):
+- **Preamble test, thứ tự load-bearing** (env TRƯỚC import, vì module đọc `JEEVI_STATE_DIR` lúc import):
   ```python
-  os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-<x>test-"))
+  os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-<x>test-"))
   sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
   import <module>  # noqa: E402
   ```
@@ -45,7 +45,7 @@
 - `server/git_brain.py` - `_GITIGNORE:62-72`; `_BACKUP_SKIP_SUBSTR:267-268`; `ensure_git_repo:75-99`.
 - `dashboard/studio.js` - `renderSkillList:463-477`.
 - `CLAUDE.md:249` - mẫu description.
-- `.claude/skills/{html-to-webcake,ingest-source,javis-builder,lint-wiki,query-wiki}/SKILL.md`.
+- `.claude/skills/{html-to-webcake,ingest-source,jeevi-builder,lint-wiki,query-wiki}/SKILL.md`.
 
 ---
 
@@ -76,7 +76,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-capstest-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-capstest-"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import skill_router  # noqa: E402
@@ -115,7 +115,7 @@ check("KHÔNG bắt 'Dùng khi cần' (mở đầu hợp lệ, ngắn)",
       v("Dùng khi cần tạo ảnh minh hoạ phong cách flat 2D") is None)
 
 # ---- _meta_of fallback dùng chung trần ----
-tmp = Path(tempfile.mkdtemp(prefix="javis-capsbrain-"))
+tmp = Path(tempfile.mkdtemp(prefix="jeevi-capsbrain-"))
 d = tmp / "skills" / "khong-co-desc"
 d.mkdir(parents=True)
 (d / "SKILL.md").write_text("---\nname: Không mô tả\n---\n" + ("y" * 400) + "\n",
@@ -143,7 +143,7 @@ Trong `server/skill_router.py`, sau dòng 31 (`_READ_BASES = ...`), TRƯỚC hai
 
 ```python
 
-# Trần độ dài description khi bơm vào router (system prompt + mô tả tool javis_use_skill).
+# Trần độ dài description khi bơm vào router (system prompt + mô tả tool jeevi_use_skill).
 # Dài hơn là BỊ CẮT IM LẶNG → phần đuôi không tới engine, skill không route được. Vì vậy
 # trần này được ÉP ở mọi chỗ GHI (POST /skills, learn.py), không chỉ cắt lúc hiển thị.
 # Ví dụ trigger đầy đủ thuộc về mục '## Khi nào dùng' trong thân file, nơi không bị cắt.
@@ -248,13 +248,13 @@ def _region(path, start_marker, end_marker):
 
 
 hub = _region("mcp_hub.py", "metas = skill_router.list_enabled_meta(vault_root)",
-              'add("javis_use_skill"')
+              'add("jeevi_use_skill"')
 check("mcp_hub không còn literal [:60]", "[:60]" not in hub)
 check("mcp_hub không còn literal 20", "20" not in hub)
 check("mcp_hub dùng SKILL_DESC_MAX", "SKILL_DESC_MAX" in hub)
 check("mcp_hub dùng SKILL_LIST_MAX", "SKILL_LIST_MAX" in hub)
 
-blk = _region("main.py", "def _skill_router_block", "@app.get(\"/javis/index\")")
+blk = _region("main.py", "def _skill_router_block", "@app.get(\"/jeevi/index\")")
 check("main không còn literal [:100]", "[:100]" not in blk)
 check("main không còn literal 15", "15" not in blk)
 check("main dùng SKILL_DESC_MAX", "SKILL_DESC_MAX" in blk)
@@ -345,7 +345,7 @@ git commit -m "fix(skill): gom 3 diem cat description ve mot hang so chung"
 
 **Files:**
 - Test: `server/test_skill_caps.py` (thêm phần lint)
-- Modify: `.claude/skills/html-to-webcake/SKILL.md`, `.claude/skills/javis-builder/SKILL.md`, `.claude/skills/ingest-source/SKILL.md`, `.claude/skills/query-wiki/SKILL.md`, `.claude/skills/lint-wiki/SKILL.md`
+- Modify: `.claude/skills/html-to-webcake/SKILL.md`, `.claude/skills/jeevi-builder/SKILL.md`, `.claude/skills/ingest-source/SKILL.md`, `.claude/skills/query-wiki/SKILL.md`, `.claude/skills/lint-wiki/SKILL.md`
 
 **Interfaces:**
 - Consumes: `skill_router.validate_description` (Task 1), `system_sync.SYSTEM_SKILLS_DIR` (`system_sync.py:52`).
@@ -375,7 +375,7 @@ for _slug in sorted(system_sync.system_skill_slugs()):
 - [ ] **Step 2: Chạy lint, xác nhận nó bắt đúng 5 skill**
 
 Run: `cd server && ../.venv/Scripts/python.exe test_skill_caps.py`
-Expected: FAIL, liệt kê ĐỦ 5 dòng (không dừng ở cái đầu, vì dùng `check` chứ không dùng bare assert): `html-to-webcake` (376 ký tự), `javis-builder` (333), `ingest-source` (266), `query-wiki` (249), `lint-wiki` (213).
+Expected: FAIL, liệt kê ĐỦ 5 dòng (không dừng ở cái đầu, vì dùng `check` chứ không dùng bare assert): `html-to-webcake` (376 ký tự), `jeevi-builder` (333), `ingest-source` (266), `query-wiki` (249), `lint-wiki` (213).
 
 - [ ] **Step 3: Viết lại description + thêm mục "Khi nào dùng"**
 
@@ -395,7 +395,7 @@ trên webcake", "html to webcake", "convert html sang webcake".
 Việc skill làm: đọc HTML, tái dựng thành page_source đúng khuôn Webcake rồi xuất .pke.
 ```
 
-`.claude/skills/javis-builder/SKILL.md` (110 ký tự):
+`.claude/skills/jeevi-builder/SKILL.md` (110 ký tự):
 ```yaml
 description: Tạo hoặc sửa năng lực của Jeevi: agent, skill, workflow, loop, plugin. Kèm mẫu file chuẩn và luật chống trùng.
 ```
@@ -478,16 +478,16 @@ git commit -m "fix(skill): viet lai 5 description he thong cho lot tran 150 + li
 
 ---
 
-### Task 4: javis-builder - sửa đường dẫn canonical + nhúng chuẩn viết skill
+### Task 4: jeevi-builder - sửa đường dẫn canonical + nhúng chuẩn viết skill
 
 **Files:**
-- Modify: `.claude/skills/javis-builder/SKILL.md:23-24`, `:38`, `:54`, chèn sau `:62`
+- Modify: `.claude/skills/jeevi-builder/SKILL.md:23-24`, `:38`, `:54`, chèn sau `:62`
 
 **Interfaces:** không có. Task này thuần tài liệu, nhưng nó là NỬA CÒN LẠI của spec mục B3 (nửa kia là prompt learn ở Task 7). Thiếu nó thì skill tạo qua chat vẫn vô định hình.
 
 **Phụ thuộc:** làm SAU Task 3 (Task 3 đã viết lại `description` của chính file này).
 
-`javis-builder` đang dạy ghi skill vào `.claude/skills/`, nhưng đó là bản MIRROR phái sinh. Canonical là `skills/<slug>/SKILL.md` (xem `skill_router.py:6` và `CLAUDE.md:245`). Sai ở 3 chỗ, phải sửa cả ba kẻo file tự mâu thuẫn.
+`jeevi-builder` đang dạy ghi skill vào `.claude/skills/`, nhưng đó là bản MIRROR phái sinh. Canonical là `skills/<slug>/SKILL.md` (xem `skill_router.py:6` và `CLAUDE.md:245`). Sai ở 3 chỗ, phải sửa cả ba kẻo file tự mâu thuẫn.
 
 - [ ] **Step 1: Sửa dòng 54**
 
@@ -525,11 +525,11 @@ thành:
 skills: [slug-skill]      # [] nếu chưa gán; chỉ gán skill đã có trong skills/
 ```
 
-- [ ] **Step 4: Nhúng CHUẨN VIẾT SKILL vào javis-builder**
+- [ ] **Step 4: Nhúng CHUẨN VIẾT SKILL vào jeevi-builder**
 
-Spec mục B3 yêu cầu bộ chuẩn có ở CẢ HAI nơi sinh skill: prompt learn (Task 7) và javis-builder (đây). Thiếu một nơi thì skill tạo qua chat vẫn ra vô định hình.
+Spec mục B3 yêu cầu bộ chuẩn có ở CẢ HAI nơi sinh skill: prompt learn (Task 7) và jeevi-builder (đây). Thiếu một nơi thì skill tạo qua chat vẫn ra vô định hình.
 
-Trong `.claude/skills/javis-builder/SKILL.md`, ngay SAU khối template Skill (kết thúc ở dòng 62 với dấu ``` đóng), chèn:
+Trong `.claude/skills/jeevi-builder/SKILL.md`, ngay SAU khối template Skill (kết thúc ở dòng 62 với dấu ``` đóng), chèn:
 
 ```markdown
 #### Chuẩn viết skill (bắt buộc, server sẽ CHẶN nếu vi phạm)
@@ -556,19 +556,19 @@ Trong `.claude/skills/javis-builder/SKILL.md`, ngay SAU khối template Skill (k
 
 - [ ] **Step 5: Xác minh không còn tham chiếu sai**
 
-Run: `grep -n "\.claude/skills" .claude/skills/javis-builder/SKILL.md`
+Run: `grep -n "\.claude/skills" .claude/skills/jeevi-builder/SKILL.md`
 Expected: chỉ còn các dòng NÓI VỀ mirror (nếu có), không còn dòng nào bảo GHI vào đó. Nếu grep trả rỗng thì cũng đạt.
 
 - [ ] **Step 6: Chạy lint để chắc không vỡ frontmatter**
 
 Run: `cd server && ../.venv/Scripts/python.exe test_skill_caps.py`
-Expected: PASS. Đặc biệt dòng `skill hệ thống 'javis-builder' description hợp lệ` phải `ok` - Task 3 đã viết lại description của chính file này, Step 4 ở đây chỉ thêm vào THÂN nên không được làm nó vượt trần trở lại.
+Expected: PASS. Đặc biệt dòng `skill hệ thống 'jeevi-builder' description hợp lệ` phải `ok` - Task 3 đã viết lại description của chính file này, Step 4 ở đây chỉ thêm vào THÂN nên không được làm nó vượt trần trở lại.
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add .claude/skills/javis-builder/SKILL.md
-git commit -m "fix(docs): javis-builder tro dung canonical skills/ + nhung chuan viet skill"
+git add .claude/skills/jeevi-builder/SKILL.md
+git commit -m "fix(docs): jeevi-builder tro dung canonical skills/ + nhung chuan viet skill"
 ```
 
 ---
@@ -809,7 +809,7 @@ Và đổi dòng 564-565 (frontmatter) từ:
 
 ```python
                     fm = (f"---\nname: {s.get('name', slug)}\ndescription: {s.get('description','')}\n"
-                          f"origin: javis-learned\nstatus: active\ncreated: {today}\n---\n")
+                          f"origin: jeevi-learned\nstatus: active\ncreated: {today}\n---\n")
 ```
 
 thành:
@@ -817,7 +817,7 @@ thành:
 ```python
                     fm = (f"---\nname: {s.get('name', slug)}\ndescription: {desc}\n"
                           f"group: {s.get('group') or 'Chung'}\n"
-                          f"origin: javis-learned\nstatus: active\ncreated: {today}\n---\n")
+                          f"origin: jeevi-learned\nstatus: active\ncreated: {today}\n---\n")
 ```
 
 - [ ] **Step 6: Chạy test, xác nhận PASS**
@@ -874,7 +874,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-usagetest-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-usagetest-"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import skill_usage  # noqa: E402
@@ -888,7 +888,7 @@ def check(name, cond):
         _fails.append(name)
 
 
-_ROOT = Path(tempfile.mkdtemp(prefix="javis-usagebrain-"))
+_ROOT = Path(tempfile.mkdtemp(prefix="jeevi-usagebrain-"))
 
 # ---- file thiếu ----
 check("brain chưa có sidecar → read_usage trả {}", skill_usage.read_usage(_ROOT) == {})
@@ -934,7 +934,7 @@ except Exception as e:
 # ---- gọi song song ----
 import threading  # noqa: E402
 
-_R2 = Path(tempfile.mkdtemp(prefix="javis-usagepar-"))
+_R2 = Path(tempfile.mkdtemp(prefix="jeevi-usagepar-"))
 
 
 def _hammer():
@@ -992,7 +992,7 @@ Vị trí: <brain>/Jeevi/skill-usage.json. Đặt cạnh Jeevi/loop-state.json t
 nhét vào frontmatter SKILL.md: brain là git repo, mỗi lần dùng skill sẽ đẻ một commit rác
 và tạo áp lực xung đột lên file do người viết.
 
-⚠ TÍN HIỆU DƯƠNG MỘT CHIỀU. Bộ đếm chỉ bump ở tool javis_use_skill (mcp_hub). Claude Code
+⚠ TÍN HIỆU DƯƠNG MỘT CHIỀU. Bộ đếm chỉ bump ở tool jeevi_use_skill (mcp_hub). Claude Code
 nạp skill NATIVE qua bản mirror <brain>/.claude/skills KHÔNG đi qua đó, nên:
   - use_count > 0  → skill CHẮC CHẮN có dùng.
   - use_count == 0 → KHÔNG có bằng chứng. TUYỆT ĐỐI không suy ra "vô dụng", không tự tắt,
@@ -1188,7 +1188,7 @@ Expected: `mcp_hub compile OK`
 
 ```bash
 git add server/mcp_hub.py server/test_skill_usage.py
-git commit -m "feat(skill): dem luot dung tai handler javis_use_skill"
+git commit -m "feat(skill): dem luot dung tai handler jeevi_use_skill"
 ```
 
 ---
@@ -1286,7 +1286,7 @@ Trong `dashboard/studio.js`, trong `renderSkillList()`, ngay SAU dòng khai báo
         const when = s.last_used_at ? new Date(s.last_used_at * 1000).toLocaleDateString("vi-VN") : "";
         usageHtml = ` · <span class="sk-usage">đã dùng ${s.use_count} lần${when ? ", gần nhất " + when : ""}</span>`;
       } else if (s.stale) {
-        usageHtml = ` · <span class="sk-usage sk-stale" title="Jeevi chỉ đếm được skill nạp qua tool javis_use_skill. Claude Code nạp native qua .claude/skills thì không đếm được, nên đây chỉ là tham khảo - không có nghĩa skill vô dụng.">chưa thấy dùng</span>`;
+        usageHtml = ` · <span class="sk-usage sk-stale" title="Jeevi chỉ đếm được skill nạp qua tool jeevi_use_skill. Claude Code nạp native qua .claude/skills thì không đếm được, nên đây chỉ là tham khảo - không có nghĩa skill vô dụng.">chưa thấy dùng</span>`;
       }
 ```
 
@@ -1362,7 +1362,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-mirrortest-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-mirrortest-"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import system_sync  # noqa: E402
@@ -1376,7 +1376,7 @@ def check(name, cond):
         _fails.append(name)
 
 
-_ROOT = Path(tempfile.mkdtemp(prefix="javis-mirrorbrain-"))
+_ROOT = Path(tempfile.mkdtemp(prefix="jeevi-mirrorbrain-"))
 _sk = _ROOT / "skills" / "co-tai-lieu"
 (_sk / "references").mkdir(parents=True)
 (_sk / "scripts").mkdir(parents=True)
@@ -1589,7 +1589,7 @@ check("_backup_skip KHÔNG bỏ nhầm skill thật",
       git_brain._backup_skip("brain/skills/viet-email/SKILL.md") is False)
 
 # reconcile brain cũ: .gitignore có sẵn thiếu dòng mới → phải được append, KHÔNG ghi đè
-_gi_root = Path(tempfile.mkdtemp(prefix="javis-gitest-"))
+_gi_root = Path(tempfile.mkdtemp(prefix="jeevi-gitest-"))
 (_gi_root / ".gitignore").write_text("# cua toi\nrieng-cua-toi/\n", encoding="utf-8")
 _changed = git_brain._ensure_gitignore_lines(_gi_root)
 _txt = (_gi_root / ".gitignore").read_text(encoding="utf-8")
@@ -1612,7 +1612,7 @@ Trong `server/git_brain.py`, đổi khối 62-72 thành (chèn 1 dòng sau `Jeev
 _GITIGNORE = (
     "# Jeevi brain - KHÔNG commit: khoá, log thô (có thể chứa secret), nhật ký nền.\n"
     "# Git chỉ version TRI THỨC ĐÃ CHƯNG CẤT (facts/wiki/skills/MEMORY.md) → undo sạch, an toàn.\n"
-    ".javis-learn.lock\n"
+    ".jeevi-learn.lock\n"
     "Jeevi/learn-staging/\n"
     "Jeevi/learn-log/\n"
     "Jeevi/loop-log/\n"
@@ -1658,7 +1658,7 @@ def _ensure_gitignore_lines(root) -> bool:
                    if l.strip() and not l.strip().startswith("#") and l.strip() not in have]
         if not missing:
             return False
-        text = (cur.rstrip("\n") + "\n") if cur.strip() else _GITIGNORE.split(".javis-learn")[0]
+        text = (cur.rstrip("\n") + "\n") if cur.strip() else _GITIGNORE.split(".jeevi-learn")[0]
         gi.write_text(text + "\n".join(missing) + "\n", encoding="utf-8")
         return True
     except Exception as e:
@@ -1761,7 +1761,7 @@ Khởi động server, mở chat, hỏi một câu khớp trigger của một sk
 echo "0.9.62" > VERSION
 ```
 
-Thêm mục vào đầu `CHANGELOG.md` theo đúng định dạng các mục đã có trong file, nội dung phủ: gom 3 điểm cắt description (60 ở hub, 100 ở system prompt, 140 ở fallback) về một hằng số `SKILL_DESC_MAX = 150`; ép trần ở `POST /skills` và learn.py; viết lại 5 description skill hệ thống (6/6 skill đang bị cắt, mất 79 tới 316 ký tự); thêm telemetry `Jeevi/skill-usage.json` đếm ở `javis_use_skill`; `mirror_skills` copy cả cây con và hash theo cây; gitignore sidecar + reconcile `.gitignore` cho brain cũ.
+Thêm mục vào đầu `CHANGELOG.md` theo đúng định dạng các mục đã có trong file, nội dung phủ: gom 3 điểm cắt description (60 ở hub, 100 ở system prompt, 140 ở fallback) về một hằng số `SKILL_DESC_MAX = 150`; ép trần ở `POST /skills` và learn.py; viết lại 5 description skill hệ thống (6/6 skill đang bị cắt, mất 79 tới 316 ký tự); thêm telemetry `Jeevi/skill-usage.json` đếm ở `jeevi_use_skill`; `mirror_skills` copy cả cây con và hash theo cây; gitignore sidecar + reconcile `.gitignore` cho brain cũ.
 
 - [ ] **Step 5: Commit + push**
 
@@ -1778,12 +1778,12 @@ git push origin main
 **Thứ tự phụ thuộc:**
 
 - Task 1 (hằng số + validator) chặn Task 2, 3, 6, 7.
-- Task 3 (viết lại description) chặn Task 4 (cùng đụng `javis-builder/SKILL.md`, Task 3 sửa frontmatter, Task 4 sửa thân).
+- Task 3 (viết lại description) chặn Task 4 (cùng đụng `jeevi-builder/SKILL.md`, Task 3 sửa frontmatter, Task 4 sửa thân).
 - Task 8 (sidecar) chặn Task 9, 10.
 - Task 5 (CLAUDE.md), Task 11 (mirror), Task 12 (gitignore) độc lập, chen vào đâu cũng được.
 - Task 13 làm cuối.
 
-**Spec mục B3 nằm ở HAI task, đừng làm nửa vời:** bộ chuẩn viết skill phải có ở cả prompt learn (Task 7) lẫn javis-builder (Task 4 Step 4). Chỉ làm một nơi thì đường sinh skill còn lại vẫn đẻ ra skill vô định hình.
+**Spec mục B3 nằm ở HAI task, đừng làm nửa vời:** bộ chuẩn viết skill phải có ở cả prompt learn (Task 7) lẫn jeevi-builder (Task 4 Step 4). Chỉ làm một nơi thì đường sinh skill còn lại vẫn đẻ ra skill vô định hình.
 
 **Task rủi ro nhất là 11** (`mirror_skills` đệ quy). Nếu bí, đọc lại mục B4 trong spec: bẫy digest tập-con và bẫy deadlock `_LOCK` là hai chỗ dễ chết nhất.
 

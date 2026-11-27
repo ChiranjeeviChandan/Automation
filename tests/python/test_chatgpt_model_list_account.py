@@ -18,8 +18,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_TMP = Path(tempfile.mkdtemp(prefix="javis-gpt-list-"))
-os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
+_TMP = Path(tempfile.mkdtemp(prefix="jeevi-gpt-list-"))
+os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
 _FAKE_HOME = _TMP / "home"
 (_FAKE_HOME / ".codex").mkdir(parents=True, exist_ok=True)
 os.environ["HOME"] = str(_FAKE_HOME)
@@ -189,7 +189,7 @@ check("...and the Plus list is kept for the Plus account", r3.get("models") == P
 
 # ---- 10. the Models page picker asks again on every open ----
 console = (ROOT / "dashboard" / "console.js").read_text(encoding="utf-8")
-picker = console[console.index("const ML = window.JavisModelList;"):console.index("Background model: the composer-style")]
+picker = console[console.index("const ML = window.JeeviModelList;"):console.index("Background model: the composer-style")]
 check("the Models page picker asks the server on every open (refresh), not only when nothing is cached",
       "ML.refresh(pid)" in picker and "ids == null && ML" not in picker)
 check("...and says it is loading while it asks", "loading ? wait" in picker)

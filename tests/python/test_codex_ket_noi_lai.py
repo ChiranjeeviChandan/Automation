@@ -24,12 +24,12 @@ import tempfile
 import time
 from pathlib import Path
 
-TMP = Path(tempfile.mkdtemp(prefix="javis-codexws-"))
-os.environ["JAVIS_STATE_DIR"] = str(TMP / "state")
+TMP = Path(tempfile.mkdtemp(prefix="jeevi-codexws-"))
+os.environ["JEEVI_STATE_DIR"] = str(TMP / "state")
 os.environ["CODEX_HOME"] = str(TMP / "codexhome")
 (TMP / "state").mkdir()
 (TMP / "codexhome").mkdir()
-os.environ.pop("JAVIS_CODEX_TRANSPORT", None)
+os.environ.pop("JEEVI_CODEX_TRANSPORT", None)
 
 import claude_cli  # noqa: E402
 from claude_cli import CodexCLI  # noqa: E402
@@ -44,7 +44,7 @@ def check(ten, dieu_kien, them=""):
         _fails.append(ten)
 
 
-MARK = Path(os.environ["JAVIS_STATE_DIR"]) / "codex_ws_hong.json"
+MARK = Path(os.environ["JEEVI_STATE_DIR"]) / "codex_ws_hong.json"
 RECON = ("Reconnecting... 2/5 (stream disconnected before completion: websocket closed by "
          "server before response.completed)")
 
@@ -119,12 +119,12 @@ MARK.write_text(json.dumps({"ts": time.time() - 4 * 86400}), encoding="utf-8")
 check("dấu cũ quá hạn: về WebSocket", not co_http(args_moi()))
 
 # 6) Cờ môi trường.
-os.environ["JAVIS_CODEX_TRANSPORT"] = "http"
-check("JAVIS_CODEX_TRANSPORT=http: luôn HTTPS", co_http(args_moi()))
+os.environ["JEEVI_CODEX_TRANSPORT"] = "http"
+check("JEEVI_CODEX_TRANSPORT=http: luôn HTTPS", co_http(args_moi()))
 MARK.write_text(json.dumps({"ts": time.time()}), encoding="utf-8")
-os.environ["JAVIS_CODEX_TRANSPORT"] = "ws"
-check("JAVIS_CODEX_TRANSPORT=ws: không ép dù vừa hỏng", not co_http(args_moi()))
-os.environ.pop("JAVIS_CODEX_TRANSPORT")
+os.environ["JEEVI_CODEX_TRANSPORT"] = "ws"
+check("JEEVI_CODEX_TRANSPORT=ws: không ép dù vừa hỏng", not co_http(args_moi()))
+os.environ.pop("JEEVI_CODEX_TRANSPORT")
 
 # 7) Người dùng tự trỏ Codex sang provider khác → Jeevi không giành.
 (Path(os.environ["CODEX_HOME"]) / "config.toml").write_text('model_provider = "ollama"\n', encoding="utf-8")

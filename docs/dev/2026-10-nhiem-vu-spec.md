@@ -155,7 +155,7 @@ Kho mới theo brain: `<brain>/Jeevi/my-tasks.json`, module `server/my_tasks.py`
                "date": "YYYY-MM-DD" | null, "time": "HH:MM" | "", "end": "HH:MM" | "",
                "repeat": null | {unit, n, days, md, time}, "project": "<id>" | "",
                "status": "open" | "done" | "cancelled", "done_at": epoch,
-               "done_dates": { "YYYY-MM-DD": {"at": epoch, "by": "me" | "javis"} },
+               "done_dates": { "YYYY-MM-DD": {"at": epoch, "by": "me" | "jeevi"} },
                "subs": [ {"t": "...", "done": false} ], "remind": "15", "location": "",
                "habit": null | {"start": "YYYY-MM-DD", "remind": "auto"|"time"|"off", "at": "HH:MM"},
                "created_at": epoch, "updated_at": epoch } ],
@@ -177,8 +177,8 @@ Không có kho riêng: thói quen là việc của tôi có `habit`. Chuỗi, đ
 ### 8.4 Phần thông minh (Phần 4)
 
 - Lịch hẹn: `kind: "appt"`. "Nhờ Jeevi chuẩn bị trước" tạo một lời nhắc mode task trước giờ hẹn 30 phút.
-- Tool cho mọi engine (plugin hệ thống, như `javis-task`): thêm việc của tôi, liệt kê, tích xong
-  (thói quen ghi `by: "javis"`). Chỉ tích khi người dùng nói rõ đã xong.
+- Tool cho mọi engine (plugin hệ thống, như `jeevi-task`): thêm việc của tôi, liệt kê, tích xong
+  (thói quen ghi `by: "jeevi"`). Chỉ tích khi người dùng nói rõ đã xong.
 - Lời nhắn thói quen: mỗi ngày Core viết một lượt cho từng thói quen (một lần gọi model cho cả
   danh sách), lưu cùng kho; trang đọc bản đã lưu, thiếu thì dùng câu mẫu.
 
@@ -202,10 +202,10 @@ Không có kho riêng: thói quen là việc của tôi có `habit`. Chuỗi, đ
 - 0.423.0: Phần 2 xong (tab Của tôi, dự án, chọn ngày, chọn lặp, quá hạn có lần lặp bị lỡ).
 - 0.424.0: Phần 3 xong (thói quen, chuỗi theo ngày có lịch, ngôi sao, hiệu ứng tích, nhắc thói quen ở máy chủ).
 - 0.425.0: Phần 4: lịch hẹn (trạng thái tự đổi, trùng giờ, nhắc trước, nhờ Jeevi chuẩn bị trước), tool
-  `javis_mytask` cho mọi engine (thêm việc của tôi, xem, tích xong theo lời báo với `by: "javis"`).
+  `jeevi_mytask` cho mọi engine (thêm việc của tôi, xem, tích xong theo lời báo với `by: "jeevi"`).
 - 0.426.0: rà lỗi sau 4 phần. Trả lại những gì trang cũ có mà trang Nhiệm vụ thiếu: sửa loop (tên, việc mỗi vòng,
   mức quyền, chu kỳ), tuỳ chọn lời nhắc (gọi điện, đọc thành tiếng, nhớ kết quả lần trước, mức quyền), Jeevi mở một
-  việc Kanban trên màn hình (`JavisTasks.show`), hỏi lại trước khi cấp quyền chạy thật. Bỏ `renderKanban`,
+  việc Kanban trên màn hình (`JeeviTasks.show`), hỏi lại trước khi cấp quyền chạy thật. Bỏ `renderKanban`,
   `renderSelfImprove` cùng chuỗi và test chỉ soi mã của chúng.
 - 0.427.0: hai phần còn lại.
   - Lời nhắn thói quen do Core viết: mỗi ngày (lượt tick đầu sau 05:00, một lần) model nền viết câu cho đầu mục và cho

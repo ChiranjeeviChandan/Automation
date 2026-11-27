@@ -1,7 +1,7 @@
 /* Cookies page, once "Kho đăng nhập" / Login vault (0.251.0; renamed and given a file upload in 0.261.0).
  *
  * The owner signs in on their own browser, exports that site's cookies and pastes them here. The server
- * (server/login_vault.py) encrypts them; Jeevi then opens pages behind that sign-in (tool javis_login) and
+ * (server/login_vault.py) encrypts them; Jeevi then opens pages behind that sign-in (tool jeevi_login) and
  * page watches can use it. Since 2026-11-21 Jeevi can also click and fill forms with a sign-in, in the
  * Playwright browser: each card has its own switch for that, and the add form states the risk before the
  * owner saves (owner: "khi add cookies nhớ cảnh báo người dùng có thể chịu rủi ro").
@@ -30,7 +30,7 @@
   var ic = function (n) { return (typeof window !== "undefined" && window.ic) ? window.ic(n) : ""; };
   // (i) with its own words, for a spot with no title beside it (0.432.0: the page header already says Cookies).
   function infoPair(html, label) {
-    var J = typeof window !== "undefined" && window.JavisInfo;
+    var J = typeof window !== "undefined" && window.JeeviInfo;
     return J ? J.pair(html, label) : '<div class="info-body">' + html + "</div>";
   }
 
@@ -350,6 +350,6 @@
 
   var api_ = { mount: mount, introHtml: introHtml, riskHtml: riskHtml, cardHtml: cardHtml, expiryText: expiryText, needsSite: needsSite, pasteFormHtml: pasteFormHtml,
     nameFromFile: nameFromFile };
-  if (typeof window !== "undefined") window.JavisLoginVault = api_;
+  if (typeof window !== "undefined") window.JeeviLoginVault = api_;
   if (typeof module !== "undefined" && module.exports) module.exports = api_;
 })();

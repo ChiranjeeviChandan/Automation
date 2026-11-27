@@ -28,8 +28,8 @@ function brainCua(html) {
 
 global.currentBrainPath = () => "brains/Brain Default";
 
-const ANH_MD = "![so do](attachments/javis-img-20260730-195818-65ea9f.png)";
-const ANH_WIKI = "![[attachments/javis-img-20260730-195818-65ea9f.png]]";
+const ANH_MD = "![so do](attachments/jeevi-img-20260730-195818-65ea9f.png)";
+const ANH_WIKI = "![[attachments/jeevi-img-20260730-195818-65ea9f.png]]";
 
 // ---- 1. Khong truyen brain: giu nguyen hanh vi cu (tin moi trong brain dang chon) ----
 let h = mdToHtml(ANH_MD);
@@ -40,7 +40,7 @@ check("van ra the img nhu cu", has(h, "<img") && has(h, "/files/raw?"));
 h = mdToHtml(ANH_MD, "brains/My Bullet Journal");
 check("truyen brain -> anh tro dung brain cua hoi thoai",
       brainCua(h) === "brains/My Bullet Journal");
-check("duong dan tuong doi giu nguyen", has(h, "javis-img-20260730-195818-65ea9f.png"));
+check("duong dan tuong doi giu nguyen", has(h, "jeevi-img-20260730-195818-65ea9f.png"));
 
 // Anh kieu wikilink ![[...]] cung phai theo brain do, khong chi rieng cu phap markdown.
 h = mdToHtml(ANH_WIKI, "brains/My Bullet Journal");

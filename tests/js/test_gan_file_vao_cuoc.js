@@ -189,7 +189,7 @@ check("a row is a folder by the server's flag or by its slash, never by a missin
 check("a folder row never gets the 'delete from the brain' button", SU.includes("xoaDuoc: con && !dir"));
 check("a folder row opens the Files page instead of the editor",
   /function moFile\(f\) \{\s*\n\s*if \(isFolderRow\(f\)\) \{ openFolderRow\(f\); return; \}/.test(SU)
-  && /window\.JavisOpenFiles\(folderPath\(duong\)\)/.test(SU));
+  && /window\.JeeviOpenFiles\(folderPath\(duong\)\)/.test(SU));
 check("the folder's pin and open titles exist in both languages",
   ["proj.pin_on_dir", "proj.open_dir"].every((k) => VI[k] && EN[k] && VI[k] !== EN[k]));
 check("the search box says folders can be found", /thư mục/.test(VI["proj.search_ph"]) && /folder/.test(EN["proj.search_ph"])

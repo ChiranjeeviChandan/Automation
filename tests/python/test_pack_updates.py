@@ -11,7 +11,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-pack-updates-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-pack-updates-")
 
 import pack_install  # noqa: E402
 import pack_updates as PU  # noqa: E402
@@ -29,18 +29,18 @@ def check(name, cond, extra=""):
 STORE = [
     {"id": "javis.zalo", "name": {"vi": "Zalo cá nhân", "en": "Personal Zalo"}, "version": "1.4.0"},
     {"id": "javis.crm", "name": {"en": "Customer CRM"}, "version": "1.10.0"},
-    {"id": "javis.old", "name": {"en": "Old"}, "version": "0.9.0"},
-    {"id": "javis.not-installed", "name": {"en": "Other"}, "version": "2.0.0"},
+    {"id": "jeevi.old", "name": {"en": "Old"}, "version": "0.9.0"},
+    {"id": "jeevi.not-installed", "name": {"en": "Other"}, "version": "2.0.0"},
 ]
-INSTALLED = {"javis.zalo": {"version": "1.3.0"}, "javis.crm": {"version": "1.9.0"}, "javis.old": {"version": "1.0.0"}}
+INSTALLED = {"javis.zalo": {"version": "1.3.0"}, "javis.crm": {"version": "1.9.0"}, "jeevi.old": {"version": "1.0.0"}}
 
 ups = PU.find_updates(STORE, INSTALLED)
 ids = {u["id"]: u for u in ups}
 check("an installed pack with a newer Store version is an update", "javis.zalo" in ids
       and ids["javis.zalo"]["from"] == "1.3.0" and ids["javis.zalo"]["to"] == "1.4.0", ups)
 check("versions compare as numbers: 1.10.0 is newer than 1.9.0", "javis.crm" in ids)
-check("an older Store number is never an update", "javis.old" not in ids)
-check("a pack that is not installed is not an update", "javis.not-installed" not in ids)
+check("an older Store number is never an update", "jeevi.old" not in ids)
+check("a pack that is not installed is not an update", "jeevi.not-installed" not in ids)
 
 item = PU.notify(ups)
 check("one bell notice for all new versions", item and item.get("kind") == "system" and item.get("channel") == PU.CHANNEL,
@@ -85,7 +85,7 @@ check("the check rides on the dashboard opening (/version)",
       "asyncio.create_task(pack_updates.on_open())" in src[src.index('@app.get("/version")'):][:800])
 nj = (ROOT / "dashboard" / "notifications.js").read_text(encoding="utf-8")
 check("pressing the notice opens the Jeevi Store on the packs with an update",
-      'item.channel === "store:updates"' in nj and 'window.JavisPacks.moKho("all", "", "", "", true)' in nj)
+      'item.channel === "store:updates"' in nj and 'window.JeeviPacks.moKho("all", "", "", "", true)' in nj)
 pj = (ROOT / "dashboard" / "packs.js").read_text(encoding="utf-8")
 check("moKho can open on the 'has an update' group", "function moKho(loai, tuTrang, nhanTrang, tim, onlyUpdates)" in pj
       and "_openUpdatesNext = !!onlyUpdates" in pj and '_kho.nhom = onlyUpdates ? "Có bản mới" : "Tất cả"' in pj)

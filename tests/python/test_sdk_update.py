@@ -15,9 +15,9 @@ import tempfile
 import time
 from pathlib import Path
 
-_STATE = Path(tempfile.mkdtemp(prefix="javis-sdkupd-"))
-os.environ["JAVIS_STATE_DIR"] = str(_STATE)
-os.environ.pop("JAVIS_CLAUDE_AUTO_UPDATE", None)
+_STATE = Path(tempfile.mkdtemp(prefix="jeevi-sdkupd-"))
+os.environ["JEEVI_STATE_DIR"] = str(_STATE)
+os.environ.pop("JEEVI_CLAUDE_AUTO_UPDATE", None)
 
 import sdk_update as su  # noqa: E402
 
@@ -152,9 +152,9 @@ check("the Docker build is left alone", r.get("docker") and not r["ok"] and STAT
 # the switch
 check("on by default", su.enabled({}))
 check("off with the Claude Code switch", not su.enabled({"model": {"claude_auto_update": False}}))
-os.environ["JAVIS_CLAUDE_AUTO_UPDATE"] = "0"
+os.environ["JEEVI_CLAUDE_AUTO_UPDATE"] = "0"
 check("off with the env var", not su.enabled({}))
-os.environ.pop("JAVIS_CLAUDE_AUTO_UPDATE")
+os.environ.pop("JEEVI_CLAUDE_AUTO_UPDATE")
 
 # status
 s = su.status()

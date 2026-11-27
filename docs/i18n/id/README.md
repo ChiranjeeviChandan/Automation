@@ -1,7 +1,7 @@
 <!-- translated-from: README.md sha256:2e10ad3d2a86 -->
 <div align="center">
 
-<a href="https://javisos.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
+<a href="https://jeevios.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
 
 # Jeevi OS
 
@@ -9,7 +9,7 @@
 
 Jeevi OS mengubah **Claude, ChatGPT, Gemini, Grok** dan model pilihan Anda menjadi satu tim yang bekerja 24/7 di mesin atau server Anda sendiri. Setiap rekan punya peran, berbagi memori dan tool yang sama, dan terus bekerja di background. Saat model yang lebih baik rilis, cukup ganti dan semua yang sudah dipelajari tim tetap ada.
 
-**🌐 Situs web: [javisos.com](https://javisos.com)** · Open source · Self-hosted · 14 penyedia AI
+**🌐 Situs web: [jeevios.com](https://jeevios.com)** · Open source · Self-hosted · 14 penyedia AI
 
 [![GitHub stars](https://img.shields.io/github/stars/blogminhquy/javis-os?style=flat&logo=github&label=stars)](https://github.com/blogminhquy/javis-os/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](../../../LICENSE)
@@ -38,7 +38,7 @@ Jeevi OS mengubah **Claude, ChatGPT, Gemini, Grok** dan model pilihan Anda menja
 
 [🇬🇧 English](../../../README.md) · [🇻🇳 Tiếng Việt](../vi/README.md) · [🇨🇳 简体中文](../zh/README.md) · [🇪🇸 Español](../es/README.md) · [🇯🇵 日本語](../ja/README.md) · [🇮🇳 हिन्दी](../hi/README.md) · [🇧🇷 Português](../pt-BR/README.md) · [🇰🇷 한국어](../ko/README.md) · [🇷🇺 Русский](../ru/README.md) · [🇩🇪 Deutsch](../de/README.md) · [🇫🇷 Français](../fr/README.md) · 🇮🇩 **Bahasa Indonesia** · [🌍 Bantu menerjemahkan](../../../CONTRIBUTING.md#translations)
 
-[Mulai cepat](#-mulai-cepat) · [Mengapa Jeevi](#-mengapa-javis) · [Otak](#-12-otak-satu-toolkit) · [Fitur](#-fitur) · [Instalasi](#-instalasi) · [Dokumentasi](../../../docs/en/README.md) · [Dukungan](#-dukung-javis-os)
+[Mulai cepat](#-mulai-cepat) · [Mengapa Jeevi](#-mengapa-jeevi) · [Otak](#-12-otak-satu-toolkit) · [Fitur](#-fitur) · [Instalasi](#-instalasi) · [Dokumentasi](../../../docs/en/README.md) · [Dukungan](#-dukung-jeevi-os)
 
 <br>
 
@@ -56,8 +56,8 @@ Jeevi OS mengubah **Claude, ChatGPT, Gemini, Grok** dan model pilihan Anda menja
 
 | Mesin | Satu perintah menginstal semuanya |
 |---|---|
-| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git javis && cd javis && chmod +x install.sh && ./install.sh` |
-| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git javis; cd javis; powershell -ExecutionPolicy Bypass -File install.ps1` |
+| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi && chmod +x install.sh && ./install.sh` |
+| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi; powershell -ExecutionPolicy Bypass -File install.ps1` |
 | **Docker** | `curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml && docker compose up -d` |
 
 Lalu buka **http://localhost:7777**. Installer akan menyiapkan Python, empat otak CLI berlangganan (`claude`, `codex`, `agy`, `grok`) dan sebuah `.env`, lalu menjalankan server. Anda login ke setiap otak **di halaman Models pada dashboard**, tanpa perlu mengetik perintah lagi.
@@ -257,17 +257,17 @@ VPS Hostinger → **Docker Manager → Compose → URL** → tempel file Hosting
 https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hostinger.yml
 ```
 
-Kotak **Environment** hanya butuh tiga field: `DOMAIN_NAME`, `JAVIS_ADMIN_USER`, `JAVIS_ADMIN_PASSWORD`, ditambah `JAVIS_AUTO_UPDATE` yang opsional (isi `true` dan Jeevi akan memperbarui dirinya setiap hari).
+Kotak **Environment** hanya butuh tiga field: `DOMAIN_NAME`, `JEEVI_ADMIN_USER`, `JEEVI_ADMIN_PASSWORD`, ditambah `JEEVI_AUTO_UPDATE` yang opsional (isi `true` dan Jeevi akan memperbarui dirinya setiap hari).
 
 Isi `DOMAIN_NAME` agar Traefik milik Hostinger menerbitkan HTTPS:
-- **Link gratis** (tanpa beli domain): `DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud` (hostname ada di hPanel → VPS, contoh `javis.srv1562015.hstgr.cloud`).
+- **Link gratis** (tanpa beli domain): `DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud` (hostname ada di hPanel → VPS, contoh `jeevi.srv1562015.hstgr.cloud`).
 - **Domain Anda sendiri:** `DOMAIN_NAME=example.com` lalu arahkan A record ke IP VPS.
 
 Tunggu 1-3 menit sampai sertifikat terbit, lalu buka `https://<DOMAIN_NAME>`.
 
 **Tiga langkah yang cukup dilakukan sekali:**
 1. **Jadikan image GHCR Public:** GitHub → repo → **Packages** → `javis-os` → *Package settings* → Visibility = **Public**.
-2. **Buat akun admin:** isi `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` (disarankan), atau buka aplikasi tepat setelah deploy lalu buat sendiri. Selama belum ada admin, siapa pun yang pertama membuka link bisa membuatnya. Setelah itu **aktifkan 2FA** ([Keamanan dan akun](../../../docs/en/14-security-and-accounts.md)).
+2. **Buat akun admin:** isi `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` (disarankan), atau buka aplikasi tepat setelah deploy lalu buat sendiri. Selama belum ada admin, siapa pun yang pertama membuka link bisa membuatnya. Setelah itu **aktifkan 2FA** ([Keamanan dan akun](../../../docs/en/14-security-and-accounts.md)).
 3. **Login ke sebuah otak** di halaman **Models**.
 
 Detail dan pemecahan masalah: [DEPLOY.en.md](../../../DEPLOY.en.md).
@@ -281,14 +281,14 @@ Detail dan pemecahan masalah: [DEPLOY.en.md](../../../DEPLOY.en.md).
 
 ```bash
 # Docker required (don't have it?  curl -fsSL https://get.docker.com | sh)
-mkdir javis && cd javis
+mkdir jeevi && cd jeevi
 curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml
 
-docker compose run --rm javis claude auth login --claudeai   # sign in to Claude once (optional)
+docker compose run --rm jeevi claude auth login --claudeai   # sign in to Claude once (optional)
 docker compose up -d                                          # pull the image and run
 ```
 
-Buka `http://<vps-ip>:7777` dan segera atur username dan password admin (minimal 8 karakter), atau isi lebih dulu `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` di environment. Lalu aktifkan 2FA.
+Buka `http://<vps-ip>:7777` dan segera atur username dan password admin (minimal 8 karakter), atau isi lebih dulu `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` di environment. Lalu aktifkan 2FA.
 
 Akses jarak jauh tanpa domain: `docker compose --profile tunnel up -d`, lalu `docker compose logs tunnel | grep trycloudflare` akan menampilkan link HTTPS.
 
@@ -298,13 +298,13 @@ Akses jarak jauh tanpa domain: `docker compose --profile tunnel up -d`, lalu `do
 <summary><b>Opsi 3: Linux atau macOS, tanpa Docker</b></summary>
 
 ```bash
-git clone https://github.com/blogminhquy/javis-os.git javis && cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi
 chmod +x install.sh && ./install.sh
 ```
 
 Script ini menginstal Python, Node, dan otak CLI, membuat venv, mendaftarkan service yang berjalan saat boot, lalu menampilkan alamatnya.
 
-🍎 **macOS, buka seperti aplikasi:** klik dua kali `JEEVI OS.app` (atau `Start JEEVI OS.command`). Jalankan saat login: `./bin/javis-autostart.sh install`. Detail: [bin/README.md](../../../bin/README.md).
+🍎 **macOS, buka seperti aplikasi:** klik dua kali `JEEVI OS.app` (atau `Start JEEVI OS.command`). Jalankan saat login: `./bin/jeevi-autostart.sh install`. Detail: [bin/README.md](../../../bin/README.md).
 
 </details>
 
@@ -312,7 +312,7 @@ Script ini menginstal Python, Node, dan otak CLI, membuat venv, mendaftarkan ser
 <summary><b>Opsi 4: Windows (komputer pribadi)</b></summary>
 
 ```powershell
-git clone https://github.com/blogminhquy/javis-os.git javis; cd javis
+git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
@@ -320,23 +320,23 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 
 ```
 Run with a visible window (live log):  setup.bat
-Run silently from then on:             start-javis.vbs   (log at server\javis.log)
-Stop:                                  stop-javis.bat
+Run silently from then on:             start-jeevi.vbs   (log at server\jeevi.log)
+Stop:                                  stop-jeevi.bat
 Dashboard:                             http://localhost:7777
 ```
 
-🪟 **Buka seperti aplikasi:** setelah dijalankan pertama kali, klik dua kali **`JEEVI OS.bat`**. Server berjalan di background dan dashboard terbuka di **jendelanya sendiri** dengan entri taskbar sendiri. Jalankan saat login: `javis-autostart.bat install` (hapus: `uninstall`).
+🪟 **Buka seperti aplikasi:** setelah dijalankan pertama kali, klik dua kali **`JEEVI OS.bat`**. Server berjalan di background dan dashboard terbuka di **jendelanya sendiri** dengan entri taskbar sendiri. Jalankan saat login: `jeevi-autostart.bat install` (hapus: `uninstall`).
 
 </details>
 
 <details>
 <summary><b>Beberapa instance Jeevi di satu VPS</b></summary>
 
-Brain, pengaturan, dan akun tetap terpisah sepenuhnya per instance. Hanya tiga nilai yang berbeda di antara mereka: `JAVIS_NAME`, `JAVIS_HOST_PORT`, `DOMAIN_NAME`.
+Brain, pengaturan, dan akun tetap terpisah sepenuhnya per instance. Hanya tiga nilai yang berbeda di antara mereka: `JEEVI_NAME`, `JEEVI_HOST_PORT`, `DOMAIN_NAME`.
 
 - **Hostinger:** deploy `docker-compose.hostinger.yml` lagi sebagai stack kedua dan isi ketiga field tersebut.
 - **VPS yang Anda kelola sendiri:** jalankan proxy bersama `docker-compose.proxy.yml` sekali untuk seluruh mesin, lalu beri setiap instance foldernya sendiri dengan `docker-compose.multi.yml`. Proxy akan menemukan instance baru dan meminta SSL dengan sendirinya.
-- **Native:** `JAVIS_NAME=javis-shop JAVIS_PORT=7778 ./install.sh`.
+- **Native:** `JEEVI_NAME=jeevi-shop JEEVI_PORT=7778 ./install.sh`.
 
 Langkah demi langkah: [DEPLOY.en.md](../../../DEPLOY.en.md).
 
@@ -389,14 +389,14 @@ Setiap baris boleh dibiarkan kosong dan Jeevi tetap berjalan. Salin `env.example
 
 | Variabel | Arti | Default |
 |---|---|---|
-| `JAVIS_HOST` | Alamat listen. `127.0.0.1` = hanya mesin ini, `0.0.0.0` = publik | `127.0.0.1` |
-| `JAVIS_PORT` | Port | `7777` |
-| `JAVIS_REQUIRE_LOGIN` | `1`/`0` untuk memaksa login aktif atau nonaktif (default: aktif saat di-bind secara publik) | *(otomatis)* |
-| `JAVIS_ADMIN_USER` / `JAVIS_ADMIN_PASSWORD` | Membuat admin saat deploy | - |
-| `JAVIS_ALLOWED_HOSTS` | Hostname tambahan di allow-list (perlindungan CSRF dan DNS rebinding) | localhost + domain Anda |
-| `JAVIS_STATE_DIR` | Tempat pengaturan, sesi, dan kunci enkripsi disimpan | `server/` (Docker: `/data/state`) |
+| `JEEVI_HOST` | Alamat listen. `127.0.0.1` = hanya mesin ini, `0.0.0.0` = publik | `127.0.0.1` |
+| `JEEVI_PORT` | Port | `7777` |
+| `JEEVI_REQUIRE_LOGIN` | `1`/`0` untuk memaksa login aktif atau nonaktif (default: aktif saat di-bind secara publik) | *(otomatis)* |
+| `JEEVI_ADMIN_USER` / `JEEVI_ADMIN_PASSWORD` | Membuat admin saat deploy | - |
+| `JEEVI_ALLOWED_HOSTS` | Hostname tambahan di allow-list (perlindungan CSRF dan DNS rebinding) | localhost + domain Anda |
+| `JEEVI_STATE_DIR` | Tempat pengaturan, sesi, dan kunci enkripsi disimpan | `server/` (Docker: `/data/state`) |
 | `BRAINS_DIR` | Folder induk yang menampung setiap Brain | `brains/` (Docker: `/brains`) |
-| `JAVIS_ENABLE_USER_PLUGINS` | `false` mematikan plugin buatan Anda sendiri (menjalankan Python sungguhan di dalam server) | *(aktif)* |
+| `JEEVI_ENABLE_USER_PLUGINS` | `false` mematikan plugin buatan Anda sendiri (menjalankan Python sungguhan di dalam server) | *(aktif)* |
 | `TTS_VOICE` / `TTS_RATE` | Suara dan kecepatan untuk Edge TTS | `en-US-EmmaMultilingualNeural` / `+5%` |
 
 ---
@@ -407,7 +407,7 @@ Setiap baris boleh dibiarkan kosong dan Jeevi tetap berjalan. Salin `env.example
 - **2FA (TOTP)**, pembatasan percobaan login, password minimal 8 karakter, cookie `Secure` di bawah HTTPS, sesi yang kedaluwarsa setelah 30 hari.
 - **Perlindungan CSRF dan DNS rebinding**: setiap request tulis dari origin yang tidak dikenal akan ditolak.
 - **Secret dienkripsi** di `settings.json` (API key, token OAuth, token bot) dengan kunci per mesin.
-- **Plugin buatan Anda dimuat secara default, tetapi tiap plugin tetap mati sampai Anda menyalakannya** di aplikasi; atur `JAVIS_ENABLE_USER_PLUGINS=false` untuk mematikan semuanya.
+- **Plugin buatan Anda dimuat secara default, tetapi tiap plugin tetap mati sampai Anda menyalakannya** di aplikasi; atur `JEEVI_ENABLE_USER_PLUGINS=false` untuk mematikan semuanya.
 - **Izin koneksi ditegakkan** oleh hub, bukan oleh model: akun read-only tidak bisa dipakai untuk mengirim, membayar, atau memublikasikan.
 
 Menemukan celah keamanan? Silakan ikuti [SECURITY.md](../../../SECURITY.md), jangan membuka issue publik.
@@ -416,7 +416,7 @@ Menemukan celah keamanan? Silakan ikuti [SECURITY.md](../../../SECURITY.md), jan
 
 ## 🔄 Pembaruan
 
-Di aplikasi: **Settings → Updates → Update now**, dengan progress bar dan tombol rollback jika build baru bermasalah. Di VPS: `cd javis && ./update.sh` (menarik image baru dan restart; data Anda di volume tetap aman).
+Di aplikasi: **Settings → Updates → Update now**, dengan progress bar dan tombol rollback jika build baru bermasalah. Di VPS: `cd jeevi && ./update.sh` (menarik image baru dan restart; data Anda di volume tetap aman).
 
 ---
 
@@ -425,7 +425,7 @@ Di aplikasi: **Settings → Updates → Update now**, dengan progress bar dan to
 | Gejala | Yang harus dilakukan |
 |---|---|
 | Halaman Models bilang sebuah CLI belum terinstal, padahal sudah | **Restart Jeevi**: proses yang berjalan tetap memakai PATH saat ia dijalankan. |
-| Port 7777 terpakai dan build baru tidak mau jalan | Hentikan dulu proses lama (`stop-javis.bat`, atau kill PID-nya), lalu jalankan lagi. |
+| Port 7777 terpakai dan build baru tidak mau jalan | Hentikan dulu proses lama (`stop-jeevi.bat`, atau kill PID-nya), lalu jalankan lagi. |
 | Hostinger tidak bisa menarik image | Atur package GHCR menjadi **Public** dan tunggu build GitHub Action selesai. |
 | Sebuah otak bilang belum login | **Models** → kartu provider tersebut → login. |
 
@@ -510,6 +510,6 @@ Tidak bisa berdonasi? Menggunakan Jeevi, mengirim masukan, atau membuka pull req
 <div align="center">
 <br>
 <a href="https://nguyenminhquy.com"><img src="../../assets/author.webp" width="96" height="96" alt="Minh Quý"></a><br>
-<b><a href="https://javisos.com">javisos.com</a></b><br>
+<b><a href="https://jeevios.com">jeevios.com</a></b><br>
 Dibuat dengan ☕ di Vietnam oleh <b><a href="https://nguyenminhquy.com">Minh Quý</a></b>
 </div>

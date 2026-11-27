@@ -23,7 +23,7 @@
         "\u2014",
         "\u2013"
       ],
-      "note": "Loads the javis-builder skill (over 12,000 characters)."
+      "note": "Loads the jeevi-builder skill (over 12,000 characters)."
     },
     {
       "id": "memory-reread",
@@ -56,7 +56,7 @@
         "\u2014",
         "\u2013"
       ],
-      "note": "javis_connections, whose list is now compact JSON."
+      "note": "jeevi_connections, whose list is now compact JSON."
     },
     {
       "id": "schedule",

@@ -32,7 +32,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-pwexe-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-pwexe-")
 
 import mcp_store  # noqa: E402
 import optional_tools as ot  # noqa: E402

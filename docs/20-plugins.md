@@ -15,7 +15,7 @@ Một plugin là **một thư mục** gồm 2 file:
 
 Plugin cho Jeevi hai thứ:
 
-- **Tool**: một công cụ engine gọi được, ví dụ `javis_now` (hỏi bây giờ mấy giờ theo giờ Việt Nam) hay `javis_generate_image` (tạo ảnh). Tool của plugin đi qua MCP Hub nên **mọi engine đều dùng được**, không riêng Claude Code.
+- **Tool**: một công cụ engine gọi được, ví dụ `jeevi_now` (hỏi bây giờ mấy giờ theo giờ Việt Nam) hay `javis_generate_image` (tạo ảnh). Tool của plugin đi qua MCP Hub nên **mọi engine đều dùng được**, không riêng Claude Code.
 - **Hook**: đoạn mã chạy **quanh mỗi lần gọi tool**. Bản hiện tại hỗ trợ hai sự kiện quanh tool: `pre_tool_call` (trước khi tool chạy) và `post_tool_call` (sau khi tool chạy xong). Khi không plugin nào đăng ký hook thì Jeevi không bọc gì cả, nên không tốn thêm gì. Sự kiện thứ ba, `chatbot_turn_context`, chạy một lần mỗi lượt bot chuyên trách và cho plugin thêm một dòng ngữ cảnh (xem [bên dưới](#hook-ngữ-cảnh-lượt-chatbot-chatbot_turn_context)).
 
 Tool của plugin **tôn trọng đúng 3 mức quyền** của Jeevi y như tool khác, nên một loop đang ở chế độ chỉ-đọc sẽ không tự gọi được tool ghi của plugin.
@@ -39,7 +39,7 @@ Mở dashboard (mặc định tại cổng 7777), nhìn thanh điều hướng b
 Ngay dưới tiêu đề là ba khối giới thiệu:
 
 1. Dòng mô tả: "Plugin thêm **tool** (công cụ engine gọi được) và **hook** native cho Jeevi mà không sửa lõi - dùng được ở MỌI engine (Claude Code, Codex, API) qua hub, tôn trọng 3 mức quyền như tool khác."
-2. Khung cảnh báo màu cam (chỉ hiện khi máy này tắt plugin người dùng): "**⚠ Plugin do bạn cài đang bị tắt trên máy này.** Máy này đặt biến môi trường `JAVIS_ENABLE_USER_PLUGINS=false` nên plugin toàn cục/brain không chạy. Bỏ biến đó (hoặc đặt true) rồi khởi động lại Jeevi. Plugin có sẵn (bundled) vẫn chạy bình thường."
+2. Khung cảnh báo màu cam (chỉ hiện khi máy này tắt plugin người dùng): "**⚠ Plugin do bạn cài đang bị tắt trên máy này.** Máy này đặt biến môi trường `JEEVI_ENABLE_USER_PLUGINS=false` nên plugin toàn cục/brain không chạy. Bỏ biến đó (hoặc đặt true) rồi khởi động lại Jeevi. Plugin có sẵn (bundled) vẫn chạy bình thường."
 3. Dòng chỉ đường xám: "Thả plugin TOÀN CỤC (dùng cho MỌI brain) vào `<đường dẫn thật trên máy bạn>` · mỗi plugin gồm `plugin.yaml` + `plugin.py`. Hoặc bảo Jeevi trong khung chat: "tạo plugin ..."."
 
 Đường dẫn trong dòng thứ 3 là đường dẫn **thật** trên máy đang chạy Jeevi, cứ sao chép từ màn hình ra chứ đừng gõ tay theo tài liệu.
@@ -55,7 +55,7 @@ Mỗi plugin là một thẻ. Đọc từ trên xuống:
 | Nhãn nguồn | Nghĩa là | Nằm ở đâu |
 |---|---|---|
 | **Có sẵn** (xanh lá) | Plugin đi kèm app, do Jeevi phát hành, tin cậy | `system/plugins/<slug>/` trong thư mục cài đặt |
-| **Toàn cục** (xanh dương) | Plugin bạn tự cài, dùng chung cho **mọi brain** | Thư mục state của Jeevi, `<JAVIS_STATE_DIR>/plugins/<slug>/` |
+| **Toàn cục** (xanh dương) | Plugin bạn tự cài, dùng chung cho **mọi brain** | Thư mục state của Jeevi, `<JEEVI_STATE_DIR>/plugins/<slug>/` |
 | **Brain này** (cam) | Plugin bạn tự cài, chỉ dùng cho **một brain** | `<brain>/plugins/<slug>/` (brain cũ có thể là `<brain>/Jeevi/plugins/<slug>/`) |
 
 Trùng slug thì nguồn sau đè nguồn trước: một plugin "Brain này" tên `datetime-vn` sẽ thay chỗ bản "Có sẵn" cùng tên.
@@ -90,7 +90,7 @@ Với plugin **Toàn cục** và **Brain này**, Jeevi ghi thẳng `enabled: tru
 
 Bật/tắt có hiệu lực ngay, không cần khởi động lại: Jeevi làm mới bộ nhớ đệm của hub nên tool xuất hiện hoặc biến mất ở lượt chat kế tiếp, và chỉ mục năng lực `Jeevi/index.md` của brain cũng được dựng lại.
 
-Ngoại lệ duy nhất: nếu bạn bật một plugin **Toàn cục/Brain này** trên máy đặt `JAVIS_ENABLE_USER_PLUGINS=false`, Jeevi hiện hộp thoại báo: "Đã bật trong manifest NHƯNG máy này đang tắt plugin do người dùng cài bằng JAVIS_ENABLE_USER_PLUGINS=false. Bỏ biến đó (hoặc đặt true) rồi khởi động lại để chạy." Thẻ khi đó chuyển sang **⚠ tắt bằng env**.
+Ngoại lệ duy nhất: nếu bạn bật một plugin **Toàn cục/Brain này** trên máy đặt `JEEVI_ENABLE_USER_PLUGINS=false`, Jeevi hiện hộp thoại báo: "Đã bật trong manifest NHƯNG máy này đang tắt plugin do người dùng cài bằng JEEVI_ENABLE_USER_PLUGINS=false. Bỏ biến đó (hoặc đặt true) rồi khởi động lại để chạy." Thẻ khi đó chuyển sang **⚠ tắt bằng env**.
 
 ### Bước 3: Kiểm tra tool đã ra tới engine chưa
 
@@ -104,16 +104,16 @@ Nếu tool bị chặn vì mức quyền, câu trả lời sẽ chứa nguyên v
 
 | Tên trên thẻ | slug | Tool cung cấp | Quyền tối thiểu | Mặc định |
 |---|---|---|---|---|
-| Thời gian & ngày (múi giờ chọn ở Cài đặt) | `datetime-vn` | `javis_now`, `javis_date_add` | chỉ đọc | Bật |
-| Đặt việc định kỳ & nhắc hẹn | `javis-schedule` | `javis_schedule` | ghi (safe) | Bật |
-| Giao việc Kanban | `javis-task` | `javis_task` | ghi (safe) | Bật |
-| Quản lý nhóm chat | `javis-team` | `javis_team` | ghi (safe), chỉ chủ | Bật |
-| Đấu thêm MCP | `javis-connect` | `javis_add_mcp` | ghi (safe) | Bật |
+| Thời gian & ngày (múi giờ chọn ở Cài đặt) | `datetime-vn` | `jeevi_now`, `jeevi_date_add` | chỉ đọc | Bật |
+| Đặt việc định kỳ & nhắc hẹn | `jeevi-schedule` | `javis_schedule` | ghi (safe) | Bật |
+| Giao việc Kanban | `jeevi-task` | `jeevi_task` | ghi (safe) | Bật |
+| Quản lý nhóm chat | `jeevi-team` | `jeevi_team` | ghi (safe), chỉ chủ | Bật |
+| Đấu thêm MCP | `jeevi-connect` | `jeevi_add_mcp` | ghi (safe) | Bật |
 | Tạo và xem ảnh (ChatGPT) | `image-chatgpt` | `javis_generate_image`, `javis_describe_image` | ghi (safe); xem ảnh: chỉ đọc | Bật |
-| Đọc video YouTube | `youtube-read` | `javis_youtube_read` | chỉ đọc | Bật |
+| Đọc video YouTube | `youtube-read` | `jeevi_youtube_read` | chỉ đọc | Bật |
 | Meta Ads (Graph API) | `meta-ads-graph` | `meta_ads_accounts`, `meta_ads_insights`, `meta_ads_campaigns`, `meta_ads_get` | chỉ đọc | Bật |
 | Facebook Trang (Graph API) | `meta-pages-graph` | `fb_pages_list`, `fb_page_posts`, `fb_page_comments`, `fb_page_scheduled`, `fb_page_post`, `fb_page_photo`, `fb_page_album`, `fb_page_video`, `fb_page_edit`, `fb_page_delete`, `fb_page_reply` | toàn quyền | Bật |
-| Nhật ký dùng tool | `tool-audit` | `javis_tool_stats` + hook `post_tool_call` | chỉ đọc | **Tắt** |
+| Nhật ký dùng tool | `tool-audit` | `jeevi_tool_stats` + hook `post_tool_call` | chỉ đọc | **Tắt** |
 
 Từng cái làm được gì:
 
@@ -141,7 +141,7 @@ Từ 0.55.23, một **Gói** cài ở trang **Năng lực > Kho cài đặt** ma
 Khác ba nguồn kia ở ba điểm:
 
 - **Bật, tắt và gỡ đều làm ở Kho cài đặt**, không làm ở đây. Plugin đi theo cả gói, nên tách ra bật lẻ chỉ gây nhầm. Thẻ ở trang này có nút dẫn thẳng sang đó.
-- **Biến môi trường `JAVIS_ENABLE_USER_PLUGINS` không áp cho gói.** Gói đi qua trình cài, tức bạn đã xem màn hình liệt kê từng tệp mã rồi mới bấm đồng ý, và chữ ký mã được đối chiếu mỗi lần nạp.
+- **Biến môi trường `JEEVI_ENABLE_USER_PLUGINS` không áp cho gói.** Gói đi qua trình cài, tức bạn đã xem màn hình liệt kê từng tệp mã rồi mới bấm đồng ý, và chữ ký mã được đối chiếu mỗi lần nạp.
 - **Mã trong gói bị khoá theo nội dung.** Lúc cài, Jeevi ghi lại một dấu vân tay của toàn bộ mã trong gói. Mỗi lần nạp, nó tính lại và đối chiếu: lệch một byte là plugin **không chạy**, và thẻ nói rõ "mã trong gói đã đổi so với lúc bạn đồng ý cài". Muốn dùng tiếp thì cài lại ở Kho cài đặt để xem và xác nhận lại.
 
 Lưu ý khi tự sửa: mở tệp `plugin.py` của một gói bằng trình soạn thảo trên Windows rồi lưu là đủ để dấu vân tay lệch, vì nhiều trình soạn thảo tự đổi ký tự xuống dòng. Đó không phải lỗi, chỉ là nội dung tệp thật sự đã khác. Sửa plugin thì nên sửa trong thư mục plugin của bạn chứ không sửa trong gói.
@@ -174,7 +174,7 @@ Khung chat bạn gõ tay chạy ở mức đầy đủ nên gọi được cả 
 
 Có hai chỗ, tuỳ bạn muốn plugin dùng chung hay dùng riêng:
 
-- **Toàn cục** (khuyên dùng): `<JAVIS_STATE_DIR>/plugins/<slug>/`. Mọi brain đều thấy plugin này, và mọi engine đều gọi được. Đường dẫn thật đang hiện sẵn ở dòng chỉ đường trên trang Plugins, cứ sao chép từ đó. Mặc định `JAVIS_STATE_DIR` là thư mục `server/` của dự án; trên Docker/VPS thường là `/data/state`.
+- **Toàn cục** (khuyên dùng): `<JEEVI_STATE_DIR>/plugins/<slug>/`. Mọi brain đều thấy plugin này, và mọi engine đều gọi được. Đường dẫn thật đang hiện sẵn ở dòng chỉ đường trên trang Plugins, cứ sao chép từ đó. Mặc định `JEEVI_STATE_DIR` là thư mục `server/` của dự án; trên Docker/VPS thường là `/data/state`.
 - **Riêng một brain**: `<brain>/plugins/<slug>/`. Chỉ brain đó dùng được. Hợp khi plugin gắn chặt với dữ liệu của một brain cụ thể.
 
 `<slug>` là tên thư mục, phải là chữ thường ASCII không dấu, bắt đầu bằng chữ hoặc số, chỉ chứa chữ số, dấu chấm, gạch dưới, gạch nối. Sai kiểu chữ thì Jeevi bỏ qua plugin và báo "slug không hợp lệ".
@@ -230,17 +230,17 @@ Từ 0.162.0, Jeevi **tải plugin do bạn cài theo mặc định**: plugin n�
 Muốn chặn hẳn plugin người dùng trên một máy (ví dụ máy chủ dùng chung):
 
 1. Mở file `.env` ở thư mục gốc dự án (chưa có thì tạo, xem [Cấu hình .env](16-cau-hinh-env.md)).
-2. Thêm một dòng: `JAVIS_ENABLE_USER_PLUGINS=false`
+2. Thêm một dòng: `JEEVI_ENABLE_USER_PLUGINS=false`
 3. Lưu file và **khởi động lại Jeevi**.
 
-Giá trị tắt nhận `0`, `false`, `no` hoặc `off` (không phân biệt hoa thường). Tên cũ `JAVIS_ENABLE_VAULT_PLUGINS` vẫn còn tác dụng, nhưng nếu đặt cả hai thì tên mới thắng.
+Giá trị tắt nhận `0`, `false`, `no` hoặc `off` (không phân biệt hoa thường). Tên cũ `JEEVI_ENABLE_VAULT_PLUGINS` vẫn còn tác dụng, nhưng nếu đặt cả hai thì tên mới thắng.
 
 ## Rào an toàn (đọc trước khi cài plugin lạ)
 
 Đây là phần quan trọng nhất của trang này.
 
 - **Plugin do bạn cài chạy mã Python thật, trong chính tiến trình server của Jeevi.** Nó có quyền của tiến trình đó: đọc ghi file, gọi mạng, đọc biến môi trường. Từ 0.162.0 chủ dự án quyết định **cho tải mặc định**; chốt chặn còn lại là công tắc **Bật** của từng plugin (`enabled: true` trong `plugin.yaml`).
-- **Chỉ bật plugin khi bạn đã tự đọc mã của nó.** Lưu ý: ai ghi được vào thư mục `plugins/` (kể cả model, vì nó ghi được vào brain) cũng có thể ghi `enabled: true`. Máy chủ dùng chung hoặc chạy bot cho người lạ thì nên đặt `JAVIS_ENABLE_USER_PLUGINS=false`.
+- **Chỉ bật plugin khi bạn đã tự đọc mã của nó.** Lưu ý: ai ghi được vào thư mục `plugins/` (kể cả model, vì nó ghi được vào brain) cũng có thể ghi `enabled: true`. Máy chủ dùng chung hoặc chạy bot cho người lạ thì nên đặt `JEEVI_ENABLE_USER_PLUGINS=false`.
 - **Plugin có sẵn (nhãn "Có sẵn") không chịu công tắc này** vì chúng đi kèm bản phát hành Jeevi. Chúng vẫn chạy bình thường kể cả khi máy đặt `false`.
 - **Plugin do Jeevi tạo qua chat luôn ở trạng thái tắt** (`enabled: false`) và mức `readonly`. Jeevi không tự bật hộ; bạn phải đọc mã rồi tự bấm **Bật**.
 - **Đừng viết plugin để làm hành động tiền bạc, tạo đơn, gửi tin hay đăng bài.** Những việc đó nên đi qua kết nối MCP và hệ mức quyền, nơi đã có lớp chặn và nhật ký. Plugin nên để `min_mode: readonly` trừ khi bạn cố ý cần khác.
@@ -303,9 +303,9 @@ Rào Jeevi tự giữ, plugin không nới được:
 - Callback ném lỗi hoặc chạy quá **2 giây** thì bị bỏ qua và ghi log, lượt trả lời vẫn đi tiếp. Callback đồng bộ chạy ở luồng riêng nên không chặn các cuộc chat khác.
 - Mỗi callback nhận **bản sao riêng** của các khoá: plugin trước sửa gì cũng không đổi thứ plugin sau thấy.
 
-Ba loại lượt đều bắn hook: lượt thật, lượt **Trả lời giúp tin này / Gợi ý câu trả lời** ở Hộp thư (người gửi là người nhắn tin cuối của cuộc chat), và lượt **Thử bot**. Lượt thử mang `trial: true` và người gửi giả của trang thử (`javis-try-user`, cuộc chat `javis-try`), cùng người gửi giả mà lượt thử vẫn dùng cho mọi kiểm tra theo người. Mã giả đó không khớp ai thật, nên plugin kiểu sổ danh sách sẽ cho thấy nhánh "người lạ". Muốn xử lý lượt thử khác đi thì plugin tự đọc `trial`.
+Ba loại lượt đều bắn hook: lượt thật, lượt **Trả lời giúp tin này / Gợi ý câu trả lời** ở Hộp thư (người gửi là người nhắn tin cuối của cuộc chat), và lượt **Thử bot**. Lượt thử mang `trial: true` và người gửi giả của trang thử (`jeevi-try-user`, cuộc chat `jeevi-try`), cùng người gửi giả mà lượt thử vẫn dùng cho mọi kiểm tra theo người. Mã giả đó không khớp ai thật, nên plugin kiểu sổ danh sách sẽ cho thấy nhánh "người lạ". Muốn xử lý lượt thử khác đi thì plugin tự đọc `trial`.
 
-Plugin dùng hook này vẫn chịu đúng rào chung: plugin người dùng tự cài chỉ chạy khi đặt `JAVIS_ENABLE_USER_PLUGINS=true`, plugin của Gói đi qua trình cài, và nên khai `min_mode: readonly` nếu nó chỉ đọc.
+Plugin dùng hook này vẫn chịu đúng rào chung: plugin người dùng tự cài chỉ chạy khi đặt `JEEVI_ENABLE_USER_PLUGINS=true`, plugin của Gói đi qua trình cài, và nên khai `min_mode: readonly` nếu nó chỉ đọc.
 
 ## Trang riêng và đường HTTP (từ 0.64.26)
 
@@ -339,7 +339,7 @@ cụ Jeevi đã có, cửa này có thêm năm công cụ chỉ AI bên ngoài t
 | `javis_chat_result` | Đọc câu trả lời khi Jeevi làm lâu | Mọi mức |
 | `javis_chat_note` | Ghi lại cuộc chat bên ngoài: chủ nói gì, đã chốt gì (từ 0.441.0) | Ghi nháp, Toàn quyền |
 | `javis_sync_setup` | Bật Jeevi Sync trên máy của AI viết code: trả về một lệnh cài, AI tự chạy | Ghi nháp, Toàn quyền |
-| `javis_brains` | Liệt kê các brain: tên, đường dẫn, brain mặc định, brain dùng gần nhất | Mọi mức |
+| `jeevi_brains` | Liệt kê các brain: tên, đường dẫn, brain mặc định, brain dùng gần nhất | Mọi mức |
 
 - **Chọn brain (#1726):** claude.ai không gửi được header nên không tự chọn được brain. Mọi công cụ đọc hay ghi
   brain ở cửa Gate (file, ghi chép, việc, nhắc hẹn...) nhận thêm `brain` tuỳ chọn: tên brain (không phân biệt hoa
@@ -364,7 +364,7 @@ cụ Jeevi đã có, cửa này có thêm năm công cụ chỉ AI bên ngoài t
 ### Tự lưu hội thoại Claude Code và Codex (Jeevi Sync)
 
 AI viết code bận làm việc nên gần như không tự gọi `javis_chat_note`. **Jeevi Sync**
-(`tools/javis-sync/javis_sync.py`) lo việc đó tự động: nó chạy trên máy có Claude Code hoặc Codex, làm **Stop hook**
+(`tools/jeevi-sync/jeevi_sync.py`) lo việc đó tự động: nó chạy trên máy có Claude Code hoặc Codex, làm **Stop hook**
 của Claude Code và chương trình **notify** của Codex. Mỗi lượt xong, nó gửi câu anh gõ và câu trả lời cuối của AI (không
 gửi các bước gọi công cụ ở giữa) lên `POST /chat/external` của Jeevi.
 
@@ -373,7 +373,7 @@ gửi các bước gọi công cụ ở giữa) lên `POST /chat/external` của
   tốn hạn mức.
 - API key lọt vào câu chữ được che trước khi lưu. Câu quá dài thì cắt, kèm dòng ghi còn bao nhiêu ký tự.
 - Jeevi tắt hay mất mạng thì lượt chưa gửi được giữ lại, lần sau gửi bù; lượt nào Jeevi có rồi thì bỏ qua, không trùng.
-- Hook không bao giờ làm hỏng Claude Code hay Codex: lỗi chỉ ghi vào `~/.javis-sync/sync.log`.
+- Hook không bao giờ làm hỏng Claude Code hay Codex: lỗi chỉ ghi vào `~/.jeevi-sync/sync.log`.
 
 **Cài: chỉ cần nối Gate.** Claude Code hay Codex vừa nối vào Jeevi Gate là được Gate dặn hỏi anh một câu: "Bật Jeevi
 Sync không?". Anh trả lời đồng ý là nó tự gọi tool `javis_sync_setup`, tự chạy lệnh cài trên máy, xong báo lại. Không phải
@@ -388,25 +388,25 @@ gõ lệnh, không phải chép token. Muốn bật lúc khác thì nhắn nó "
 Cài tay (máy không nối Gate): tạo token ở trang **Tích hợp**, tab **Token API**, rồi chạy:
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/tools/javis-sync/javis_sync.py
-python3 javis_sync.py install --url https://<tên-miền-javis> --token jvs_...
+curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/tools/jeevi-sync/jeevi_sync.py
+python3 jeevi_sync.py install --url https://<tên-miền-jeevi> --token jvs_...
 ```
 
-Lệnh `install` thử kết nối trước, sai URL hay token thì không cài gì. Nó chép script vào `~/.javis-sync/`, thêm hook vào
+Lệnh `install` thử kết nối trước, sai URL hay token thì không cài gì. Nó chép script vào `~/.jeevi-sync/`, thêm hook vào
 `~/.claude/settings.json` và dòng `notify` vào `~/.codex/config.toml` (có sao lưu `.bak`). Codex đang có chương trình
 notify khác thì chương trình đó vẫn chạy tiếp. Chỉ cài một bên: thêm `--claude` hoặc `--codex`.
 
 - Lượt đầu tiên của một phiên Claude Code gửi bù cả phần đã nói trước khi cài.
-- Xem tình trạng: `python3 ~/.javis-sync/javis_sync.py status`. Gỡ: `... uninstall` (trả lại notify cũ của Codex).
-- Không gửi một thư mục: thêm đường dẫn vào `"exclude"` trong `~/.javis-sync/config.json`. Tạm tắt một cửa sổ:
-  `JAVIS_SYNC_OFF=1`.
+- Xem tình trạng: `python3 ~/.jeevi-sync/jeevi_sync.py status`. Gỡ: `... uninstall` (trả lại notify cũ của Codex).
+- Không gửi một thư mục: thêm đường dẫn vào `"exclude"` trong `~/.jeevi-sync/config.json`. Tạm tắt một cửa sổ:
+  `JEEVI_SYNC_OFF=1`.
 
 ## Bảng tra nhanh nút và trạng thái
 
 | Bạn thấy | Ý nghĩa / thao tác |
 |---|---|
 | **● đang chạy** (xanh lá) | Plugin đã nạp, tool của nó đang có mặt cho engine |
-| **⚠ tắt bằng env** (cam) | Bạn đã bật plugin nhưng máy này đặt `JAVIS_ENABLE_USER_PLUGINS=false` |
+| **⚠ tắt bằng env** (cam) | Bạn đã bật plugin nhưng máy này đặt `JEEVI_ENABLE_USER_PLUGINS=false` |
 | **⚠ lỗi** (đỏ) | Manifest hỏng hoặc mã nạp không được; lý do hiện ngay dưới hàng chip |
 | **○ tắt** (xám) | Plugin có mặt nhưng đang tắt, không có tool nào ra |
 | **● bật (chưa nạp)** (cam) | Trạng thái hiếm: đã bật nhưng chưa nạp được vì lý do khác. Tải lại trang, nếu vẫn vậy thì xem log server |
@@ -430,14 +430,14 @@ notify khác thì chương trình đó vẫn chạy tiếp. Chỉ cài một bê
 
 ## Sự cố thường gặp
 
-- **Thẻ ghi "⚠ tắt bằng env":** máy này đặt `JAVIS_ENABLE_USER_PLUGINS=false`. Bỏ dòng đó trong `.env` (hoặc đặt `true`) rồi khởi động lại Jeevi. Biến này chỉ được đọc lúc khởi động.
+- **Thẻ ghi "⚠ tắt bằng env":** máy này đặt `JEEVI_ENABLE_USER_PLUGINS=false`. Bỏ dòng đó trong `.env` (hoặc đặt `true`) rồi khởi động lại Jeevi. Biến này chỉ được đọc lúc khởi động.
 - **Đã đặt biến môi trường mà vẫn bị chặn:** kiểm tra file `.env` nằm đúng thư mục gốc dự án, dòng biến không bị dấu `#` ở đầu, và giá trị là `true` (hoặc `1`/`yes`/`on`). Trên Docker thì đặt biến ở phần Environment của container chứ không phải trong file trên máy chủ.
 - **Plugin mới thả vào mà không hiện trên trang:** thư mục phải nằm **trực tiếp** trong thư mục plugins (không lồng thêm cấp), và bên trong phải có `plugin.py` (hoặc `__init__.py`). Thiếu thì Jeevi không coi đó là plugin. Tên thư mục cũng phải là slug hợp lệ (chữ thường không dấu).
 - **Thẻ ghi "⚠ lỗi" kèm "thiếu plugin.py":** thư mục chỉ có `plugin.yaml`. Thêm file mã vào.
 - **Thẻ ghi "⚠ lỗi" kèm "manifest lỗi: ...":** `plugin.yaml` sai cú pháp YAML. Hay gặp nhất là mô tả có dấu hai chấm mà không bọc nháy.
 - **Thẻ ghi "⚠ lỗi" kèm "thiếu hàm register(ctx)":** `plugin.py` chưa có hàm `register`, hoặc bạn đặt tên khác. Hàm phải tên đúng là `register` và nhận một tham số.
 - **Thẻ ghi "⚠ lỗi" kèm tên một lỗi Python (ví dụ `ModuleNotFoundError`):** mã plugin dùng thư viện chưa cài trong môi trường Python của Jeevi. Cài thư viện đó vào đúng môi trường ảo Jeevi đang chạy, rồi khởi động lại.
-- **Plugin đang chạy nhưng engine không thấy tool:** nhiều khả năng tên tool **trùng** với một tool đã có của MCP hoặc tool lõi. Jeevi không cho plugin chiếm chỗ tool lõi, nó bỏ qua tool trùng và ghi một dòng vào log server. Đổi tên tool trong `plugin.py` cho khác đi (đặt tiền tố riêng là cách chắc nhất). Các tên lõi không được dùng lại: `javis_connections`, `javis_read_file`, `javis_list_dir`, `javis_write_file`, `javis_use_skill`.
+- **Plugin đang chạy nhưng engine không thấy tool:** nhiều khả năng tên tool **trùng** với một tool đã có của MCP hoặc tool lõi. Jeevi không cho plugin chiếm chỗ tool lõi, nó bỏ qua tool trùng và ghi một dòng vào log server. Đổi tên tool trong `plugin.py` cho khác đi (đặt tiền tố riêng là cách chắc nhất). Các tên lõi không được dùng lại: `jeevi_connections`, `jeevi_read_file`, `jeevi_list_dir`, `jeevi_write_file`, `jeevi_use_skill`.
 - **Tool trả về `ERROR: tool '<tên>' cần mức quyền cao hơn`:** lượt chạy đang bị hạn chế mức quyền. Nếu là việc định kỳ, nâng chế độ của việc đó (xem [Việc định kỳ & Nhắc hẹn](08-viec-dinh-ky.md)); nếu là plugin của bạn thì xem lại `min_mode` khai trong `register_tool`.
 - **Tool trả về "Chưa kết nối ...":** plugin cần một kết nối mà bạn chưa đấu. Làm theo đúng câu hướng dẫn trong lỗi, thường là vào trang **Kết nối** (hoặc **Models** với plugin tạo ảnh).
 - **Bấm Bật báo "không tìm thấy plugin":** danh sách trên màn hình đã cũ so với đĩa (bạn vừa xoá hoặc đổi tên thư mục). Tải lại trang.
@@ -448,7 +448,7 @@ notify khác thì chương trình đó vẫn chạy tiếp. Chỉ cài một bê
 - [Skills](06-skills.md) - khi cái bạn thiếu là tri thức cách làm chứ không phải mã chạy.
 - [Kết nối & số liệu kinh doanh](09-mcp-va-so-lieu.md) - đấu nguồn dữ liệu ngoài; các plugin Meta Ads, Facebook Trang và Apify lấy token từ đây.
 - [Models & engine](10-models-va-engine.md) - vì sao mọi engine đều gọi được tool của plugin.
-- [Việc định kỳ & Nhắc hẹn](08-viec-dinh-ky.md) - ba mức quyền của việc chạy nền, và plugin `javis-schedule`.
+- [Việc định kỳ & Nhắc hẹn](08-viec-dinh-ky.md) - ba mức quyền của việc chạy nền, và plugin `jeevi-schedule`.
 - [Zalo Agent MCP](12-zalo.md) - Zalo nay dùng MCP của CLI riêng `javis-zalo`, không còn plugin riêng.
 - [Cấu hình .env](16-cau-hinh-env.md) - cách đặt biến môi trường và khởi động lại.
 - [Agents & Workflows](07-agents-va-workflows.md) - các loại năng lực khác của Jeevi.

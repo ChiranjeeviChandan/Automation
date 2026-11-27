@@ -65,7 +65,7 @@ function boot(store, clock) {
     fs.readFileSync(path.join(ROOT, "dashboard", "theme.js"), "utf8"))(
     win, doc, ls, CustomEvent, FakeDate, (fn, ms) => { timers.push({ fn, ms }); return timers.length; });
   return {
-    T: win.javisTheme, root, btn, meta, store, events, timers,
+    T: win.jeeviTheme, root, btn, meta, store, events, timers,
     light: () => root.getAttribute("data-theme") === "light",
     fire: (ev, e) => (listeners[ev] || []).forEach(f => f(e || {})),
     fireDoc: (ev) => (docListeners[ev] || []).forEach(f => f({})),
@@ -74,7 +74,7 @@ function boot(store, clock) {
 const at = (h, m) => new Date(2026, 9, 4, h, m || 0).getTime();
 
 // ---- Defaults and manual modes ----
-// Since 2026-11-05 a device that never picked a theme is LIGHT (owner: "giao diện sáng là màn mặc định của javis,
+// Since 2026-11-05 a device that never picked a theme is LIGHT (owner: "giao diện sáng là màn mặc định của jeevi,
 // đừng để mặc định giao diện tối nữa"). From 0.75.1 it was Auto, which turned dark after 18:00.
 {
   const b = boot({}, { now: at(12) });
@@ -174,7 +174,7 @@ const at = (h, m) => new Date(2026, 9, 4, h, m || 0).getTime();
 
 // ---- The pre-paint script in index.html must agree with theme.js ----
 const html = fs.readFileSync(path.join(ROOT, "dashboard", "index.html"), "utf8");
-const pre = (html.match(/<script>(\(function\(\)\{try\{var m=localStorage\.getItem\('javis\.theme'\)[\s\S]*?)<\/script>/) || [])[1];
+const pre = (html.match(/<script>(\(function\(\)\{try\{var m=localStorage\.getItem\('jeevi\.theme'\)[\s\S]*?)<\/script>/) || [])[1];
 check("found the pre-paint script", !!pre);
 check("theme.js is cache-busted past the old version", /\/static\/theme\.js\?v=([3-9]|\d\d)/.test(html));
 if (pre) {
@@ -236,7 +236,7 @@ for (const lang of ["vi", "en"]) {
     const box = { innerHTML: "", querySelectorAll: () => [], querySelector: () => null };
     const themeNowText = new Function("t", "T", nowBody).bind(null, t);
     new Function("box", "window", "t", "esc", "toast", "themeNowText", renderBody)(
-      box, { javisTheme: b.T }, t, esc, () => {}, themeNowText);
+      box, { jeeviTheme: b.T }, t, esc, () => {}, themeNowText);
     return box.innerHTML;
   };
   const manual = draw(boot({ "javis.theme": "light" }, { now: at(12) }));

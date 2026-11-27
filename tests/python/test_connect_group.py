@@ -7,7 +7,7 @@ import os
 import tempfile
 
 # One test adds a real connection: keep its store out of server/ when the file is run on its own.
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-connect-group-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-connect-group-"))
 
 import mcp_catalog  # noqa: E402
 import mcp_store  # noqa: E402

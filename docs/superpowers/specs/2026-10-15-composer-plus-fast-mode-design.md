@@ -74,7 +74,7 @@ PR 2 merge ngay sau PR 1. Giữa hai bản, nút tia sét lưu được nhưng c
 File mới `dashboard/composer-plus.js` (không chữ Việt trong mã chạy; chữ qua i18n). Một danh sách đăng ký:
 
 ```js
-window.JavisComposerMenu.register({ id, order, icon, label: "i18n.key", hint, run(ctx) | submenu(ctx) })
+window.JeeviComposerMenu.register({ id, order, icon, label: "i18n.key", hint, run(ctx) | submenu(ctx) })
 ```
 
 Thêm tính năng sau này chỉ cần gọi `register`. Mục mặc định:
@@ -87,7 +87,7 @@ Thêm tính năng sau này chỉ cần gọi `register`. Mục mặc định:
    (đường `/upload` lưu phẳng), câu báo nói rõ.
 3. **Chọn file trong brain**: popover tìm theo tên (GET `/files/search?mode=name`), chọn là gắn vào tin như một file
    đính kèm nhưng không tải lên lại. Cần endpoint nhỏ `GET /files/resolve?path=` trả đường dẫn tuyệt đối đã kiểm
-   nằm trong gốc brain (chặn `..`, symlink ra ngoài). app.js lộ `window.JavisAttach = { upload, addBrainFile }`,
+   nằm trong gốc brain (chặn `..`, symlink ra ngoài). app.js lộ `window.JeeviAttach = { upload, addBrainFile }`,
    `addBrainFile` đẩy vào `pendingAttachments` với khối `[File đính kèm ...]` sẵn có.
 4. **Lệnh và kỹ năng** (/): focus ô gõ, chèn "/" ở con trỏ, phát sự kiện `input` để chat-slash.js mở menu.
 5. **Kết nối ›**: menu con từ GET `/connect/health` (+ tên từ catalog), mỗi kết nối một chấm trạng thái; dòng mục cha

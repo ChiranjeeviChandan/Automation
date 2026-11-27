@@ -3,7 +3,7 @@
     .venv/bin/python tools/webhook_staging_rehearsal.py [--out report.json]
 
 What it runs (docs/webhook-platform/staging-pilot-pack.md):
-  - `main.app` under uvicorn in a CHILD process, a fresh temporary JAVIS_STATE_DIR, real HTTP sockets, real SQLite.
+  - `main.app` under uvicorn in a CHILD process, a fresh temporary JEEVI_STATE_DIR, real HTTP sockets, real SQLite.
   - Local receivers on 127.0.0.1 (`allow_private` actions): one answers at once, one waits 6 s, one answers 500.
   - The child refuses every model path (run_task, run_workflow, incident triage): a call is written to a marker file
     and fails the run.
@@ -116,8 +116,8 @@ class Host:
         self.base = f"http://127.0.0.1:{self.port}"
 
     def start(self) -> None:
-        env = dict(os.environ, JAVIS_STATE_DIR=str(self.state), REHEARSAL_PORT=str(self.port),
-                   REHEARSAL_MODEL_MARKER=str(self.marker), PYTHONPATH=str(SERVER), JAVIS_REQUIRE_LOGIN="0")
+        env = dict(os.environ, JEEVI_STATE_DIR=str(self.state), REHEARSAL_PORT=str(self.port),
+                   REHEARSAL_MODEL_MARKER=str(self.marker), PYTHONPATH=str(SERVER), JEEVI_REQUIRE_LOGIN="0")
         self.proc = subprocess.Popen([sys.executable, "-c", CHILD], env=env, cwd=str(SERVER),
                                      stdout=subprocess.DEVNULL, stderr=open(self.state / "host.log", "ab"))
         for _ in range(300):
@@ -189,7 +189,7 @@ def main() -> int:
     rport = free_port()
     srv = ThreadingHTTPServer(("127.0.0.1", rport), Receiver)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
-    state = Path(tempfile.mkdtemp(prefix="javis-rehearsal-"))
+    state = Path(tempfile.mkdtemp(prefix="jeevi-rehearsal-"))
     marker = state / "model-calls.txt"
     host = Host(state, marker)
     t0 = time.time()

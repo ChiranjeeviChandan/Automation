@@ -282,8 +282,8 @@ account is set to Full power.
 ## Differences from the old Zalo integration
 
 The new flow dropped the `listen --webhook` sidecar, the `/hook/zalo` endpoint, the "Listen
-continuously" panel, the per-chat rules file and the two plugins `javis_zalo_rule` and
-`javis_zalo_send`. No listener process turns the MCP connector off and back on any more.
+continuously" panel, the per-chat rules file and the two plugins `jeevi_zalo_rule` and
+`jeevi_zalo_send`. No listener process turns the MCP connector off and back on any more.
 
 Because of that, Jeevi does not forward Zalo messages to Telegram in the background. When you
 want to check messages, ask Jeevi; MCP can use `zalo_get_messages` for buffered messages or

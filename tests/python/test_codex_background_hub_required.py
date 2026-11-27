@@ -1,14 +1,14 @@
 """Regression: a scheduled background job on Codex gets the Jeevi hub, or fails for real.
 
 Canary 2026-10-08/09 (one VPS, 0.84.4 to 0.86.102, two read-only scheduled reminders): 4 of 12 runs had no
-`mcp__javis__*` tool. Codex 0.161.0 waits only `mcp_optional_startup_grace_ms` (default 1 s,
+`mcp__jeevi__*` tool. Codex 0.161.0 waits only `mcp_optional_startup_grace_ms` (default 1 s,
 codex-mcp/src/mcp/mod.rs) for an MCP server that is not `required`, then drops that server from
 the turn (codex-mcp/src/connection_manager/tool_catalog.rs). The hub answers `tools/list` in
 about 2 s once its 60 s discovery cache has expired. The model then went through the ChatGPT
 apps (`mcp__codex_apps__*`) or said it could not work, and the reminder still recorded success.
 
 Fix, for the scheduled background lanes only (reminder, loop, Kanban dispatch):
-  - `mcp_servers.javis.required=true`: Codex waits for the hub up to `startup_timeout_sec`, and
+  - `mcp_servers.jeevi.required=true`: Codex waits for the hub up to `startup_timeout_sec`, and
     `codex exec` exits with "required MCP servers failed to initialize" when it cannot start;
   - `features.apps=false`: no `codex_apps` server, so no route around the hub;
   - the background engine chain stops on that error instead of handing the prompt to the next
@@ -34,14 +34,14 @@ import time
 import tomllib
 from pathlib import Path
 
-# Hard-set, not setdefault: inside the production container JAVIS_STATE_DIR, BRAINS_DIR and HOME
+# Hard-set, not setdefault: inside the production container JEEVI_STATE_DIR, BRAINS_DIR and HOME
 # point at live data, and this test writes a Codex profile under HOME and a reminders.json.
-_TMP = Path(tempfile.mkdtemp(prefix="javis-codex-bg-hub-"))
-os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
-os.environ["JAVIS_SESSIONS_DB"] = str(_TMP / "conversations.db")
+_TMP = Path(tempfile.mkdtemp(prefix="jeevi-codex-bg-hub-"))
+os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+os.environ["JEEVI_SESSIONS_DB"] = str(_TMP / "conversations.db")
 os.environ["BRAINS_DIR"] = str(_TMP / "brains")
 os.environ["HOME"] = str(_TMP / "home")
-os.environ.pop("JAVIS_CODEX_SANDBOX", None)
+os.environ.pop("JEEVI_CODEX_SANDBOX", None)
 os.environ.pop("CODEX_HOME", None)
 for _d in ("state", "brains/Brain Default/Jeevi", "home"):
     (_TMP / _d).mkdir(parents=True, exist_ok=True)
@@ -69,7 +69,7 @@ def check(name, cond, detail=""):
 
 
 # Names read with getattr so this file still runs (and turns RED) on a tree without the fix.
-REQ_KEY = getattr(mcp_hub, "CODEX_REQUIRED_KEY", "mcp_servers.javis.required")
+REQ_KEY = getattr(mcp_hub, "CODEX_REQUIRED_KEY", "mcp_servers.jeevi.required")
 APPS_KEY = getattr(mcp_hub, "CODEX_APPS_KEY", "features.apps")
 REQ_FAIL = getattr(claude_cli, "CODEX_REQUIRED_FAIL", "required MCP servers failed to initialize")
 HUB_REQ = getattr(mcp_hub, "dat_codex_hub_bat_buoc", None)
@@ -104,7 +104,7 @@ def effective_config(argv):
 
 
 def hub_entry(cfg):
-    return (cfg.get("mcp_servers") or {}).get("javis") or {}
+    return (cfg.get("mcp_servers") or {}).get("jeevi") or {}
 
 
 def count(argv, key):
@@ -123,8 +123,8 @@ class _Engine:
         self.cwd = str(BRAIN)
         self.tag = tag
         self.system_prompt = None
-        self.javis_vault = str(BRAIN)
-        self.javis_mode = mode
+        self.jeevi_vault = str(BRAIN)
+        self.jeevi_mode = mode
         self.model = None
 
     def is_available(self):
@@ -182,7 +182,7 @@ prof = Path.home() / ".codex" / f"{mcp_hub.codex_profile_name()}.config.toml"
 before = prof.read_bytes()
 aux_engine._build_codex(CODEX_SPEC, _Engine(), "suggest", "reminder", shared_profile)
 after = tomllib.loads(prof.read_text(encoding="utf-8"))
-check("shared profile: hub not required", "required" not in after["mcp_servers"]["javis"])
+check("shared profile: hub not required", "required" not in after["mcp_servers"]["jeevi"])
 check("shared profile: no features table", "features" not in after)
 check("shared profile bytes unchanged by a background job", prof.read_bytes() == before)
 
@@ -192,7 +192,7 @@ for label, writer in (("no profile writer", None), ("writer returned nothing", l
     check(f"{label}: no required override", count(argv, REQ_KEY) == 0, argv)
     check(f"{label}: no apps override", count(argv, APPS_KEY) == 0, argv)
 set_hub(False)
-argv = aux_engine._build_codex(CODEX_SPEC, _Engine(), "suggest", "reminder", lambda: "javis")._build_args()
+argv = aux_engine._build_codex(CODEX_SPEC, _Engine(), "suggest", "reminder", lambda: "jeevi")._build_args()
 check("hub off in settings: no required and no apps override", count(argv, REQ_KEY) == 0 and count(argv, APPS_KEY) == 0, argv)
 set_hub(True)
 
@@ -257,16 +257,16 @@ REQ_STDERR = [
     "when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url "
     "(http://127.0.0.1:19310/hub/mcp)\")))",
     "2026-10-09T00:20:19.722743Z ERROR codex_core::session: Failed to create session: required MCP servers failed "
-    "to initialize: javis: timed out handshaking with MCP server after 20s",
+    "to initialize: jeevi: timed out handshaking with MCP server after 20s",
     "Error: thread/start: thread/start failed: error creating thread: Fatal error: Failed to initialize session: "
-    "required MCP servers failed to initialize: javis: timed out handshaking with MCP server after 20s (code -32603)",
+    "required MCP servers failed to initialize: jeevi: timed out handshaking with MCP server after 20s (code -32603)",
 ]
 REQ_ERR = claude_cli.codex_error_text(1, REQ_STDERR)
 # Hub port closed: same probe, the reason line is ~800 characters of transport detail.
 DOWN_STDERR = [
     REQ_STDERR[0],
     "2026-10-09T00:19:58.391560Z ERROR codex_core::session: Failed to create session: required MCP servers failed to "
-    "initialize: javis: handshaking with MCP server failed: Send message error Transport "
+    "initialize: jeevi: handshaking with MCP server failed: Send message error Transport "
     "[codex_rmcp_client::event_notification_transport::EventNotificationTransport<rmcp::transport::worker::"
     "WorkerTransport<rmcp::transport::streamable_http_client::StreamableHttpClientWorker<codex_rmcp_client::"
     "http_client_adapter::StreamableHttpClientAdapter>>>] error: Client error: HTTP request failed: http/request "
@@ -275,7 +275,7 @@ DOWN_STDERR = [
 for label, lines in (("hub hung (timed out after 20s)", REQ_STDERR), ("hub port closed", DOWN_STDERR)):
     txt = claude_cli.codex_error_text(1, lines)
     check(f"codex_error_text, {label}: reason within the first 300 characters", REQ_FAIL in txt[:300], txt[:300])
-    check(f"codex_error_text, {label}: names the hub server and keeps the exit code", "javis:" in txt and "1" in txt)
+    check(f"codex_error_text, {label}: names the hub server and keeps the exit code", "jeevi:" in txt and "1" in txt)
     check(f"codex_error_text, {label}: bounded length", len(txt) < 600, len(txt))
 other = claude_cli.codex_error_text(2, ["Error: unexpected status 401 Unauthorized"])
 check("codex_error_text, unrelated error: old format kept", other.startswith("Codex lỗi (exit 2):") and "401" in other, other)
@@ -290,8 +290,8 @@ check("required hub failed: next engine NOT run (it would reach the same hub bli
 check("required hub failed: no final leaks out", all(e.get("type") != "final" for e in evs))
 check("required hub failed: the reason is in the first 300 characters (what the chat card keeps)",
       bool(evs) and REQ_FAIL in str(evs[-1].get("content", ""))[:300], str(evs[-1].get("content", ""))[:300] if evs else "")
-check("required hub failed: Codex's own line is kept (javis + timed out after 20s)",
-      bool(evs) and "javis: timed out handshaking with MCP server after 20s" in str(evs[-1].get("content", "")))
+check("required hub failed: Codex's own line is kept (jeevi + timed out after 20s)",
+      bool(evs) and "jeevi: timed out handshaking with MCP server after 20s" in str(evs[-1].get("content", "")))
 
 # ---- #1306: a late required hub gets ONE more try before the run is given up ----------------------
 check("a required hub that fails twice ran that link exactly twice (one retry, not a loop)", codex.ran == 2, codex.ran)
@@ -318,8 +318,8 @@ acted = FakeEngine([{"type": "tool_call", "name": "zalo_send_message"}, {"type":
 evs = asyncio.run(collect(FB([acted])))
 check("the hub error AFTER a tool call is never retried (the action could run twice)", acted.ran == 1, acted.ran)
 check("required timeout override replaces an earlier one instead of stacking",
-      HUB_REQ(["mcp_servers.javis.startup_timeout_sec=20", "x=1"]).count("mcp_servers.javis.startup_timeout_sec=45") == 1
-      and "mcp_servers.javis.startup_timeout_sec=20" not in HUB_REQ(["mcp_servers.javis.startup_timeout_sec=20"]))
+      HUB_REQ(["mcp_servers.jeevi.startup_timeout_sec=20", "x=1"]).count("mcp_servers.jeevi.startup_timeout_sec=45") == 1
+      and "mcp_servers.jeevi.startup_timeout_sec=20" not in HUB_REQ(["mcp_servers.jeevi.startup_timeout_sec=20"]))
 
 LIMIT = "You've hit your session limit · resets 4:40am (UTC)"
 claude_het = FakeEngine([{"type": "error", "content": LIMIT}], provider="claude")
@@ -339,7 +339,7 @@ evs = asyncio.run(collect(FB([codex2, claude2]), fresh=False))
 check("0.222.0: right after that quota error, the next job tries Claude first (Codex is resting)",
       evs[-1] == FINAL("claude chạy trước") and codex2.ran == 0)
 
-codex = FakeEngine([{"type": "tool_call", "name": "mcp__javis__javis_run_tool"}, FINAL("xong")], provider="openai-oauth")
+codex = FakeEngine([{"type": "tool_call", "name": "mcp__jeevi__jeevi_run_tool"}, FINAL("xong")], provider="openai-oauth")
 claude = FakeEngine([FINAL("không được chạy")])
 evs = asyncio.run(collect(FB([codex, claude])))
 check("healthy Codex run: unchanged, Claude never runs", evs[-1] == FINAL("xong") and claude.ran == 0)
@@ -413,7 +413,7 @@ check("reminder at full (no chain): error recorded with the reason", REQ_FAIL in
 check("reminder at full (no chain): card failed and warning names the reason",
       bool(sent) and (sent[-1]["viec"] or {}).get("status") == "failed" and REQ_FAIL in sent[-1]["text"], sent[-1:])
 
-codex = FakeEngine([{"type": "tool_call", "name": "mcp__javis__javis_run_tool"}, FINAL("OK: 3 rows")], provider="openai-oauth")
+codex = FakeEngine([{"type": "tool_call", "name": "mcp__jeevi__jeevi_run_tool"}, FINAL("OK: 3 rows")], provider="openai-oauth")
 claude = FakeEngine([FINAL("không được chạy")])
 stored = run_fire([codex, claude])
 check("reminder healthy run: result kept, no error, card done",

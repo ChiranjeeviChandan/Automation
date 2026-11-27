@@ -16,7 +16,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-dictation-quick-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-dictation-quick-"))
 
 import main  # noqa: E402
 import stt  # noqa: E402

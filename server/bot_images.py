@@ -27,7 +27,7 @@ import channel_context
 import channels
 
 IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".webp", ".gif")
-# Images per reply. 4 unless the machine sets JAVIS_BOT_MAX_IMAGES (issue #1634: a rental business needs more photos to
+# Images per reply. 4 unless the machine sets JEEVI_BOT_MAX_IMAGES (issue #1634: a rental business needs more photos to
 # show one room). Clamped to 1..MAX_IMAGES_CEILING: every image is one more message under the owner's name, and the
 # personal Zalo channel remembers only the last 20 image echoes of a chat (`zalo_personal_channel.ghi_da_gui_anh`).
 DEFAULT_MAX_IMAGES = 4
@@ -35,8 +35,8 @@ MAX_IMAGES_CEILING = 20
 
 
 def max_images_from_env(raw=None) -> int:
-    """The per-reply image cap from JAVIS_BOT_MAX_IMAGES (or `raw`): unset or not a number gives the default."""
-    raw = os.environ.get("JAVIS_BOT_MAX_IMAGES", "") if raw is None else raw
+    """The per-reply image cap from JEEVI_BOT_MAX_IMAGES (or `raw`): unset or not a number gives the default."""
+    raw = os.environ.get("JEEVI_BOT_MAX_IMAGES", "") if raw is None else raw
     try:
         n = int(str(raw).strip())
     except (TypeError, ValueError):

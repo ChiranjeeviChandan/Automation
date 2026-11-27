@@ -10,7 +10,7 @@
 
 **Tech Stack:** Python, SQLite, runner hiện có, Git checkout cho code candidate, supervisor host và container worker ở chế độ live self-update. V1 không hỗ trợ tự cập nhật live nếu môi trường chưa có ranh giới worker/supervisor đã kiểm tra.
 
-**Spec:** [Thiết kế tổng thể](../specs/2026-10-06-javis-resonance-design.md), mục 10 đến 17. Phụ thuộc [Foundation](2026-10-06-resonance-01-foundation.md) và B1 đến B3 của [Runtime](2026-10-06-resonance-02-runtime.md).
+**Spec:** [Thiết kế tổng thể](../specs/2026-10-06-jeevi-resonance-design.md), mục 10 đến 17. Phụ thuộc [Foundation](2026-10-06-resonance-01-foundation.md) và B1 đến B3 của [Runtime](2026-10-06-resonance-02-runtime.md).
 
 ## Global Constraints
 
@@ -81,7 +81,7 @@
 
 ## Task C3 Bài học và đánh giá định tính có nguồn
 
-**Files:** Create server/resonance_learning.py, server/resonance_eval_rubric.py, server/resonance_eval_human.py, tests/python/test_resonance_learning.py, tests/python/test_resonance_rubric.py. Modify server/main.py tại đường JAVIS_LESSON, server/resonance_evaluators.py, server/resonance_store.py.
+**Files:** Create server/resonance_learning.py, server/resonance_eval_rubric.py, server/resonance_eval_human.py, tests/python/test_resonance_learning.py, tests/python/test_resonance_rubric.py. Modify server/main.py tại đường JEEVI_LESSON, server/resonance_evaluators.py, server/resonance_store.py.
 
 **Interfaces:**
 
@@ -96,7 +96,7 @@
 - [ ] Viết test lesson chỉ áp đúng scope, bị supersede không còn đưa vào prompt, không sửa vùng memory người dùng viết tay, không rò bài học qua brain.
 - [ ] Viết test rubric thiếu bằng chứng trả unknown; model confidence không được trình bày là xác suất; không có quyền xem dữ liệu thì evaluator không được đọc để chấm.
 - [ ] Chạy python tests/run.py resonance_learning resonance_rubric -v; xác nhận đỏ.
-- [ ] Implement provenance riêng cho lesson Resonance; bridge sang cơ chế bộ nhớ hiện có bằng id/hash để thu hồi bài học sinh tự động đúng dòng. Giữ hành vi JAVIS_LESSON legacy chưa thuộc Resonance.
+- [ ] Implement provenance riêng cho lesson Resonance; bridge sang cơ chế bộ nhớ hiện có bằng id/hash để thu hồi bài học sinh tự động đúng dòng. Giữ hành vi JEEVI_LESSON legacy chưa thuộc Resonance.
 - [ ] Thêm các evaluator mới bằng registry, không sửa state machine. Human confirmation yêu cầu danh tính xác thực, không nhận câu tự báo của model là chữ ký người dùng.
 - [ ] Chạy test mới và python tests/run.py learn_agent_workflow agent_tu_boi_dap memory_hoa_thuong -v; review và commit.
 

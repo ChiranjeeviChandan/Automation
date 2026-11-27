@@ -14,7 +14,7 @@
 - **Nền:** thiết kế viết trên `main` `33a3c1aa` (0.89.0); mã đã merge `main` `1d0b515c` (0.91.0: 0.89.1, 0.89.2, DeepSeek) rồi `709e3db9` (0.92.1: đăng nhập, màn cài đặt đầu) `b7e09dbf` (0.92.2: Ollama cục bộ có công cụ) `55bc8e86` (0.94.0: bot xem ảnh khách) và `adb103ed` (0.95.1: Ollama cục bộ tắt suy nghĩ mặc định). A1 0.87.0, A2 0.88.0, A3 0.89.0, bản hiệu năng 0.88.5 (#602) đã vào `main`.
 - **Lộ trình:** [agent scope roadmap](2026-10-08-resonance-agent-scope-roadmap.md), mục 7 (A4, A5).
 - **Đầu vào giao quyền** (ngoài git):
-  - báo cáo Paperclip 08/10: `exports/reviews/paperclip-javis-assessment-2026-10-08.md`;
+  - báo cáo Paperclip 08/10: `exports/reviews/paperclip-jeevi-assessment-2026-10-08.md`;
   - bản bổ sung 10/10: `exports/reviews/2026-10-10-resonance-delegation-paperclip-review-supplement.md`.
 
 **Mức bằng chứng:**
@@ -120,7 +120,7 @@ Lấy từ bản bổ sung 10/10, mục 5. A4 hiện thực các bất biến 1 
 | Nguồn | Engine | Nội dung đến từ | Bytes ở đâu khi thành bản nộp |
 |---|---|---|---|
 | `background_text` (đã có) | Claude, engine API | Model trả chữ | Host đã ghi `output_root/<action_id>.md` |
-| `submit_tool` (mới) | Engine có khoá lượt tới hub: Claude, Codex, engine API | Model gọi `javis_submit_deliverable` | Host ghi `output_root/submissions/<id>.md` (vùng nháp) |
+| `submit_tool` (mới) | Engine có khoá lượt tới hub: Claude, Codex, engine API | Model gọi `jeevi_submit_deliverable` | Host ghi `output_root/submissions/<id>.md` (vùng nháp) |
 | `observed_write` (đã có, giữ làm đường phụ) | Claude trong chat | Model Write thẳng vào đích | Engine đã ghi ở đích |
 | `approved_draft` (mới) | Không có engine | Chủ dự án Cho phép một bản nháp đã giữ (mục 5.3) | Chính file nháp cũ, không chép lại |
 
@@ -208,7 +208,7 @@ Hai phép kiểm này chỉ là kiểm quyền. Bước đăng vẫn chạy đ�
   - trong cùng tiến trình, liên kết đã `sealed` nên lời nộp bị từ chối (`turn_closed`).
 - **Khởi động lại không làm mất bản đã nhận.** Bàn giao hết hạn chỉ chuyển liên kết sang `sealed`. Đối soát vẫn đăng được bản `candidate` đã nhận, dưới đúng quyền đã ghim, nếu quyền đó còn hiệu lực (mục 4.7).
 
-### 4.3 Công cụ `javis_submit_deliverable`
+### 4.3 Công cụ `jeevi_submit_deliverable`
 
 **Đầu vào:**
 
@@ -499,7 +499,7 @@ Lượt chat cũ không hưởng gì: liên kết `draft` của nó đã `closed
 | Điểm | Kiểm (trong giao dịch) |
 |---|---|
 | Mở liên kết `handoff` | Gốc đang `active`, luật ghim gốc theo lượt (mục 4.2). Không có gốc thì liên kết `draft` theo yêu cầu đang chờ |
-| `javis_submit_deliverable` | Liên kết của đúng lượt; phát lại trước, rồi `binding_accepts`; quyền `submit` + đích, hay đúng đường của yêu cầu |
+| `jeevi_submit_deliverable` | Liên kết của đúng lượt; phát lại trước, rồi `binding_accepts`; quyền `submit` + đích, hay đúng đường của yêu cầu |
 | `begin_action(work)` | Quyền revision hiệu lực. Ghi liên kết `action`. Không có thì không giữ lượt (`grant_missing`, `scope_pending`, `grant_revoked`) |
 | `begin_experiment` (phép thử A3) | Như trên, liên kết `experiment`. Mỗi lượt thử kiểm `binding_accepts` ở cổng lượt sẵn có (`_TrialCall`). Hỏng thì phép thử dừng `inconclusive` với lý do quyền, theo đường dừng sẵn có |
 | Lượt làm sản phẩm A3 (`use_hold`) | Liên kết `followup` mới, kiểm quyền hiện hành, không kế thừa liên kết của phép thử |
@@ -518,7 +518,7 @@ Lượt chat cũ không hưởng gì: liên kết `draft` của nó đã `closed
 | Provider | Khoá lượt tới hub | Nộp qua công cụ | Quan sát Write có biên nhận | Chặn ghi native | Việc nền chỉ chữ |
 |---|---|---|---|---|---|
 | `anthropic-cli` | Có (header) | Có | Có | Theo từng lời gọi (`can_use_tool`) khi có `allowed_tools` | Có |
-| `openai-oauth` (Codex) | Có (`-c`) | **Có (mới)** | Không | Chỉ sandbox; tắt được bằng `JAVIS_CODEX_SANDBOX=off` | Không |
+| `openai-oauth` (Codex) | Có (`-c`) | **Có (mới)** | Không | Chỉ sandbox; tắt được bằng `JEEVI_CODEX_SANDBOX=off` | Không |
 | `grok-cli` | **Không** | Không | Không | `--deny` theo mức | Không |
 | `antigravity-cli` | **Không** | Không | Không | Chỉ sandbox | Không |
 | Engine API | Có (trong tiến trình) | **Có (mới)** | Không | Không có công cụ native | Có |
@@ -657,7 +657,7 @@ Review vòng 1 chỉ ra `apply_command(..., "resume")` của 0.95.1 gỡ tạm d
 
 ## 10. API và công cụ
 
-- **`javis_submit_deliverable(path, content, submission_key?, handoff?)`:** công cụ hub.
+- **`jeevi_submit_deliverable(path, content, submission_key?, handoff?)`:** công cụ hub.
   - Công cụ lập và sửa mục tiêu trả thêm `handoff` (mã liên kết) khi host mở liên kết, và `scope: "granted" | "pending"`.
 - **`GET /goals/{id}`:** thêm các trường:
   - `scope`: gốc, đích, nguồn, trạng thái;
@@ -835,7 +835,7 @@ Bảng câu của `test_resonance_a4_directive.py` ghi kết quả thật của 
    - `handoff_after_turn` theo bản nộp, quy tắc A/B, niêm liên kết;
    - cổng trong phép thử A3;
    - đối soát theo mục 4.7.
-5. **Công cụ hub** `javis_submit_deliverable` (plugin `javis-goal`). Công cụ lập và sửa mục tiêu trả `handoff` và `scope`.
+5. **Công cụ hub** `jeevi_submit_deliverable` (plugin `jeevi-goal`). Công cụ lập và sửa mục tiêu trả `handoff` và `scope`.
 6. **API** theo mục 10.
 7. **Giao diện** theo mục 8.
 8. **Script** `tools/resonance_restore_pre_a4.py` (repo không có thư mục `scripts/`).
@@ -908,7 +908,7 @@ Các điểm dưới đây là chỗ mã phải chọn mà thiết kế chưa n�
 | I1 | §5.3 ghi "Thu hồi (nút Thu hồi quyền, hay tắt Cộng hưởng của trợ lý)" | **Tắt Cộng hưởng KHÔNG thu hồi gốc.** Liên kết vẫn chết ngay vì ghim version trợ lý (§4.2 điều 3); bật lại thì lượt mới làm tiếp dưới gốc cũ | Giữ hành vi A1 "bật lại thì chạy tiếp". **Reviewer chấp nhận ở review mã vòng 1**; §5.3 đã sửa theo |
 | I2 | §4.5 liệt kê "đăng lại" nhưng §4.2 không có nguồn cho nó | File đích bị xoá thì `_publish_latest` tạo bản nộp `republish` chép bản đã đăng, dưới liên kết **mới** `republish` ghim quyền revision ĐANG hiệu lực (không dùng lại liên kết cũ). Không có quyền hiệu lực thì không đăng lại | Giữ hành vi A2 "xoá file thì đăng lại bản hiệu lực, 0 lượt model". **Reviewer chấp nhận ở review mã vòng 1**; đã ghi vào §4.2 và §4.7 |
 | I3 | Mục tiêu không có đường sản phẩm (chỉ có tiêu chí người dùng xác nhận) | `scope_state=none`: không cần phạm vi, việc nền chạy như 0.95.1, không có gì để đăng | Không có đích để cho phép; chặn chúng thì mục tiêu kẹt vĩnh viễn |
-| I4 | Hệ quả của D1 với Claude | Write trong lượt LẬP mục tiêu không được tiếp nhận (bytes lạ ở đích). Chỉ bản nộp qua `javis_submit_deliverable` được giữ làm nháp. Gợi ý trong prompt và kết quả `javis_goal` dặn bộ não nộp qua công cụ, không Write thẳng | Đúng §4.4 ("liên kết draft không bao giờ tiếp nhận Write tại chỗ"). Câu hỏi mở cho A5: có nên chuyển một Write có biên nhận thành bản nháp không; mã chưa làm |
+| I4 | Hệ quả của D1 với Claude | Write trong lượt LẬP mục tiêu không được tiếp nhận (bytes lạ ở đích). Chỉ bản nộp qua `jeevi_submit_deliverable` được giữ làm nháp. Gợi ý trong prompt và kết quả `jeevi_goal` dặn bộ não nộp qua công cụ, không Write thẳng | Đúng §4.4 ("liên kết draft không bao giờ tiếp nhận Write tại chỗ"). Câu hỏi mở cho A5: có nên chuyển một Write có biên nhận thành bản nháp không; mã chưa làm |
 | I5 | A1 quyết định 4 (đăng lại đầu ra giữ sau khi tắt bật, ý định mới theo version hiện tại) | Thay bằng §4.2 điều 3: bản nộp `stale`, lần thức sau làm lại một lượt | "Host không bao giờ sửa liên kết đang dở sang quyền mới". Test A1 sửa kỳ vọng, có chú thích |
 | I6 | Revision do mã cũ tạo, hay mục tiêu vừa gán, cần phạm vi mà chưa có yêu cầu | `_gate` gọi `ensure_scope_request`: chỉ ghi yêu cầu chờ, không cấp | Để thẻ có nút Cho phép; §7.4 |
 | I7 | `origin_ref` của liên kết `handoff` | Dùng `message_ref` (`msg:<phiên>:<tin>`), cùng khoá với bảng `handoffs` | Tương đương `<session_id>:<message_id>` của §4.2 |

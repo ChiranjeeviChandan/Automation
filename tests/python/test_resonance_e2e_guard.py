@@ -200,13 +200,13 @@ check("ảnh chụp brain bỏ thư mục hệ thống Jeevi/", "Jeevi/resonance
 d = G.snapshot_diff(s0, G.snapshot_files(br))
 check("so ảnh chụp: biết file mới và file đổi do bộ não ghi trong lượt",
       d == {"added": ["Docs/b.md"], "changed": ["Notes/a.md"], "removed": []})
-frames = [{"type": "tool", "name": "ToolSearch", "input": "{\"query\": \"select:mcp__javis-plugins__javis_goal\"}"},
+frames = [{"type": "tool", "name": "ToolSearch", "input": "{\"query\": \"select:mcp__jeevi-plugins__jeevi_goal\"}"},
           {"type": "tool", "name": "Bash", "input": "ls"},
-          {"type": "tool_result", "content": "[javis_search_tools] không tìm thấy"},
-          {"type": "tool", "name": "mcp__javis-plugins__javis_goal", "input": "{\"op\": \"create\"}"}]
-check("khung tìm tool: giữ ToolSearch và javis_search_tools, bỏ khung khác",
+          {"type": "tool_result", "content": "[jeevi_search_tools] không tìm thấy"},
+          {"type": "tool", "name": "mcp__jeevi-plugins__jeevi_goal", "input": "{\"op\": \"create\"}"}]
+check("khung tìm tool: giữ ToolSearch và jeevi_search_tools, bỏ khung khác",
       G.search_calls(frames) == [frames[0], frames[2]])
-check("khung gọi javis_goal/javis_task: nhận cả lần nạp qua ToolSearch và lần gọi",
+check("khung gọi jeevi_goal/jeevi_task: nhận cả lần nạp qua ToolSearch và lần gọi",
       G.goal_tool_calls(frames) == [frames[0], frames[3]])
 check("không có khung nào: danh sách rỗng, không suy ra gì", G.search_calls([]) == [] and G.search_calls(None) == [])
 

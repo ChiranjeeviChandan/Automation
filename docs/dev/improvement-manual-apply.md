@@ -18,7 +18,7 @@ kế tiếp trong khung chat riêng với trợ lý đó, mọi đường nạp 
 
 | Đường | Có dùng bản thử |
 |---|---|
-| Tool `javis_use_skill` gọi trong tiến trình (engine API) | Có |
+| Tool `jeevi_use_skill` gọi trong tiến trình (engine API) | Có |
 | Ảnh chụp skill theo lượt (`TaskSkillScope`, khi bật) | Có, bytes được ghim theo lượt |
 | Hub qua HTTP từ CLI (Claude Code, Codex, Grok, Antigravity) | Không: các engine này còn tự đọc `.claude/skills`, phục vụ bản thử ở một đường sẽ chia lượt làm hai phiên bản |
 | Router lười (`lazy_skill_runtime`) | Không: chạy cả cho engine CLI và không chạy cho chat trợ lý |
@@ -112,7 +112,7 @@ idempotent theo `event_key`. Không ghi đè file, không phát lại hành đ�
   kiếm bỏ sót), nên định tuyến của skill khác không đổi. Cần ít nhất một câu negative hoặc competing.
 - Skill có mô tả dịch (`description_<lang>`) chưa áp dụng được (V1 chỉ thay mô tả gốc). Mô tả trùng nội dung cũ bị
   từ chối. Khi phạm vi chụp skill theo lượt đang bật, khung chat dùng ảnh chụp, không trộn mô tả áp dụng.
-- Giới hạn còn lại: mô tả trong tool `javis_use_skill` của hub vẫn là mô tả gốc (danh sách tool được cache theo
+- Giới hạn còn lại: mô tả trong tool `jeevi_use_skill` của hub vẫn là mô tả gốc (danh sách tool được cache theo
   brain, dùng chung cho mọi lượt), nên lượt API ở khung chat chính thấy mô tả mới trong danh sách skill của prompt
   và mô tả gốc trong mô tả tool.
 - Chưa có: bộ chạy thử cho bộ não API với bộ công cụ do host kiểm soát (spec 10.3), và đo việc Claude Code/Codex tự
@@ -128,7 +128,7 @@ idempotent theo `event_key`. Không ghi đè file, không phát lại hành đ�
   chatbot khách không nạp lời nhắc trợ lý nên không được phủ. Mọi bộ não đều nhận vì đây là chữ trong lời nhắc.
 - Host nói nơi chạy: `_agent_sysprompt(slug, surface, agent_key, session_created_at)`; không có `surface` thì lời
   nhắc y như trước. Mã trợ lý lấy từ ghim phiên, thành viên nhóm, khoá việc Kanban hoặc dòng sống của slug.
-- Kiểm của host khi lưu: 20 tới 2000 ký tự; từ chối dấu hiệu `JAVIS_RULE/LESSON/ASK`, comment HTML, dòng đặt
+- Kiểm của host khi lưu: 20 tới 2000 ký tự; từ chối dấu hiệu `JEEVI_RULE/LESSON/ASK`, comment HTML, dòng đặt
   `model:`, `skills:`, `quyền:`..., câu bảo bỏ qua luật chủ hay đổi model. Mâu thuẫn về nghĩa với luật chủ do chủ
   tự đọc và tick xác nhận (`owner_confirmed`); duyệt mâu thuẫn tự động để Phase 2.
 - Ghim phiên (I10): chat riêng bắt đầu TRƯỚC lúc áp dụng giữ lời nhắc cũ; phiên mới mới dùng quy trình. Gỡ và tạm

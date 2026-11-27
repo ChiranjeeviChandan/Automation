@@ -15,7 +15,7 @@
 (function () {
   "use strict";
 
-  var DB = "javis-chat-cache";
+  var DB = "jeevi-chat-cache";
   var STORE = "chats";
   var MAX = 50;
   var MAX_AGE = 7 * 24 * 3600 * 1000;
@@ -110,6 +110,6 @@
   }
 
   var api = { all: all, put: put, del: del, clear: clear, toDrop: toDrop, MAX: MAX, MAX_AGE: MAX_AGE };
-  if (typeof window !== "undefined") window.JavisChatCache = api;
+  if (typeof window !== "undefined") window.JeeviChatCache = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

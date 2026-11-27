@@ -22,11 +22,11 @@ import tempfile
 from pathlib import Path
 
 # PHẢI set BRAINS_DIR + STATE_DIR sang thư mục tạm TRƯỚC khi import main (main đọc env lúc import).
-_STATE = tempfile.mkdtemp(prefix="javis-viec-state-")
-_BRAINS = tempfile.mkdtemp(prefix="javis-viec-brains-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-viec-state-")
+_BRAINS = tempfile.mkdtemp(prefix="jeevi-viec-brains-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 os.environ["BRAINS_DIR"] = _BRAINS
-sys.path.insert(0, str(ROOT / "system" / "plugins" / "javis-schedule"))
+sys.path.insert(0, str(ROOT / "system" / "plugins" / "jeevi-schedule"))
 
 import main            # noqa: E402
 import self_improve    # noqa: E402
@@ -60,8 +60,8 @@ _loop_deps = self_improve.LoopDeps(
 )
 _lf = self_improve.LoopFeature(_loop_deps)
 
-_bA = tempfile.mkdtemp(prefix="javis-brainA-")
-_bB = tempfile.mkdtemp(prefix="javis-brainB-")
+_bA = tempfile.mkdtemp(prefix="jeevi-brainA-")
+_bB = tempfile.mkdtemp(prefix="jeevi-brainB-")
 
 sched._create_loop_file(_bA, name="Quet don", prompt="Moi vong quet don moi.", schedule="120m")
 _slug = "quet-don"
@@ -109,8 +109,8 @@ _rem_deps = reminders_mod.RemindersDeps(
 )
 _rf = reminders_mod.RemindersFeature(_rem_deps)
 
-_rA = tempfile.mkdtemp(prefix="javis-remA-")
-_rB = tempfile.mkdtemp(prefix="javis-remB-")
+_rA = tempfile.mkdtemp(prefix="jeevi-remA-")
+_rB = tempfile.mkdtemp(prefix="jeevi-remB-")
 _rem = _rf._create(_rA, "goi khach X", delay_min=30, chat_id="777", label="Goi khach")
 _rid = _rem["id"]
 check("B: nhắc tạo ở brain A đọc được",
@@ -129,14 +129,14 @@ check("B: move id không tồn tại -> lỗi", _rf.move(_rA, _rB, "khong-co").g
 
 
 # ══════════════════════ C. javis_schedule báo tên brain (mảnh 4) ══════════════════════
-_vault_kk = os.path.join(tempfile.mkdtemp(prefix="javis-vault-kk-"), "KimKhiHaLoc")
+_vault_kk = os.path.join(tempfile.mkdtemp(prefix="jeevi-vault-kk-"), "KimKhiHaLoc")
 os.makedirs(_vault_kk)
 _res_loop = asyncio.run(sched._do_create(_vault_kk, {
     "name": "Quet don kho", "prompt": "quet don moi 2 tieng", "schedule": "120m"}))
 check("C: câu tạo LOOP nêu tên brain", "KimKhiHaLoc" in _res_loop)
 check("C: _create_loop_file có brain_name -> chuỗi chứa brain",
       "trong brain MyBrain" in sched._create_loop_file(
-          tempfile.mkdtemp(prefix="javis-vault-mb-"), name="Viec X",
+          tempfile.mkdtemp(prefix="jeevi-vault-mb-"), name="Viec X",
           prompt="lam gi do", schedule="120m", brain_name="MyBrain"))
 
 

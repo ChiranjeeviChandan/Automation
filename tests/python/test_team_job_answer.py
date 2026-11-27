@@ -13,8 +13,8 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-team-answer-")
-STATE = Path(os.environ["JAVIS_STATE_DIR"])
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-team-answer-")
+STATE = Path(os.environ["JEEVI_STATE_DIR"])
 
 import sessions  # noqa: E402
 import task_store  # noqa: E402
@@ -31,7 +31,7 @@ def check(name, cond, extra=""):
 
 
 def directive(**op):
-    return f"\n<!-- JAVIS_TEAM: {json.dumps(op, ensure_ascii=False)} -->"
+    return f"\n<!-- JEEVI_TEAM: {json.dumps(op, ensure_ascii=False)} -->"
 
 
 AGENTS = {"ag_lan": ("lan", "Lan"), "ag_vy": ("vy", "Vy")}

@@ -25,10 +25,10 @@ Ngày: 2026-09-15. Trạng thái: đã duyệt (chủ dự án chốt trong chat
 
 ## 3. Giao diện
 
-Bố cục ba cột, theo bản concept `javis-workspace-concept.html`:
+Bố cục ba cột, theo bản concept `jeevi-workspace-concept.html`:
 
 - Cột trái: nút chuyển Trợ lý | Quy trình, ô tìm, ô lọc theo `group`, danh sách, nút Tạo
-  mới, nút Jeevi Store (mở kho có sẵn qua `JavisPacks.moKho`, lọc đúng loại). Mỗi dòng: icon
+  mới, nút Jeevi Store (mở kho có sẵn qua `JeeviPacks.moKho`, lọc đúng loại). Mỗi dòng: icon
   (trợ lý dùng icon `bot`, quy trình dùng icon `workflow`), tên, nhóm và vai trò/số bước.
 - Cột giữa: khung chat MƯỢN từ app bằng `_borrowChatNodes` (đúng cách trang Trò chuyện đang
   làm). Thanh đầu có tên cộng sự, dòng phụ (nhóm và trạng thái với trợ lý; "Quy trình, N
@@ -68,10 +68,10 @@ nguyên.
   test được độc lập.
 - Nếu kind là `agent`: system prompt của lượt là prompt của chính trợ lý đó, dựng bằng
   `_agent_sysprompt` từ `_workflow_agent_helpers` (đã gồm bộ nhớ riêng
-  `memory/agents/<slug>/MEMORY.md` và luật `JAVIS_LESSON`). Bỏ lớp prompt Jeevi (CLAUDE.md,
+  `memory/agents/<slug>/MEMORY.md` và luật `JEEVI_LESSON`). Bỏ lớp prompt Jeevi (CLAUDE.md,
   bộ nhớ chủ, khối kênh) và bỏ bộ nén ngữ cảnh (`_subscription_system_prompt` trả về prompt
   trợ lý). Tool vẫn qua hub như lượt thường.
-- Cuối lượt: bóc `JAVIS_LESSON` khỏi câu trả lời và ghi vào bộ nhớ trợ lý (dùng `_learn`),
+- Cuối lượt: bóc `JEEVI_LESSON` khỏi câu trả lời và ghi vào bộ nhớ trợ lý (dùng `_learn`),
   ghi nhật ký `memory/agents/<slug>/runs/` (dùng `_log_agent_run`), rồi lưu phiên qua
   `_persist_turn` như lượt thường.
 - Trợ lý không còn file: lượt trả khung `error` "Trợ lý <slug> không còn trong brain này",
@@ -108,7 +108,7 @@ nguyên.
 
 ## 7. Kho lịch sử chạy
 
-Module mới `server/workflow_runs.py`, SQLite tại `<JAVIS_STATE_DIR>/workflow_runs.sqlite3`
+Module mới `server/workflow_runs.py`, SQLite tại `<JEEVI_STATE_DIR>/workflow_runs.sqlite3`
 (giống cách `task_store.py`). Một bảng `workflow_runs`:
 
 | cột | ý nghĩa |
@@ -146,17 +146,17 @@ HTTP:
 
 ## 8. Jeevi biết về lần chạy gần nhất
 
-- Plugin hệ thống mới `system/plugins/javis-workflow/` (plugin.yaml + plugin.py) với tool
-  `javis_workflow`, `min_mode: readonly`. Op `runs` (tham số `slug` tuỳ chọn, `limit` mặc
+- Plugin hệ thống mới `system/plugins/jeevi-workflow/` (plugin.yaml + plugin.py) với tool
+  `jeevi_workflow`, `min_mode: readonly`. Op `runs` (tham số `slug` tuỳ chọn, `limit` mặc
   định 10) trả danh sách gọn; op `show` (`id`) trả bản ghi đầy đủ gồm các bước và kết quả.
-- `_javis_capability_summary` thêm một dòng sau dòng `Workflows:`:
+- `_jeevi_capability_summary` thêm một dòng sau dòng `Workflows:`:
   "Lần chạy quy trình gần nhất: <tên> lúc <giờ ngày> (<trạng thái>). Xem chi tiết hay các
-  lần khác bằng tool javis_workflow (op=runs, op=show)." Không có lần chạy nào thì bỏ dòng.
+  lần khác bằng tool jeevi_workflow (op=runs, op=show)." Không có lần chạy nào thì bỏ dòng.
 
 ## 9. Kiểm thử
 
 - Python: `tests/test_workflow_runs.py` (kho: bắt đầu, ghi bước, kết thúc, gần nhất, cắt độ
-  dài); test hai endpoint `/workflows/runs`; test plugin `javis_workflow`; test
+  dài); test hai endpoint `/workflows/runs`; test plugin `jeevi_workflow`; test
   `_persona_cua_phien`; test `list_sessions` lọc kênh; test `run_workflow_turn` với
   `execute_workflow` giả (mock) kiểm tra đủ tin lưu vào phiên ở ba ca done/error/wait_user và
   đầu vào có nối "Kết quả lần trước".

@@ -1,4 +1,4 @@
-"""Kho mục tiêu của Jeevi Resonance: SQLite riêng `JAVIS_STATE_DIR/resonance.sqlite3`.
+"""Kho mục tiêu của Jeevi Resonance: SQLite riêng `JEEVI_STATE_DIR/resonance.sqlite3`.
 
 Nguồn chuẩn cho bản ghi ý định, mục tiêu, revision, sự kiện và outbox (spec mục 12). Mọi thao tác
 đi qua một `Principal` và kiểm đúng brain: đường dẫn hay id do model đưa ra không đủ làm quyền đọc.
@@ -33,7 +33,7 @@ import resonance_learning as L
 
 def call_ceiling() -> Optional[int]:
     """Trần TỔNG lượt engine cấp host của Resonance trên cả kho, đặt bằng biến môi trường
-    JAVIS_RESONANCE_CALL_CEILING. Không đặt (mặc định) thì không có trần chung, chỉ có hạn mức từng mục tiêu.
+    JEEVI_RESONANCE_CALL_CEILING. Không đặt (mặc định) thì không có trần chung, chỉ có hạn mức từng mục tiêu.
 
     Tính MỌI đường Resonance gọi engine: lượt việc nền và phép thử (goals.calls_used) cùng bộ lập mục tiêu chưa có
     mục tiêu nào (call_ledger, review e2e P1-1). Đơn vị là lượt engine ở cấp host: một lượt có thể gồm nhiều request
@@ -43,7 +43,7 @@ def call_ceiling() -> Optional[int]:
     vượt trần không bao giờ được gọi; số đã dùng nằm trong SQLite nên trần giữ qua mọi lần khởi động lại, MIỄN là
     mỗi tiến trình được truyền biến này (tiến trình không có biến thì không có trần chung). Giá trị hỏng thì coi là 0
     (chặn hết), không phải bỏ trần."""
-    raw = os.environ.get("JAVIS_RESONANCE_CALL_CEILING", "").strip()
+    raw = os.environ.get("JEEVI_RESONANCE_CALL_CEILING", "").strip()
     if not raw:
         return None
     try:
@@ -478,7 +478,7 @@ def shared(path: Optional[Path] = None) -> "GoalStore":
     """One opened store per file, for code that would otherwise build a new `GoalStore()` on every call (2026-11-09).
 
     Opening a store is heavy on purpose (backups, schema, migrations and reconcile passes, several write transactions)
-    and is meant to happen once. The javis-goal plugin opened one on every visibility check, i.e. every time a system
+    and is meant to happen once. The jeevi-goal plugin opened one on every visibility check, i.e. every time a system
     prompt was built (auto learning, reminders, webhooks), and those write transactions held up the Partners page.
     A store whose file was removed (a reset, a test) is opened again."""
     p = Path(path) if path else Path(STATE_DIR) / "resonance.sqlite3"

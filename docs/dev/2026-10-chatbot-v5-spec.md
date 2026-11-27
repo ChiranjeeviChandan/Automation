@@ -1,6 +1,6 @@
 # Trang Chatbot v5: Hội thoại, Bot, Kênh, Thống kê
 
-Chủ repo duyệt ngày 28/10/2026 sau năm bản mẫu (v1 tới v5, mẫu cuối ở bản mẫu HTML "javis-chatbot-v5" gửi trong phiên
+Chủ repo duyệt ngày 28/10/2026 sau năm bản mẫu (v1 tới v5, mẫu cuối ở bản mẫu HTML "jeevi-chatbot-v5" gửi trong phiên
 làm việc). Cảm hứng từ Pancake (khách bên trái, chat bên phải, chọn Page bằng hộp thả xuống, Lọc theo hai tầng) nhưng
 sửa những chỗ Pancake bắt người dùng phải học: icon không có chữ, quá nhiều thẻ màu, không thấy ai đang lo cuộc chat.
 

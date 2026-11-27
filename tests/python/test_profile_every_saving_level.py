@@ -28,8 +28,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-STATE = tempfile.mkdtemp(prefix="javis-profile-levels-")
-os.environ["JAVIS_STATE_DIR"] = STATE
+STATE = tempfile.mkdtemp(prefix="jeevi-profile-levels-")
+os.environ["JEEVI_STATE_DIR"] = STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -61,7 +61,7 @@ context_compiler.dong_ho = lambda now=None, lang="": CLOCK["now"]
 main.cfgmod.gate_active = lambda: False
 client = TestClient(main.app, base_url="http://127.0.0.1")
 
-BRAIN = Path(tempfile.mkdtemp(prefix="javis-profile-brain-"))
+BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-profile-brain-"))
 ROOT_OF_BRAIN = main._brain_root(str(BRAIN))
 memory_dir = main._brain_memory_dir(str(BRAIN))
 (memory_dir / "facts").mkdir(parents=True, exist_ok=True)
@@ -191,7 +191,7 @@ EVIDENCE = {"evidence_ref": "evidence://task/t/step/s/ev_1", "source_type": "cap
             "capability_id": "calendar_list", "capability_name": "calendar_list",
             "capability_revision": "r1", "content_hash": "0" * 64, "excerpt": "review at 09:00"}
 
-scratch = Path(tempfile.mkdtemp(prefix="javis-profile-readonly-"))
+scratch = Path(tempfile.mkdtemp(prefix="jeevi-profile-readonly-"))
 stack = readonly_harness._stack(scratch)
 readonly_plan = asyncio.run(stack[6].prepare(
     stack[3], "calendar list today events", str(stack[0]), "dashboard", "groq", "llama-3.3", "api", "actor-1"))
@@ -205,7 +205,7 @@ check("read-only route: the answer round carries the profile",
 check("read-only route: the profile comes before the round's own rules",
       0 < final_system.find(MARKER) < final_system.find("This is the final synthesis round"))
 
-scratch = Path(tempfile.mkdtemp(prefix="javis-profile-orchestrator-"))
+scratch = Path(tempfile.mkdtemp(prefix="jeevi-profile-orchestrator-"))
 ostack = orchestrator_harness._stack(scratch)
 orchestrator_plan = asyncio.run(orchestrator_harness._prepare(ostack))
 check("multi-step read-only route: the turn is admitted", orchestrator_plan.action == "execute",

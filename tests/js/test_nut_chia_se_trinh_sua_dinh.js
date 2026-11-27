@@ -90,7 +90,7 @@ function chayCommonBtns(coShareBtn) {
   };
   const win = {
     t: tt,
-    JavisShareBtn: coShareBtn
+    JeeviShareBtn: coShareBtn
       ? (b, p, host, lop) => {
           goiShare.push({ b, p, host, lop });
           const n = el("button");
@@ -118,7 +118,7 @@ check("thanh nút của trình sửa định CÓ nút Chia sẻ", coNut,
   r1.actions.children.map((n) => chu(n).slice(0, 40)).join(" | "));
 check("nút Chia sẻ mang đúng chú giải", r1.actions.children.some(
   (n) => chu(n).indexOf(tt("fedit.share_title")) >= 0));
-check("gọi JavisShareBtn đúng 1 lần", r1.goiShare.length === 1, r1.goiShare.length);
+check("gọi JeeviShareBtn đúng 1 lần", r1.goiShare.length === 1, r1.goiShare.length);
 check("truyền đúng đường dẫn file đang mở", r1.goiShare[0] && r1.goiShare[0].p === "Jeevi/AGENTS.md",
   r1.goiShare[0] && r1.goiShare[0].p);
 check("truyền ô #neShare làm chỗ vẽ thanh link", r1.goiShare[0] && r1.goiShare[0].host === r1.hopShare);
@@ -128,7 +128,7 @@ check("dọn thanh link của file mở trước", r1.hopShare.innerHTML === "" 
 
 // Bản cũ (chưa nạp file-editor.js, hoặc bản 0.59.39 chưa có hàm) không được nổ - các nút còn lại vẫn phải dựng.
 const r0 = chayCommonBtns(false);
-check("thiếu JavisShareBtn thì bỏ qua êm, không vỡ thanh nút", r0.actions.children.length >= 6,
+check("thiếu JeeviShareBtn thì bỏ qua êm, không vỡ thanh nút", r0.actions.children.length >= 6,
   r0.actions.children.length + " nút");
 
 // ============================================================
@@ -139,7 +139,7 @@ const thanShare = bocHam(feSrc, "function shareBtn(b, ceil, hostEl, lop) {");
 check("shareBtn nhận được hostEl (ô vẽ thanh link) và lop", !!thanShare,
   thanShare ? "ok" : "chữ ký vẫn là shareBtn(b, ceil) - khung thứ hai không dùng lại được");
 
-check("file-editor.js xuất window.JavisShareBtn", /window\.JavisShareBtn\s*=\s*shareBtn/.test(feSrc));
+check("file-editor.js xuất window.JeeviShareBtn", /window\.JeeviShareBtn\s*=\s*shareBtn/.test(feSrc));
 
 // Nút Chia sẻ KHÔNG được đeo cùng icon với nút "Chèn liên kết" của thanh định dạng markdown:
 // hai nút nằm cùng một trình sửa, cách nhau vài chục pixel. Chủ dự án báo 18/09: "icon đổi lại
@@ -179,7 +179,7 @@ async function chayShareBtn() {
     if (url === "/share/create") return { json: async () => ({ ok: true, token: "abc123", path: "/s/abc123" }) };
     return { json: async () => ({ ok: true }) };
   };
-  const win = { isSecureContext: false, location: { origin: "https://javis.test" } };
+  const win = { isSecureContext: false, location: { origin: "https://jeevi.test" } };
   const fn = new Function(
     "b", "ceil", "hostEl", "lop",
     "document", "window", "fetch", "location", "navigator", "setTimeout",
@@ -200,7 +200,7 @@ async function chayShareBtn() {
     "hidden=" + host.hidden);
   const noiDung = host.children.map(chu).join(" ") + " " +
     host.children.map((h) => (h.children || []).map((c) => String(c.value || "")).join(" ")).join(" ");
-  check("thanh link chứa đường link đầy đủ", noiDung.indexOf("https://javis.test/s/abc123") >= 0,
+  check("thanh link chứa đường link đầy đủ", noiDung.indexOf("https://jeevi.test/s/abc123") >= 0,
     noiDung.slice(0, 160));
   check("thanh link có nút Thu hồi", noiDung.indexOf(tt("fedit.share_revoke")) >= 0, noiDung.slice(0, 160));
 }

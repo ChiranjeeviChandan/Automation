@@ -33,7 +33,7 @@ Nút **Kiểm tra** mở **trang kiểm tra** bằng đăng nhập đó. Mặc �
 
 ## Jeevi dùng đăng nhập ở đâu
 
-- **Trong chat:** mọi engine có tool `javis_login`. Nói "xem giúp anh trang đơn hàng Shopee" kèm link, Jeevi mở trang bằng đăng nhập đã cất và đọc nội dung. Đăng nhập hết hạn thì Jeevi nói thẳng và nhờ bạn cập nhật, không thử lại mãi.
+- **Trong chat:** mọi engine có tool `jeevi_login`. Nói "xem giúp anh trang đơn hàng Shopee" kèm link, Jeevi mở trang bằng đăng nhập đã cất và đọc nội dung. Đăng nhập hết hạn thì Jeevi nói thẳng và nhờ bạn cập nhật, không thử lại mãi.
 - **Theo dõi trang:** form ở tab Theo dõi trang (trang Việc định kỳ) có ô **Đăng nhập**. Chọn một đăng nhập là Jeevi canh được trang cần đăng nhập. Phiên hết hạn thì mục theo dõi tự tạm dừng và báo bạn một lần.
 - **Bấm nút và điền form:** nói "vào kênh người bán Shopee, điền form trả lời đánh giá này giúp anh". Jeevi nạp đăng nhập vào trình duyệt, mở trang rồi thao tác như một người dùng.
 
@@ -77,4 +77,4 @@ Vài điều Jeevi tự lo:
 
 ## Chi tiết kỹ thuật
 
-Module `server/login_vault.py`, kho `login_vault.sqlite3` trong thư mục dữ liệu (quyền 600), route `/logins` và `/logins/action`, tool `javis_login` (plugin `javis-login`: `list` và `fetch` mức `readonly`, `browser` mức `full`; nằm trong `OWNER_ONLY_TOOLS`), trang `dashboard/login-vault.js`. Mục theo dõi trang có thêm cột `login_id`. Phần trình duyệt nằm ở `server/browser_login.py`: nạp, đọc và xoá cookie qua tool chạy mã của kết nối Playwright (`browser_run_code_unsafe`), hai cột `allow_act` và `browser_at` trong kho, và `mcp_hub.discover_all` bỏ kết nối trình duyệt khỏi danh sách tool của chatbot khách.
+Module `server/login_vault.py`, kho `login_vault.sqlite3` trong thư mục dữ liệu (quyền 600), route `/logins` và `/logins/action`, tool `jeevi_login` (plugin `jeevi-login`: `list` và `fetch` mức `readonly`, `browser` mức `full`; nằm trong `OWNER_ONLY_TOOLS`), trang `dashboard/login-vault.js`. Mục theo dõi trang có thêm cột `login_id`. Phần trình duyệt nằm ở `server/browser_login.py`: nạp, đọc và xoá cookie qua tool chạy mã của kết nối Playwright (`browser_run_code_unsafe`), hai cột `allow_act` và `browser_at` trong kho, và `mcp_hub.discover_all` bỏ kết nối trình duyệt khỏi danh sách tool của chatbot khách.

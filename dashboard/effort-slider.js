@@ -179,5 +179,5 @@
     };
   }
   api.mount = mount;
-  window.JavisEffortSlider = api;
+  window.JeeviEffortSlider = api;
 })();

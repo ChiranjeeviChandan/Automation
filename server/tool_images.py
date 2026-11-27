@@ -27,7 +27,7 @@ SUBDIR = "tool-images"
 MAX_BYTES = 25 * 1024 * 1024        # a full-page screenshot is a few MB; anything bigger is not a preview
 
 # (vault root, tool name) of the model's tool call running in this context; empty outside one.
-_scope = contextvars.ContextVar("javis_tool_image_scope", default=("", ""))
+_scope = contextvars.ContextVar("jeevi_tool_image_scope", default=("", ""))
 
 # The bytes decide the type, not the declared mimeType. SVG is left out on purpose: it can carry script.
 _SIGNATURES = (

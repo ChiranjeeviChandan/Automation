@@ -149,5 +149,5 @@
 
   api.place = place;
   api.bindDrag = bindDrag;
-  window.JavisModelsOrder = api;
+  window.JeeviModelsOrder = api;
 })();

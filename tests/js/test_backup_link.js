@@ -30,7 +30,7 @@ check("repo but no token from anywhere: lost", bl.phase({ repo_url: "https://git
 check("missing answers do not throw, and say the check failed", bl.phase(null, null) === "unknown");
 
 // ---- repo name ----
-check("GitHub URL shows owner/repo", bl.repoName("https://github.com/acme/javis-brain-backup") === "acme/javis-brain-backup");
+check("GitHub URL shows owner/repo", bl.repoName("https://github.com/acme/jeevi-brain-backup") === "acme/jeevi-brain-backup");
 check(".git and a trailing slash are dropped", bl.repoName("https://github.com/acme/x.git/") === "acme/x");
 check("ssh URL shows owner/repo", bl.repoName("git@github.com:acme/x.git") === "acme/x");
 check("other hosts show the last part", bl.repoName("https://git.example.com/team/brain") === "brain");
@@ -40,9 +40,9 @@ check("other hosts get no link", bl.repoWeb("https://git.example.com/team/brain"
 // ---- wiring ----
 check("index.html loads backup-link.js after github-connect.js",
   html.indexOf("/static/backup-link.js") > html.indexOf("/static/github-connect.js") && html.indexOf("/static/backup-link.js") < html.indexOf("/static/console.js"));
-check("the Connect button opens the same dialog as the Connections page", /JavisGithubRepos\.connect\(\)/.test(js) && /connect: connect/.test(ghJs));
-check("a sign-in anywhere tells the backup box", (ghJs.match(/announceConnected\(\)/g) || []).length >= 3 && /javis:github-connected/.test(consoleJs));
-check("console.js mounts the box", /JavisBackupLink\.mount\(/.test(consoleJs) && /id="bkLink"/.test(consoleJs));
+check("the Connect button opens the same dialog as the Connections page", /JeeviGithubRepos\.connect\(\)/.test(js) && /connect: connect/.test(ghJs));
+check("a sign-in anywhere tells the backup box", (ghJs.match(/announceConnected\(\)/g) || []).length >= 3 && /jeevi:github-connected/.test(consoleJs));
+check("console.js mounts the box", /JeeviBackupLink\.mount\(/.test(consoleJs) && /id="bkLink"/.test(consoleJs));
 check("a fresh link syncs right away", /onLinked:[^\n]*bkSyncNow/.test(consoleJs));
 check("the pasted-token form stays, hidden by default", /id="bkManual" hidden/.test(consoleJs) && /id="bkToken"/.test(consoleJs));
 check("switches save at once, no separate Save", /bkAutoBtn\.onclick = async[^\n]*bkSaveCfg\(\)/.test(consoleJs) && /bkAnhBtn\.onclick = async[^\n]*bkSaveCfg\(\)/.test(consoleJs));

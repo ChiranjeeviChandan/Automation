@@ -39,10 +39,10 @@ import team_migration
 import subscription_context_store
 import sqlite_tune
 
-# DB nằm cùng nơi settings.json/.sessions.json (JAVIS_STATE_DIR, mặc định server/).
-_STATE_DIR = Path(os.getenv("JAVIS_STATE_DIR", str(Path(__file__).parent)))
+# DB nằm cùng nơi settings.json/.sessions.json (JEEVI_STATE_DIR, mặc định server/).
+_STATE_DIR = Path(os.getenv("JEEVI_STATE_DIR", str(Path(__file__).parent)))
 _DEFAULT_DB = _STATE_DIR / "conversations.db"
-DB_PATH = Path(os.getenv("JAVIS_SESSIONS_DB", str(_DEFAULT_DB)))
+DB_PATH = Path(os.getenv("JEEVI_SESSIONS_DB", str(_DEFAULT_DB)))
 
 # Kênh của phiên "cộng sự": chat với MỘT trợ lý hoặc MỘT quy trình (trang Cộng sự, 0.59), và
 # từ 0.63.0 thêm phiên của trang Coding (`coding:<id repo>`).
@@ -537,7 +537,7 @@ PROJECT_INSTRUCTIONS_MAX = 4000
 # What Jeevi learnt about a project (2026-11-13). A note is ONE short line, never a document: the block built from
 # these rows rides on every chat turn of the project, so the caps below are the price list of that block.
 PROJECT_NOTE_KINDS = ("fact", "decision", "term")
-PROJECT_NOTE_SOURCES = ("javis", "owner")
+PROJECT_NOTE_SOURCES = ("jeevi", "owner")
 PROJECT_NOTE_MAX = 300          # characters of one note
 PROJECT_NOTES_CAP = 60          # notes kept per project; past it the oldest note Jeevi wrote itself makes room
 PROJECT_ASSET_NOTE_MAX = 200    # characters of the description of one file or link
@@ -1135,7 +1135,7 @@ class SessionStore:
         """Thay NỘI DUNG tin cuối của phiên nếu nó đúng vai. Trả True khi có thay.
 
         Dùng cho lượt nói: tin người dùng được lưu NGAY khi tới (chữ thô của máy nghe), rồi bộ
-        não giọng diễn giải lại câu đó (JAVIS_NGHE). Bản lưu phải là câu đã diễn giải, vì đó
+        não giọng diễn giải lại câu đó (JEEVI_NGHE). Bản lưu phải là câu đã diễn giải, vì đó
         là câu Jeevi thực sự trả lời, là câu người dùng thấy trong khung chat sau F5, và là câu
         đi vào vòng tự học. Trigger messages_fts_upd cập nhật chỉ mục tìm kiếm theo."""
         def _do(conn):
@@ -2063,7 +2063,7 @@ class SessionStore:
     #
     # Two kinds of row. A NOTE is one durable line about the project (a fact, a settled decision, a term). An ASSET
     # NOTE says in one line what an attached file or link holds, so the model picks the right document without
-    # opening each one. Both are written by Jeevi while it works (tool `javis_project`) or by the owner in the
+    # opening each one. Both are written by Jeevi while it works (tool `jeevi_project`) or by the owner in the
     # project drawer; the owner's rows are never dropped to make room.
 
     def list_project_notes(self, project_id: str) -> List[Dict[str, Any]]:
@@ -2071,7 +2071,7 @@ class SessionStore:
             "SELECT id, kind, text, source, created_at, updated_at FROM project_notes "
             "WHERE project_id = ? ORDER BY created_at DESC, rowid DESC", (project_id,))]
 
-    def add_project_note(self, project_id: str, text: str, *, kind: str = "fact", source: str = "javis",
+    def add_project_note(self, project_id: str, text: str, *, kind: str = "fact", source: str = "jeevi",
                          session_id: str = "") -> Dict[str, Any]:
         """Save one note. Returns {"id", "created", "dropped"}; id is "" when nothing could be saved (empty text, or
         the project is full of the owner's own notes). The same note in other words of case or accents is one note:
@@ -2081,7 +2081,7 @@ class SessionStore:
         if not line or not norm:
             return {"id": "", "created": False, "dropped": ""}
         kind = kind if kind in PROJECT_NOTE_KINDS else "fact"
-        source = source if source in PROJECT_NOTE_SOURCES else "javis"
+        source = source if source in PROJECT_NOTE_SOURCES else "jeevi"
 
         def _do(c):
             old = c.execute("SELECT id FROM project_notes WHERE project_id = ? AND text_norm = ?",
@@ -2092,7 +2092,7 @@ class SessionStore:
             count = c.execute("SELECT COUNT(*) FROM project_notes WHERE project_id = ?", (project_id,)).fetchone()[0]
             if count >= PROJECT_NOTES_CAP:
                 oldest = c.execute(
-                    "SELECT id, text FROM project_notes WHERE project_id = ? AND source = 'javis' "
+                    "SELECT id, text FROM project_notes WHERE project_id = ? AND source = 'jeevi' "
                     "ORDER BY created_at ASC, rowid ASC LIMIT 1", (project_id,)).fetchone()
                 if not oldest:
                     return {"id": "", "created": False, "dropped": ""}
@@ -2140,7 +2140,7 @@ class SessionStore:
                                     "WHERE project_id = ?", (project_id,))}
 
     def set_project_asset_note(self, project_id: str, kind: str, ref: str, description: str,
-                               source: str = "javis") -> bool:
+                               source: str = "jeevi") -> bool:
         """Describe one attached file or link in one line; an empty description removes it. False when the project
         has no such file or link: a description of something that is not attached would never be shown."""
         if kind not in ("file", "link"):
@@ -2151,7 +2151,7 @@ class SessionStore:
                                      (project_id, ref)):
             return False
         line = _one_line(description, PROJECT_ASSET_NOTE_MAX)
-        source = source if source in PROJECT_NOTE_SOURCES else "javis"
+        source = source if source in PROJECT_NOTE_SOURCES else "jeevi"
         if not line:
             self._write(lambda c: c.execute(
                 "DELETE FROM project_asset_notes WHERE project_id = ? AND kind = ? AND ref = ?",
@@ -2286,7 +2286,7 @@ class SessionStore:
                                     "WHERE session_id = ?", (session_id,))}
 
     def set_session_asset_note(self, session_id: str, kind: str, ref: str, description: str,
-                               source: str = "javis") -> bool:
+                               source: str = "jeevi") -> bool:
         """Twin of `set_project_asset_note` for a chat's attached documents (a team's documents live there)."""
         if kind not in ("file", "link"):
             return False
@@ -2296,7 +2296,7 @@ class SessionStore:
                                      (session_id, ref)):
             return False
         line = _one_line(description, PROJECT_ASSET_NOTE_MAX)
-        source = source if source in PROJECT_NOTE_SOURCES else "javis"
+        source = source if source in PROJECT_NOTE_SOURCES else "jeevi"
         if not line:
             self._write(lambda c: c.execute(
                 "DELETE FROM session_asset_notes WHERE session_id = ? AND kind = ? AND ref = ?",

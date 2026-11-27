@@ -76,13 +76,13 @@ const CSS = read("dashboard/console.css");
 const SRC = read("dashboard/gate-brain.js");
 check("the Connections page has a spot for the card and mounts it", () => {
   assert.ok(CON.includes('id="mcpGate"'));
-  assert.ok(CON.includes('window.JavisGateBrain.mount(document.getElementById("mcpGate"))'));
+  assert.ok(CON.includes('window.JeeviGateBrain.mount(document.getElementById("mcpGate"))'));
 });
 check("the Connected tab search hides the card unless it matches", () => {
   assert.ok(/getElementById\("mcpGate"\)[\s\S]{0,200}gate\.textContent\.toLowerCase\(\)\.includes\(q\)/.test(CON));
 });
 check("loaded with the Connections page's lazy group", () => {
-  const blk = /<script id="javis-lazy" type="application\/json">([\s\S]*?)<\/script>/.exec(IDX);
+  const blk = /<script id="jeevi-lazy" type="application\/json">([\s\S]*?)<\/script>/.exec(IDX);
   const lazy = JSON.parse(blk[1]);
   assert.ok((lazy.packs || []).some(u => u.startsWith("/static/gate-brain.js?v=")));
 });

@@ -15,7 +15,7 @@ from pathlib import Path
 _TMP = Path(tempfile.mkdtemp(prefix="gate-brain-card-"))
 for name in ("Brain Default", "Cá Nhân"):
     (_TMP / "brains" / name).mkdir(parents=True, exist_ok=True)
-os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
+os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
 os.environ["BRAINS_DIR"] = str(_TMP / "brains")
 (_TMP / "state").mkdir(parents=True, exist_ok=True)
 

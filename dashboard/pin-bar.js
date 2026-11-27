@@ -27,7 +27,7 @@
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
   function media() {
-    if (typeof window !== "undefined" && window.JavisHtMedia) return window.JavisHtMedia;
+    if (typeof window !== "undefined" && window.JeeviHtMedia) return window.JeeviHtMedia;
     try { return require("./ht-media.js"); } catch (e) { return null; }
   }
 
@@ -112,6 +112,6 @@
   }
 
   var api = { preview: preview, plain: plain, rowHtml: rowHtml, barHtml: barHtml, sig: sig };
-  if (typeof window !== "undefined") window.JavisPinBar = api;
+  if (typeof window !== "undefined") window.JeeviPinBar = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

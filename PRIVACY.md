@@ -17,7 +17,7 @@ To tell you that an update exists, Jeevi reads public files over HTTPS. These re
 - **GitHub** (`raw.githubusercontent.com`, `github.com`): the current version number, the changelog, community announcements and the catalog of the add-on store.
 - **PyPI** (`pypi.org`): the latest version number of the Claude Agent SDK.
 
-JEEVI OS itself is updated only when you press **Update**. The AI command-line tools are different: once a day Jeevi runs the vendor's own update command for Claude Code and Antigravity CLI, and takes a newer Claude Agent SDK from PyPI, so that new models and security fixes arrive. The Claude part has a switch on the Models page (or `JAVIS_CLAUDE_AUTO_UPDATE=0`); `JAVIS_AGY_AUTO_UPDATE=0` turns the Antigravity part off.
+JEEVI OS itself is updated only when you press **Update**. The AI command-line tools are different: once a day Jeevi runs the vendor's own update command for Claude Code and Antigravity CLI, and takes a newer Claude Agent SDK from PyPI, so that new models and security fixes arrive. The Claude part has a switch on the Models page (or `JEEVI_CLAUDE_AUTO_UPDATE=0`); `JEEVI_AGY_AUTO_UPDATE=0` turns the Antigravity part off.
 
 ## What is sent because you asked
 

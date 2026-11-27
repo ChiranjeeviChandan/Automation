@@ -63,9 +63,9 @@ UNLIMITED_CAPS = ("task_turns", "task_steps", "help_depth", "judge_daily")
 CAP_MAX = {"volunteer_k": 5, "judge_off_batch": 1, "reply_parallel": 1, "auto_jobs": 50}
 # 2026-11-12 (a customer: two assistants with two different jobs ran one after the other): a team now runs up to three
 # jobs at once, each with a different assistant in charge (team_runner._next_job). It stays a SERVER limit, not one more
-# number for the owner to set: who may run together is decided by who the jobs belong to. JAVIS_TEAM_JOBS=1 gives the
+# number for the owner to set: who may run together is decided by who the jobs belong to. JEEVI_TEAM_JOBS=1 gives the
 # old one-job-at-a-time team back.
-# 17/11/2026 (owner: "anh không muốn giới hạn team làm việc luôn"): no cap (None) by default; JAVIS_TEAM_JOBS sets one.
+# 17/11/2026 (owner: "anh không muốn giới hạn team làm việc luôn"): no cap (None) by default; JEEVI_TEAM_JOBS sets one.
 # 17/11/2026 (owner, a team stopped with "Team đã hết số lần trả lời cho phép": "anh không muốn giới hạn như này"):
 # no daily reply count either. A number saved before (by the owner, by "Cho thêm lượt", or in a Full-authority grant)
 # no longer applies; the caps of one job (task_turns, task_steps) stay.

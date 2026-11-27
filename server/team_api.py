@@ -551,7 +551,7 @@ class TeamApi:
 
 
 class OpError(Exception):
-    """Lỗi của một thao tác nhóm, có mã HTTP và câu hai thứ tiếng (route trả JSON, công cụ `javis_team` trả chữ)."""
+    """Lỗi của một thao tác nhóm, có mã HTTP và câu hai thứ tiếng (route trả JSON, công cụ `jeevi_team` trả chữ)."""
 
     def __init__(self, code: int, vi: str, en: str, **extra):
         super().__init__(vi)
@@ -559,7 +559,7 @@ class OpError(Exception):
 
 
 class TeamOps:
-    """Thao tác quản lý nhóm dùng chung cho route `/teams/*` và công cụ `javis_team` (0.173.0): một chỗ duy nhất giữ luật
+    """Thao tác quản lý nhóm dùng chung cho route `/teams/*` và công cụ `jeevi_team` (0.173.0): một chỗ duy nhất giữ luật
     (kiểm trợ lý có thật, khoá `accept_lock`, huỷ việc khi lưu trữ, chạy lại khi mở lại), nên trang web và Jeevi trong chat
     làm y như nhau. Mọi hàm chạy ở luồng phụ (route qua `api.io`, công cụ qua `asyncio.to_thread`). Lỗi: `OpError` hay
     `TeamError` của kho."""
@@ -727,7 +727,7 @@ _CURRENT: list = [None]
 
 
 def current() -> Optional[TeamOps]:
-    """`TeamOps` của tiến trình (đặt trong `register`), cho plugin `javis_team` gọi mà không import main. None khi chưa
+    """`TeamOps` của tiến trình (đặt trong `register`), cho plugin `jeevi_team` gọi mà không import main. None khi chưa
     đăng ký (test không dựng host)."""
     return _CURRENT[0]
 
@@ -1423,7 +1423,7 @@ def register(app, deps: TeamApiDeps) -> TeamApi:
     @app.post("/teams/{team_id}/authority")
     async def teams_authority(team_id: str, request: Request, brain: str = "brain"):
         """Chủ bật, sửa hay thu hồi Toàn quyền cho trưởng nhóm `{mode: "full"|"limited", grant}`. Route của dashboard
-        (auth, CSRF); không lệnh JAVIS_TEAM nào gọi tới đây, nên trưởng nhóm không tự nâng mình lên Toàn quyền."""
+        (auth, CSRF); không lệnh JEEVI_TEAM nào gọi tới đây, nên trưởng nhóm không tự nâng mình lên Toàn quyền."""
         body = await _body(request)
 
         def _do():
@@ -1508,7 +1508,7 @@ def register(app, deps: TeamApiDeps) -> TeamApi:
         """The owner's decision on one approval card (0.207.0): `decision` approve | reject | changes | revoke, `note`,
         `decision_key` (one per click: a retry replays the first answer, a second tab gets already_decided) and
         `expected_rev` (the job revision the card showed). Owner-only by construction: the dashboard's login and CSRF
-        stand in front of this route, and no JAVIS_TEAM directive or chat text reaches it."""
+        stand in front of this route, and no JEEVI_TEAM directive or chat text reaches it."""
         body = await _body(request)
         decision = str(body.get("decision") or "").strip().lower()
         note = str(body.get("note") or "")[:2000]
@@ -1665,7 +1665,7 @@ def register(app, deps: TeamApiDeps) -> TeamApi:
 
     @app.put("/teams/{team_id}/tasks/{task_id}/acceptance")
     async def teams_acceptance_put(team_id: str, task_id: str, request: Request, brain: str = "brain"):
-        """Owner sets the job's acceptance criteria (owner only: no JAVIS_TEAM directive reaches this)."""
+        """Owner sets the job's acceptance criteria (owner only: no JEEVI_TEAM directive reaches this)."""
         body = await _body(request)
 
         def _do():
@@ -1741,7 +1741,7 @@ def register(app, deps: TeamApiDeps) -> TeamApi:
 
     @app.put("/teams/{team_id}/mandate")
     async def teams_mandate_put(team_id: str, request: Request, brain: str = "brain"):
-        """Owner writes or edits the team's mandate (a new version). Never reachable from a JAVIS_TEAM directive."""
+        """Owner writes or edits the team's mandate (a new version). Never reachable from a JEEVI_TEAM directive."""
         body = await _body(request)
 
         def _do():

@@ -13,11 +13,11 @@ import tempfile
 import time
 from pathlib import Path
 
-_TMP = tempfile.mkdtemp(prefix="javis-unread-")
-os.environ["JAVIS_STATE_DIR"] = _TMP
-os.environ["JAVIS_SESSIONS_DB"] = str(Path(_TMP) / "conv.db")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-unread-brains-")
-os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
+_TMP = tempfile.mkdtemp(prefix="jeevi-unread-")
+os.environ["JEEVI_STATE_DIR"] = _TMP
+os.environ["JEEVI_SESSIONS_DB"] = str(Path(_TMP) / "conv.db")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-unread-brains-")
+os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
 
 import sessions  # noqa: E402
 

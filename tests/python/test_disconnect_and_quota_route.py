@@ -16,7 +16,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-disc-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-disc-")
 
 import config as cfgmod  # noqa: E402
 import antigravity_cli  # noqa: E402
@@ -32,7 +32,7 @@ def check(name, cond, extra=""):
 
 
 def fake_agy(help_text: str) -> str:
-    d = Path(tempfile.mkdtemp(prefix="javis-fakeagy-"))
+    d = Path(tempfile.mkdtemp(prefix="jeevi-fakeagy-"))
     p = d / "agy"
     p.write_text("#!/usr/bin/env python3\nimport sys\n"
                  f"if '--help' in sys.argv:\n    sys.stdout.write({help_text!r}); sys.exit(0)\n"
@@ -42,7 +42,7 @@ def fake_agy(help_text: str) -> str:
 
 
 def use_agy(path: str):
-    os.environ["JAVIS_AGY_BIN"] = path
+    os.environ["JEEVI_AGY_BIN"] = path
     antigravity_cli._HELP_CACHE.update(path=None, text="", ts=0.0)
     antigravity_cli.forget_status()
 
@@ -67,20 +67,20 @@ check("`logged out` inside a description is not a command",
 
 # ---- 2. switched off in Jeevi: every status read says so ----
 cfgmod.update_settings({"model": {"antigravity_off": True}})
-check("javis_off reads the flag", antigravity_cli.javis_off() is True)
+check("jeevi_off reads the flag", antigravity_cli.jeevi_off() is True)
 st = antigravity_cli.auth_status(True)
 check("auth_status: not connected, marked off, says how to undo",
-      st.get("connected") is False and st.get("javis_off") is True and st.get("error"), st)
+      st.get("connected") is False and st.get("jeevi_off") is True and st.get("error"), st)
 st2 = antigravity_cli.auth_status_nen()
-check("the hot-path status says the same (no CLI run)", st2.get("javis_off") is True and st2.get("connected") is False)
+check("the hot-path status says the same (no CLI run)", st2.get("jeevi_off") is True and st2.get("connected") is False)
 view = next(p for p in main._providers_view(cfgmod.read_settings()) if p["id"] == "antigravity-cli")
-check("the Models card is not connected and carries javis_off", view["configured"] is False and view["javis_off"] is True)
+check("the Models card is not connected and carries jeevi_off", view["configured"] is False and view["jeevi_off"] is True)
 mcfg = cfgmod.read_settings()["model"]
 route = main._chat_provider_for_session(mcfg, {"pinned_provider": "antigravity-cli", "pinned_model": ""})
 check("a chat pinned to the disconnected card runs on the main model", route[0] != "antigravity-cli", route)
 check("the chat model bar calls that pin unusable", main._pin_health(mcfg, "antigravity-cli")[0] is False)
 cfgmod.update_settings({"model": {"antigravity_off": False}})
-check("Connect again clears it", antigravity_cli.javis_off() is False)
+check("Connect again clears it", antigravity_cli.jeevi_off() is False)
 
 # ---- 3. an Antigravity quota refusal marks the card, and the owner's choice lifts a mark ----
 main._PIN_LIMITED.clear()

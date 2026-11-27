@@ -13,7 +13,7 @@
 
 # ChatGPT Web: một model của thẻ ChatGPT
 
-**Phiên bản:** v4.1 (mục 14 ghi lại những gì đã vào `main` ở 0.64.0). v4.0: Gộp bản rà soát chéo `JAVIS_OS_WEB_ENGINE_SPEC.md` (2026-09-22) vào v3.0:
+**Phiên bản:** v4.1 (mục 14 ghi lại những gì đã vào `main` ở 0.64.0). v4.0: Gộp bản rà soát chéo `JEEVI_OS_WEB_ENGINE_SPEC.md` (2026-09-22) vào v3.0:
 thêm mục 18-22, và ĐÍNH CHÍNH một chỗ v2.0/v3.0 nói quá (mục 3).
 **Trạng thái:** chốt phạm vi và chốt mục đích. **Chưa viết mã**; cổng duy nhất là spike ở
 mục 13.
@@ -199,16 +199,16 @@ có một dòng trong nhật ký chạy nói rõ, kẻo trang chẩn đoán nói
 | Hạng | Có gì |
 |---|---|
 | CLI (Claude Code, Codex, Grok) | Tool file native, **Bash**, **WebFetch/WebSearch**, **Task**, resume phiên |
-| API (sáu engine) | Tool vault qua hub, MCP, skill, `javis_task`, `javis_schedule`, plugin. Không Bash, không WebFetch, không Task |
+| API (sáu engine) | Tool vault qua hub, MCP, skill, `jeevi_task`, `javis_schedule`, plugin. Không Bash, không WebFetch, không Task |
 
 `chatgpt-web` nằm ở **hạng API**, không phải hạng CLI. Nó có
-`javis_read_file` / `javis_list_dir` / `javis_write_file` / `javis_use_skill`, mọi MCP đã nối,
-mọi plugin, `javis_task`, `javis_schedule`.
+`jeevi_read_file` / `jeevi_list_dir` / `jeevi_write_file` / `jeevi_use_skill`, mọi MCP đã nối,
+mọi plugin, `jeevi_task`, `javis_schedule`.
 
 Hai thứ của hạng CLI nó vẫn **không** có, và mô tả model trên ô chọn phải nói thẳng:
 **WebFetch/WebSearch** và **Task** (sub-agent song song).
 
-Còn chạy lệnh thì **mục 7.2 gỡ**, bằng `javis_run_command` chứ không phải Bash native và
+Còn chạy lệnh thì **mục 7.2 gỡ**, bằng `jeevi_run_command` chứ không phải Bash native và
 không phải PTY. Nhưng đúng như bản rà soát chéo nêu: cấp thế thì **cả sáu engine API cũng
 có**, nên đó là quyết định của chủ dự án, không phải chi tiết thi công.
 
@@ -218,10 +218,10 @@ có**, nên đó là quyết định của chủ dự án, không phải chi ti�
 
 | Nhóm | Tool |
 |---|---|
-| Builtin vault | `javis_read_file`, `javis_list_dir`, `javis_write_file`, `javis_use_skill`, `javis_connections` |
-| Điều phối | `javis_task`, `javis_schedule`, `javis_workflow`, `javis_ui` |
-| Tiện ích | `javis_now`, `javis_date_add`, `javis_generate_image`, `javis_add_mcp`, `javis_tool_stats`, `javis_youtube_read` |
-| Máy | `javis_app_list`, `javis_app_open`, `javis_app_close` |
+| Builtin vault | `jeevi_read_file`, `jeevi_list_dir`, `jeevi_write_file`, `jeevi_use_skill`, `jeevi_connections` |
+| Điều phối | `jeevi_task`, `javis_schedule`, `jeevi_workflow`, `jeevi_ui` |
+| Tiện ích | `jeevi_now`, `jeevi_date_add`, `javis_generate_image`, `jeevi_add_mcp`, `jeevi_tool_stats`, `jeevi_youtube_read` |
+| Máy | `jeevi_app_list`, `jeevi_app_open`, `jeevi_app_close` |
 | Meta, Zalo | `meta_ads_*` (4), `fb_pages_*` (6), `fb_monitor`, `zalo_send_image` |
 | MCP | Mọi connector đã nối |
 
@@ -229,7 +229,7 @@ Khoảng **26 tool plugin bundled cộng 5 builtin**, cộng toàn bộ MCP.
 
 Hai điểm dễ tưởng là thiếu mà thật ra có:
 
-- **Đính kèm trong khung chat đọc được.** Hub cho `javis_read_file` đọc thêm vùng `.staging`
+- **Đính kèm trong khung chat đọc được.** Hub cho `jeevi_read_file` đọc thêm vùng `.staging`
   khi `staging=True` (`mcp_hub.py:447`), nên file người dùng vừa kéo vào vẫn tới được model.
 - **Tạo ảnh vẫn chạy.** `javis_generate_image` gọi Codex Responses bằng OAuth
   (`system/plugins/image-chatgpt/`), không phụ thuộc phiên trình duyệt.
@@ -266,7 +266,7 @@ Jeevi **đã có sẵn vòng lặp**: `engine.openai_chat_with_mcp` (`engine.py:
 tuyến tool qua `mcp_hub`. Chỉ thiếu **bộ dịch** ở hai đầu:
 
 **Đầu gửi:** thay vì đính `tools=[...]` dạng schema, dựng danh sách tool thành chữ và chèn vào
-prompt, kèm luật: muốn gọi tool thì trả về **đúng một khối** rào bằng ```` ```javis_tool ````
+prompt, kèm luật: muốn gọi tool thì trả về **đúng một khối** rào bằng ```` ```jeevi_tool ````
 chứa JSON `{"name": ..., "arguments": {...}}`, và **không viết gì khác** trong lượt đó.
 
 **Đầu nhận:** bóc khối đó ra khỏi câu trả lời. Có khối thì chạy tool qua hub rồi gửi kết quả
@@ -285,8 +285,8 @@ Ba ranh giới của bộ dịch:
 ### Chế độ lazy nhân đôi số vòng, phải biết trước
 
 Hub có tầng lazy (`mcp_hub.py:612-669`): mặc định `auto`, bật khi pool vượt **40 tool** hoặc
-**6000 ký tự schema**. Bật rồi thì tool MCP bị giấu sau hai meta-tool `javis_search_tools` và
-`javis_run_tool`, nên **mỗi lần dùng một tool MCP tốn hai vòng**: tìm, rồi mới gọi.
+**6000 ký tự schema**. Bật rồi thì tool MCP bị giấu sau hai meta-tool `jeevi_search_tools` và
+`jeevi_run_tool`, nên **mỗi lần dùng một tool MCP tốn hai vòng**: tìm, rồi mới gọi.
 
 Với engine API thì hai vòng đó là hai lời gọi HTTP, không ai để ý. Với `chatgpt-web` thì đó là
 **hai lượt gõ vào ô chat**, tức gấp đôi cả thời gian lẫn số tin nhắn. Máy nào đã nối vài
@@ -305,7 +305,7 @@ Với model này, **một vòng tool là một tin nhắn web**. Một lượt c
 ```
 
 Chủ dự án đã chốt: gói chat rất lớn, **số tin nhắn không phải ràng buộc**. Nên giữ trần chung
-30 vòng (`JAVIS_MAX_TOOL_ROUNDS`), không đặt trần riêng. Biến `JAVIS_WEB_MAX_TOOL_ROUNDS` vẫn
+30 vòng (`JEEVI_MAX_TOOL_ROUNDS`), không đặt trần riêng. Biến `JEEVI_WEB_MAX_TOOL_ROUNDS` vẫn
 có, mặc định bằng trần chung, để ai dùng gói nhỏ hơn tự hạ.
 
 ### Ràng buộc thật là THỜI GIAN, không phải tin nhắn
@@ -326,7 +326,7 @@ lời gọi API chứ không phải một lượt gõ vào ô chat rồi chờ n
 
 Nên phanh đổi từ đếm tin nhắn sang **đếm giây**:
 
-- `JAVIS_WEB_TURN_BUDGET_S`, **mặc định 600** (10 phút cho một lượt). Hết ngân sách thì dừng
+- `JEEVI_WEB_TURN_BUDGET_S`, **mặc định 600** (10 phút cho một lượt). Hết ngân sách thì dừng
   đúng như chạm trần vòng: trả phần đã có kèm lời giải thích, không cụt lặng lẽ.
 - **Hiện tiến độ trong lúc chạy.** Vòng thứ mấy, đã mất bao lâu. Mười lăm phút im lặng thì
   người dùng sẽ tưởng treo và bấm Dừng, kể cả khi nó đang chạy đúng.
@@ -401,7 +401,7 @@ Rỗng thì `workspace_root = vault_root` và mọi thứ chạy y như hôm nay
 rõ đang ở gốc nào, vì câu hiện tại ("nằm ngoài bộ não đang làm việc") sẽ sai nghĩa ngay khi có
 gốc thứ hai.
 
-### 7.2. `javis_run_command`, KHÔNG phải PTY của `terminal.py`
+### 7.2. `jeevi_run_command`, KHÔNG phải PTY của `terminal.py`
 
 Bản rà soát chéo 2026-09-22 bác đề xuất cho model lái thẳng PTY của `terminal.py`, và bác
 đúng. Chính docstring của file đó ghi:
@@ -423,7 +423,7 @@ Nên tool riêng, một lệnh một lần, không trạng thái:
 Bắt buộc: env **lọc trắng**, không thừa kế env server; trần kích thước output; huỷ được; ghi
 audit; và mức quyền ánh xạ thẳng từ chip của phiên:
 
-| Mức của `coding_store` | `javis_run_command` |
+| Mức của `coding_store` | `jeevi_run_command` |
 |---|---|
 | `suggest` | Không chạy. Trả về lệnh đề xuất dưới dạng chữ |
 | `auto` | Chỉ lệnh trong allowlist, và chỉ trong `workspace_root` |
@@ -439,13 +439,13 @@ trên. Hai lớp, không thay nhau.
 
 ### 7.3. Bộ tool coding tối thiểu
 
-Có `workspace_root` và `javis_run_command` rồi thì bộ còn lại gần như miễn phí, vì chúng chỉ
+Có `workspace_root` và `jeevi_run_command` rồi thì bộ còn lại gần như miễn phí, vì chúng chỉ
 là lệnh git gói lại:
 
 ```
 đọc file, ghi file, liệt kê, tìm trong file   ← builtin, đổi gốc là xong
-git status, git diff                          ← javis_run_command
-chạy test                                     ← javis_run_command
+git status, git diff                          ← jeevi_run_command
+chạy test                                     ← jeevi_run_command
 ```
 
 Đây mới là thứ làm `chatgpt-web` coding được. Giao thức tool qua chữ chỉ là cách gọi; không có
@@ -548,7 +548,7 @@ chạy nền gói Claude Pro/Max. Không bọc đường.
 
 Vì vậy:
 
-- Model `chatgpt-web` chỉ hiện trong ô chọn khi cổng môi trường `JAVIS_ENABLE_WEB_CHAT=true`
+- Model `chatgpt-web` chỉ hiện trong ô chọn khi cổng môi trường `JEEVI_ENABLE_WEB_CHAT=true`
   được bật. Bật là một hành động có chủ ý.
 - Mô tả model nói rõ nó chạy bằng phiên trình duyệt, để người bật biết mình bật gì.
 - **Không việc nền nào được tự chọn model này.** Loop, nhắc hẹn, task Kanban, `_FallbackChain`
@@ -559,7 +559,7 @@ Vì vậy:
 hẳn. Thực tế: **chỉ chạy ổn trên máy nhà hoặc bản desktop**. Trên VPS thì model tự ẩn khỏi ô
 chọn và nói rõ lý do, chứ không hiện ra rồi lỗi.
 
-**Dữ liệu.** Tool `javis_read_file` trả nội dung vault, và nội dung đó đi thẳng vào ô chat của
+**Dữ liệu.** Tool `jeevi_read_file` trả nội dung vault, và nội dung đó đi thẳng vào ô chat của
 chatgpt.com. Jeevi in ra đã gửi những gì trước mỗi vòng tool.
 
 ## 12. Đổi qua lại giữa web và Codex
@@ -589,7 +589,7 @@ của phiên**. Không chặn nó thì đúng cơ chế đang phục vụ mục 
 - **Không có thử thách nào** cần tay người trong 10 lượt đó
 - Độ trễ trung vị **dưới 60 giây** với prompt khoảng 2.000 token
 - Đoạn tee bắt được luồng ở **cả hai cảnh**: mở nguội và tab đã mở sẵn
-- **Một vòng tool đi trọn**: model trả đúng khối ```` ```javis_tool ````, Jeevi bóc được, chạy
+- **Một vòng tool đi trọn**: model trả đúng khối ```` ```jeevi_tool ````, Jeevi bóc được, chạy
   được, gửi lại được, và model dùng kết quả đó trả lời
 
 Tiêu chí cuối là tiêu chí mới của v2.0 và là tiêu chí dễ trượt nhất. Không đạt đủ năm thì
@@ -605,13 +605,13 @@ Năm lớp đã vào `main`, mỗi lớp một commit và một bộ test riêng
 |---|---|---|
 | 1. Giao thức tool qua chữ, sổ trạng thái | `web_tool_protocol.py`, `web_state.py` | `test_web_tool_protocol`, `test_web_state` |
 | 2. Gỡ chặn cứng tool file khoá trong brain | `coding_ctx.py`, `mcp_hub._safe_path` | `test_coding_tool_context`, `test_doc_file_dinh_kem` |
-| 3. `javis_run_command` (KHÔNG phải PTY) | `run_command.py` | `test_run_command_quyen` |
+| 3. `jeevi_run_command` (KHÔNG phải PTY) | `run_command.py` | `test_run_command_quyen` |
 | 4. Transport tee fetch | `web_transport.py` | `test_web_transport_tee` (có tầng chạy THẬT trong Chromium) |
 | 5. Vòng lặp tool + nối dây ba đường chat | `web_engine.py`, `main.py` | `test_web_engine_loop`, `test_luot_chat_web` |
 
 Tức Phase 1 tới Phase 4 của bảng dưới đã xong. Đường chat dashboard truyền `workspace_root`
 và `coding_ctx` của phiên vào hub, nên chọn `chatgpt-web` trong một phiên Coding là model đọc
-ghi được cây mã nguồn và gọi được `javis_run_command`.
+ghi được cây mã nguồn và gọi được `jeevi_run_command`.
 
 **Gốc file là một DANH SÁCH, không phải một đường dẫn.** 0.63.9 cho một phiên Coding gắn
 nhiều thư mục. Engine CLI chỉ hưởng thư mục CHÍNH, vì tool file native của nó chạy theo `cwd`
@@ -645,7 +645,7 @@ phải tự nó dùng được.
 | Phase 1 | `web_chat.py`: transport, sổ trạng thái, thẻ Models, nút đăng nhập, model vào ô chọn, chặn bẫy mục 2.1. Chat thuần | Hỏi đáp, lên kế hoạch, đọc hiểu | 2-3 ngày |
 | Phase 2 | Bộ dịch tool qua chữ, ngân sách giờ, bộ đếm | **Tạo ảnh, nhắc lịch, đọc vault, skill, MCP.** Phần lớn giá trị nằm ở đây | 3-4 ngày |
 | Phase 3 | `web_thread_id`, nối tiếp luồng, xoay mạch khi phình (mượn `compaction.nen_mach_thue_bao`) | Dùng hằng ngày không phải dựng lại ngữ cảnh mỗi lượt | 1-2 ngày |
-| Phase 4 | Coding Tool Context (mục 7): `workspace_root`, `javis_run_command`, allowlist mức `auto` | Lập trình | 3-4 ngày |
+| Phase 4 | Coding Tool Context (mục 7): `workspace_root`, `jeevi_run_command`, allowlist mức `auto` | Lập trình | 3-4 ngày |
 
 **Vì sao Coding Tool Context xuống cuối, dù v2.1 xếp nó đầu:** v2.1 tưởng mục tiêu là "web thay
 Codex khi Codex chết", nên coding là bắt buộc. Mục tiêu thật là việc thường ngày, mà trong đó
@@ -678,11 +678,11 @@ Repo chạy test bằng cách gọi từng file như script, nên mỗi file ph�
 - `test_web_chat_catalog.py`: `chatgpt-web` có trong danh sách model của thẻ ChatGPT **cả khi**
   `openai_oauth.list_models` trả `None`; và thẻ báo sẵn sàng khi chỉ có phiên web, không có
   Codex CLI.
-- `test_web_chat_tool_protocol.py`: bóc đúng khối ```` ```javis_tool ````; JSON hỏng thì trả
+- `test_web_chat_tool_protocol.py`: bóc đúng khối ```` ```jeevi_tool ````; JSON hỏng thì trả
   câu báo lỗi nói được chứ không ném exception và không đoán; tên tool không tồn tại thì báo rõ;
   `_LapGuard` vẫn cắt khi lặp y hệt.
-- `test_web_chat_ngan_sach_gio.py`: hết `JAVIS_WEB_TURN_BUDGET_S` thì dừng và trả phần đã có
-  kèm lời giải thích, không cụt lặng lẽ; và trần vòng mặc định bằng `JAVIS_MAX_TOOL_ROUNDS`
+- `test_web_chat_ngan_sach_gio.py`: hết `JEEVI_WEB_TURN_BUDGET_S` thì dừng và trả phần đã có
+  kèm lời giải thích, không cụt lặng lẽ; và trần vòng mặc định bằng `JEEVI_MAX_TOOL_ROUNDS`
   chứ không phải một con số riêng.
 - `test_web_chat_state.py`: `HET_LUOT` đặt đúng `cooldown_until`; trong cooldown thì từ chối mà
   **không** mở trình duyệt; hết lượt giữa vòng tool thì giữ phần đã làm và vào `limit_resume`.
@@ -690,7 +690,7 @@ Repo chạy test bằng cách gọi từng file như script, nên mỗi file ph�
   nguyên văn; luồng đứt giữa chừng thì `QUA_HAN` chứ không trả chuỗi cụt.
 - `test_web_chat_viec_nen.py`: `_FallbackChain` và hàng đợi việc nền không bao giờ chọn
   `chatgpt-web`.
-- `test_coding_tool_context.py`: phiên coding thì `javis_read_file` đọc được file trong repo;
+- `test_coding_tool_context.py`: phiên coding thì `jeevi_read_file` đọc được file trong repo;
   phiên thường thì `workspace_root` bằng `vault_root` và hành vi **không đổi một chút nào**;
   đường dẫn ngoài cả hai gốc vẫn bị chặn, và câu báo lỗi nói đúng gốc nào.
 - `test_run_command_quyen.py`: `suggest` không chạy lệnh nào; `auto` chỉ chạy lệnh trong
@@ -722,7 +722,7 @@ Web Engine **map vào đúng hợp đồng đó**, không đẻ hợp đồng th
 ```
 transport nhận mảnh chữ      → {"type": "text"}
 mở luồng web mới             → {"type": "session"}
-bóc được khối javis_tool     → {"type": "tool_call"}
+bóc được khối jeevi_tool     → {"type": "tool_call"}
 xong lượt                    → {"type": "final"}
 lỗi transport / hết lượt     → {"type": "error"}
 ```
@@ -790,7 +790,7 @@ bắt được khi trang đổi:
 ```
 transport_version        đoạn tee fetch
 selector_version         selector DOM (ô soạn, nút gửi, nút tải file)
-tool_protocol_version    khuôn khối javis_tool
+tool_protocol_version    khuôn khối jeevi_tool
 ```
 
 Mọi selector DOM nằm **trong một chỗ duy nhất** của transport. Rải selector khắp nơi là lần

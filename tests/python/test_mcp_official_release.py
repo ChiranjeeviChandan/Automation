@@ -23,7 +23,7 @@ import json
 import os
 import tempfile
 
-os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-official-release-"))
+os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-official-release-"))
 
 import mcp_catalog  # noqa: E402
 import zalo_cli  # noqa: E402

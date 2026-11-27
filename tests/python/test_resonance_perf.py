@@ -18,8 +18,8 @@ import tempfile
 import time
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="javis-resonance-perf-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-resonance-perf-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 
 import resonance as R  # noqa: E402
 import resonance_store as RS  # noqa: E402
@@ -34,7 +34,7 @@ def check(name, cond, info=None):
 
 
 BRAIN = str(Path(tempfile.mkdtemp(prefix="brain-perf-")).resolve())
-P = RS.Principal("agent", "javis", BRAIN)
+P = RS.Principal("agent", "jeevi", BRAIN)
 OWNER = RS.Principal("owner", "owner", BRAIN)
 store = RS.GoalStore(Path(_STATE) / "resonance.sqlite3")
 FRAME = {"understanding": "Ghi chú", "criteria": [

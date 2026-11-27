@@ -17,8 +17,8 @@ import sys
 import tempfile
 import time
 
-_STATE = tempfile.mkdtemp(prefix="javis-gh-oauth-")
-os.environ["JAVIS_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="jeevi-gh-oauth-")
+os.environ["JEEVI_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -28,8 +28,8 @@ except Exception:
 from _fake_github import FakeGitHub, GOOD_TOKEN  # noqa: E402
 
 fake = FakeGitHub(scopes=None)          # GitHub App tokens carry no X-OAuth-Scopes header
-os.environ["JAVIS_GITHUB_API"] = fake.url
-os.environ["JAVIS_GITHUB_WEB"] = fake.url
+os.environ["JEEVI_GITHUB_API"] = fake.url
+os.environ["JEEVI_GITHUB_WEB"] = fake.url
 
 import config  # noqa: E402
 import github_oauth  # noqa: E402

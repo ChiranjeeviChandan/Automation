@@ -3,7 +3,7 @@
     python tests/run.py dong_ho
 
 Lỗi thật chủ repo chụp lại: hỏi "giờ Việt Nam là mấy giờ" thì Jeevi trả lời "MCP server của
-Jeevi hiện đang mất kết nối... khi nào kết nối lại em sẽ gọi tool javis_now". Không có server
+Jeevi hiện đang mất kết nối... khi nào kết nối lại em sẽ gọi tool jeevi_now". Không có server
 nào mất kết nối cả. Sự thật là lượt đó đi ĐƯỜNG TẮT của mức Siêu tiết kiệm, mà đường tắt gửi
 capsule KHÔNG KÈM TOOL NÀO - đó chính là chỗ nó tiết kiệm. Model không có đồng hồ, không có
 tool, nên nó làm cái tệ nhất: bịa ra một lý do nghe hợp lý.
@@ -20,7 +20,7 @@ import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
 
-os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-dongho-")
+os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-dongho-")
 
 import context_compiler as cc  # noqa: E402
 import main  # noqa: E402
@@ -62,7 +62,7 @@ check("và đúng giờ đang chạy", _hom_nay.strftime("%H:%M") in _that
 # ---- 2. Capsule của ĐƯỜNG TẮT phải mang theo giờ. Đây là chỗ lỗi thật nằm ----
 from capability_registry import CapabilityRegistry  # noqa: E402
 
-_reg_dir = tempfile.mkdtemp(prefix="javis-dongho-reg-")
+_reg_dir = tempfile.mkdtemp(prefix="jeevi-dongho-reg-")
 _reg = CapabilityRegistry(_reg_dir)
 _reg.refresh_tools("brain-a", [], {})
 _reg.refresh_model_profile("groq", "model-a", "api", True, {"observed": True})

@@ -32,7 +32,7 @@ MIN_INSIDE = 12         # a sent text found INSIDE a longer echo ("@Lan " added 
 LINK_BLIND = 120        # a link card that comes back as a non-text message without its link (as LINK_ECHO_BLIND)
 # What the inbox row of such a message carries. The same mark `routes.conversations.owner_reply` puts on a message an
 # engine sent with `inbox_reply`, so one rule in the stats covers both.
-MARK = {"tu_javis": True, "via": "tool"}
+MARK = {"tu_jeevi": True, "via": "tool"}
 
 _NOT_A_MESSAGE = ("zalo_send_typing",)      # "typing..." puts nothing in the chat
 _THREAD_KEYS = ("threadId", "thread_id", "threadID", "thread", "chatId", "chat_id", "groupId", "group_id")
