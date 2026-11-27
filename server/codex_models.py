@@ -1,0 +1,319 @@
+"""Danh sách model LIVE từ chính Codex CLI.
+
+Codex app-server là giao diện ổn định mà các client Codex dùng để dựng model
+picker.  Hỏi ``model/list`` ở đây giúp Jeevi tự thấy model mới, model mặc định
+và các đợt ẩn/deprecate mà không phải ghim version model trong source.
+"""
+from __future__ import annotations
+
+import json
+import os
+import queue
+import subprocess
+import threading
+import time
+from typing import Any, Optional
+
+import claude_cli
+from claude_cli import codex_env, find_codex_cli
+
+
+def _no_window() -> int:
+    return subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+
+
+# Thang effort mỗi model Codex nhận, do CHÍNH Codex khai trong `model/list`. Nhớ trong RAM,
+# ghi mỗi lần `list_models` chạy trót lọt.
+#
+# Vì sao phải nhớ chứ không hỏi lại lúc cần: `list_models` đẻ một tiến trình `codex app-server`
+# và mất vài giây - không được phép nằm trên đường chat. Bù lại, đường lấy danh sách model
+# (trang Models, hộp chọn model, /provider/models) đều gọi qua đây, nên máy đang chạy thì bảng
+# này gần như luôn có sẵn. Chưa có thì `efforts_for` trả rỗng và caller KHÔNG truyền effort -
+# lượt chat chạy bằng mặc định của Codex, đúng như trước, chứ không hỏng.
+_EFFORTS: dict = {}
+
+# Codex writes the same ladders to `models_cache.json` in its own home each time it fetches its model list. Read as a
+# fallback so the ladder is known right after Jeevi restarts, before anything asks `model/list` again (ported from
+# PR #1847): until then a bot set to "xhigh" ran at Codex's default. Parsed again only when the file changes.
+_CACHE_FILE = "models_cache.json"
+_CACHE_LOCK = threading.Lock()
+_cache: dict = {"key": None, "efforts": {}}
+
+
+def _cached_efforts() -> dict:
+    """{model slug: [effort, ...]} from Codex's own models cache, {} when it is missing or unreadable. Never raises."""
+    try:
+        path = claude_cli._codex_home() / _CACHE_FILE
+        st = path.stat()
+        key = (str(path), st.st_mtime_ns, st.st_size)
+    except Exception:  # noqa: BLE001 - no cache yet (Codex never ran here), or no home folder
+        return {}
+    with _CACHE_LOCK:
+        if _cache["key"] == key:
+            return _cache["efforts"]
+    efforts: dict = {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        for item in (data.get("models") if isinstance(data, dict) else None) or []:
+            if not isinstance(item, dict):
+                continue
+            slug = str(item.get("slug") or "").strip()
+            levels = []
+            for x in item.get("supported_reasoning_levels") or []:
+                level = str((x.get("effort") if isinstance(x, dict) else x) or "").strip()
+                if level and level not in levels:
+                    levels.append(level)
+            if slug and levels:
+                efforts[slug] = levels
+    except Exception:  # noqa: BLE001 - a half-written or reshaped file: no ladder from it, as before the cache
+        efforts = {}
+    with _CACHE_LOCK:
+        _cache.update(key=key, efforts=efforts)
+    return efforts
+
+
+def efforts_for(model: str) -> list:
+    """Các mức effort model này nhận, theo lời của chính Codex. [] = chưa biết.
+
+    The live `model/list` answer first; Codex's own models cache when that has not run since the restart."""
+    model = str(model or "").strip()
+    if not model:
+        return []
+    return list(_EFFORTS.get(model) or _cached_efforts().get(model) or [])
+
+
+_TIERS: dict = {}
+
+
+def tiers_for(model: str) -> list:
+    """Service tier ids this Codex model declares (e.g. ["priority"] for Fast). [] = unknown/none."""
+    return list(_TIERS.get(str(model or "").strip()) or [])
+
+
+# What Codex says each model is, in its own words (`description` of model/list). Kept so the automatic
+# background picker (auto_background.py) can read it without starting another app-server.
+_DESCRIPTIONS: dict = {}
+
+
+def description_for(model: str) -> str:
+    return str(_DESCRIPTIONS.get(str(model or "").strip()) or "")
+
+
+def _nho_mo_ta(items) -> None:
+    for x in items or []:
+        if x.get("id"):
+            _DESCRIPTIONS[x["id"]] = " ".join(str(x.get("display_name") or "").split() + ["-"]
+                                              + str(x.get("description") or "").split()).strip(" -")
+
+
+def _nho_tiers(items) -> None:
+    for x in items or []:
+        if x.get("id"):
+            _TIERS[x["id"]] = list(x.get("service_tiers") or [])
+
+
+def _nho_efforts(items) -> None:
+    for x in items or []:
+        muc = [m for m in (x.get("supported_reasoning_efforts") or []) if m]
+        if x.get("id") and muc:
+            _EFFORTS[x["id"]] = muc
+
+
+# Thang effort của Codex, xếp từ nhẹ tới nặng. Chỉ dùng để SẮP XẾP thang mà model tự khai,
+# không phải để quyết định model nhận mức nào - cái đó là lời của Codex.
+_THANG = ("minimal", "low", "medium", "high", "xhigh", "max")
+
+
+def muc_cho(model: str, muc_jeevi: str) -> str:
+    """Mức của Jeevi -> mức effort của Codex, lấy từ THANG CỦA CHÍNH MODEL ĐÓ. "" = đừng truyền.
+
+    Không có bảng dịch chép tay, và đó là chủ ý: Codex đổi thang theo từng model và từng đợt
+    (`minimal` chỉ vài model có, `xhigh` mới thêm sau). Bảng chép tay thì sai lặng lẽ, còn giá
+    trị model không nhận thì hỏng cả lượt chat. Ở đây mọi giá trị trả ra đều LẤY TỪ danh sách
+    mà chính Codex vừa khai cho model đó, nên không bao giờ gửi một mức nó không hiểu.
+
+    Luật: "ultra" là nấc trên cùng của Jeevi nên luôn ra nấc CAO NHẤT model có. Mấy nấc còn
+    lại lấy đúng tên nếu model có, không thì lùi xuống nấc thấp hơn gần nhất - lùi chứ không
+    tiến, vì tiến là tiêu nhiều tiền hơn mức người dùng chọn.
+    """
+    thang = [m for m in _THANG if m in efforts_for(model)]
+    if not thang or not muc_jeevi or muc_jeevi == "off":
+        return ""
+    if muc_jeevi == "ultra":
+        return thang[-1]
+    if muc_jeevi in thang:
+        return muc_jeevi
+    if muc_jeevi not in _THANG:
+        return ""
+    i = _THANG.index(muc_jeevi)
+    thap_hon = [m for m in thang if _THANG.index(m) < i]
+    return thap_hon[-1] if thap_hon else thang[0]
+
+
+def _normalize_items(items: Any) -> list[dict]:
+    """Chuẩn hoá model/list, giữ nguyên thứ tự picker của Codex và bỏ bản ẩn."""
+    if not isinstance(items, list):
+        return []
+    out: list[dict] = []
+    seen: set[str] = set()
+    for raw in items:
+        if not isinstance(raw, dict) or raw.get("hidden"):
+            continue
+        model_id = str(raw.get("id") or raw.get("model") or "").strip()
+        if not model_id or model_id in seen:
+            continue
+        seen.add(model_id)
+        out.append({
+            "id": model_id,
+            "display_name": str(raw.get("displayName") or model_id),
+            "description": str(raw.get("description") or ""),
+            "is_default": bool(raw.get("isDefault")),
+            "default_reasoning_effort": raw.get("defaultReasoningEffort"),
+            "supported_reasoning_efforts": [
+                str(x.get("reasoningEffort"))
+                for x in (raw.get("supportedReasoningEfforts") or [])
+                if isinstance(x, dict) and x.get("reasoningEffort")
+            ],
+            "upgrade": raw.get("upgrade"),
+            # 0.164.0, Fast mode: the tier ids the model declares ("priority" is Fast).
+            "service_tiers": [
+                str(t.get("id")) for t in (raw.get("serviceTiers") or [])
+                if isinstance(t, dict) and t.get("id")
+            ],
+            "default_service_tier": raw.get("defaultServiceTier"),
+        })
+    # Codex thường đã xếp default đầu tiên. Bảo đảm điều đó để fallback của
+    # Jeevi cũng dùng đúng default hiện hành nếu upstream đổi thứ tự.
+    out.sort(key=lambda x: not x["is_default"])
+    return out
+
+
+def list_models(timeout: float = 20.0, cli_path: Optional[str] = None,
+                popen_factory=subprocess.Popen, codex_home: Optional[str] = None) -> Optional[dict]:
+    """Gọi Codex app-server ``model/list``.
+
+    Trả ``None`` khi CLI cũ/chưa cài/chưa đăng nhập để caller dùng nguồn dự
+    phòng. Không để subprocess sống sót sau request.
+
+    ``codex_home``: the login folder of an extra ChatGPT account (plan_accounts), so the list is that account's own.
+    None asks account 1's folder, as before.
+    """
+    cli = cli_path or find_codex_cli()
+    if not cli:
+        return None
+
+    proc = None
+    messages: queue.Queue = queue.Queue()
+    deadline = time.monotonic() + max(1.0, float(timeout))
+
+    def remaining() -> float:
+        return max(0.05, deadline - time.monotonic())
+
+    def send(payload: dict) -> None:
+        assert proc is not None and proc.stdin is not None
+        proc.stdin.write(json.dumps(payload, ensure_ascii=False) + "\n")
+        proc.stdin.flush()
+
+    def reader() -> None:
+        assert proc is not None and proc.stdout is not None
+        try:
+            for line in iter(proc.stdout.readline, ""):
+                try:
+                    messages.put(json.loads(line))
+                except (TypeError, json.JSONDecodeError):
+                    continue
+        finally:
+            messages.put(None)
+
+    def response(request_id: int) -> Optional[dict]:
+        while time.monotonic() < deadline:
+            try:
+                msg = messages.get(timeout=remaining())
+            except queue.Empty:
+                return None
+            if msg is None:
+                return None
+            if isinstance(msg, dict) and msg.get("id") == request_id:
+                return msg
+        return None
+
+    try:
+        proc = popen_factory(
+            [cli, "app-server"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            bufsize=1,
+            creationflags=_no_window(),
+            env=codex_env(codex_home),
+        )
+        threading.Thread(target=reader, name="jeevi-codex-models", daemon=True).start()
+        send({
+            "method": "initialize",
+            "id": 0,
+            "params": {
+                "clientInfo": {
+                    "name": "jeevi_os",
+                    "title": "Jeevi OS",
+                    "version": "1.0",
+                }
+            },
+        })
+        init = response(0)
+        if not init or init.get("error"):
+            return None
+        send({"method": "initialized", "params": {}})
+
+        all_items: list[dict] = []
+        cursor = None
+        request_id = 1
+        while time.monotonic() < deadline:
+            params: dict[str, Any] = {"limit": 100, "includeHidden": False}
+            if cursor:
+                params["cursor"] = cursor
+            send({"method": "model/list", "id": request_id, "params": params})
+            msg = response(request_id)
+            if not msg or msg.get("error"):
+                return None
+            result = msg.get("result") or {}
+            all_items.extend(result.get("data") or [])
+            cursor = result.get("nextCursor")
+            if not cursor:
+                break
+            request_id += 1
+
+        models = _normalize_items(all_items)
+        if not models:
+            return None
+        _nho_efforts(models)
+        _nho_tiers(models)
+        _nho_mo_ta(models)
+        default = next((x["id"] for x in models if x["is_default"]), models[0]["id"])
+        return {
+            "models": [x["id"] for x in models],
+            "items": models,
+            "default_model": default,
+            "source": "codex-app-server",
+        }
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return None
+    finally:
+        if proc is not None:
+            try:
+                if proc.stdin:
+                    proc.stdin.close()
+            except Exception:
+                pass
+            try:
+                if proc.poll() is None:
+                    proc.terminate()
+                    proc.wait(timeout=2)
+            except Exception:
+                try:
+                    proc.kill()
+                except Exception:
+                    pass

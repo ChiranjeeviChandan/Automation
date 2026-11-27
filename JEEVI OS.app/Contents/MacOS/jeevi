@@ -1,0 +1,6 @@
+#!/bin/bash
+# App bundle entrypoint -> delegates to bin/jeevi-start.sh.
+# Resolves the repo root relative to this bundle, so keep "JEEVI OS.app"
+# inside the repo folder (repo/JEEVI OS.app/Contents/MacOS/jeevi).
+DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
+exec "${DIR}/bin/jeevi-start.sh"
