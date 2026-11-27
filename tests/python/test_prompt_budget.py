@@ -21,7 +21,7 @@ import os
 import sys
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-budget-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-budget-"))
 
 _fails = []
 
@@ -78,7 +78,7 @@ def _tok(chars):
 #     python -m pip install tiktoken
 #     python -c "import tiktoken; print(len(tiktoken.get_encoding('cl100k_base').encode(open('CLAUDE.md', encoding='utf-8').read())))"
 # 0.345.0: lowered to 29,200 after condensing four on-demand sections into pointers to the
-# jeevi-builder skill (CLAUDE.md 33,591 -> 28,599 chars, measured 12,361 -> about 10,500 Claude tokens).
+# javis-builder skill (CLAUDE.md 33,591 -> 28,599 chars, measured 12,361 -> about 10,500 Claude tokens).
 KERNEL_MAX_CHARS = 29_200
 
 _claude_md = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
@@ -198,7 +198,7 @@ CORE_TOOLS_MAX_CHARS = 3_000
 import mcp_hub  # noqa: E402
 import config  # noqa: E402
 
-_vault = tempfile.mkdtemp(prefix="jeevi-budget-vault-")
+_vault = tempfile.mkdtemp(prefix="javis-budget-vault-")
 os.makedirs(os.path.join(_vault, "skills"), exist_ok=True)
 # 30 skill mô tả dài: mô phỏng brain thật, để bắt được đúng kiểu phình theo N.
 for _i in range(30):

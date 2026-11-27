@@ -5,7 +5,7 @@
 Field reports 19-20/11/2026: two Zalo accounts, one bot each in two brains. Right after the second account was signed
 in, the first bot's card read "another session of this account keeps taking the Zalo connection" and stayed that way.
 The QR sign-in saves its connection from a worker thread, `mcp_hub.invalidate_cache` dropped every MCP session from
-there, and `SessionPool._close_later` did nothing without a running loop: the first account's jeevi-zalo kept running
+there, and `SessionPool._close_later` did nothing without a running loop: the first account's javis-zalo kept running
 outside the pool while the read loop started a second one on the same HOME. Checks:
   1. a session dropped from a worker thread is closed on the loop that runs it;
   2. with no loop known, its process tree is killed right away;
@@ -21,7 +21,7 @@ import sys
 import tempfile
 import threading
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zalo2-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zalo2-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

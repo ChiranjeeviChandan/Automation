@@ -29,7 +29,7 @@ def retry_after(header, default: float) -> float:
 
 
 def normalize(msg: dict) -> dict:
-    # jeevi-zalo 1.2.0 normalizeMessage: attachment.url=content.href,
+    # javis-zalo 1.2.0 normalizeMessage: attachment.url=content.href,
     # attachment.description=content.title. History drops attachment entirely.
     att = msg.get("attachment") if isinstance(msg.get("attachment"), dict) else {}
     content = msg.get("content") if isinstance(msg.get("content"), dict) else {}

@@ -304,8 +304,8 @@ def forget_memory(mem_dir: Path, slug: str) -> dict:
     out = {"slug": slug, "title": title, "index_line_removed": removed_line}
     if on_forget is not None:
         try:
-            # `learned`: the self-learning loop wrote this memory (origin: jeevi-learned), not the owner or a chat.
-            on_forget(mem_dir, {**out, "learned": str(meta.get("origin") or "") == "jeevi-learned"})
+            # `learned`: the self-learning loop wrote this memory (origin: javis-learned), not the owner or a chat.
+            on_forget(mem_dir, {**out, "learned": str(meta.get("origin") or "") == "javis-learned"})
         except Exception as e:   # noqa: BLE001 - a listener must not undo the forgetting
             print(f"[memory forget] listener: {type(e).__name__}: {e}", file=sys.stderr)
     return out

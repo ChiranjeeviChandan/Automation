@@ -132,10 +132,10 @@ check("ResultMessage dọn trạng thái, final giữ nguyên", SID not in cst._
       and [e for e in evs if e["type"] == "final"][0]["content"] == "x")
 
 # 9. Tắt bằng biến môi trường thì quay lại như cũ.
-os.environ["JEEVI_CLAUDE_STREAM_TEXT"] = "0"
+os.environ["JAVIS_CLAUDE_STREAM_TEXT"] = "0"
 evs = run([se({"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "z"}})])
-check("JEEVI_CLAUDE_STREAM_TEXT=0 thì không phát mẩu", texts(evs) == [])
-os.environ.pop("JEEVI_CLAUDE_STREAM_TEXT")
+check("JAVIS_CLAUDE_STREAM_TEXT=0 thì không phát mẩu", texts(evs) == [])
+os.environ.pop("JAVIS_CLAUDE_STREAM_TEXT")
 
 # 10. Móc nằm DƯỚI hai móc còn lại, cài từ factory, không đụng file engine bị khoá.
 cli = (ROOT / "server" / "claude_cli.py").read_text(encoding="utf-8")
@@ -188,9 +188,9 @@ evs = run([SystemMessage(subtype="init", data={"session_id": SID}), am([TextBloc
 check("a new turn starts clean even when the last one never reached its result", texts(evs) == ["Lượt mới."], texts(evs))
 
 turn()
-os.environ["JEEVI_CLAUDE_STREAM_TEXT"] = "0"
+os.environ["JAVIS_CLAUDE_STREAM_TEXT"] = "0"
 evs = run([am([TextBlock(text="Một.")], mid="e1"), am([TextBlock(text="Hai.")], mid="e2")])
-os.environ.pop("JEEVI_CLAUDE_STREAM_TEXT")
+os.environ.pop("JAVIS_CLAUDE_STREAM_TEXT")
 check("with streaming switched off the breaks still apply", texts(evs) == ["Một.", "\n\nHai."], texts(evs))
 cst._STATE.clear()
 

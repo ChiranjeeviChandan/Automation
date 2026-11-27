@@ -4,7 +4,7 @@
 
 Owner report 2026-11-23: Composio lists a handful of meta tools (COMPOSIO_SEARCH_TOOLS, COMPOSIO_MULTI_EXECUTE_TOOL)
 while the hundreds of app tools behind them (GMAIL_SEND_EMAIL, NOTION_CREATE_PAGE...) never reach Jeevi's tool list.
-jeevi_search_tools ranked only what it could see, so "gmail" came back as Resend, "gửi tin slack" as Zalo, and the
+javis_search_tools ranked only what it could see, so "gmail" came back as Resend, "gửi tin slack" as Zalo, and the
 model said the app was not connected. A claude.ai account connector matched only when the request said its exact
 name, so "đọc email mới nhất" never pointed at the Gmail connector, and a "Composio" connector on the Claude account
 never matched "notion".
@@ -15,9 +15,9 @@ import json
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-toolgateway-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-toolgateway-"))
 # The Codex hub profile is written under ~/.codex: keep it out of the real home.
-os.environ["HOME"] = tempfile.mkdtemp(prefix="jeevi-toolgateway-home-")
+os.environ["HOME"] = tempfile.mkdtemp(prefix="javis-toolgateway-home-")
 
 import tool_finder  # noqa: E402
 import mcp_hub  # noqa: E402
@@ -125,13 +125,13 @@ check("no gateway -> no via", r["via"] == [])
 pool = _pool()
 route = {t["fn"]: {"call": None} for t in pool}
 tools, r = mcp_hub._lazy_tools_and_route([], {}, pool, route, 8)
-search_desc = next(t["description"] for t in tools if t["fn"] == "jeevi_search_tools")
+search_desc = next(t["description"] for t in tools if t["fn"] == "javis_search_tools")
 check("the source menu names the apps behind the gateway", "cổng tới app đã nối: ahrefs, facebook, gmail" in search_desc)
 
 
 def ask(q, ambient=None):
     _t, rr = mcp_hub._lazy_tools_and_route([], {}, pool, route, 8, ambient=ambient)
-    out = asyncio.run(rr["jeevi_search_tools"]["call"]({"query": q}))
+    out = asyncio.run(rr["javis_search_tools"]["call"]({"query": q}))
     return json.loads(out) if out.startswith("{") else out
 
 
@@ -172,12 +172,12 @@ check("the hub answer points at the account's Composio connector too",
 # never named them, so a Codex turn searching for "notion" heard "no tool" (owner request 2026-11-23).
 import claude_cli  # noqa: E402
 
-_home = tempfile.mkdtemp(prefix="jeevi-codexhome-")
+_home = tempfile.mkdtemp(prefix="javis-codexhome-")
 os.environ["CODEX_HOME"] = _home
 with open(os.path.join(_home, "config.toml"), "w", encoding="utf-8") as f:
     f.write('model = "gpt-5"\n\n[mcp_servers.composio]\nurl = "https://connect.composio.dev/mcp"\n\n'
             '[mcp_servers.notion]\ncommand = "npx"\n\n[mcp_servers.old]\ncommand = "x"\nenabled = false\n\n'
-            '[mcp_servers.jeevi]\nurl = "http://127.0.0.1/hub/mcp"\n')
+            '[mcp_servers.javis]\nurl = "http://127.0.0.1/hub/mcp"\n')
 check("CODEX_HOME is honoured", str(claude_cli._codex_home()) == _home)
 check("_ambient_kind: Claude stays Claude", mcp_hub._ambient_kind(True) == "claude"
       and mcp_hub._ambient_kind("claude") == "claude")
@@ -185,22 +185,22 @@ check("_ambient_kind: codex", mcp_hub._ambient_kind("codex") == "codex")
 check("_ambient_kind: anything else is off", mcp_hub._ambient_kind("") == "" and mcp_hub._ambient_kind("gemini") == ""
       and mcp_hub._ambient_kind(False) == "")
 cx = mcp_hub._ambient_for("codex")
-check("Codex servers are read, jeevi and disabled ones left out",
+check("Codex servers are read, javis and disabled ones left out",
       [s["name"] for s in cx] == ["composio", "notion"], cx)
 check("... marked as the Codex config", all(s["source"] == "codex_config" for s in cx))
 check("Codex search: 'tạo trang notion' names both", [s["name"] for s in mcp_hub._match_ambient(cx, "tạo trang notion")]
       == ["composio", "notion"])
 
 _t, rr = mcp_hub._lazy_tools_and_route([], {}, pool, route, 8, ambient=cx)
-desc = next(t["description"] for t in _t if t["fn"] == "jeevi_search_tools")
+desc = next(t["description"] for t in _t if t["fn"] == "javis_search_tools")
 check("the source menu names Codex's own servers", "mcp__notion__* (notion, cấu hình Codex riêng" in desc, desc[-300:])
-ans = json.loads(asyncio.run(rr["jeevi_search_tools"]["call"]({"query": "tạo trang notion"})))
+ans = json.loads(asyncio.run(rr["javis_search_tools"]["call"]({"query": "tạo trang notion"})))
 check("the search answer points at Codex's own servers",
       [a["connector"] for a in ans.get("codex_rieng", [])] == ["composio", "notion"], ans.get("codex_rieng"))
 check("... not filed as Claude account connectors", "tai_khoan_claude" not in ans)
 check("... with the Codex hint", "config.toml" in ans["codex_rieng"][0]["goi_the_nao"])
 cj = json.loads(mcp_hub._connections_json(include_ambient="codex"))
-check("jeevi_connections lists them on Codex",
+check("javis_connections lists them on Codex",
       [c["connector"] for c in cj if c.get("source") == "codex_config"] == ["composio", "notion"])
 check("the Codex hub profile tells the hub it is Codex",
       'X-Jeevi-Engine" = "codex"' in open(mcp_hub.codex_profile_path(), encoding="utf-8").read()
@@ -211,32 +211,32 @@ _h = os.environ["HOME"]
 os.makedirs(os.path.join(_h, ".grok"), exist_ok=True)
 with open(os.path.join(_h, ".grok", "config.toml"), "w", encoding="utf-8") as f:
     f.write('[mcp_servers.composio]\nurl = "https://connect.composio.dev/mcp"\n\n'
-            '[mcp_servers.jeevi]\nurl = "http://127.0.0.1/hub/mcp"\n')
+            '[mcp_servers.javis]\nurl = "http://127.0.0.1/hub/mcp"\n')
 os.makedirs(os.path.join(_h, ".gemini", "config"), exist_ok=True)
 with open(os.path.join(_h, ".gemini", "config", "mcp_config.json"), "w", encoding="utf-8") as f:
     json.dump({"mcpServers": {"notion": {"serverUrl": "https://mcp.notion.com/mcp"},
                               "cu": {"command": "x", "disabled": True},
-                              "jeevi": {"serverUrl": "http://127.0.0.1/hub/mcp"}}}, f)
+                              "javis": {"serverUrl": "http://127.0.0.1/hub/mcp"}}}, f)
 check("_ambient_kind knows grok and antigravity",
       mcp_hub._ambient_kind("grok") == "grok" and mcp_hub._ambient_kind("antigravity") == "antigravity")
 gx = mcp_hub._ambient_for("grok")
-check("Grok: ~/.grok/config.toml read, jeevi left out", [s["name"] for s in gx] == ["composio"], gx)
+check("Grok: ~/.grok/config.toml read, javis left out", [s["name"] for s in gx] == ["composio"], gx)
 ax = mcp_hub._ambient_for("antigravity")
-check("Antigravity: mcp_config.json read, jeevi and disabled left out", [s["name"] for s in ax] == ["notion"], ax)
+check("Antigravity: mcp_config.json read, javis and disabled left out", [s["name"] for s in ax] == ["notion"], ax)
 check("Grok and Antigravity are not given a made-up mcp__ pattern",
       mcp_hub._amb_tools(gx[0]) == "tool của MCP 'composio'" and mcp_hub._amb_tools(ax[0]) == "tool của MCP 'notion'")
 check("Codex keeps its mcp__ pattern", mcp_hub._amb_tools(cx[0]) == "mcp__composio__*")
 _t, rr = mcp_hub._lazy_tools_and_route([], {}, pool, route, 8, ambient=ax)
-ans = json.loads(asyncio.run(rr["jeevi_search_tools"]["call"]({"query": "tạo trang notion"})))
+ans = json.loads(asyncio.run(rr["javis_search_tools"]["call"]({"query": "tạo trang notion"})))
 check("an Antigravity search names its own Notion server",
       [a["connector"] for a in ans.get("antigravity_rieng", [])] == ["notion"], ans.get("antigravity_rieng"))
 check("... with the Antigravity hint", "mcp_config.json" in ans["antigravity_rieng"][0]["goi_the_nao"])
 cj = json.loads(mcp_hub._connections_json(include_ambient="grok"))
-check("jeevi_connections lists Grok's own servers",
+check("javis_connections lists Grok's own servers",
       [c["connector"] for c in cj if c.get("source") == "grok_config"] == ["composio"])
 _agy = mcp_hub.antigravity_config_path("full", None)
 check("the Antigravity hub file tells the hub it is Antigravity",
-      json.load(open(_agy, encoding="utf-8"))["mcpServers"]["jeevi"]["headers"].get("X-Jeevi-Engine") == "antigravity")
+      json.load(open(_agy, encoding="utf-8"))["mcpServers"]["javis"]["headers"].get("X-Jeevi-Engine") == "antigravity")
 
 print()
 if _fails:

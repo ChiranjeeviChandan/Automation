@@ -274,7 +274,7 @@ def _branch_taken(wt: str, name: str, cur: str) -> bool:
 
 
 def _final_branch(sid: str, repo: Dict[str, Any], title: str) -> str:
-    """`jeevi/<slug>-<id6>` decided at the first push (spec 6); after that the branch never changes.
+    """`javis/<slug>-<id6>` decided at the first push (spec 6); after that the branch never changes.
 
     The name is always one Jeevi can push to without overwriting anything: when the chosen name is taken locally or
     on GitHub by other history, `-2`, `-3`... is added. Jeevi never force-pushes, so a clash used to stop the job with
@@ -284,7 +284,7 @@ def _final_branch(sid: str, repo: Dict[str, Any], title: str) -> str:
     cur = github_repos.git_out(["rev-parse", "--abbrev-ref", "HEAD"], wt)
     short = github_repos.session_branch(sid)
     slug = _slug(title)
-    want = f"jeevi/{slug}-{short.split('/', 1)[1][:6]}" if (cur == short and slug) else cur
+    want = f"javis/{slug}-{short.split('/', 1)[1][:6]}" if (cur == short and slug) else cur
     name = want
     for n in range(2, 60):
         if not _branch_taken(wt, name, cur):
@@ -441,7 +441,7 @@ def ship(sid: str, brain: str, repo: Dict[str, Any], report: Dict[str, Any]) -> 
     sha = commit_all(repo["worktree"], f"{title[:72]}\n\nJeevi chat {sid[:8]}")
     # The branch is fixed once a push to it went through. A name stored by a push that never did (GitHub held other
     # history under it, or a row from before the clash check) is not ours yet: decide again, else every retry and
-    # the "Push again" button hit the same taken name forever (jeevios-blog, 14/11/2026).
+    # the "Push again" button hit the same taken name forever (javisos-blog, 14/11/2026).
     branch = row.get("branch") if (row.get("head_sha") or row.get("pr_number")) else ""
     branch = branch or _final_branch(sid, repo, title)
     if branch != row.get("branch"):
@@ -827,7 +827,7 @@ def _ci_snapshot(row: Dict[str, Any]) -> Dict[str, Any]:
 
 
 # Why a red job came with no log. The fix turn used to get only a link, and the engine went looking for a bug in code
-# that builds fine (owner, 23/11/2026: jeevios-blog PR #58, a private repo whose job left no log at all).
+# that builds fine (owner, 23/11/2026: javisos-blog PR #58, a private repo whose job left no log at all).
 NO_LOG_DENIED = ("GitHub từ chối cho đọc log của job này (GitHub {status}): token GitHub của Jeevi thiếu quyền Actions "
                  "(Read). Người dùng cấp thêm ở thẻ GitHub trên trang Kết nối. Không có log thì đừng đoán lỗi trong code.")
 NO_LOG_NEVER_RAN = ("GitHub không có log cho job này: job gần như chắc chưa hề chạy (repo private hết phút GitHub "

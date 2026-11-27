@@ -24,7 +24,7 @@ from fastapi.testclient import TestClient
 import my_tasks  # noqa: E402
 
 fails = []
-roots = {"brain": Path(tempfile.mkdtemp(prefix="jeevi-tag-a-")), "other": Path(tempfile.mkdtemp(prefix="jeevi-tag-b-"))}
+roots = {"brain": Path(tempfile.mkdtemp(prefix="javis-tag-a-")), "other": Path(tempfile.mkdtemp(prefix="javis-tag-b-"))}
 
 
 def check(name, cond):

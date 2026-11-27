@@ -14,7 +14,7 @@ import time
 import asyncio
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-turnfiles-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-turnfiles-"))
 
 import channel_context  # noqa: E402
 from telegram_bot import TelegramBot  # noqa: E402
@@ -29,10 +29,10 @@ def check(name, cond):
 
 
 # ---- Vault tạm với attachments/ + 1 ảnh vừa tạo ----
-vault = Path(tempfile.mkdtemp(prefix="jeevi-vault-"))
+vault = Path(tempfile.mkdtemp(prefix="javis-vault-"))
 adir = vault / "attachments"
 adir.mkdir(parents=True, exist_ok=True)
-img = adir / "jeevi-img-20260720-abc123.png"
+img = adir / "javis-img-20260720-abc123.png"
 img.write_bytes(b"\x89PNG\r\n\x1a\n" + b"0" * 64)   # PNG giả, đủ để is_file + size > 0
 img_abs = os.path.normpath(str(img))
 t0 = time.time() - 1   # ảnh vừa tạo (mtime >= t0-2)
@@ -57,7 +57,7 @@ out4 = channel_context.collect_turn_files(reply_url, [], t0, cwd=os.getcwd(), va
 check("URL không bị thu làm file", out4 == [])
 
 # ---- 5. Chống thoát vault: ../ ra ngoài KHÔNG được nhận ----
-outside = Path(tempfile.mkdtemp(prefix="jeevi-outside-")) / "secret.txt"
+outside = Path(tempfile.mkdtemp(prefix="javis-outside-")) / "secret.txt"
 outside.write_text("bí mật", encoding="utf-8")
 rel_escape = os.path.relpath(outside, vault).replace(os.sep, "/")
 reply_escape = f"tài liệu ![x]({rel_escape})"

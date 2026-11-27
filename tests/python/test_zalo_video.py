@@ -16,7 +16,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zvid-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zvid-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -49,7 +49,7 @@ raw = {"id": "m1", "threadId": "t1", "threadType": "dm", "senderId": "t1", "send
        "text": URL, "timestamp": int(time.time() * 1000), "type": "chat.video.msg",
        "attachment": {"type": "chat.video.msg", "url": URL, "description": ""}}
 e = zc.chuan_hoa_tin(CONN, raw, {"t1": {"name": "Hoàng Lâm Vũ", "type": "dm"}})
-check("a jeevi-zalo video message is a 'video' event", e and e["message_type"] == "video", e)
+check("a javis-zalo video message is a 'video' event", e and e["message_type"] == "video", e)
 check("CANARY: its link is kept in metadata.video_url", e and e["metadata"].get("video_url") == URL, e)
 
 
@@ -75,7 +75,7 @@ check("a video alone -> a 'video' turn", g["message_type"] == "video" and g["met
 # ============================================================
 # 3. video_vision on a real clip (ffmpeg makes it; the download is local)
 # ============================================================
-tmp = Path(tempfile.mkdtemp(prefix="jeevi-zvid-clip-"))
+tmp = Path(tempfile.mkdtemp(prefix="javis-zvid-clip-"))
 clip = tmp / "clip.mp4"
 HAS_FFMPEG = vv.available()
 if HAS_FFMPEG:

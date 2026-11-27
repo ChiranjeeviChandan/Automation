@@ -114,35 +114,35 @@ def build_channel_block(source: str, meta: dict = None, telegram_running: bool =
         "do not cling to the literal misheard word and do not comment on it. Ask back only when a wrong "
         "guess would do harm (numbers, recipients, outside actions).",
         "- When the user asks about the CURRENT state of a cron job, recurring job, reminder or medication "
-        "schedule: you MUST call `jeevi_schedule` with `op=list` before answering. Do not infer it from "
+        "schedule: you MUST call `javis_schedule` with `op=list` before answering. Do not infer it from "
         "memory or the index, and do not say \"there is no tool\" while this tool is in your list.",
         "- When the user asks to CREATE/EDIT/DELETE/CANCEL/TURN OFF a cron job, recurring job or reminder: "
-        "you MUST use `jeevi_schedule`. To delete or cancel without an id, call `op=list`, match the exact "
+        "you MUST use `javis_schedule`. To delete or cancel without an id, call `op=list`, match the exact "
         "item, then call `op=cancel`; do not send the user to the Tasks page (Nhiệm vụ) to do it "
         "themselves, and confirm only after the tool returns success. If the tool fails: do NOT call "
         "DELETE, do NOT guess a JSON body and NEVER edit `Jeevi/reminders.json` directly - doing so can "
         "cancel the wrong job.",
         "- SCHEDULE ONLY WHEN THE PRECONDITIONS HOLD: before creating any schedule or recurring job, check "
         "that everything it needs will be there when it runs - are the data sources connected "
-        "(Gmail/Calendar/POS... check with `jeevi_connections`), and is there a channel to REPORT the "
+        "(Gmail/Calendar/POS... check with `javis_connections`), and is there a channel to REPORT the "
         "result to. If something is missing, SAY exactly what and ask whether the user wants to connect "
         "it first or create it anyway; NEVER create it just to be done and then stay silent while it "
         "fails every day without the user knowing.",
-        "- Call `jeevi_schedule` ONLY on a clear command to read/create/edit/delete Jeevi's own automatic "
+        "- Call `javis_schedule` ONLY on a clear command to read/create/edit/delete Jeevi's own automatic "
         "schedules. If the user merely mentions \"scheduling\", a booking, a one-to-one consultation or an "
         "appointment, or is asking for an opinion on a product, UX or marketing, that is an ordinary "
         "conversation: answer the question, NO `op=list`, NO listing of crons or reminders and NO "
         "schedule created on your own.",
         "- For any live data or data in outside accounts (MCP/Google/POS...): call the matching tool, or "
-        "`jeevi_connections` / `jeevi_search_tools` to find one. If the tool really fails, state the exact "
+        "`javis_connections` / `javis_search_tools` to find one. If the tool really fails, state the exact "
         "error you just got; do not make up a state from old context.",
         "- DO NOT PROMISE WHAT YOU CANNOT DO. Your turn ENDS the moment you finish speaking: nobody wakes "
         "you up to finish, and you do NOT keep running in the background. So NEVER say things like "
         "\"I'm looking into it, I'll report as soon as I have the result\", \"I'll get back to you when "
         "it's done\", \"give me a moment\", \"I'll wait and then summarize\", in any language and any "
         "form of address. There are only two right paths: (1) DO IT NOW in this turn and give the real "
-        "result, or (2) hand it off as background work (`jeevi_task` op=add) or a reminder "
-        "(`jeevi_schedule`) and say clearly what was handed off and where the result will land. If "
+        "result, or (2) hand it off as background work (`javis_task` op=add) or a reminder "
+        "(`javis_schedule`) and say clearly what was handed off and where the result will land. If "
         "neither is possible, say plainly it has not been done; do not promise.",
         "- QUEUE BACKGROUND WORK ONLY WHEN THE USER ASKS FOR IT. The Kanban queue is where a job the user "
         "just asked for, one this turn cannot finish, RUNS; it is NOT a to-do list. Plans, "
@@ -158,17 +158,17 @@ def build_channel_block(source: str, meta: dict = None, telegram_running: bool =
         "says orchestration is OFF, the job only sits in the queue and is not running yet: say exactly "
         "that and tell the user to turn on \"AI self-driving\" (\"AI tự vận hành\" in Vietnamese) on the "
         "Tasks page; NEVER shorten it to \"the job is running, the result will come back on its own\".",
-        "- ADDING AN MCP / connecting a new source: you MUST use tool `jeevi_add_mcp` (op=find to look in "
+        "- ADDING AN MCP / connecting a new source: you MUST use tool `javis_add_mcp` (op=find to look in "
         "the Connection store first, op=add to connect). Only this path puts the new source in Jeevi's "
         "store, SHOWS it in the 'Connected' section of the Connections page (Kết nối) for the user to "
         "see, and lets every brain share it. NEVER add one with `claude mcp add` / `codex mcp add` and "
         "never hand-edit an MCP config file: that way only one CLI sees it, and the user looks at the "
-        "Connections page and thinks nothing was added. If `jeevi_add_mcp` is not in your tool list, it "
-        "sits behind `jeevi_search_tools`: find it, then call it through `jeevi_run_tool`; do not "
+        "Connections page and thinks nothing was added. If `javis_add_mcp` is not in your tool list, it "
+        "sits behind `javis_search_tools`: find it, then call it through `javis_run_tool`; do not "
         "conclude it cannot be done. Once added, SAY CLEARLY that it is on the Connections page, whether "
         "it is on or off, and at which permission level.",
         "- A Jeevi tool that Codex refuses (\"requires approval\") is fixed in Jeevi, not by you: never write a "
-        "`mcp_servers.jeevi` entry into `~/.codex/config.toml`; one without `url` stops Codex from loading.",
+        "`mcp_servers.javis` entry into `~/.codex/config.toml`; one without `url` stops Codex from loading.",
     ]
     if source == "telegram":
         who = (meta.get("user_name") or "").strip() or "user"
@@ -212,7 +212,7 @@ def build_channel_block(source: str, meta: dict = None, telegram_running: bool =
             "When the user wants to be REMINDED at some point (\"remind me in 30 minutes...\", \"remind me "
             "at 8:30 tomorrow morning...\", \"remind me to take my medicine every morning at 7\", \"report "
             "today's revenue at 9pm\").",
-            "- PREFERRED: call tool `jeevi_schedule` (op=create) - it attaches this session's brain BY "
+            "- PREFERRED: call tool `javis_schedule` (op=create) - it attaches this session's brain BY "
             "ITSELF, so the reminder cannot land in the wrong brain. Use the curl below only if the tool "
             "cannot be called for some reason.",
             "- The curl way (if needed): use the Bash tool to call "
@@ -247,7 +247,7 @@ def build_channel_block(source: str, meta: dict = None, telegram_running: bool =
             "BRIEFLY in words (e.g. \"OK, I'll remind you at 8:30 tomorrow morning\"). Do NOT say it is set "
             "unless curl returned ok=true.",
             "",
-            "## Fallback to CANCEL a reminder when jeevi_schedule really fails",
+            "## Fallback to CANCEL a reminder when javis_schedule really fails",
             "- Use this fallback only for a reminder whose id looks like `r_...`; a loop or recurring file "
             "must stop and report the exact tool error, never edit or delete the file yourself.",
             "- No id yet: read the real list with "
@@ -303,7 +303,7 @@ def build_channel_block(source: str, meta: dict = None, telegram_running: bool =
             "message.",
             "",
             "## Setting reminders and queuing background work",
-            "- Reminders: call tool `jeevi_schedule` (op=create). It attaches this session's brain by itself.",
+            "- Reminders: call tool `javis_schedule` (op=create). It attaches this session's brain by itself.",
             f"- Loop and Kanban results must reach the RIGHT person asking: set `owner_chat: "
             f"\"{chat_id}\"` on a loop, or the field \"chat_id\":\"{chat_id}\" when you POST "
             f"http://127.0.0.1:{port}/kanban/task. Keep the `zalo:` prefix INTACT - that is what the "
@@ -337,7 +337,7 @@ def build_channel_block(source: str, meta: dict = None, telegram_running: bool =
             "message.",
             "",
             "## Setting reminders and queuing background work",
-            "- Reminders: call tool `jeevi_schedule` (op=create). It attaches this session's brain by itself.",
+            "- Reminders: call tool `javis_schedule` (op=create). It attaches this session's brain by itself.",
             f"- Loop and Kanban results must reach the RIGHT person asking: set `owner_chat: "
             f"\"{chat_id}\"` on a loop, or the field \"chat_id\":\"{chat_id}\" when you POST "
             f"http://127.0.0.1:{port}/kanban/task. Keep the `{tien_to}` prefix INTACT - that is what the "
@@ -384,7 +384,7 @@ def build_channel_block(source: str, meta: dict = None, telegram_running: bool =
             "- This channel CAN DRAW tables, so use one when comparing the same set of fields across 2 or "
             "more items. For a flat list, bullets read faster than a table.",
             "- Interactive cards (only this chat draws them; other channels fall back to text): insert a "
-            "hidden block `<!-- JEEVI_CARD: {...} -->` with one line of JSON. `{\"type\":\"chart\",\"title\","
+            "hidden block `<!-- JAVIS_CARD: {...} -->` with one line of JSON. `{\"type\":\"chart\",\"title\","
             "\"kind\":\"bar|line\",\"labels\":[..],\"series\":[{\"name\",\"data\":[numbers]}]}` for trends "
             "by day or week; `{\"type\":\"stats\",\"items\":[{\"label\",\"value\",\"delta\"}]}` for a few key "
             "numbers; `{\"type\":\"buttons\",\"buttons\":[{\"label\",\"reply\"}]}` (at most 4) when the owner "
@@ -398,7 +398,7 @@ def build_channel_block(source: str, meta: dict = None, telegram_running: bool =
             "",
             "## Controlling the dashboard and the computer by voice (Voice V1)",
             "- The user asks to OPEN a page / file / job in Jeevi (\"open the Tasks page\", \"open file X\", "
-            "\"show the job I just queued\", \"scroll down\"): call tool `jeevi_ui` (action open_page | "
+            "\"show the job I just queued\", \"scroll down\"): call tool `javis_ui` (action open_page | "
             "open_file | open_task | scroll), then report exactly what the tool returned. Do not describe "
             "where to click when the tool can do it.",
             "- \"scroll down\" scrolls WHAT THEY ARE LOOKING AT, not always the chat: pass target "
@@ -406,7 +406,7 @@ def build_channel_block(source: str, meta: dict = None, telegram_running: bool =
             "or `page_top`/`page_bottom` only when the user says which one. The tool returns what it "
             "actually scrolled; report according to that.",
             "- The user asks to OPEN or CLOSE an app on the computer (\"open Chrome\", \"close Excel\", "
-            "\"which apps are open\"): call `jeevi_app_open` / `jeevi_app_close` / `jeevi_app_list`. The "
+            "\"which apps are open\"): call `javis_app_open` / `javis_app_close` / `javis_app_list`. The "
             "tool says so itself when Jeevi runs on a server rather than the user's computer; then report "
             "exactly that. Closing an app happens right away as the user wants; pass `force=true` only when "
             "they say to force it.",
@@ -469,7 +469,7 @@ def build_channel_block(source: str, meta: dict = None, telegram_running: bool =
                 "-H \"Content-Type: application/json\" "
                 "-d '{\"path\":\"<absolute path>\",\"caption\":\"...\"}'`",
                 "- If the user wants to be REMINDED later (\"remind me in 30 minutes...\", \"8am tomorrow...\"): "
-                "preferably call tool `jeevi_schedule` (op=create) so the reminder lands in the RIGHT brain "
+                "preferably call tool `javis_schedule` (op=create) so the reminder lands in the RIGHT brain "
                 "selected; or use the Bash tool to call "
                 f"`curl -s -X POST http://127.0.0.1:{port}/reminders -H \"Content-Type: application/json\" "
                 f"-d '{{\"text\":\"<reminder text>\",{brain_kv}\"delay_min\":30}}'` (or \"at\":\"HH:MM\" / "
@@ -724,18 +724,18 @@ def collect_turn_files(reply_text: str, written_paths: list, t0: float,
 # Hạ khối điều khiển xuống chữ cho kênh không phải web
 # ============================================================
 # Jeevi nhúng khối điều khiển dạng HTML comment ở cuối câu trả lời cho dashboard
-# đọc (hiện chỉ còn JEEVI_ASK - vẽ nút lựa chọn). Kênh chữ thuần như Telegram không
+# đọc (hiện chỉ còn JAVIS_ASK - vẽ nút lựa chọn). Kênh chữ thuần như Telegram không
 # hiểu mấy khối này, mà md_to_mdv2 chỉ escape chứ không bóc, nên không lọc là người
 # dùng nhìn thấy nguyên cụm "<\!\-\- JEEVI\_ASK: ...".
-# Regex để CHUNG cho mọi JEEVI_*, không liệt kê từng tên: khối lạ (vd JEEVI_METRICS
+# Regex để CHUNG cho mọi JAVIS_*, không liệt kê từng tên: khối lạ (vd JAVIS_METRICS
 # thời còn bảng số liệu, hoặc ký ức cũ trong brain còn nhắc) thì lặng lẽ rơi mất
 # thay vì lọt nguyên xi ra chat.
-_CTRL_RE = re.compile(r"<!--\s*JEEVI_([A-Z_]+):\s*([\s\S]*?)\s*-->")
+_CTRL_RE = re.compile(r"<!--\s*JAVIS_([A-Z_]+):\s*([\s\S]*?)\s*-->")
 _MAX_ASK_OPTS = 4
 
 
 def _ask_to_text(payload: str) -> str:
-    """JSON của khối JEEVI_ASK -> câu hỏi + danh sách đánh số. JSON hỏng -> chuỗi rỗng.
+    """JSON của khối JAVIS_ASK -> câu hỏi + danh sách đánh số. JSON hỏng -> chuỗi rỗng.
 
     Người dùng Telegram nhắn lại "1" là xong: Jeevi đọc "1" trong ngữ cảnh câu hỏi
     vừa hỏi thì tự hiểu, không cần lưu state.
@@ -779,9 +779,9 @@ def is_silent_report(text: str) -> bool:
 
 
 def strip_control_blocks(text: str) -> str:
-    """Bóc mọi khối <!-- JEEVI_*: ... --> khỏi text.
+    """Bóc mọi khối <!-- JAVIS_*: ... --> khỏi text.
 
-    JEEVI_ASK -> thay bằng câu hỏi + danh sách đánh số. Khối khác -> bỏ hẳn.
+    JAVIS_ASK -> thay bằng câu hỏi + danh sách đánh số. Khối khác -> bỏ hẳn.
     Khối sai cú pháp cũng bị bỏ: một khối hỏng KHÔNG được phép nuốt mất câu trả lời.
     """
     def _sub(m):

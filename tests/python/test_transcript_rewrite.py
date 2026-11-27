@@ -21,7 +21,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-rewrite-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-rewrite-"))
 
 import main  # noqa: E402
 import nghe_sua  # noqa: E402
@@ -114,8 +114,8 @@ transcript_fix._ask_quick_api = fake_quick
 res = run({"model": {"groq_api_key": "gk"}}, "kiểm tra giúp anh travis đã nghe được chưa")
 check("Groq key with a CLI main brain: Groq rewrites", res["source"] == "groq" and quick == ["groq"]
       and res["text"] == "Kiểm tra giúp anh Jeevi đã nghe được chưa.")
-res = run({}, "kiểm tra giúp anh jeevi đã nghe được chưa")
-check("no model at all: the word rules still run (Jeevi -> Jeevi)",
+res = run({}, "kiểm tra giúp anh gi vi đã nghe được chưa")
+check("no model at all: the word rules still run (gi vi -> Jeevi)",
       res["source"] == "rules" and "Jeevi" in res["text"])
 
 

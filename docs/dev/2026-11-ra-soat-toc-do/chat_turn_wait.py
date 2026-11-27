@@ -45,7 +45,7 @@ def main(argv=None) -> int:
     ap.add_argument("--days", type=float, default=0, help="only the last N days (0 = everything on record)")
     ap.add_argument("--db", default="")
     a = ap.parse_args(argv)
-    db = Path(a.db or Path(os.environ.get("JEEVI_STATE_DIR") or ".") / "runtime.db")
+    db = Path(a.db or Path(os.environ.get("JAVIS_STATE_DIR") or ".") / "runtime.db")
     con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
     since = time.time() - a.days * 86400 if a.days else 0
 

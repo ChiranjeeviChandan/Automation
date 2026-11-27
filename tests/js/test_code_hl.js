@@ -7,7 +7,7 @@
    noi, con tro mot neo. Loi kieu do khong bao gio nem exception nen chi co test nay bat duoc. */
 "use strict";
 
-global.window = {};   // co window -> module gan window.JeeviCodeHL; van giu module.exports
+global.window = {};   // co window -> module gan window.JavisCodeHL; van giu module.exports
 const HL = require("../../dashboard/code-hl.js");
 
 let fails = [];
@@ -77,13 +77,13 @@ roundTrip("HTML rong", "", "html");
 check("HTML rong tra chuoi rong", HL.highlight("", "html") === "");
 
 // ---------------------------------------------------------------- ruot <script> giao cho bo chung
-global.window.JeeviHighlight = function (code) { return "[[JS:" + code + "]]"; };
+global.window.JavisHighlight = function (code) { return "[[JS:" + code + "]]"; };
 check("ruot <script> giao cho bo to mau chung",
       HL.highlight("<script>var x=1;<\/script>", "html").indexOf("[[JS:var x=1;]]") >= 0);
-global.window.JeeviHighlight = function () { throw new Error("hong"); };
+global.window.JavisHighlight = function () { throw new Error("hong"); };
 check("bo chung nem loi thi khong keo sap ca file",
       HL.highlight("<script>var x=1;<\/script>", "html").indexOf("var x=1;") >= 0);
-delete global.window.JeeviHighlight;
+delete global.window.JavisHighlight;
 
 // ---------------------------------------------------------------- CSS
 const CSS = ".hop, #id { color: #ff8800; margin: 12px 0; }\n/* chu thich */\n@media (max-width:700px){ .a{display:none} }";
@@ -117,7 +117,7 @@ check("code null khong no", HL.highlight(null, "html") === "");
 
 // ---------------------------------------------------------------- da dau day chua
 // Bo to mau chay dung chi khi CA BA cho cung khop nhau. Moi cho deu im lang khi hong: quen
-// the <script> thi window.JeeviCodeHL khong ton tai va ca hai trinh sua nuot loi trong
+// the <script> thi window.JavisCodeHL khong ton tai va ca hai trinh sua nuot loi trong
 // try/catch; quen goi attach thi o sua van sua duoc, chi la khong co mau. Khong ai nhan ra.
 const fs = require("fs");
 const path = require("path");
@@ -126,11 +126,11 @@ const doc = (p) => fs.readFileSync(path.join(goc, p), "utf8");
 
 const indexHtml = doc("dashboard/index.html");
 check("index.html co nap code-hl.js", /<script src="\/static\/code-hl\.js\?v=/.test(indexHtml));
-check("code-hl.js nap SAU chat-render.js (can window.JeeviHighlight)",
+check("code-hl.js nap SAU chat-render.js (can window.JavisHighlight)",
       indexHtml.indexOf("/static/code-hl.js") > indexHtml.indexOf("/static/chat-render.js"));
-check("chat-render.js phoi window.JeeviHighlight", /window\.JeeviHighlight\s*=/.test(doc("dashboard/chat-render.js")));
-check("trinh sua dinh (console.js) goi attach", /JeeviCodeHL\.attach\(/.test(doc("dashboard/console.js")));
-check("khung sua bung giua (file-editor.js) goi attach", /JeeviCodeHL\.attach\(/.test(doc("dashboard/file-editor.js")));
+check("chat-render.js phoi window.JavisHighlight", /window\.JavisHighlight\s*=/.test(doc("dashboard/chat-render.js")));
+check("trinh sua dinh (console.js) goi attach", /JavisCodeHL\.attach\(/.test(doc("dashboard/console.js")));
+check("khung sua bung giua (file-editor.js) goi attach", /JavisCodeHL\.attach\(/.test(doc("dashboard/file-editor.js")));
 check("khung sua bung giua co nut Mo tab moi", /function openLink\(/.test(doc("dashboard/file-editor.js")));
 
 const css = doc("dashboard/style.css");

@@ -20,7 +20,7 @@ def check(name, cond):
         fails.append(name)
 
 
-root = Path(tempfile.mkdtemp(prefix="jeevi-receipt-"))
+root = Path(tempfile.mkdtemp(prefix="javis-receipt-"))
 (root / "Jeevi" / "loops").mkdir(parents=True)
 (root / "agents").mkdir()
 (root / "skills" / "old").mkdir(parents=True)
@@ -52,8 +52,8 @@ check("new skill name unquoted", by.get(("skill", "viet-email"), {}).get("title"
 check("old skill untouched not listed", ("skill", "old") not in by)
 
 block = cr.receipt_block(items, "/brains/shop")
-check("block shape", block.startswith("<!-- JEEVI_DOI: ") and block.endswith(" -->"))
-data = json.loads(block[len("<!-- JEEVI_DOI: "):-4])
+check("block shape", block.startswith("<!-- JAVIS_DOI: ") and block.endswith(" -->"))
+data = json.loads(block[len("<!-- JAVIS_DOI: "):-4])
 check("block carries brain and items", data["brain"] == "/brains/shop" and len(data["items"]) == len(items))
 check("block cannot be closed early by a title", "-->" not in cr.receipt_block(
     [{"kind": "loop", "id": "x", "title": "evil --> <script>", "act": "new"}], "b")[:-4])

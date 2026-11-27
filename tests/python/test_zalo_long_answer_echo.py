@@ -3,7 +3,7 @@
     python tests/run.py zalo_long_answer_echo      (no network, no MCP)
 
 #1734 (0.627.0): a personal-Zalo bot sent a long answer, Zalo got it as two messages. About 90 s later the history
-catch-up (`zalo_personal_channel.catch_up`) found the second part in jeevi-zalo's `history.jsonl` and wrote it as the
+catch-up (`zalo_personal_channel.catch_up`) found the second part in javis-zalo's `history.jsonl` and wrote it as the
 OWNER's message ("recovered": true), so `_TAY` was set and the bot stayed out of that chat for `nhuong_tay_phut`:
 the next two customer messages got no answer. The answer's inbox row is ONE message holding only the first part's id
 (`attach_echo_id`), and `_own_already_stored` skipped rows that have an id and only matched equal or same-start text.
@@ -25,7 +25,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zlongecho-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zlongecho-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -70,7 +70,7 @@ tt["ten"] = {c: {"name": "Khach " + c, "type": "dm"} for c in CHATS}
 
 
 def hist(mid, chat, text, seconds_ago, self_=False, kind="text"):
-    """One message as jeevi-zalo files it (the live feed hands over the same shape)."""
+    """One message as javis-zalo files it (the live feed hands over the same shape)."""
     return {"msgId": str(mid), "threadId": chat, "threadType": "dm", "senderId": "me" if self_ else "u-" + chat,
             "senderName": "Me" if self_ else "Khach " + chat, "isSelf": self_, "text": text,
             "timestamp": int((NOW - seconds_ago) * 1000), "type": kind}

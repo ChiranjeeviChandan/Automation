@@ -24,7 +24,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ghi-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ghi-")
 # A machine with no git identity: no global or system config, and git may not guess one from the login name.
 for name in ("GIT_AUTHOR_NAME", "GIT_AUTHOR_EMAIL", "GIT_COMMITTER_NAME", "GIT_COMMITTER_EMAIL", "EMAIL"):
     os.environ.pop(name, None)
@@ -38,7 +38,7 @@ except Exception:
 from _fake_github import FakeGitHub, GOOD_TOKEN, git  # noqa: E402
 
 fake = FakeGitHub()
-os.environ["JEEVI_GITHUB_API"] = fake.url
+os.environ["JAVIS_GITHUB_API"] = fake.url
 
 import github_repos  # noqa: E402
 import github_store  # noqa: E402

@@ -10,8 +10,8 @@ from _paths import ROOT, SERVER  # noqa: E402,F401
 import os
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-vpersona-")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-vpersona-brains-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-vpersona-")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-vpersona-brains-")
 
 import main  # noqa: E402
 import voice_brain  # noqa: E402
@@ -68,14 +68,14 @@ check("opt-in voice rules survive clipping without duplicate markers",
 check("incomplete voice marker preserves original body",
       voice_persona._priority_body("text " + voice_persona.VOICE_RULES_START) == "text " + voice_persona.VOICE_RULES_START)
 from unittest.mock import patch
-with patch.dict(os.environ, {"JEEVI_VOICE_AGENT_BODY_CHARS": "18000",
-                              "JEEVI_VOICE_AGENT_MEMORY_CHARS": "999999"}):
+with patch.dict(os.environ, {"JAVIS_VOICE_AGENT_BODY_CHARS": "18000",
+                              "JAVIS_VOICE_AGENT_MEMORY_CHARS": "999999"}):
     check("voice budgets support bounded environment overrides",
-          voice_persona._env_budget("JEEVI_VOICE_AGENT_BODY_CHARS", 12000, 24000) == 18000
-          and voice_persona._env_budget("JEEVI_VOICE_AGENT_MEMORY_CHARS", 6000, 12000) == 12000)
-with patch.dict(os.environ, {"JEEVI_VOICE_AGENT_BODY_CHARS": "invalid"}):
+          voice_persona._env_budget("JAVIS_VOICE_AGENT_BODY_CHARS", 12000, 24000) == 18000
+          and voice_persona._env_budget("JAVIS_VOICE_AGENT_MEMORY_CHARS", 6000, 12000) == 12000)
+with patch.dict(os.environ, {"JAVIS_VOICE_AGENT_BODY_CHARS": "invalid"}):
     check("bad override falls back to default",
-          voice_persona._env_budget("JEEVI_VOICE_AGENT_BODY_CHARS", 12000, 24000) == 12000)
+          voice_persona._env_budget("JAVIS_VOICE_AGENT_BODY_CHARS", 12000, 24000) == 12000)
 check("custom prompt without the opening gets the block in front",
       voice_persona.apply("Một prompt khác.", "A", "BLOCK") == "BLOCK\n\nMột prompt khác.")
 
@@ -137,8 +137,8 @@ check("partner chat prompt says who it is inside Jeevi",
 
 # --- every call path reads it (code reading: these paths run engines) ---
 src = (SERVER / "main.py").read_text(encoding="utf-8")
-ask = src[src.index("async def _voice_ask_jeevi("):src.index("def _live_call_lang(")]
-check("_voice_ask_jeevi runs the turn as the partner", "agent = _voice_agent(conv_sid, brain)" in ask
+ask = src[src.index("async def _voice_ask_javis("):src.index("def _live_call_lang(")]
+check("_voice_ask_javis runs the turn as the partner", "agent = _voice_agent(conv_sid, brain)" in ask
       and "agent=agent" in ask and '"call_lang": call_lang' in ask)
 check("the agent turn of a call gets the voice channel line", 'else "voice" if "call_lang" in (meta or {})' in src)
 route = src[src.index("async def voice_live_ws("):]

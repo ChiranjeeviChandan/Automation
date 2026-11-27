@@ -19,7 +19,7 @@ import os
 import tempfile
 from unittest.mock import patch
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-ollama-team-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-ollama-team-"))
 
 import aux_engine  # noqa: E402
 import engine  # noqa: E402
@@ -43,10 +43,10 @@ SPEC = {"provider": "ollama-local", "model": "qwen2.5-coder:14b"}
 class _Base:
     """The sandboxed Claude engine a Team turn builds before the swap: only what team_engine reads."""
     system_prompt = "Bạn là trợ lý nhóm."
-    allowed_tools = ["jeevi_nothing"]
-    cwd = tempfile.mkdtemp(prefix="jeevi-ollama-team-cwd-")
-    jeevi_vault = None
-    jeevi_mode = "suggest"
+    allowed_tools = ["javis_nothing"]
+    cwd = tempfile.mkdtemp(prefix="javis-ollama-team-cwd-")
+    javis_vault = None
+    javis_mode = "suggest"
     tag = "team-test"
 
 

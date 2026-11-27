@@ -68,8 +68,8 @@ const { create } = require("../../dashboard/screen-awake.js");
   const vi = JSON.parse(read("dashboard/i18n/vi.json"));
   const en = JSON.parse(read("dashboard/i18n/en.json"));
   assert.match(html, /screen-awake\.js\?v=\d+"><\/script>[\s\S]{0,200}<script src="\/static\/app\.js/, "screen-awake.js loads before app.js");
-  assert.match(app, /window\.JeeviScreenAwake\.hold\(\)/, "opening a call keeps the screen on");
-  assert.match(app, /window\.JeeviScreenAwake\.release\(\)/, "hanging up lets the screen sleep");
+  assert.match(app, /window\.JavisScreenAwake\.hold\(\)/, "opening a call keeps the screen on");
+  assert.match(app, /window\.JavisScreenAwake\.release\(\)/, "hanging up lets the screen sleep");
   assert.match(app, /attention\.wakes\(text\)/, "the waiting listener wakes on real speech");
   assert.ok(!/!attention\.accept\(text\)\) return;\s*\n\s*resumeVoiceFocus/.test(app), "the old name-only rule is gone");
   assert.match(app, /function datCheDoGiong\(mode\) \{\s*\n\s*voiceMode = mode;\s*\n\s*attention\.enabled = mode === "live";/,
@@ -79,7 +79,7 @@ const { create } = require("../../dashboard/screen-awake.js");
   assert.ok(!/focus_mode/.test(app), "app.js no longer reads the removed Focus setting");
   assert.match(app, /else if \(!nghe\) batNgheAmLuong\(\);/, "no browser recogniser: fall back to the level detector");
   assert.match(app, /_liveWaitingWake = false;\s*\n\s*tatNgheAmLuong\(\);/, "the level detector releases the mic before Live reopens");
-  assert.match(app, /tatNgheAmLuong\(\);\s*\n\s*if \(window\.JeeviScreenAwake\) window\.JeeviScreenAwake\.release\(\);/,
+  assert.match(app, /tatNgheAmLuong\(\);\s*\n\s*if \(window\.JavisScreenAwake\) window\.JavisScreenAwake\.release\(\);/,
     "hang up stops the level detector and the screen lock");
   assert.ok(!/id="vcFocus"/.test(html) && !/vcFocus/.test(con), "the Focus switch is gone from Settings");
   assert.ok(!("settings.vc_focus" in vi) && !("settings.vc_focus_hint" in en));

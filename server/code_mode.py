@@ -1,14 +1,14 @@
-"""`jeevi_code`: run a short read-only Python script that calls connection tools and returns only what it prints.
+"""`javis_code`: run a short read-only Python script that calls connection tools and returns only what it prints.
 
 Why: Cloudflare's "Code Mode" showed that a model writing a little code against an API spends far fewer tokens than a
 model calling tools one by one, because the intermediate results never pass through the conversation. Jeevi already
-hides tool definitions behind the tool search and shapes large results into views with a ref (jeevi_query). What was
+hides tool definitions behind the tool search and shapes large results into views with a ref (javis_query). What was
 still missing is CHAINING: read orders, then look up each customer, then join with the ad spend, all in one step, with
 only the final numbers coming back. This tool does that.
 
 Hard rules, enforced here and not by the prompt:
   - Read only. A script can only reach connection tools through `call(tool, args)`, and every call must pass
-    `tool_result_tools.is_plain_read` (the same strict test jeevi_query uses for reads Jeevi repeats by itself). The
+    `tool_result_tools.is_plain_read` (the same strict test javis_query uses for reads Jeevi repeats by itself). The
     call then goes through the tool's normal guarded route: permission level, rate limit and audit still apply.
   - Isolated. The script runs in a separate Python process with an empty environment (no keys), a temporary
     working directory, CPU, memory, file-size and process limits, and an audit hook that refuses files, sockets,
@@ -29,7 +29,7 @@ import time
 
 import winproc
 
-TOOL = "jeevi_code"
+TOOL = "javis_code"
 ANSWER_CHARS = 7000
 OUTPUT_CHARS_MAX = 400_000          # what the child may print in total
 CALL_RESULT_MAX = 3_000_000         # one tool result handed to the script
@@ -46,7 +46,7 @@ DESCRIPTION = (
     "`call(tool, args)` calls a read-only connection tool by its exact name (from the tool search) and returns the "
     "parsed JSON (or text); a failed call raises ToolError. Use it to CHAIN reads: page through a period, look up "
     "details for each item, join two sources, then compute and print just the answer, so the raw data never enters "
-    "this conversation. For one call or SQL over one stored result, jeevi_query is simpler. Writes, sends and "
+    "this conversation. For one call or SQL over one stored result, javis_query is simpler. Writes, sends and "
     "outside actions are refused. json, math, re, datetime, statistics and collections are ready; also "
     "importable: itertools, functools, decimal, fractions, heapq, bisect, operator, string, textwrap, unicodedata. "
     "No files, no network, no subprocess. Limits: 40 calls, 120 s. print() only what the owner's answer needs.")
@@ -108,15 +108,15 @@ def _audit(event, args):
     if event == "import":
         name = str(args[0] or "")
         if not any(name == m or name.startswith(m + ".") for m in _ALLOWED):
-            raise ImportError("module '%s' is not available in jeevi_code" % name)
+            raise ImportError("module '%s' is not available in javis_code" % name)
         return
     if event.startswith(_BLOCK):
-        raise PermissionError("jeevi_code is read-only and isolated: '%s' is not allowed" % event)
+        raise PermissionError("javis_code is read-only and isolated: '%s' is not allowed" % event)
 sys.addaudithook(_audit)
 _real_import = builtins.__import__
 def _gated_import(name, globals=None, locals=None, fromlist=(), level=0):
     if level or not any(name == m or name.startswith(m + ".") for m in _ALLOWED):
-        raise ImportError("module '%s' is not available in jeevi_code" % name)
+        raise ImportError("module '%s' is not available in javis_code" % name)
     return _real_import(name, globals, locals, fromlist, level)
 class ToolError(Exception):
     pass
@@ -155,17 +155,17 @@ _safe = {k: getattr(builtins, k) for k in dir(builtins)
 _safe["__import__"] = _gated_import
 _safe["print"] = _print
 _src = _boot["code"]
-linecache.cache["<jeevi_code>"] = (len(_src), None, _src.splitlines(True), "<jeevi_code>")
-_env = {"__builtins__": _safe, "__name__": "__jeevi_code__", "call": call, "ToolError": ToolError}
+linecache.cache["<javis_code>"] = (len(_src), None, _src.splitlines(True), "<javis_code>")
+_env = {"__builtins__": _safe, "__name__": "__javis_code__", "call": call, "ToolError": ToolError}
 for _m in ("json", "math", "re", "datetime", "statistics", "collections"):
     if _m in sys.modules:
         _env[_m] = sys.modules[_m]          # ready without an import: models often forget one
 _err = ""
 try:
-    exec(builtins.compile(_src, "<jeevi_code>", "exec"), _env)
+    exec(builtins.compile(_src, "<javis_code>", "exec"), _env)
 except BaseException as _e:
     _tb = traceback.format_exception(type(_e), _e, _e.__traceback__)
-    _err = "".join(t for t in _tb if "<jeevi_code>" in t or not t.startswith("  File ")).strip()
+    _err = "".join(t for t in _tb if "<javis_code>" in t or not t.startswith("  File ")).strip()
     _err = _err.replace("Traceback (most recent call last):\n", "")
 _text = _out.getvalue()
 if len(_text) > _cap:
@@ -178,8 +178,8 @@ _active = 0
 
 
 def enabled() -> bool:
-    """`mcp.code_mode`: true (default) | false. JEEVI_CODE_MODE=0|1 wins."""
-    v = (os.getenv("JEEVI_CODE_MODE") or "").strip().lower()
+    """`mcp.code_mode`: true (default) | false. JAVIS_CODE_MODE=0|1 wins."""
+    v = (os.getenv("JAVIS_CODE_MODE") or "").strip().lower()
     if v in ("0", "false", "off", "no"):
         return False
     if v in ("1", "true", "on", "yes"):
@@ -264,12 +264,12 @@ async def run(route: dict, code: str, scope: str = "") -> str:
         return _fallback("it is switched off on this install")
     if _active >= MAX_PARALLEL:
         return _fallback(f"{_active} scripts are already running")
-    max_calls = _env_int("JEEVI_CODE_MODE_MAX_CALLS", MAX_CALLS_DEFAULT, 1, 500)
-    wall = _env_int("JEEVI_CODE_MODE_MAX_WALL_S", WALL_S_DEFAULT, 5, 1800)
+    max_calls = _env_int("JAVIS_CODE_MODE_MAX_CALLS", MAX_CALLS_DEFAULT, 1, 500)
+    wall = _env_int("JAVIS_CODE_MODE_MAX_WALL_S", WALL_S_DEFAULT, 5, 1800)
     boot = {"code": code, "max_calls": max_calls, "modules": list(ALLOWED_MODULES), "output_max": OUTPUT_CHARS_MAX,
-            "cpu_s": _env_int("JEEVI_CODE_MODE_CPU_S", CPU_S_DEFAULT, 1, 600),
-            "mem_mb": _env_int("JEEVI_CODE_MODE_MEM_MB", MEM_MB_DEFAULT, 128, 8192)}
-    workdir = await asyncio.to_thread(tempfile.mkdtemp, prefix="jeevi-code-")
+            "cpu_s": _env_int("JAVIS_CODE_MODE_CPU_S", CPU_S_DEFAULT, 1, 600),
+            "mem_mb": _env_int("JAVIS_CODE_MODE_MEM_MB", MEM_MB_DEFAULT, 128, 8192)}
+    workdir = await asyncio.to_thread(tempfile.mkdtemp, prefix="javis-code-")
     started = time.time()
     used: dict = {}
     done = None
@@ -355,10 +355,10 @@ def build(route_ref: dict, scope: str) -> tuple:
         args = args if isinstance(args, dict) else {}
         return await run(route_ref, args.get("code"), str(scope or ""))
 
-    spec = {"fn": TOOL, "server": "jeevi", "name": TOOL, "namespace": "jeevi", "description": DESCRIPTION,
+    spec = {"fn": TOOL, "server": "javis", "name": TOOL, "namespace": "javis", "description": DESCRIPTION,
             "schema": SCHEMA}
     # Not a core tool: it lives behind the tool search, and the search tool's description names it in one line
     # (mcp_hub.CODE_MODE_HINT).
-    entry = {"call": _call, "source_type": "builtin", "source_id": "jeevi",
+    entry = {"call": _call, "source_type": "builtin", "source_id": "javis",
              "effect": "read", "required_mode": "readonly", "health": "healthy"}
     return spec, entry

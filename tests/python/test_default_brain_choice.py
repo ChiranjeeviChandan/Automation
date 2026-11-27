@@ -13,7 +13,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jv-defbrain-state-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="jv-defbrain-state-"))
 BR = Path(tempfile.mkdtemp(prefix="jv-defbrain-brains-")).resolve()
 os.environ["BRAINS_DIR"] = str(BR)
 

@@ -18,7 +18,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-pvault-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-pvault-"))
 
 import plugins_host  # noqa: E402
 import image_gen     # noqa: E402
@@ -32,7 +32,7 @@ def check(name, cond):
         _fails.append(name)
 
 
-_BRAIN = tempfile.mkdtemp(prefix="jeevi-brain-that-")
+_BRAIN = tempfile.mkdtemp(prefix="javis-brain-that-")
 
 # ---- 1. Tiền đề của bug: _resolve_vault rơi về Brain Default khi vault rỗng ----
 # Nếu assert này đỏ thì bug đã được sửa ở nơi khác và test cần viết lại.
@@ -99,18 +99,18 @@ try:
           not (Path(_cwd_khong_phai_brain) / "Jeevi").is_dir())
 
     eng = claude_sdk_engine.ClaudeSDK(cwd=_cwd_khong_phai_brain)
-    eng.jeevi_vault = _BRAIN   # _apply_mcp (main.py) đặt tường minh - KHÔNG suy từ cwd
+    eng.javis_vault = _BRAIN   # _apply_mcp (main.py) đặt tường minh - KHÔNG suy từ cwd
     eng._plugins_server()
-    check("hành vi: plugin_tools nhận đúng brain đã đặt qua jeevi_vault (không None)",
+    check("hành vi: plugin_tools nhận đúng brain đã đặt qua javis_vault (không None)",
           _seen.get("vault_root") == _BRAIN)
 
-    # ---- Hồi quy CHÍNH cho Critical: cwd không phải brain + chưa đặt jeevi_vault ----
+    # ---- Hồi quy CHÍNH cho Critical: cwd không phải brain + chưa đặt javis_vault ----
     # (vd engine mới dựng, _apply_mcp chưa chạy) -> vault_root PHẢI là None, không được suy
     # ngầm từ cwd ra bất kỳ giá trị nào khác - đúng hành vi "chưa biết brain" thay vì "đoán sai".
     eng2 = claude_sdk_engine.ClaudeSDK(cwd=_cwd_khong_phai_brain)
     _seen.clear()
     eng2._plugins_server()
-    check("hồi quy: chưa đặt jeevi_vault -> vault_root None (không suy mù từ cwd)",
+    check("hồi quy: chưa đặt javis_vault -> vault_root None (không suy mù từ cwd)",
           _seen.get("vault_root") is None)
 
     check("hành vi: scope_vault vẫn False (không nạp plugin riêng-của-vault)",

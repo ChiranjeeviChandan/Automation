@@ -3,7 +3,7 @@
     python tests/run.py bot_agent_doc_paths      (no network)
 
 #1699 (0.620.0, Windows, no login): the bot's Agent had its schedule and price file in its Documents section, stored
-as "dự án web/jeevi/brains/Brain Default/wiki/chu-de/lich-hoc-gia-ban-bke.md", yet the bot told the customer it had no
+as "dự án web/javis/brains/Brain Default/wiki/chu-de/lich-hoc-gia-ban-bke.md", yet the bot told the customer it had no
 information. The Documents drawer stores a path from the BROWSE CEILING (`main._files_ceiling`), which is the whole
 drive on a computer without a login, while `chatbot_runtime.bot_doc_files` read it from the brain root: a file that
 does not exist, so the bot had no document at all (`chatbot_grounding._ung_vien` drops a path that is not a file).
@@ -18,7 +18,7 @@ import tempfile
 import unicodedata
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-docpaths-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-docpaths-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -37,7 +37,7 @@ def check(name, cond, extra=""):
 
 
 DRIVE = Path(tempfile.mkdtemp(prefix="drive-")).resolve()       # stands for "D:/"
-BRAIN = DRIVE / "dự án web" / "jeevi" / "brains" / "Brain Default"
+BRAIN = DRIVE / "dự án web" / "javis" / "brains" / "Brain Default"
 FILE = "wiki/chu-de/lich-hoc-gia-ban-bke.md"
 (BRAIN / FILE).parent.mkdir(parents=True)
 (BRAIN / FILE).write_text("# Lịch học và giá bán\nLớp BKE học tối thứ hai và thứ năm, học phí 2.500.000 đồng một khoá.\n",
@@ -60,7 +60,7 @@ def docs(*paths):
     return chatbot_runtime.bot_doc_files(CFG)
 
 
-ceiling_path = "dự án web/jeevi/brains/Brain Default/" + FILE
+ceiling_path = "dự án web/javis/brains/Brain Default/" + FILE
 check("#1699: a path from the drive (the browse ceiling) finds the file in the brain", docs(ceiling_path) == (FILE,),
       docs(ceiling_path))
 check("a path from the brain still works", docs(FILE) == (FILE,), docs(FILE))
@@ -69,15 +69,15 @@ check("an absolute path inside the brain", docs(str(BRAIN / FILE)) == (FILE,), d
 check("a brain copied to another place: the part after the brain's folder name",
       docs("old laptop/brains/Brain Default/" + FILE) == (FILE,), docs("old laptop/brains/Brain Default/" + FILE))
 check("the brain folder name in another Unicode form or case",
-      docs(unicodedata.normalize("NFD", "Dự án web/jeevi/brains/brain default/") + FILE) == (FILE,))
+      docs(unicodedata.normalize("NFD", "Dự án web/javis/brains/brain default/") + FILE) == (FILE,))
 check("several documents keep their order", docs(ceiling_path, "sources/bang-gia.md") == (FILE, "sources/bang-gia.md"))
 
-outside = docs("Brain Default/../../secret.md", "../secret.md", "dự án web/jeevi/brains/Other Brain/note.md",
+outside = docs("Brain Default/../../secret.md", "../secret.md", "dự án web/javis/brains/Other Brain/note.md",
                "Brain Default/../Other Brain/note.md", str(DRIVE / "secret.md"))
 # What comes back stays inside the brain and leads to no file there: the outside files are never reached.
 check("nothing outside the bot's brain gets in",
       all(BRAIN in (BRAIN / p).resolve().parents and not (BRAIN / p).is_file() for p in outside), outside)
-missing = docs("dự án web/jeevi/brains/Brain Default/wiki/gone.md")
+missing = docs("dự án web/javis/brains/Brain Default/wiki/gone.md")
 check("a file that is gone stays a path that leads nowhere (as before)",
       all(not (BRAIN / p).is_file() for p in missing), missing)
 

@@ -22,7 +22,7 @@ import sys
 import tempfile
 import types
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ollama-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ollama-")
 
 import config as cfg  # noqa: E402
 import engine  # noqa: E402

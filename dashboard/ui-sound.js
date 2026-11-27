@@ -6,7 +6,7 @@
 // off means silent everywhere. Quiet on a hidden tab; a browser without Web Audio simply stays silent.
 (function () {
   "use strict";
-  var KEY = "jeevi.sound";
+  var KEY = "javis.sound";
   var AC_ = null, NOISE_ = null;
   function audioCtx() {
     if (AC_ === false) return null;
@@ -95,10 +95,10 @@
     var b = document.getElementById("soundToggle");
     if (b) b.addEventListener("click", toggle);
     sync();
-    window.addEventListener("jeevi:i18n", sync);
+    window.addEventListener("javis:i18n", sync);
     window.addEventListener("storage", function (e) { if (e.key === KEY) sync(); });   // other tabs follow
   }
-  window.JeeviSound = { on: on, set: set, play: play, _sfxPlay: sfxPlay };
+  window.JavisSound = { on: on, set: set, play: play, _sfxPlay: sfxPlay };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

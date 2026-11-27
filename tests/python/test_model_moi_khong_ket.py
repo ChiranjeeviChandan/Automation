@@ -37,9 +37,9 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-model-moi-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-model-moi-")
 # Claude Code's model-catalog cache of the machine running the test must not leak in.
-os.environ["CLAUDE_CONFIG_DIR"] = os.path.join(os.environ["JEEVI_STATE_DIR"], "claude-config")
+os.environ["CLAUDE_CONFIG_DIR"] = os.path.join(os.environ["JAVIS_STATE_DIR"], "claude-config")
 
 import claude_cli  # noqa: E402
 import config as cfg  # noqa: E402
@@ -61,7 +61,7 @@ def check(name, cond, them=""):
 # ============================================================
 # Không phụ thuộc máy chạy test có cài Claude Code hay không: dựng một file GIẢ mang đúng hình
 # dạng dữ liệu thật (id nằm trong dấu nháy kép, lẫn giữa rác nhị phân) rồi trỏ hàm vào đó.
-_gia = os.path.join(os.environ["JEEVI_STATE_DIR"], "claude-gia.bin")
+_gia = os.path.join(os.environ["JAVIS_STATE_DIR"], "claude-gia.bin")
 with open(_gia, "wb") as _fh:
     _fh.write(b'\x00rac"claude-opus-4-1-20250805"rac"claude-fable-5"\xff'
               b'"claude-opus-5"..."claude-fable-5-1"..."claude-sonnet-5"'

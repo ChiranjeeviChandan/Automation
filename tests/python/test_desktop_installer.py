@@ -5,7 +5,7 @@
 The .exe and .dmg are only built on Windows and macOS runners (desktop-installers.yml, which
 also does a real install on Windows). This Linux test guards the invariants whose breakage
 installs fine and fails later, where nobody looks:
-- the shortcut must open Jeevi WITHOUT restarting it (start-jeevi.vbs always kills first);
+- the shortcut must open Jeevi WITHOUT restarting it (start-javis.vbs always kills first);
 - the code must be a git clone in a folder the app and the uninstaller agree on, or the
   Update button stops working and the uninstaller loses track of the brain;
 - Windows script files must stay ASCII (PowerShell 5.1 and wscript read them as ANSI), and the
@@ -29,16 +29,16 @@ def check(name, cond, extra=""):
 
 
 PK = ROOT / "packaging"
-ISS = PK / "windows" / "jeevi-setup.iss"
+ISS = PK / "windows" / "javis-setup.iss"
 BOOT_PS1 = PK / "windows" / "bootstrap.ps1"
-OPEN_VBS = ROOT / "open-jeevi.vbs"
+OPEN_VBS = ROOT / "open-javis.vbs"
 LAUNCHER = PK / "macos" / "launcher.sh"
 BOOT_SH = PK / "macos" / "bootstrap.sh"
 BUILD_DMG = PK / "macos" / "build-dmg.sh"
 WF = ROOT / ".github" / "workflows" / "desktop-installers.yml"
 
 for f in (ISS, BOOT_PS1, OPEN_VBS, LAUNCHER, BOOT_SH, BUILD_DMG, WF,
-          PK / "assets" / "jeevi.ico", PK / "assets" / "jeevi.icns"):
+          PK / "assets" / "javis.ico", PK / "assets" / "javis.icns"):
     check(f"exists: {f.relative_to(ROOT)}", f.exists())
 
 iss_raw = ISS.read_bytes()
@@ -55,31 +55,31 @@ main_py = (ROOT / "server" / "main.py").read_text(encoding="utf-8")
 # ---- encodings ----
 for f in (BOOT_PS1, OPEN_VBS, ROOT / "install.ps1"):
     check(f"{f.name} is pure ASCII (read as ANSI on Windows)", f.read_bytes().isascii())
-check("jeevi-setup.iss starts with a UTF-8 BOM (Vietnamese messages)", iss_raw.startswith(b"\xef\xbb\xbf"))
+check("javis-setup.iss starts with a UTF-8 BOM (Vietnamese messages)", iss_raw.startswith(b"\xef\xbb\xbf"))
 
 # ---- open without restarting ----
 server_up = vbs.split("Function ServerUp()", 1)[-1].split("End Function", 1)[0]
-check("CANARY: open-jeevi.vbs only calls start-jeevi.vbs (which kills the running server) when /health fails",
-      re.search(r'If ServerUp\(\) Then\s+OpenWindow\s+Else\s+sh\.Run "wscript\.exe //nologo """ & root & "\\start-jeevi\.vbs"" /open"',
+check("CANARY: open-javis.vbs only calls start-javis.vbs (which kills the running server) when /health fails",
+      re.search(r'If ServerUp\(\) Then\s+OpenWindow\s+Else\s+sh\.Run "wscript\.exe //nologo """ & root & "\\start-javis\.vbs"" /open"',
                 vbs) is not None and "/health" in server_up and "http.Status = 200" in server_up)
-check("open-jeevi.vbs opens an app window (--app=) with a default-browser fallback",
+check("open-javis.vbs opens an app window (--app=) with a default-browser fallback",
       "--app=" in vbs and "sh.Run url, 1, False" in vbs)
-check("open-jeevi.vbs honours JEEVI_PORT", "JEEVI_PORT" in vbs)
+check("open-javis.vbs honours JAVIS_PORT", "JAVIS_PORT" in vbs)
 shortcut_lines = [ln for ln in iss.splitlines() if ln.startswith("Name: \"{auto") and "wscript.exe" in ln]
-check("every wscript shortcut in the installer runs open-jeevi.vbs, never start-jeevi.vbs",
-      len(shortcut_lines) == 2 and all("open-jeevi.vbs" in ln and "start-jeevi.vbs" not in ln for ln in shortcut_lines),
+check("every wscript shortcut in the installer runs open-javis.vbs, never start-javis.vbs",
+      len(shortcut_lines) == 2 and all("open-javis.vbs" in ln and "start-javis.vbs" not in ln for ln in shortcut_lines),
       shortcut_lines)
-check("the 'open now' checkbox also uses open-jeevi.vbs and only after a good bootstrap",
-      re.search(r'^Filename: "\{sys\}\\wscript\.exe";.*open-jeevi\.vbs.*postinstall.*Check: BootstrapOk', iss, re.M) is not None)
-check("CANARY: macOS launcher hands an installed Jeevi to bin/jeevi-start.sh (opens, never restarts)",
-      'exec "${JEEVI_HOME}/bin/jeevi-start.sh"' in launcher)
+check("the 'open now' checkbox also uses open-javis.vbs and only after a good bootstrap",
+      re.search(r'^Filename: "\{sys\}\\wscript\.exe";.*open-javis\.vbs.*postinstall.*Check: BootstrapOk', iss, re.M) is not None)
+check("CANARY: macOS launcher hands an installed Jeevi to bin/javis-start.sh (opens, never restarts)",
+      'exec "${JAVIS_HOME}/bin/javis-start.sh"' in launcher)
 
 # ---- one folder, agreed on everywhere ----
 check("installer CodeDir and bootstrap.ps1 default agree on %USERPROFILE%\\JeeviOS",
       "ExpandConstant('{%USERPROFILE}') + '\\JeeviOS'" in iss
       and '(Join-Path $env:USERPROFILE "JeeviOS")' in boot)
 check("macOS launcher and bootstrap.sh agree on ~/JeeviOS",
-      'JEEVI_HOME="${JEEVI_HOME:-$HOME/JeeviOS}"' in launcher and 'JEEVI_HOME="${JEEVI_HOME:-$HOME/JeeviOS}"' in boot_sh)
+      'JAVIS_HOME="${JAVIS_HOME:-$HOME/JeeviOS}"' in launcher and 'JAVIS_HOME="${JAVIS_HOME:-$HOME/JeeviOS}"' in boot_sh)
 check("Windows wizard does not ask for a folder (the clone path is fixed)", "DisableDirPage=yes" in iss)
 check("per-user install, no admin prompt from the wizard", "PrivilegesRequired=lowest" in iss)
 
@@ -99,7 +99,7 @@ check("bootstrap.sh runs install.sh", "bash ./install.sh" in boot_sh)
 m = re.search(r'_AUTOSTART_NAME = "([^"]+)"', main_py)
 check("uninstaller removes the same Run entry the app writes",
       m is not None and f"CurrentVersion\\Run', '{m.group(1)}'" in iss, m and m.group(1))
-check("uninstaller stops Jeevi first", "stop-jeevi.ps1" in iss and "usUninstall" in iss)
+check("uninstaller stops Jeevi first", "stop-javis.ps1" in iss and "usUninstall" in iss)
 check("uninstaller keeps the brain folder and says where it is", "DataKept" in iss and "[UninstallDelete]" in iss
       and "JeeviOS" not in iss.split("[UninstallDelete]")[1].split("[Code]")[0])
 
@@ -131,7 +131,7 @@ check("CI installs the CLIs on Windows (no -SkipCli) and checks all four brains"
 check("CI runs the macOS first-run path and checks all four brains",
       "packaging/macos/bootstrap.sh" in mac_job and "check_brains.py" in mac_job)
 check("macOS launcher has a fallback when Terminal automation is denied",
-      "if ! osascript" in launcher and "pbcopy" in launcher and "printf 'JEEVI_HOME=%q bash %q" in launcher)
+      "if ! osascript" in launcher and "pbcopy" in launcher and "printf 'JAVIS_HOME=%q bash %q" in launcher)
 
 # ---- no black window, nothing that can wait forever (2026-11-11) ----
 # The owner's screenshot: wizard at 100%, nothing moving, the console that held the answer
@@ -180,8 +180,8 @@ check("vendor installers answer in plain text, not CLIXML", "-OutputFormat Text 
 check("CI runs the real Setup.exe and checks the lines the wizard captured",
       "dist\\JeeviOS-Setup.exe -ArgumentList \"/VERYSILENT" in wf and "the wizard wrote no install.log" in wf
       and 'Join-Path $env:USERPROFILE "JeeviOS"' in wf)
-check("get-jeevi.ps1 says the rest happens in the Setup window",
-      "JEEVI OS Setup" in (PK / "windows" / "get-jeevi.ps1").read_text(encoding="utf-8"))
+check("get-javis.ps1 says the rest happens in the Setup window",
+      "JEEVI OS Setup" in (PK / "windows" / "get-javis.ps1").read_text(encoding="utf-8"))
 
 # ---- Jeevi logo in the installers, optional signing (0.439.1) ----
 import struct  # noqa: E402
@@ -205,8 +205,8 @@ for pct in (100, 125, 150, 175, 200, 225, 250):
               info == (*want, 24), info)
         check(f"installer lists {name}", f"..\\assets\\{name}" in iss)
 check("installer shows the pictures unstretched", "WizardImageStretch=no" in iss)
-check("signing is opt-in: SignTool only under #ifdef Sign", "#ifdef Sign\r\nSignTool=jeevi" in iss_raw.decode("utf-8-sig")
-      or "#ifdef Sign\nSignTool=jeevi" in iss)
+check("signing is opt-in: SignTool only under #ifdef Sign", "#ifdef Sign\r\nSignTool=javis" in iss_raw.decode("utf-8-sig")
+      or "#ifdef Sign\nSignTool=javis" in iss)
 check("the uninstaller is signed together with the setup", "SignedUninstaller=yes" in iss)
 check("CI signs only with the certificate secrets and checks the signature",
       "secrets.WINDOWS_CERT_PFX_BASE64" in wf and "/DSign" in wf and "Get-AuthenticodeSignature" in wf
@@ -219,26 +219,26 @@ check(".dmg mounts with the Jeevi icon (.VolumeIcon.icns + custom-icon flag)",
 
 # ---- one-line installs, no SmartScreen / Gatekeeper block (0.439.1) ----
 REL = "https://github.com/blogminhquy/javis-os/releases/download/desktop/"
-GET_PS1 = PK / "windows" / "get-jeevi.ps1"
-GET_SH = PK / "macos" / "get-jeevi.sh"
+GET_PS1 = PK / "windows" / "get-javis.ps1"
+GET_SH = PK / "macos" / "get-javis.sh"
 gps = GET_PS1.read_text(encoding="utf-8")
 gsh = GET_SH.read_text(encoding="utf-8")
-check("get-jeevi.ps1 is pure ASCII (piped into Windows PowerShell 5.1)", GET_PS1.read_bytes().isascii())
-check("get-jeevi.ps1 runs inside & { } so `irm | iex` leaves no settings in the person's session",
+check("get-javis.ps1 is pure ASCII (piped into Windows PowerShell 5.1)", GET_PS1.read_bytes().isascii())
+check("get-javis.ps1 runs inside & { } so `irm | iex` leaves no settings in the person's session",
       gps.split("# ===", 2)[-1].lstrip().split("\n", 1)[-1].lstrip().startswith("& {"))
-check("get-jeevi.ps1 downloads the published setup and opens it",
+check("get-javis.ps1 downloads the published setup and opens it",
       REL + "JeeviOS-Setup.exe" in gps and "Start-Process -FilePath $out" in gps)
-check("get-jeevi.sh downloads the published .dmg", REL + "JeeviOS-macOS.dmg" in gsh)
-check("get-jeevi.sh gives the installer the keyboard back (stdin is the curl pipe)", "< /dev/tty" in gsh)
-check("get-jeevi.sh only replaces the app bundle, never ~/JeeviOS (the brain)",
+check("get-javis.sh downloads the published .dmg", REL + "JeeviOS-macOS.dmg" in gsh)
+check("get-javis.sh gives the installer the keyboard back (stdin is the curl pipe)", "< /dev/tty" in gsh)
+check("get-javis.sh only replaces the app bundle, never ~/JeeviOS (the brain)",
       'rm -rf "${DEST}/JEEVI OS.app"' in gsh and not any("rm -rf" in ln and "JeeviOS" in ln and ".app" not in ln
                                                          for ln in gsh.splitlines()))
-check("get-jeevi.sh is executable", os.access(GET_SH, os.X_OK))
+check("get-javis.sh is executable", os.access(GET_SH, os.X_OK))
 raw = "https://raw.githubusercontent.com/blogminhquy/javis-os/main/"
 for doc in ("QUICKSTART.md", "QUICKSTART.en.md"):
     d = (ROOT / doc).read_text(encoding="utf-8")
-    check(f"{doc} gives the Windows one-liner", f"irm {raw}packaging/windows/get-jeevi.ps1 | iex" in d)
-    check(f"{doc} gives the macOS one-liner", f"curl -fsSL {raw}packaging/macos/get-jeevi.sh | bash" in d)
+    check(f"{doc} gives the Windows one-liner", f"irm {raw}packaging/windows/get-javis.ps1 | iex" in d)
+    check(f"{doc} gives the macOS one-liner", f"curl -fsSL {raw}packaging/macos/get-javis.sh | bash" in d)
 
 # ---- the .app bundle actually assembles ----
 dist = ROOT / "dist" / "dmg-stage"
@@ -253,13 +253,13 @@ if shutil.which("bash") and os.name != "nt":
         check("Info.plist executable and icon exist",
               (app / "MacOS" / info["CFBundleExecutable"]).exists()
               and (app / "Resources" / (info["CFBundleIconFile"] + ".icns")).exists())
-        check("app executable is executable", os.access(app / "MacOS" / "jeevi", os.X_OK))
+        check("app executable is executable", os.access(app / "MacOS" / "javis", os.X_OK))
     shutil.rmtree(ROOT / "dist", ignore_errors=True)
-for f in (LAUNCHER, BOOT_SH, BUILD_DMG, PK / "macos" / "get-jeevi.sh", ROOT / "install.sh", ROOT / "bin" / "jeevi-start.sh"):
+for f in (LAUNCHER, BOOT_SH, BUILD_DMG, PK / "macos" / "get-javis.sh", ROOT / "install.sh", ROOT / "bin" / "javis-start.sh"):
     r = subprocess.run(["bash", "-n", str(f)], capture_output=True, text=True)
     check(f"bash -n {f.relative_to(ROOT)}", r.returncode == 0, r.stderr)
 check("in-repo JEEVI OS.app now has the icon its Info.plist names",
-      (ROOT / "JEEVI OS.app" / "Contents" / "Resources" / "jeevi.icns").exists())
+      (ROOT / "JEEVI OS.app" / "Contents" / "Resources" / "javis.icns").exists())
 
 # ---- publishing and docs agree on the download links ----
 base = "https://github.com/blogminhquy/javis-os/releases/download/desktop/"
@@ -280,9 +280,9 @@ check("the publish step knows whether the build was signed, and that 'Run workfl
 iss_sources = set(re.findall(r'^Source: "([^"]+)"', iss, re.M))
 info_pages = set(re.findall(r'InfoBeforeFile: "([^"]+)"', iss))
 check("the fingerprint covers every file the installer packs",
-      iss_sources == {"bootstrap.ps1", "..\\assets\\jeevi.ico"}
+      iss_sources == {"bootstrap.ps1", "..\\assets\\javis.ico"}
       and info_pages == {"before-install.en.txt", "before-install.vi.txt"}
-      and all(f"packaging/windows/{n}" in publish for n in ("jeevi-setup.iss", "bootstrap.ps1", *sorted(info_pages)))
+      and all(f"packaging/windows/{n}" in publish for n in ("javis-setup.iss", "bootstrap.ps1", *sorted(info_pages)))
       and '"${inputs[@]}" packaging/assets' in publish,
       (iss_sources, info_pages))
 in_git = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True).returncode == 0
@@ -451,11 +451,11 @@ check("the code signing policy carries the SignPath wording, the team roles and 
       and "Committers and reviewers" in policy and "Approvers" in policy and "## Privacy policy" in policy
       and "will not transfer any information to other networked systems unless specifically requested" in policy)
 check("the privacy policy says what Jeevi fetches on its own, auto-updates included",
-      "pypi.org" in privacy and "raw.githubusercontent.com" in privacy and "JEEVI_CLAUDE_AUTO_UPDATE=0" in privacy
-      and "JEEVI_AGY_AUTO_UPDATE=0" in privacy)
+      "pypi.org" in privacy and "raw.githubusercontent.com" in privacy and "JAVIS_CLAUDE_AUTO_UPDATE=0" in privacy
+      and "JAVIS_AGY_AUTO_UPDATE=0" in privacy)
 check("the privacy policy names switches that exist",
-      '_ENV = "JEEVI_CLAUDE_AUTO_UPDATE"' in (ROOT / "server" / "claude_update.py").read_text(encoding="utf-8")
-      and '"JEEVI_AGY_AUTO_UPDATE"' in (ROOT / "server" / "agy_update.py").read_text(encoding="utf-8"))
+      '_ENV = "JAVIS_CLAUDE_AUTO_UPDATE"' in (ROOT / "server" / "claude_update.py").read_text(encoding="utf-8")
+      and '"JAVIS_AGY_AUTO_UPDATE"' in (ROOT / "server" / "agy_update.py").read_text(encoding="utf-8"))
 for doc, target in (("README.md", "docs/code-signing-policy.md"), ("QUICKSTART.en.md", "docs/code-signing-policy.md"),
                     ("QUICKSTART.md", "docs/code-signing-policy.md"),
                     ("docs/i18n/vi/README.md", "../../code-signing-policy.md")):

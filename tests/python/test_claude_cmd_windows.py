@@ -19,9 +19,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-cmdwin-")
-os.environ.pop("JEEVI_CLAUDE_CLI", None)
-os.environ.pop("JEEVI_CLAUDE_BIN", None)
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-cmdwin-")
+os.environ.pop("JAVIS_CLAUDE_CLI", None)
+os.environ.pop("JAVIS_CLAUDE_BIN", None)
 
 import claude_cli as cc  # noqa: E402
 
@@ -49,7 +49,7 @@ def shim(folder: Path, body: str = "@ECHO off\r\nnode cli.js %*\r\n", name: str 
 
 
 _keep = (cc._is_windows, cc._home_dir, cc.tim_binary, cc._duong_dan_tim_binary, os.environ.get("PATH"))
-home = Path(tempfile.mkdtemp(prefix="jeevi-home-"))
+home = Path(tempfile.mkdtemp(prefix="javis-home-"))
 cc._home_dir = lambda: home
 cc._duong_dan_tim_binary = lambda: ""
 os.environ["PATH"] = ""
@@ -102,19 +102,19 @@ try:
     cc.tim_binary = lambda ten: str(s1)
     check("find_claude_cli also prefers the native exe",
           cc.find_claude_cli() == str(e1) and cc.claude_cli_for_sdk() == str(e1))
-    os.environ["JEEVI_CLAUDE_CLI"] = str(s1)
-    check("JEEVI_CLAUDE_CLI pointing at a shim is upgraded too", cc.claude_cli_for_sdk() == str(e1))
-    os.environ["JEEVI_CLAUDE_CLI"] = r"C:\py\claude_agent_sdk\_bundled\claude.exe"
+    os.environ["JAVIS_CLAUDE_CLI"] = str(s1)
+    check("JAVIS_CLAUDE_CLI pointing at a shim is upgraded too", cc.claude_cli_for_sdk() == str(e1))
+    os.environ["JAVIS_CLAUDE_CLI"] = r"C:\py\claude_agent_sdk\_bundled\claude.exe"
     check("the SDK's own _bundled binary is never passed back", cc.claude_cli_for_sdk() == "")
-    os.environ.pop("JEEVI_CLAUDE_CLI")
+    os.environ.pop("JAVIS_CLAUDE_CLI")
     cc.tim_binary = lambda ten: None
     check("no CLI at all gives an empty cli_path", cc.claude_cli_for_sdk() == "")
 
-    # ---- the pinned engine reads JEEVI_CLAUDE_CLI first: that is where the fix reaches it ----
+    # ---- the pinned engine reads JAVIS_CLAUDE_CLI first: that is where the fix reaches it ----
     def engine_cli_path():
         """Exactly what the pinned ClaudeSDK._options does with cli_path."""
         cc.use_native_claude_for_sdk()
-        c = (os.environ.get("JEEVI_CLAUDE_CLI") or "").strip() or (cc.tim_binary("claude") or "")
+        c = (os.environ.get("JAVIS_CLAUDE_CLI") or "").strip() or (cc.tim_binary("claude") or "")
         return c if c and "_bundled" not in c.replace("\\", "/") else ""
 
     _bund = cc._sdk_bundled_claude
@@ -124,30 +124,30 @@ try:
         check("it is Jeevi's own value in the env", cc._SDK_CLI_ENV["set"] == str(e1))
         cc.tim_binary = lambda ten: str(e1)
         check("PATH resolves a real exe again: Jeevi removes its own override",
-              engine_cli_path() == str(e1) and "JEEVI_CLAUDE_CLI" not in os.environ)
+              engine_cli_path() == str(e1) and "JAVIS_CLAUDE_CLI" not in os.environ)
         cc.tim_binary = lambda ten: str(s3)
         fake_bundled = str(big(Path(tempfile.mkdtemp()) / "claude_agent_sdk" / "_bundled" / "claude.exe"))
         cc._sdk_bundled_claude = lambda: fake_bundled
         check("shim only: engine passes no cli_path, so the SDK runs its bundled claude.exe",
-              engine_cli_path() == "" and os.environ.get("JEEVI_CLAUDE_CLI") == fake_bundled)
-        os.environ.pop("JEEVI_CLAUDE_CLI", None); cc._SDK_CLI_ENV["set"] = ""
+              engine_cli_path() == "" and os.environ.get("JAVIS_CLAUDE_CLI") == fake_bundled)
+        os.environ.pop("JAVIS_CLAUDE_CLI", None); cc._SDK_CLI_ENV["set"] = ""
         cc._sdk_bundled_claude = lambda: None
         check("shim only and no bundled exe: nothing is invented (the SDK explains how to fix it)",
-              engine_cli_path() == str(s3) and "JEEVI_CLAUDE_CLI" not in os.environ)
-        os.environ["JEEVI_CLAUDE_CLI"] = r"D:\tools\claude.exe"
-        check("a user's own JEEVI_CLAUDE_CLI executable is left alone",
+              engine_cli_path() == str(s3) and "JAVIS_CLAUDE_CLI" not in os.environ)
+        os.environ["JAVIS_CLAUDE_CLI"] = r"D:\tools\claude.exe"
+        check("a user's own JAVIS_CLAUDE_CLI executable is left alone",
               engine_cli_path() == r"D:\tools\claude.exe" and cc._SDK_CLI_ENV["set"] == "")
-        os.environ["JEEVI_CLAUDE_CLI"] = str(s1)
-        check("a user's JEEVI_CLAUDE_CLI naming a shim is upgraded", engine_cli_path() == str(e1))
-        os.environ.pop("JEEVI_CLAUDE_CLI", None); cc._SDK_CLI_ENV["set"] = ""
+        os.environ["JAVIS_CLAUDE_CLI"] = str(s1)
+        check("a user's JAVIS_CLAUDE_CLI naming a shim is upgraded", engine_cli_path() == str(e1))
+        os.environ.pop("JAVIS_CLAUDE_CLI", None); cc._SDK_CLI_ENV["set"] = ""
         cc._is_windows = lambda: False
         cc.tim_binary = lambda ten: str(s1)
         check("off Windows the env is never touched",
-              engine_cli_path() == str(s1) and "JEEVI_CLAUDE_CLI" not in os.environ)
+              engine_cli_path() == str(s1) and "JAVIS_CLAUDE_CLI" not in os.environ)
         cc._is_windows = lambda: True
     finally:
         cc._sdk_bundled_claude = _bund
-        os.environ.pop("JEEVI_CLAUDE_CLI", None); cc._SDK_CLI_ENV["set"] = ""
+        os.environ.pop("JAVIS_CLAUDE_CLI", None); cc._SDK_CLI_ENV["set"] = ""
 
     # ---- the real SDK agrees: what we hand over is not a batch script to it ----
     try:
@@ -171,8 +171,8 @@ finally:
 eng = (SERVER / "claude_sdk_engine.py").read_text(encoding="utf-8")
 voice = (SERVER / "voice_brain.py").read_text(encoding="utf-8")
 src = (SERVER / "claude_cli.py").read_text(encoding="utf-8")
-check("chat engine (pinned source) reads JEEVI_CLAUDE_CLI before PATH",
-      'os.environ.get("JEEVI_CLAUDE_CLI")' in eng and '"_bundled" not in' in eng)
+check("chat engine (pinned source) reads JAVIS_CLAUDE_CLI before PATH",
+      'os.environ.get("JAVIS_CLAUDE_CLI")' in eng and '"_bundled" not in' in eng)
 check("the one factory that builds ClaudeSDK applies the fix first",
       "use_native_claude_for_sdk()" in src.split("eng = ClaudeSDK(")[0][-600:])
 check("voice brain asks claude_cli_for_sdk", "claude_cli_for_sdk()" in voice)

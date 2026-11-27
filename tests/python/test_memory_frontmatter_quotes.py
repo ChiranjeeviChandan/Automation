@@ -22,7 +22,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-mem-fm-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-mem-fm-"))
 
 import fastyaml  # noqa: E402
 import memory_control as mc  # noqa: E402
@@ -44,7 +44,7 @@ def meta_of(path):
         return f"YAML error: {type(e).__name__}"
 
 
-mem = Path(tempfile.mkdtemp(prefix="jeevi-mem-fm-dir-")) / "memory"
+mem = Path(tempfile.mkdtemp(prefix="javis-mem-fm-dir-")) / "memory"
 facts = mem / "facts"
 facts.mkdir(parents=True)
 

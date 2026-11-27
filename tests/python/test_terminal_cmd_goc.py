@@ -36,18 +36,18 @@ import main      # noqa: E402
 import terminal  # noqa: E402
 
 # ---- 1. cwd mặc định = HOME, không còn là gốc brain ----
-cu = os.environ.pop("JEEVI_TERMINAL_CWD", None)
+cu = os.environ.pop("JAVIS_TERMINAL_CWD", None)
 try:
     check("CANARY: terminal mở ở HOME của user chạy Jeevi (cmd gốc của máy)",
           main._terminal_cwd("brain") == str(Path.home()))
     with tempfile.TemporaryDirectory() as td:
-        os.environ["JEEVI_TERMINAL_CWD"] = td
-        check("JEEVI_TERMINAL_CWD vẫn ghi đè được (ai muốn brain thì tự đặt)",
+        os.environ["JAVIS_TERMINAL_CWD"] = td
+        check("JAVIS_TERMINAL_CWD vẫn ghi đè được (ai muốn brain thì tự đặt)",
               main._terminal_cwd("brain") == td)
 finally:
-    os.environ.pop("JEEVI_TERMINAL_CWD", None)
+    os.environ.pop("JAVIS_TERMINAL_CWD", None)
     if cu is not None:
-        os.environ["JEEVI_TERMINAL_CWD"] = cu
+        os.environ["JAVIS_TERMINAL_CWD"] = cu
 
 # ---- 2. PATH của shell được bù ngăn ~/.local/bin ----
 lb = Path.home() / ".local" / "bin"
@@ -60,12 +60,12 @@ check("không nhân đôi ngăn đã có", parts.count(str(lb)) == 1)
 env2 = terminal._env()
 check("gọi lại vẫn không phình PATH", env2.get("PATH", "").split(os.pathsep).count(str(lb)) == 1)
 
-# ---- 3. Biến JEEVI_BRAIN đi vào env của shell ----
-check("_env nhận extra (JEEVI_BRAIN...)",
-      terminal._env({"JEEVI_BRAIN": "/duong/brain"}).get("JEEVI_BRAIN") == "/duong/brain")
+# ---- 3. Biến JAVIS_BRAIN đi vào env của shell ----
+check("_env nhận extra (JAVIS_BRAIN...)",
+      terminal._env({"JAVIS_BRAIN": "/duong/brain"}).get("JAVIS_BRAIN") == "/duong/brain")
 src = (SERVER / "main.py").read_text(encoding="utf-8")
-check("WS terminal truyền JEEVI_BRAIN cho shell (cd \"$JEEVI_BRAIN\" là về brain)",
-      '"JEEVI_BRAIN": str(_brain_root(brain))' in src)
+check("WS terminal truyền JAVIS_BRAIN cho shell (cd \"$JAVIS_BRAIN\" là về brain)",
+      '"JAVIS_BRAIN": str(_brain_root(brain))' in src)
 src_t = (SERVER / "terminal.py").read_text(encoding="utf-8")
 check("Phien nhận extra_env và trộn vào env lúc mở shell",
       "extra_env" in src_t and "_env(self.extra_env)" in src_t)

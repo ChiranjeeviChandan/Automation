@@ -19,7 +19,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zalo-fmt-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zalo-fmt-")
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -62,7 +62,7 @@ check("a pair cut in half loses its stray stars", to("giá **85.000đ") == ("gi�
 check("stray stars before a style move it back", to("** đầu, **đậm**") == (" đầu, đậm", [(6, 3, "bold")]),
       to("** đầu, **đậm**"))
 check("plain text is untouched", to("Dạ em chào anh ạ") == ("Dạ em chào anh ạ", []))
-check("only names jeevi-zalo knows", all(n in zalo_markup.STYLE_NAMES for _a, _n, n in to("{big:A} {small:B} {orange:C} {yellow:D}")[1]))
+check("only names javis-zalo knows", all(n in zalo_markup.STYLE_NAMES for _a, _n, n in to("{big:A} {small:B} {orange:C} {yellow:D}")[1]))
 
 # ============================================================
 # 2. Sending

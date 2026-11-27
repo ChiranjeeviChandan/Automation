@@ -197,7 +197,7 @@ GET    /sessions?...&project=      lọc theo project
 - Thanh Project trên đầu cột trái: nút chọn project đang mở, nút tạo project, đổi tên, đổi
   icon, xoá.
 - Đang mở project thì danh sách lọc theo nó, và **chat mới tạo tự gắn project đó** qua
-  `window.JeeviProjects.claim(sid)` mà `app.js` gọi ngay sau khi mint id.
+  `window.JavisProjects.claim(sid)` mà `app.js` gọi ngay sau khi mint id.
 - Mỗi mục hội thoại: icon (nếu có) + tên; hover ra hàng nút ghim / icon / đổi tên / xoá.
 - Bộ chọn icon là một popover hiện **toàn bộ icon Lucide app đã vendor**, kèm ô lọc theo tên
   và nút Xoá icon. **Không dùng emoji** - chủ repo chốt ngày 2026-08-04. Lý do đúng và đáng
@@ -246,7 +246,7 @@ luật đã áp cho wikilink từ trước. Muốn sửa chữ của link thì b
   giữ nguyên đường cũ.
 - CSS `cursor: pointer` cho link trong `.ne-wys` và `.jvfe-prev`, để hover là biết bấm được.
 - **Cây tự sổ**: `_vtRevealInTree(path)` đã tồn tại từ 0.15.0 (nút "Vị trí" của khung tìm
-  kiếm, `dashboard/console.js:5016`). Phơi nó ra thành `window.JeeviRevealInTree` và gọi mỗi
+  kiếm, `dashboard/console.js:5016`). Phơi nó ra thành `window.JavisRevealInTree` và gọi mỗi
   khi điều hướng tới một file bằng link. Không viết cơ chế sổ cây thứ hai.
 
 **Trạng thái.** Đã làm.
@@ -263,16 +263,16 @@ Hai đường vào cùng một file, hai bộ mặt.
 
 **Thiết kế.**
 
-- `chat-render.js` gọi `window.JeeviOpenNote(rel)` thay cho `window.JeeviEditFile(rel)`.
+- `chat-render.js` gọi `window.JavisOpenNote(rel)` thay cho `window.JavisEditFile(rel)`.
   `openNote` tự biết: đang ở trang Trò chuyện thì mượn `#chatPageEdit` (chiếm chỗ khung chat),
   ở màn chính thì nổi lên trên visual não - chỗ đó rỗng nên đè là hợp lý.
-- **Fallback theo đúng thứ tự**: màn hẹp (dưới 860px) hoặc `JeeviOpenNote` chưa nạp thì giữ
+- **Fallback theo đúng thứ tự**: màn hẹp (dưới 860px) hoặc `JavisOpenNote` chưa nạp thì giữ
   popup cũ. Màn hẹp không đủ chỗ cho khung dính, và popup vốn đã có `@media` riêng cho nó.
 - **Loại file không sửa được** (pdf, docx, zip...) thì `openNote` đã có sẵn nhánh
   `_neRenderDownload`: hiện thẻ file kèm nút Mở tab mới và Tải về. Đúng yêu cầu "fallback
   hiện trạng thái đang tải, hoặc cho xem như file bình thường trên trình duyệt", và không phải
   viết gì thêm.
-- `JeeviOpenNote` đang từ chối chạy trên màn hẹp kèm toast "sửa note trên điện thoại đã tắt".
+- `JavisOpenNote` đang từ chối chạy trên màn hẹp kèm toast "sửa note trên điện thoại đã tắt".
   Lý do gốc là chạm nhầm node đồ thị, không áp cho việc bấm một link có chủ đích. Nhưng vì
   chat-render đã chặn màn hẹp từ trước khi gọi, không cần đụng vào luật đó.
 

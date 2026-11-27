@@ -11,7 +11,7 @@ Install Jeevi like any other app: download one file, open it, and you get a JEEV
 - **Windows 10/11:** download [JeeviOS-Setup.exe](https://github.com/blogminhquy/javis-os/releases/download/desktop/JeeviOS-Setup.exe), double-click it and press Next to the end. The install progress shows inside the Setup window itself, step by step (a few minutes), with no separate black window. When it is done there is a JEEVI OS icon on the Desktop and in the Start menu.
 - **macOS 11 or newer:** open **Terminal** (Launchpad, type Terminal), paste this line and press Enter. Installed this way, macOS shows no warning:
   ```
-  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-jeevi.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-javis.sh | bash
   ```
   It downloads Jeevi, copies **JEEVI OS** into **Applications** and installs it right there in the Terminal window (it may ask you to set a Jeevi admin account and for your Mac password once). After that, open JEEVI OS from Launchpad.
 
@@ -21,7 +21,7 @@ Clicking the icon opens Jeevi in its own window (no address bar), Jeevi starts w
 
 **Windows: install without the warning screen (recommended).** The Windows installer is not code-signed yet, so a browser download gets blocked the first time. Paste one line instead and you get the same installer with the Jeevi logo, unblocked: press Start, type `PowerShell`, open it, paste this line and press Enter:
 ```
-irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-jeevi.ps1 | iex
+irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-javis.ps1 | iex
 ```
 
 What the installers change on your computer, who signs them and what Jeevi sends where: [Code signing policy](docs/code-signing-policy.md) · [Privacy policy](PRIVACY.md).
@@ -37,7 +37,7 @@ If you already downloaded the file with the browser and it was blocked:
 
 ## Option 1 - Hostinger VPS (Docker Manager, one click)
 
-> 🛒 **No VPS yet?** [Get a Hostinger VPS here](https://www.hostinger.com?REFERRALCODE=JEEVIOS). Docker Manager comes built in, so Jeevi installs in one click. Once it is ready, come back to the steps below.
+> 🛒 **No VPS yet?** [Get a Hostinger VPS here](https://www.hostinger.com?REFERRALCODE=JAVISOS). Docker Manager comes built in, so Jeevi installs in one click. Once it is ready, come back to the steps below.
 
 1. hPanel → VPS → **Docker Manager** → **Compose** → **Compose from URL**.
 2. Paste this URL:
@@ -46,19 +46,19 @@ If you already downloaded the file with the browser and it was blocked:
    ```
 3. (Optional, for HTTPS + a domain) set this in the **Environment** box:
    ```
-   DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud
+   DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud
    ```
-   (Find the hostname under hPanel → VPS, e.g. `jeevi.srv1782015.hstgr.cloud`.)
+   (Find the hostname under hPanel → VPS, e.g. `javis.srv1782015.hstgr.cloud`.)
 4. **Deploy**. Wait 1-3 minutes. Open the app with the **Open** button (or `https://<DOMAIN_NAME>`).
 5. On first run the screen asks you to create an admin account. After that, sign in to Claude Code once inside the container terminal: `claude auth login --claudeai`.
 
-VPS on **Ubuntu 26** or a plain OS without Hostinger's Traefik: paste the same link, `DOMAIN_NAME` may stay empty: **Open** moves you to `https://jeevi.srvXXXX.hstgr.cloud` or `https://srvXXXX.hstgr.cloud` (since 0.302.0). **Settings → Domain** says whether the link works yet. The bundled `jeevi-gateway` container issues HTTPS for `DOMAIN_NAME` when ports 80/443 are free (since 0.300.0); open ports 80 and 443 in the firewall.
+VPS on **Ubuntu 26** or a plain OS without Hostinger's Traefik: paste the same link, `DOMAIN_NAME` may stay empty: **Open** moves you to `https://javis.srvXXXX.hstgr.cloud` or `https://srvXXXX.hstgr.cloud` (since 0.302.0). **Settings → Domain** says whether the link works yet. The bundled `javis-gateway` container issues HTTPS for `DOMAIN_NAME` when ports 80/443 are free (since 0.300.0); open ports 80 and 443 in the firewall.
 
 To update: press **⬆ Update now** in the app (Updates page), or **Redeploy** in Docker Manager (image `:latest`, `pull_policy: always`). Brain data stays in the volume.
 
 ## Option 2 - Docker on any machine or VPS
 
-> 🛒 **Need a VPS?** A [Hostinger VPS](https://www.hostinger.com?REFERRALCODE=JEEVIOS) runs this option too.
+> 🛒 **Need a VPS?** A [Hostinger VPS](https://www.hostinger.com?REFERRALCODE=JAVISOS) runs this option too.
 
 ```
 docker compose -f docker-compose.yml up -d
@@ -69,7 +69,7 @@ Open http://localhost:7777. For HTTPS through Caddy, add `-f docker-compose.http
 
 1. Install Python 3.12 + Node 22.
 2. In the project folder run `setup.bat` once - it creates .venv, installs dependencies, and installs the two CLI engines (Claude Code, Codex) for you.
-3. `start-jeevi.bat` to run in the background (`stop-jeevi.bat` to stop).
+3. `start-javis.bat` to run in the background (`stop-javis.bat` to stop).
 4. Open http://localhost:7777.
 
 ## Once it is running
@@ -85,6 +85,6 @@ See [docs/en/README.md](docs/en/README.md) - a guide per feature (chat/voice, kn
 
 ## Common problems
 
-- **The in-app update button does not work on Hostinger**: it needs the bundled `jeevi-watchtower` container (included since 0.55.56). If the stack shows "Partially running", open that container's log; if it cannot be fixed, update with **Redeploy** in Docker Manager.
+- **The in-app update button does not work on Hostinger**: it needs the bundled `javis-watchtower` container (included since 0.55.56). If the stack shows "Partially running", open that container's log; if it cannot be fixed, update with **Redeploy** in Docker Manager.
 - **ChatGPT/Codex says "model not supported"**: pick a valid Codex model on the Models page (e.g. `gpt-5.5`). Do not use `gpt-5-mini` or `gpt-4o` - those are API models and a Codex account cannot run them.
 - More: [docs/17 - Troubleshooting](docs/en/17-troubleshooting.md).

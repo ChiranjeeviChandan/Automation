@@ -179,6 +179,6 @@
     if (f) f.focus();
   }
 
-  window.JeeviDateRange = { PRESETS: PRESETS, resolve: resolve, dates: dates, label: label, monthCells: monthCells, iso: iso,
+  window.JavisDateRange = { PRESETS: PRESETS, resolve: resolve, dates: dates, label: label, monthCells: monthCells, iso: iso,
                             open: open, close: close };
 })();

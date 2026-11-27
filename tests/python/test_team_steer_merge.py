@@ -22,8 +22,8 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-team-steer-")
-STATE = Path(os.environ["JEEVI_STATE_DIR"])
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-team-steer-")
+STATE = Path(os.environ["JAVIS_STATE_DIR"])
 
 import sessions  # noqa: E402
 import steer_inbox  # noqa: E402

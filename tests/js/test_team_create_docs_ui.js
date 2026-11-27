@@ -108,7 +108,7 @@ check("both searches keep folder rows through team-picker's one rule, and a pick
   tm.includes("F.items = searchRows(items);") && tm.includes("S.pickSt.docResults = searchRows(items);")
   && tm.includes("brain_path: r.path, dir: !!r.dir"));
 check("a folder document in the Info tab opens on the Files page, it is never served as a raw file",
-  tm.includes('data-info-open-dir="') && tm.includes("window.JeeviOpenFiles(d.infoOpenDir)"));
+  tm.includes('data-info-open-dir="') && tm.includes("window.JavisOpenFiles(d.infoOpenDir)"));
 check("Enter in the link box adds the link and never presses Create",
   /contains\("tmp-link-input"\) && e\.key === "Enter"\) \{ e\.preventDefault\(\); pickAddLink\(\); return; \}/.test(tm)
   && /contains\("tmp-doc-search"\) && e\.key === "Enter"\) \{ e\.preventDefault\(\); return; \}/.test(tm));

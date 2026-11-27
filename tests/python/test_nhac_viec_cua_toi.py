@@ -73,7 +73,7 @@ check("no long dash in the messages", all(chr(0x2014) not in s and chr(0x2013) n
                                             for s in (txt, my_tasks.timed_text(task, "10:00"))))
 
 # ---- the tick: everything goes out once, through the reminder group ----
-brain = Path(tempfile.mkdtemp(prefix="jeevi-nhacviec-"))
+brain = Path(tempfile.mkdtemp(prefix="javis-nhacviec-"))
 sent = []
 
 

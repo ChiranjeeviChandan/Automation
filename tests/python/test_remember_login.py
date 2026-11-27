@@ -21,8 +21,8 @@ import os
 import tempfile
 import time
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-remember-")
-os.environ["JEEVI_REQUIRE_LOGIN"] = "1"
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-remember-")
+os.environ["JAVIS_REQUIRE_LOGIN"] = "1"
 
 from fastapi.testclient import TestClient   # noqa: E402
 import config as c   # noqa: E402
@@ -47,7 +47,7 @@ def login(**extra):
     c.clear_sessions()
     cl.cookies.clear()
     r = cl.post("/auth/login", data={"username": "admin", "password": "matkhau123", **extra})
-    return r, cl.cookies.get("jeevi_session", "")
+    return r, cl.cookies.get("javis_session", "")
 
 
 # 1. Ticked / field missing: unchanged 30-day cookie
@@ -63,7 +63,7 @@ check("remember=1 -> 30-day cookie", "max-age=2592000" in r.headers.get("set-coo
 r, tok = login(remember="0")
 sc = r.headers.get("set-cookie", "").lower()
 check("remember=0 -> signed in", r.status_code == 200 and c.valid_session(tok))
-check("remember=0 -> cookie has no max-age", "jeevi_session=" in sc and "max-age" not in sc)
+check("remember=0 -> cookie has no max-age", "javis_session=" in sc and "max-age" not in sc)
 check("remember=0 -> cookie has no expires", "expires" not in sc)
 check("remember=0 -> session marked short", not c.session_remembered(tok))
 check("the dashboard works on a short session", cl.get("/auth/status").json().get("authed") is True)
@@ -98,7 +98,7 @@ check("CANARY: a remembered one of the same age is renewed", (lambda t: (c.SESSI
 # 5. Password change keeps the choice
 r, tok = login(remember="0")
 r = cl.post("/auth/password", data={"current_password": "matkhau123", "username": "admin", "password": "matkhau123"})
-new_tok = cl.cookies.get("jeevi_session", "")
+new_tok = cl.cookies.get("javis_session", "")
 sc = r.headers.get("set-cookie", "").lower()
 check("password change on a short session -> ok", r.status_code == 200 and c.valid_session(new_tok))
 check("password change on a short session -> new session still short",
@@ -107,7 +107,7 @@ r, tok = login()
 r = cl.post("/auth/password", data={"current_password": "matkhau123", "username": "admin", "password": "matkhau123"})
 check("password change on a remembered session -> stays 30 days",
       "max-age=2592000" in r.headers.get("set-cookie", "").lower()
-      and c.session_remembered(cl.cookies.get("jeevi_session", "")))
+      and c.session_remembered(cl.cookies.get("javis_session", "")))
 
 # 6. Restart and older sessions
 r, tok = login(remember="0")

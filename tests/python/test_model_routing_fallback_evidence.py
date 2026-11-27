@@ -13,8 +13,8 @@ if str(_TEST_DIR) not in sys.path:
     sys.path.insert(0, str(_TEST_DIR))
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-_TMP = Path(tempfile.mkdtemp(prefix="jeevi_model_evidence_test_"))
-os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+_TMP = Path(tempfile.mkdtemp(prefix="javis_model_evidence_test_"))
+os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
 os.environ["BRAINS_DIR"] = str(_TMP / "brains")
 
 import pytest  # noqa: E402

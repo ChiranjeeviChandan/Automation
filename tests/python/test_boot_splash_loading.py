@@ -25,7 +25,7 @@ def test_splash_is_in_the_page_from_the_first_paint_and_hides_after_the_first_pa
     assert 'data-i18n="boot.starting"' in body and 'id="bootSub" data-i18n="boot.just_started" hidden' in body
     assert html.index("/static/i18n/index.js") < html.index("/static/boot-splash.js")
     con = _read("console.js")
-    assert re.search(r"khoiPhucTrang\(\);\s*\n\s*//[^\n]*\n\s*try \{ if \(window\.JeeviBoot\) window\.JeeviBoot\.pageStarted\(\); \}", con)
+    assert re.search(r"khoiPhucTrang\(\);\s*\n\s*//[^\n]*\n\s*try \{ if \(window\.JavisBoot\) window\.JavisBoot\.pageStarted\(\); \}", con)
     root = (SERVER / "main.py").read_text(encoding="utf-8").split("async def root()", 1)[1].split("\n@app.", 1)[0]
     assert '"up": int(time.time() - _PROCESS_STARTED)' in root
 
@@ -81,8 +81,8 @@ def test_an_early_splash_never_uncovers_bare_keys():
     """2026-11-12: now that the splash goes as soon as the first page has its data, the dictionary must be there too,
     or labels drawn by scripts show as keys. The splash waits for it (same cap), and the background strip, whose first
     answer can beat the dictionary, draws itself again when the words arrive."""
-    got = _node_json("[b.wordsReady({JeeviI18n:{ready:()=>false}}),b.wordsReady({JeeviI18n:{ready:()=>true}}),"
-                     "b.wordsReady({}),b.wordsReady(null),b.wordsReady({JeeviI18n:{ready(){throw new Error('x')}}})]")
+    got = _node_json("[b.wordsReady({JavisI18n:{ready:()=>false}}),b.wordsReady({JavisI18n:{ready:()=>true}}),"
+                     "b.wordsReady({}),b.wordsReady(null),b.wordsReady({JavisI18n:{ready(){throw new Error('x')}}})]")
     if got is None:
         return
     # not arrived, arrived, no i18n module, no window, a broken module: only the first keeps the splash.
@@ -90,7 +90,7 @@ def test_an_early_splash_never_uncovers_bare_keys():
     splash = _read("boot-splash.js")
     assert 'if (loaderVisible(document.querySelectorAll(".pg-loading")) || !wordsReady(window)) quietSince = 0;' in splash
     strip = _read("background-strip.js")
-    assert 'window.addEventListener("jeevi:i18n", function () { if (lastData) render(lastData); });' in strip
+    assert 'window.addEventListener("javis:i18n", function () { if (lastData) render(lastData); });' in strip
     assert re.search(r"function render\(d\) \{\n\s*var e = el\(\);\n\s*if \(!e\) return;\n\s*lastData = d;", strip)
 
 
@@ -116,7 +116,7 @@ def test_waiting_screens_share_the_loading_look():
     con = _read("console.js")
     assert 'ic("loader", { cls: "ic-xl ic-spin" })}</div><div>${esc(t("common.loading"))}' not in con
     assert con.count('<div class="pg-loading pg-page">') >= 9
-    lazy = con.split("const nhomCan = NHOM_TRANG[id];", 1)[1].split("await window.JeeviNapCham.cho(nhomCan);", 1)[0]
+    lazy = con.split("const nhomCan = NHOM_TRANG[id];", 1)[1].split("await window.JavisNapCham.cho(nhomCan);", 1)[0]
     assert "placeholder(" not in lazy and "pg-loading pg-page" in lazy          # not "<page> - in development"
     # A container that keeps living after its data arrives holds the loading line INSIDE it, so no spinner stays.
     for k in ("lnChat", "lnReview", "lnLog"):
@@ -168,7 +168,7 @@ def test_new_texts_in_both_languages():
 def test_brain_picker_counts_nodes_and_links_only_when_opened(tmp_path, monkeypatch):
     """The picker shows each brain's node and link counts as its graph shows them, asked when the picker opens."""
     import graph_builder as G
-    monkeypatch.setenv("JEEVI_STATE_DIR", str(tmp_path / "state"))
+    monkeypatch.setenv("JAVIS_STATE_DIR", str(tmp_path / "state"))
     b = tmp_path / "brain"
     (b / "notes").mkdir(parents=True)
     (b / "notes" / "A.md").write_text("[[B]] [[C]] [[missing]]", encoding="utf-8")

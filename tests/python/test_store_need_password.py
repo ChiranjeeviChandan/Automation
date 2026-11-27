@@ -12,7 +12,7 @@ import json
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-store-pw-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-store-pw-"))
 
 import routes.packs as packs_routes  # noqa: E402
 

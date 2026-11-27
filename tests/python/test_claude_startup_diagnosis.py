@@ -46,7 +46,7 @@ UI_CUT = 160
 
 
 def _clean_env():
-    os.environ.pop("JEEVI_CLAUDE_INIT_TIMEOUT", None)
+    os.environ.pop("JAVIS_CLAUDE_INIT_TIMEOUT", None)
     os.environ.pop("CLAUDE_CODE_STREAM_CLOSE_TIMEOUT", None)
 
 
@@ -126,7 +126,7 @@ m_slow = eng.loi_de_hieu(TIMEOUT, 300.0, diag(hub(init_s=0.1, list_s=140.0)))
 check("hub answered after 140s: verdict in the visible window, with the number",
       "trả quá chậm" in m_slow[:UI_CUT] and "140s" in m_slow)
 check("hub slow: the MCP advice (Connections page, Check) is back",
-      "trang Kết nối" in m_slow and "JEEVI_CLAUDE_INIT_TIMEOUT" in m_slow)
+      "trang Kết nối" in m_slow and "JAVIS_CLAUDE_INIT_TIMEOUT" in m_slow)
 
 m_pend = eng.loi_de_hieu(TIMEOUT, 300.0, diag(hub(init_s=0.1, pending="tools/list", pending_s=290.0)))
 check("hub never answered: says it did not answer", "chưa trả lời" in m_pend[:UI_CUT])
@@ -137,7 +137,7 @@ check("hub answered fast: says it is fine, with the number",
       "trả lời bình thường" in m_fast[:UI_CUT] and "2s" in m_fast)
 check("hub answered fast: does NOT blame MCP sources", "trang Kết nối" not in m_fast)
 check("hub answered fast: raising the limit is not suggested",
-      "JEEVI_CLAUDE_INIT_TIMEOUT" not in m_fast)
+      "JAVIS_CLAUDE_INIT_TIMEOUT" not in m_fast)
 
 m_none = eng.loi_de_hieu(TIMEOUT, 300.0, diag(attached=False))
 check("no hub in this run: says so", "không đấu" in m_none[:UI_CUT])

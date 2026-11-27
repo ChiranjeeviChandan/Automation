@@ -25,7 +25,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-gocgw-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-gocgw-")
 
 import config as cfg  # noqa: E402
 import main  # noqa: E402
@@ -123,8 +123,8 @@ _docker = (ROOT / "Dockerfile").read_text(encoding="utf-8")
 check("ảnh Docker không còn cài xvfb (chỉ ChatGPT Web cần)", "xvfb" not in _docker)
 
 for _doc in ("docs/16-cau-hinh-env.md", "docs/en/16-env-configuration.md"):
-    check(f"{_doc} không còn biến JEEVI_ENABLE_WEB_CHAT",
-          "JEEVI_ENABLE_WEB_CHAT" not in (ROOT / _doc).read_text(encoding="utf-8"))
+    check(f"{_doc} không còn biến JAVIS_ENABLE_WEB_CHAT",
+          "JAVIS_ENABLE_WEB_CHAT" not in (ROOT / _doc).read_text(encoding="utf-8"))
 check("tài liệu hướng dẫn cũ đã xoá", not (ROOT / "docs" / "29-chatgpt-web.md").exists())
 check("spec cũ còn lại làm hồ sơ, có ghi rõ ĐÃ GỠ",
       "ĐÃ GỠ ở 0.64.20" in (ROOT / "docs/dev/2026-09-chatgpt-web-model-spec.md").read_text(encoding="utf-8"))

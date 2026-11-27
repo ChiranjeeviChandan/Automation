@@ -13,7 +13,7 @@ import sys
 import tempfile
 from urllib.parse import urlparse, parse_qs
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-oauthtest-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-oauthtest-")
 
 import openai_oauth     # noqa: E402
 

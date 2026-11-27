@@ -25,7 +25,7 @@ model, không cần model nhớ gọi tool nào: đây là sự thật đọc t�
      xong. Gọi `_KHI_XONG` do main đặt: báo về đúng khung chat + hòm thư + thông báo đẩy, và nếu
      cần thì mở một lượt nối tiếp trong cùng phiên để làm nốt (ghép tiếng, kiểm tra, gửi file).
 
-Lượt nối tiếp chạy khi: model đã dặn rõ bằng tool `jeevi_job` op=then, HOẶC câu trả lời của
+Lượt nối tiếp chạy khi: model đã dặn rõ bằng tool `javis_job` op=then, HOẶC câu trả lời của
 lượt vừa rồi có hứa "xong em làm tiếp/gửi" (bộ bắt lời hứa của background_status). Nhờ vậy lời
 hứa của model thành sự thật, thay vì chỉ bị dán nhãn là hứa suông.
 
@@ -60,7 +60,7 @@ try:
     import config as _cfg
     _STATE_DIR = Path(_cfg.STATE_DIR)
 except Exception:          # chạy lẻ trong test
-    _STATE_DIR = Path(os.getenv("JEEVI_STATE_DIR", str(Path(__file__).parent)))
+    _STATE_DIR = Path(os.getenv("JAVIS_STATE_DIR", str(Path(__file__).parent)))
 
 POSIX = os.name != "nt"
 
@@ -80,11 +80,11 @@ _KHOA = threading.Lock()
 
 _NHOM_THEO_TAG: Dict[str, List[int]] = {}      # tag lượt -> pid engine (= mã nhóm)
 _VIEC: Dict[str, dict] = {}                     # mã việc -> bản ghi
-_LOI_DAN: Dict[str, dict] = {}                  # chat_id -> {"text", "ts"} (jeevi_job op=then)
+_LOI_DAN: Dict[str, dict] = {}                  # chat_id -> {"text", "ts"} (javis_job op=then)
 _KHI_XONG: Optional[Callable[[dict], Any]] = None
 _VONG: Optional[asyncio.Task] = None
 # The server's event loop, where the watcher runs. Remembered so a job registered from a worker
-# thread (jeevi_terminal background=true runs in asyncio.to_thread) can still start the watcher.
+# thread (javis_terminal background=true runs in asyncio.to_thread) can still start the watcher.
 _LOOP: Optional[asyncio.AbstractEventLoop] = None
 
 
@@ -254,7 +254,7 @@ def ghi_nhom(tag: str, pid: int) -> None:
 # Claude Code's work: Jeevi keeps its `claude` process warm between turns (it does not exit), the
 # SDK starts it without a session of its own, and its Bash tool runs every command in a NEW
 # session. So `nohup ffmpeg ... &` left behind by Claude Code was never adopted, and
-# `jeevi_job op=then` silently dropped its instruction at the end of the turn.
+# `javis_job op=then` silently dropped its instruction at the end of the turn.
 #
 # Instead the engine starts with ENV_MARK=<mark> in its environment. Every process it starts
 # inherits it (Claude Code filters only its own CLAUDE_CODE_* and BUN_* variables from its shell),
@@ -264,7 +264,7 @@ def ghi_nhom(tag: str, pid: int) -> None:
 # tool is still running in the background (a turn that ended with its background tasks running).
 # The engine itself, its MCP servers and anything else still owned by a live engine process are
 # not orphans and are left alone.
-ENV_MARK = "JEEVI_BG_MARK"
+ENV_MARK = "JAVIS_BG_MARK"
 _MARKS_BY_TAG: Dict[str, List[str]] = {}
 _CLAUDE_SHELL = re.compile(r"shell-snapshots/snapshot-|pwd -P >\| \S*claude-[0-9a-f]+-cwd")
 _EVAL_INNER = re.compile(r"\beval '(.*?)'(?: < /dev/null)?(?: && pwd -P|$)", re.S)
@@ -408,7 +408,7 @@ def groups_left_by_mark(mark) -> List[int]:
 
 
 def dat_loi_dan(chat_id: str, text: str) -> None:
-    """Model dặn "khi việc nền của lượt này xong thì làm tiếp X" (tool jeevi_job op=then)."""
+    """Model dặn "khi việc nền của lượt này xong thì làm tiếp X" (tool javis_job op=then)."""
     cid = str(chat_id or "").strip()
     t = str(text or "").strip()
     if not cid or not t:
@@ -444,7 +444,7 @@ def drop_stopped_followups(chat_id: str, since: Optional[float] = None) -> int:
     """The owner pressed Stop in this chat: what the stopped turn asked to do after its background work no longer
     starts a turn by itself. Two things only:
 
-    - the pending instruction (jeevi_job op=then) of this chat, which a stopped turn never hands to a job because it
+    - the pending instruction (javis_job op=then) of this chat, which a stopped turn never hands to a job because it
       never reaches the adoption step; left there it would attach to a later turn's job for up to TUOI_LOI_DAN;
     - the follow-up of a job of this chat that is still running and was started during the stopped turn
       (`bat_dau >= since`, `since` = when that turn started; None = no turn was running, so no job qualifies).

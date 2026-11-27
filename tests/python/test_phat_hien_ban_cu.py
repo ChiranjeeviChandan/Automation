@@ -21,7 +21,7 @@ Hai điều then chốt mà test này ghim:
    lại đúng URL ấy (lấy từ cache, không tốn mạng) rồi băm và đối chiếu.
 
 2. **Điểm tựa phải luôn mới.** `index.html` trả kèm `no-store` nên nó luôn mới kể cả khi
-   mọi file quanh nó đã cũ - khối `<script id="jeevi-fresh">` vì vậy luôn nói thật. Và
+   mọi file quanh nó đã cũ - khối `<script id="javis-fresh">` vì vậy luôn nói thật. Và
    `freshness.js` nạp KHÔNG kèm `?v=`, được đóng dấu `no-cache`: người gác cổng mà cũ theo
    thì nó gác cái gì.
 
@@ -66,7 +66,7 @@ check("CANARY: /app-version KHÔNG chạm mạng (khác /version đi hỏi GitHu
 check("và trả cả phiên bản lẫn vân tay", '"version"' in _av and '"assets"' in _av)
 
 _root = MAIN.split("async def root()", 1)[1].split("\n@app.", 1)[0]
-check("trang nhúng khối jeevi-fresh", 'id="jeevi-fresh"' in _root)
+check("trang nhúng khối javis-fresh", 'id="javis-fresh"' in _root)
 # Regex tìm vân tay bám vào `?v=`, nên tính SAU khi đã đổi `?v=` là ra rỗng sạch.
 # 0.444.4: lời gọi đi qua asyncio.to_thread(_asset_fps, html) (lần đầu nó nén gọn mọi file), nên nhận cả hai dạng.
 _fp_goi = re.search(r"_asset_fps(?:\(|, )html", _root)
@@ -136,7 +136,7 @@ check("nhưng /app-version thì hỏi thẳng máy chủ", 'cache: "no-store"' i
 # Tự tải lại là cướp mất câu người dùng đang gõ dở - tệ hơn hẳn cái nó chữa.
 check("CANARY: KHÔNG tự động tải lại trang, chỉ mời",
       "location.reload()" in FRESH and "KHÔNG tự tải lại trang" in FRESH)
-check("có chống vòng lặp tải lại vô tận", "jeevi-fresh-reloaded" in FRESH)
+check("có chống vòng lặp tải lại vô tận", "javis-fresh-reloaded" in FRESH)
 check("tải lại rồi vẫn cũ thì đổi sang câu chỉ thẳng cách làm",
       "Ctrl+Shift+R" in FRESH)
 check("gọi ĐÚNG TÊN file đang cũ (để còn lần ra tầng cache nào giữ)",

@@ -30,8 +30,8 @@ import os
 import sys
 import tempfile
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-chatbot-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-chatbot-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -413,7 +413,7 @@ check("prompt lấy TÊN từ Agent", "Hoa CSKH" in p)
 check("prompt lấy VAI TRÒ từ Agent", "Trả lời khách về sản phẩm" in p)
 check("prompt lấy THÂN file Agent", "Luôn hỏi khách đã mua chưa." in p)
 check("prompt KHÔNG mang system prompt điều phối của Jeevi",
-      "jeevi_schedule" not in p and "Kanban" not in p)
+      "javis_schedule" not in p and "Kanban" not in p)
 
 
 def _no_agent(brain, slug):

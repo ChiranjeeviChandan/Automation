@@ -8,6 +8,6 @@ author: Jeevi (bundled)
 enabled: false
 min_mode: readonly
 tools:
-  - jeevi_tool_stats
+  - javis_tool_stats
 hooks:
   - post_tool_call

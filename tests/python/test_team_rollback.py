@@ -22,7 +22,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-team-rb-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-team-rb-")
 
 import sessions as NEW_SS  # noqa: E402
 import task_store as NEW_TS  # noqa: E402

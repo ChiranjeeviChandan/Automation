@@ -120,18 +120,18 @@ Hai năng lực, cùng độ phức tạp, khác nhau đúng một điều:
 
 | Năng lực | Có tool riêng | Prose trong `CLAUDE.md` |
 |---|---|---:|
-| Đặt lịch, nhắc hẹn, loop | **Có** (`jeevi_schedule`) | **~600 ký tự** |
+| Đặt lịch, nhắc hẹn, loop | **Có** (`javis_schedule`) | **~600 ký tự** |
 | Tạo agent, workflow | Không | **2.875** |
 | Tạo plugin | Không | **2.114** |
 | Ghi bộ nhớ dài hạn | Không | **2.297** |
 
 Đặt lịch **phức tạp hơn** tạo agent: có cron, có ba mức quyền, có hai kho lưu khác nhau, có
 điều kiện tiền đề. Nhưng nó chỉ tốn ~600 ký tự prose, vì luật của nó nằm trong hợp đồng tool
-(`system/plugins/jeevi-schedule/plugin.py:583`, mô tả ~1.900 ký tự).
+(`system/plugins/javis-schedule/plugin.py:583`, mô tả ~1.900 ký tự).
 
 Và quan trọng hơn: tool đó **nằm trong lazy pool**. `mcp_hub.py:837` lấy pool là mọi tool trừ
-`CORE_TOOL_FNS` (`mcp_hub.py:598`, chỉ có `jeevi_read_file`, `jeevi_list_dir`,
-`jeevi_write_file`). Nên 1.900 ký tự ấy chỉ vào ngữ cảnh khi model thật sự cần đặt lịch. Lượt
+`CORE_TOOL_FNS` (`mcp_hub.py:598`, chỉ có `javis_read_file`, `javis_list_dir`,
+`javis_write_file`). Nên 1.900 ký tự ấy chỉ vào ngữ cảnh khi model thật sự cần đặt lịch. Lượt
 hỏi doanh thu trả 0 ký tự cho nó.
 
 > **Cơ chế "luật đi kèm năng lực, nạp lười theo nhu cầu" đã tồn tại, đã chạy production, đã đo
@@ -142,7 +142,7 @@ Vì vậy kế hoạch này **không xây tầng truy xuất mới**. Nó đưa 
 
 ## Lỗ hổng quy trình
 
-`jeevi_schedule` đã có từ lâu, nhưng mục Orchestration trong `CLAUDE.md` vẫn còn nguyên 8.888
+`javis_schedule` đã có từ lâu, nhưng mục Orchestration trong `CLAUDE.md` vẫn còn nguyên 8.888
 ký tự mô tả lại chính những luật đó.
 
 **Thêm tool không tự động rút prose.** Không có trường nào, test nào, quy trình nào nói "luật
@@ -329,7 +329,7 @@ Bốn cái vách trong hệ thống:
 | Vách | Ngưỡng | Vượt qua là gì |
 |---|---|---|
 | Trần dòng lệnh Antigravity | 120.000 byte (Linux), 30.000 UTF-16 (Windows) | Thêm 1 vòng inference, 30-60 giây |
-| Ngưỡng lazy tool | 40 tool **hoặc** 6.000 ký tự schema | ~10.000 ký tự schema, đổi lấy khả năng thêm 1 vòng `jeevi_search_tools` |
+| Ngưỡng lazy tool | 40 tool **hoặc** 6.000 ký tự schema | ~10.000 ký tự schema, đổi lấy khả năng thêm 1 vòng `javis_search_tools` |
 | Hạn cache | 5 phút (hoặc 1 giờ nếu bật) | Mất toàn bộ tiền tố đã cache |
 | Kích thước tối thiểu để cache | 512 tới 4.096 token, tuỳ model | **Dưới ngưỡng thì cache im lặng không chạy** |
 
@@ -384,7 +384,7 @@ giữa 8.000 và 6.000 chỉ là ~130 ms. Nó tồn tại vì kỷ luật.
 
 ```yaml
 id: agent-ghi-dung-thu-muc
-enforced_by: jeevi_create_agent     # code ép → XOÁ khỏi prose
+enforced_by: javis_create_agent     # code ép → XOÁ khỏi prose
 # enforced_by: ""                   # trống → ứng viên để biến thành code
 added: 2026-07-19
 because: "Agent ghi vào Jeevi/agents/ nên biến mất khỏi app"
@@ -393,7 +393,7 @@ review: 2026-12-19
 
 Trường `enforced_by` biến việc rút prose từ **tuỳ hứng** thành **tự động**: có người thi hành
 bằng code thì prose bị xoá, không cần ai nhớ. Đây đúng là lỗ đã để mục Orchestration sống sót
-nguyên vẹn dù `jeevi_schedule` có từ lâu.
+nguyên vẹn dù `javis_schedule` có từ lâu.
 
 ---
 
@@ -449,7 +449,7 @@ từ ~80% (model nhớ luật) lên 100% (code ép).
 Thu hẹp giao diện làm giảm linh hoạt, mà linh hoạt là điểm bán của Jeevi. Nên thiết kế là hai
 lớp:
 
-- **Đường trải nhựa:** `jeevi_create_agent(...)` làm đúng mọi thứ, là đường dễ nhất nên model
+- **Đường trải nhựa:** `javis_create_agent(...)` làm đúng mọi thứ, là đường dễ nhất nên model
   tự chọn
 - **Lan can:** hook `pre_tool_call` chặn hoặc sửa một lệnh ghi vào `Jeevi/agents/`, kèm câu
   giải thích
@@ -526,7 +526,7 @@ Nên trong lộ trình, việc hook phủ quyết **chặn cứng** mọi việc
 `server/main.py:351` trỏ vào `CLAUDE.md` ở gốc repo. Cùng file đó đang phục vụ hai khán giả
 khác hẳn nhau:
 
-1. **Claude Code làm việc trên repo `jeevi-os`** đọc nó làm project file (tự động theo cwd)
+1. **Claude Code làm việc trên repo `javis-os`** đọc nó làm project file (tự động theo cwd)
 2. **Mọi người dùng cuối của Jeevi** nhận nó làm system prompt, mọi lượt chat
 
 Đây là nguyên nhân **cấu trúc** của việc phình: mỗi lần thêm một quy ước dev là mọi khách hàng
@@ -563,13 +563,13 @@ không. Mục lục cấp **nhóm** giữ cho model luôn có **bản đồ**, c
 ```
 Nhóm luật hiện có: điều phối công việc · tạo năng lực · bộ nhớ · tệp và ảnh ·
 số liệu và MCP · kênh và chatbot · an toàn.
-Cần nhóm nào chưa có trong prompt thì gọi jeevi_use_skill để lấy.
+Cần nhóm nào chưa có trong prompt thì gọi javis_use_skill để lấy.
 ```
 
 ## Hợp đồng 2: file luật
 
 Một luật = một file ở `system/prompt/policies/<id>.md`, dùng lại định dạng skill đang có nên
-`skill_router` và `jeevi_use_skill` đọc được ngay, **không cần runtime mới**.
+`skill_router` và `javis_use_skill` đọc được ngay, **không cần runtime mới**.
 
 ```yaml
 ---
@@ -577,7 +577,7 @@ id: ba-muc-quyen-loop
 group: dieu-phoi                  # khớp mục lục nhóm trong nhân
 description: "Ba mức quyền của loop và khi nào chọn mức nào."   # <= 150, skill_router ép
 requires: [thang-quyet-dinh]      # nạp cái này thì kéo theo
-enforced_by: jeevi_schedule       # trống = chưa có code ép
+enforced_by: javis_schedule       # trống = chưa có code ép
 added: 2026-08-16
 because: "Loop mode full chạy hành động ra ngoài không hỏi"
 review: 2027-02-16
@@ -593,19 +593,19 @@ quyết định**, mỗi đơn vị 800 tới 1.500 ký tự:
 ```
 policies/thang-quyet-dinh.md              ~900   (rút gọn 5 dòng đưa vào nhân)
 policies/bao-ket-qua-ve-nguoi-hoi.md    ~1.200   enforced_by: server tự gắn chat_id
-policies/ba-muc-quyen-loop.md           ~1.100   enforced_by: jeevi_schedule
-policies/dieu-kien-truoc-khi-len-lich.md  ~900   enforced_by: jeevi_schedule (can_force)
+policies/ba-muc-quyen-loop.md           ~1.100   enforced_by: javis_schedule
+policies/dieu-kien-truoc-khi-len-lich.md  ~900   enforced_by: javis_schedule (can_force)
 policies/zalo-gui-tin.md                ~1.000   → về mô tả zalo_send_message
 policies/khong-hua-suong.md               ~200   enforced_by: background_status
 ```
 
 ## Hợp đồng 3: ba tool mới
 
-Viết dưới dạng bundled plugin, đúng khuôn `system/plugins/jeevi-schedule/`. Dùng
+Viết dưới dạng bundled plugin, đúng khuôn `system/plugins/javis-schedule/`. Dùng
 `ctx.register_tool` (`plugins_host.py:340`), `min_mode="safe"`. Cả ba nằm trong lazy pool,
 **không** thêm vào `CORE_TOOL_FNS`.
 
-### `jeevi_create_agent` / `jeevi_update_agent`
+### `javis_create_agent` / `javis_update_agent`
 
 ```
 op            create | update
@@ -622,14 +622,14 @@ Tool tự lo: ghi vào `<brain>/agents/<slug>.md` **phẳng**, dựng frontmatte
 slug, từ chối slug có dấu hoặc có `/` và `..`.
 
 Retire: **2.875 ký tự** (mục "Creating/editing Agents and Workflows") và **1.726** (mục
-"Building capabilities", vốn đã trùng skill `jeevi-builder`).
+"Building capabilities", vốn đã trùng skill `javis-builder`).
 
-### `jeevi_create_workflow`
+### `javis_create_workflow`
 
 Cùng khuôn. Thêm **kiểm tham chiếu**: workflow trỏ tới agent chưa tồn tại thì tool trả lỗi kèm
 tên agent thiếu, thay vì để model nhớ luật "tạo agent trước".
 
-### `jeevi_remember`
+### `javis_remember`
 
 ```
 type          user | preference | business | decision
@@ -643,10 +643,10 @@ thư mục khác" biến mất), dựng frontmatter `type/created/updated`, thê
 
 Retire: **2.297 ký tự**.
 
-### `jeevi_create_plugin`
+### `javis_create_plugin`
 
 Ép sẵn `enabled: false`, đòi khai `min_mode` tường minh, và **trả về câu nhắc về
-`JEEVI_ENABLE_USER_PLUGINS`** trong kết quả tool thay vì bắt model nhớ nói.
+`JAVIS_ENABLE_USER_PLUGINS`** trong kết quả tool thay vì bắt model nhớ nói.
 
 Retire: **2.114 ký tự**.
 
@@ -660,7 +660,7 @@ rủi ro, không vòng tool.
 | Có file đính kèm | `blocks/files-attached.md` | 2.272 | `has_attachments`, `main.py:12175` |
 | Có khối `[FILE ĐANG MỞ]` | `blocks/open-file.md` | 676 | server tự chèn khối đó |
 | Pack CRM đã cài | `blocks/customer-inbox.md` | 329 | `packs_store` |
-| Có MCP số liệu | `blocks/data-cache.md` | 824 | `jeevi_connections` |
+| Có MCP số liệu | `blocks/data-cache.md` | 824 | `javis_connections` |
 | Phiên dev trên repo | (về `CLAUDE.md`) | 1.005 | không còn liên quan |
 
 Lượt không khớp điều kiện nào trả **0 ký tự** cho cả năm.
@@ -763,9 +763,9 @@ Thứ tự có ràng buộc thật, không xếp theo cảm tính. Ba luật th�
 | 4 | ~~`AGY_BOOTSTRAP_MAX_CHARS` 100.000 → 80.000~~ **XONG: → 45.000** (số thật sau khi đo sysprompt 46.179) | `test_ba_loi_tran_prompt.py` | ✅ |
 | 5 | Bốn khối điều kiện + dời `cache_control` + **kiểm `cache_read_input_tokens`** | Lượt không đính kèm giảm đúng 2.272 ký tự. Cache read khác 0 qua 3 lượt liên tiếp | 1,5 ngày |
 | 6 | Rút luật code đã ép + thêm `enforced_by` vào mọi file luật | Ba đoạn "hứa suông" (2.403) còn 1 dòng. Test: `enforced_by` khác trống phải trỏ tới symbol có thật | 0,5 ngày |
-| 7 | `jeevi_remember` | Retire 2.297. Ghi thử 60 ký ức, `MEMORY.md` không mất dòng nào | 1 ngày |
-| 8 | `jeevi_create_agent`, `jeevi_create_workflow` + lan can hook | Retire 2.875 + 1.726. Ghi thẳng vào `Jeevi/agents/` bị chặn kèm giải thích | 2 ngày |
-| 9 | `jeevi_create_plugin` | Retire 2.114 | 1 ngày |
+| 7 | `javis_remember` | Retire 2.297. Ghi thử 60 ký ức, `MEMORY.md` không mất dòng nào | 1 ngày |
+| 8 | `javis_create_agent`, `javis_create_workflow` + lan can hook | Retire 2.875 + 1.726. Ghi thẳng vào `Jeevi/agents/` bị chặn kèm giải thích | 2 ngày |
+| 9 | `javis_create_plugin` | Retire 2.114 | 1 ngày |
 | 10 | Tách Orchestration thành policy | Retire ~8.000. Nhân dưới 6.500 | 2-3 ngày |
 | ~~11~~ | ~~Nhân đúc sẵn theo chữ ký~~ **RÚT LẠI** | Đo được 3,9 ms chứ không phải 40 ms (xem 4.5). Lý do CPU không còn | - |
 | ~~12~~ | ~~`cache_ttl="1h"`~~ **RÚT LẠI** | TTL 1 giờ tốn 2x ghi và chỉ đúng cho khoảng cách 5-60 phút (xem 4.6). Mặc định 5m đang đúng | - |
@@ -840,14 +840,14 @@ dùng đường tool **dưới 98%** thì không cắt prose, quay lại sửa m
 Ghi lại vì mỗi cái đều từng được cân nhắc rồi bị loại có lý do.
 
 - **Không xây tầng truy xuất policy mới.** Cơ chế đã có (lazy tool pool, `skill_router`,
-  `jeevi_use_skill`) và đã đo được. Thêm tầng thứ bảy lên một chồng sáu tầng chưa có baseline
+  `javis_use_skill`) và đã đo được. Thêm tầng thứ bảy lên một chồng sáu tầng chưa có baseline
   production là lặp lại đúng sai lầm đã dẫn tới đây.
 - **Không cấu hình embedding cho `capability_index`.** Khung RRF đã sẵn. Bật khi `miss_class`
   báo cần. Phần lớn luật kích hoạt bằng **cấu trúc** (có biểu thức thời gian, có ý định tạo)
   chứ không bằng từ vựng, nên embedding giải một bài toán mà chúng không có.
 - **Không xây cơ chế ghim policy theo phiên.** Chỉ cần khi luật sống trong policy body. Đưa
   luật vào hợp đồng tool thì phạm vi tool đã ổn định sẵn cả phiên.
-- **Không để model tự gọi `jeevi_use_skill` làm đường CHÍNH.** Nó là một vòng inference đầy đủ,
+- **Không để model tự gọi `javis_use_skill` làm đường CHÍNH.** Nó là một vòng inference đầy đủ,
   tức 30 tới 60 giây trên engine CLI. Nó là lưới an toàn cho ca truy xuất trượt.
 - **Không cấm `Write` native cho chat của chủ.** Quá tay. Dùng hậu kiểm thay vì cấm.
 - **Không nâng trần nhân.** Chạm 8.000 là tín hiệu có luật bề mặt lọt vào nhân, không phải tín
@@ -862,12 +862,12 @@ Ghi lại vì mỗi cái đều từng được cân nhắc rồi bị loại c�
 | Orchestration | 8.888 | Tool + nhân | Thang quyết định 5 dòng vào nhân (~700). Báo kết quả → server tự gắn `chat_id`. Ba mức quyền → tham số tool. Luật Zalo → mô tả `zalo_send_message`. Hứa suông → `background_status` đã ép |
 | What Jeevi is | 4.071 | Nhân + dữ liệu | Tính cách giữ ~1.200. Bảng 10 engine là **dữ liệu**, sinh từ `PROVIDERS`, không viết tay |
 | Response principles | 3.812 | Nhân + kênh | Tính cách giữ ~1.500. Phần theo kênh đã có `channel_context` |
-| Creating Agents/Workflows | 2.875 | Tool | `jeevi_create_agent`, `jeevi_create_workflow`. Còn 0 |
-| Long-term memory | 2.297 | Tool | `jeevi_remember`. Còn 0 |
+| Creating Agents/Workflows | 2.875 | Tool | `javis_create_agent`, `javis_create_workflow`. Còn 0 |
+| Long-term memory | 2.297 | Tool | `javis_remember`. Còn 0 |
 | Files attached | 2.272 | Khối điều kiện | `has_attachments` |
-| Creating Plugins | 2.114 | Tool | `jeevi_create_plugin`. Còn 0 |
+| Creating Plugins | 2.114 | Tool | `javis_create_plugin`. Còn 0 |
 | Clarify before answering | 2.055 | Nhân | Phán đoán thật, giữ nguyên |
-| Building capabilities | 1.726 | Skill | Đã trùng `jeevi-builder`. Còn 0 |
+| Building capabilities | 1.726 | Skill | Đã trùng `javis-builder`. Còn 0 |
 | Dev conventions | 1.005 | Tách file | Về `CLAUDE.md` của repo |
 | Data Cache | 824 | Khối điều kiện | Chỉ khi có MCP số liệu |
 | Open file | 676 | Khối điều kiện | Server tự chèn khối đó |
@@ -908,6 +908,6 @@ dốc, mà là đứng đúng bên của vài cái vách.** Cái vách đắt nh
 Antigravity, và nó chỉ vượt qua được khi sửa `AGY_BOOTSTRAP_MAX_CHARS` **cùng lúc** với thu nhỏ
 nhân. Sửa một cái là không đủ.
 
-Repo đã tự chứng minh mệnh đề trung tâm: `jeevi_schedule` có tool nên tốn ~600 ký tự prose,
+Repo đã tự chứng minh mệnh đề trung tâm: `javis_schedule` có tool nên tốn ~600 ký tự prose,
 trong khi tạo agent không có tool nên tốn 2.875 ký tự cho một việc đơn giản hơn. Thứ còn thiếu
 không phải kiến trúc, mà là một quy trình buộc phải rút prose khi tool ra đời.

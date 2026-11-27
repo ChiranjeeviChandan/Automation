@@ -69,7 +69,7 @@
     host.setAttribute("data-phase", ph);
     var manualBtn = '<button type="button" class="s-btn-ghost" data-bl="manual">' + ic("key-round") + " " + esc(tw("bl.own_token")) + "</button>";
     if (ph === "unknown") {
-      var G = window.JeeviGithubRepos;
+      var G = window.JavisGithubRepos;
       host.innerHTML = '<div class="lv-meta">' + esc(tw("gh.panel_unknown")) + "</div>" +
         '<div class="lv-note">' + esc(G && G.whyText ? G.whyText(gh) : tw("gh.err_net")) + "</div>" +
         '<div class="si-actions"><button type="button" class="s-btn-ghost" data-bl="retry">' + ic("refresh-cw") + " " + esc(tw("common.retry")) + "</button>" +
@@ -115,7 +115,7 @@
       return "";
     }
     on("connect", function () {
-      if (window.JeeviGithubRepos && window.JeeviGithubRepos.connect) window.JeeviGithubRepos.connect();
+      if (window.JavisGithubRepos && window.JavisGithubRepos.connect) window.JavisGithubRepos.connect();
     });
     on("manual", function () { if (opts.showManual) opts.showManual(true); });
     on("retry", function () { if (opts.onChange) opts.onChange(); });
@@ -141,10 +141,10 @@
   // GitHub refused to create the repo (a "Sign in with GitHub" token has no Administration permission): github.com/new
   // already filled in, the page that lets Jeevi see the new repo when the sign-in is the app, then back to the list.
   function manualCreate(r, gh, next) {
-    var M = window.JeeviConnModal;
+    var M = window.JavisConnModal;
     if (!M) return;
     var steps = '<li><a class="s-btn" target="_blank" rel="noopener" href="' + esc(r.new_url) + '">' + ic("external-link") + " " +
-      esc(tw("bl.m_new", { name: r.name || "jeevi-brain-backup" })) + "</a></li>" +
+      esc(tw("bl.m_new", { name: r.name || "javis-brain-backup" })) + "</a></li>" +
       (r.install_url ? '<li><a class="s-btn-ghost" target="_blank" rel="noopener" href="' + esc(r.install_url) + '">' +
         ic("external-link") + " " + esc(tw("bl.m_access")) + "</a></li>" : "") +
       '<li><button type="button" class="s-btn-ghost" data-f="next">' + ic("folder-git") + " " + esc(tw("bl.pick")) + "</button></li>";
@@ -155,7 +155,7 @@
 
   // Private repos the account can push to, newest push first, with a search box when there are many.
   async function openPicker(gh, linkTo) {
-    var M = window.JeeviConnModal;
+    var M = window.JavisConnModal;
     if (!M) return;
     var m = M.open(M.head(esc(tw("bl.pick_head"))) + '<div class="conn-form bl-form"><div class="pg-loading" role="status">' +
       esc(tw("gh.loading")) + "</div></div>", 560);
@@ -197,5 +197,5 @@
     draw();
   }
 
-  window.JeeviBackupLink = { mount: mount };
+  window.JavisBackupLink = { mount: mount };
 })();

@@ -7,7 +7,7 @@ stranger-driven model an "open any document" tool is only safe if four things ho
 a single careless edit away from breaking, so each is pinned here:
 
 1. **Read-only by construction.** The hub returns exactly three document tools for this mode: no
-   write tool, no connected source, no plugin, no lazy `jeevi_run_tool`, whatever else is installed.
+   write tool, no connected source, no plugin, no lazy `javis_run_tool`, whatever else is installed.
 2. **Same documents as the pre-turn search, never more.** `memory/`, `inbox/` (customer uploads),
    `agents/`, Jeevi' convention files, images, `../` and absolute paths, and symlinks out of the
    brain all stay closed, because the path a customer types is matched against a list, never opened.
@@ -28,8 +28,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-doctools-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-doctools-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -63,8 +63,8 @@ if _STATE not in str(chatbot_store.STORE_PATH):
 # ============================================================
 # A brain with documents, private files and traps
 # ============================================================
-BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-doctools-brain-")).resolve()
-OUTSIDE = Path(tempfile.mkdtemp(prefix="jeevi-doctools-outside-")).resolve()
+BRAIN = Path(tempfile.mkdtemp(prefix="javis-doctools-brain-")).resolve()
+OUTSIDE = Path(tempfile.mkdtemp(prefix="javis-doctools-outside-")).resolve()
 
 
 def w(rel, text, root=BRAIN):
@@ -133,7 +133,7 @@ PINNED = ("faq/chinh-sach.md", "huong-dan/cai-vps.md", "memory/facts/bi-mat.md",
           "inbox/khach-gui.md", "agents/cskh.md", "workflows/quy-trinh.md", "CLAUDE.md", "faq/lien-ket.md",
           "../" + OUTSIDE.name + "/ngoai.md")
 dt.turn_files = lambda: PINNED
-NAMES = {"jeevi_docs_search", "jeevi_docs_list", "jeevi_docs_read"}
+NAMES = {"javis_docs_search", "javis_docs_list", "javis_docs_read"}
 check("exactly the three document tools", {t["fn"] for t in tools} == NAMES and set(route) == NAMES)
 check("every tool is marked read-only", all(r["effect"] == "read" and r["required_mode"] == "readonly"
                                             for r in route.values()))
@@ -144,37 +144,37 @@ def call(name, **args):
     return run(route[name]["call"](args))
 
 
-lst = call("jeevi_docs_list")
+lst = call("javis_docs_list")
 check("list shows the documents and their sections", "faq/chinh-sach.md" in lst and "Hoàn trả" in lst, lst)
 for leak in ("bi-mat", "khach-gui", "cskh", "quy-trinh", "CLAUDE.md", "MEMORY"):
     check(f"list does not leak {leak}", leak not in lst)
 
-r = call("jeevi_docs_read", path="faq/chinh-sach.md")
+r = call("javis_docs_read", path="faq/chinh-sach.md")
 check("read opens a listed document", "7 ngày" in r and "Giao toàn quốc" in r, r[:200])
 check("read drops the frontmatter", "type: faq" not in r)
-check("read accepts a Windows-style path", "7 ngày" in call("jeevi_docs_read", path=".\\faq\\chinh-sach.md"))
-check("read accepts a bare file name when unique", "Hostinger" in call("jeevi_docs_read", path="cai-vps.md"))
+check("read accepts a Windows-style path", "7 ngày" in call("javis_docs_read", path=".\\faq\\chinh-sach.md"))
+check("read accepts a bare file name when unique", "Hostinger" in call("javis_docs_read", path="cai-vps.md"))
 
 SECRETS = ("BIMAT-123", "GIA-MAO-456", "NOI-BO-789", "QUY-TRINH-000", "VAN-HANH-111", "NGOAI-222")
 for p in ("memory/facts/bi-mat.md", "memory/MEMORY.md", "inbox/khach-gui.md", "agents/cskh.md",
           "workflows/quy-trinh.md", "CLAUDE.md", "../" + OUTSIDE.name + "/ngoai.md",
           str(OUTSIDE / "ngoai.md"), str(BRAIN / "memory" / "facts" / "bi-mat.md"),
           "faq/../memory/facts/bi-mat.md", "bi-mat.md", "/etc/passwd", "", None):
-    out = call("jeevi_docs_read", path=p)
+    out = call("javis_docs_read", path=p)
     check(f"read refuses {p!r}", out.startswith("ERROR") and not any(s in out for s in SECRETS), out[:120])
 if _CO_SYMLINK:
-    out = call("jeevi_docs_read", path="faq/lien-ket.md")
+    out = call("javis_docs_read", path="faq/lien-ket.md")
     check("a symlink out of the brain cannot be read", "NGOAI-222" not in out, out[:120])
     check("nor is it listed", "faq/lien-ket.md" not in dt.allowed_docs(BRAIN))
-    check("nor found by search", "NGOAI-222" not in call("jeevi_docs_search", query="file ngoài brain"))
+    check("nor found by search", "NGOAI-222" not in call("javis_docs_search", query="file ngoài brain"))
 
-s = call("jeevi_docs_search", query="hoàn trả mấy ngày")
+s = call("javis_docs_search", query="hoàn trả mấy ngày")
 check("search finds the matching section with its source", "7 ngày" in s and "faq/chinh-sach.md" in s, s[:200])
-s = call("jeevi_docs_search", query="mật khẩu kho")
+s = call("javis_docs_search", query="mật khẩu kho")
 check("search never returns private files", "BIMAT-123" not in s)
-s = call("jeevi_docs_search", query="nội bộ quy trình agent")
+s = call("javis_docs_search", query="nội bộ quy trình agent")
 check("search never returns agents/workflows", "NOI-BO-789" not in s and "QUY-TRINH-000" not in s)
-check("a miss tells the model to retry with other words", "từ khác" in call("jeevi_docs_search", query="xyzqwv"))
+check("a miss tells the model to retry with other words", "từ khác" in call("javis_docs_search", query="xyzqwv"))
 
 toc = dt.table_of_contents(BRAIN)
 check("table of contents lists documents and headings", "faq/chinh-sach.md" in toc and "Hoàn trả" in toc, toc)
@@ -188,15 +188,15 @@ check("table of contents respects its size cap", len(dt.table_of_contents(BRAIN,
 h_tools, h_route = run(mcp_hub.discover_all("read_docs", vault_root=str(BRAIN), for_bot=True))
 check("hub gives the read_docs mode exactly the three tools", {t["fn"] for t in h_tools} == NAMES
       and set(h_route) == NAMES, sorted(t["fn"] for t in h_tools))
-for forbidden in ("jeevi_write_file", "jeevi_read_file", "jeevi_connections", "jeevi_run_tool", "jeevi_task",
-                  "jeevi_schedule"):
+for forbidden in ("javis_write_file", "javis_read_file", "javis_connections", "javis_run_tool", "javis_task",
+                  "javis_schedule"):
     check(f"hub hides {forbidden} at read_docs", forbidden not in h_route)
 check("hub without a brain gives read_docs nothing", run(mcp_hub.discover_all("read_docs", vault_root=None)) == ([], {}))
 
 cfg_path = mcp_hub.claude_config_path("read_docs", vault_root=str(BRAIN), bot=True)
 check("Claude Code bot gets a hub config even with no connection", bool(cfg_path))
 if cfg_path:
-    hdr = json.loads(Path(cfg_path).read_text(encoding="utf-8"))["mcpServers"]["jeevi"]["headers"]
+    hdr = json.loads(Path(cfg_path).read_text(encoding="utf-8"))["mcpServers"]["javis"]["headers"]
     check("that config carries the mode, the bot's brain and the bot flag",
           hdr.get("X-Jeevi-Mode") == "read_docs" and hdr.get("X-Jeevi-Vault") == str(BRAIN)
           and hdr.get("X-Jeevi-Bot") == "1", hdr)
@@ -233,13 +233,13 @@ base = {"name": "Bot", "agent": {"slug": "cskh", "brain": "shop"}, "nguon_tra_lo
 p_suggest = chatbot_runtime.build_bot_prompt(dict(base, muc_quyen="suggest"))
 p_docs = chatbot_runtime.build_bot_prompt(dict(base, muc_quyen="read_docs"))
 check("suggest + docs-only + no match: still says 'no info'", "CHỈ TRẢ LỜI THEO" in p_suggest
-      and "jeevi_docs_search" not in p_suggest)
-check("read_docs + no match: told to search with the tools first", "jeevi_docs_search" in p_docs
+      and "javis_docs_search" not in p_suggest)
+check("read_docs + no match: told to search with the tools first", "javis_docs_search" in p_docs
       and "PHẢI tự tìm" in p_docs)
 check("read_docs + no match: the 'say you have no info' rule waits until after searching",
       "CHỈ TRẢ LỜI THEO" not in p_docs and "Đã tìm kỹ mà vẫn không có" in p_docs)
 p_agent = chatbot_runtime.build_bot_prompt(dict(base, muc_quyen="read_docs", nguon_tra_loi="agent"))
-check("agent-mode read_docs bot is not forced into docs-only", "Đã tìm kỹ" not in p_agent and "jeevi_docs_read" in p_agent)
+check("agent-mode read_docs bot is not forced into docs-only", "Đã tìm kỹ" not in p_agent and "javis_docs_read" in p_agent)
 p_auto = chatbot_runtime.build_bot_prompt(dict(base, muc_quyen="read_docs", _tu_dong=True))
 check("group auto-reply counts documents the bot opens itself", "bạn tự mở" in p_auto)
 

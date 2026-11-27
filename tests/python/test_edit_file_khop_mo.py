@@ -1,4 +1,4 @@
-"""`jeevi_edit_file`: sửa từng đoạn, khớp mờ, lỗi dạy được model, kiểm lỗi sau khi sửa (0.256.0).
+"""`javis_edit_file`: sửa từng đoạn, khớp mờ, lỗi dạy được model, kiểm lỗi sau khi sửa (0.256.0).
 
     python tests/run.py edit_file_khop_mo
 
@@ -16,7 +16,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-edit-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-edit-"))
 
 import coding_files as cf  # noqa: E402
 
@@ -95,7 +95,7 @@ check("lỗi có từ trước thì im", "CẢNH BÁO" not in out)
 j = d / "c.json"
 j.write_text('{"a": 1}', encoding="utf-8")
 check("json hỏng sau khi sửa thì cảnh báo", "CẢNH BÁO" in cf.sua_file(j, '"a": 1', '"a": 1,', sid="s1"))
-check("file không có thì báo dùng write_file", "jeevi_write_file" in cf.sua_file(d / "khong.py", "a", "b"))
+check("file không có thì báo dùng write_file", "javis_write_file" in cf.sua_file(d / "khong.py", "a", "b"))
 for _ in range(3):
     out = cf.sua_file(j, "khong-co-dau", "x", sid="s2")
 check("hỏng 3 lần liên tiếp thì bảo đọc lại file", "Đã hỏng 3 lần" in out)

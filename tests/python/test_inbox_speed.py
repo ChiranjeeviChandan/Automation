@@ -17,11 +17,11 @@ import tempfile
 import time
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-inbox-speed-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
-os.environ["JEEVI_SESSIONS_DB"] = str(Path(_STATE) / "sessions.db")
+_STATE = tempfile.mkdtemp(prefix="javis-inbox-speed-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
+os.environ["JAVIS_SESSIONS_DB"] = str(Path(_STATE) / "sessions.db")
 os.environ["BRAINS_DIR"] = str(Path(_STATE) / "brains")
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

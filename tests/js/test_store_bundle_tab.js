@@ -1,4 +1,4 @@
-// Jeevi Store: a `bundle` pack (several kinds in one, e.g. jeevi.crm) has a tab of its own (2026-11-11).
+// Jeevi Store: a `bundle` pack (several kinds in one, e.g. javis.crm) has a tab of its own (2026-11-11).
 //
 //     node tests/js/test_store_bundle_tab.js
 //
@@ -22,13 +22,13 @@ const doc = {
 };
 const host = { innerHTML: "", querySelector: () => null, querySelectorAll: () => [] };
 const pack = (o) => Object.assign({
-  id: "jeevi.x", kind: "skill", name: { vi: "X" }, description: { vi: "mo ta" }, tier: "data", verified: true,
+  id: "javis.x", kind: "skill", name: { vi: "X" }, description: { vi: "mo ta" }, tier: "data", verified: true,
   nguon: "kho", author: { name: "Jeevi" }, version: "1.0.0", installed: false,
   download: { url: "https://x/y.zip", sha256: "a" }, nhom: "Ban hang", upstream: {},
 }, o);
-const CRM = pack({ id: "jeevi.crm", kind: "bundle", tier: "code", name: { vi: "Quan ly khach hang (CRM)" } });
-const SKILL = pack({ id: "jeevi.skill-a" });
-const TOOL = pack({ id: "jeevi.tool-a", kind: "tool" });
+const CRM = pack({ id: "javis.crm", kind: "bundle", tier: "code", name: { vi: "Quan ly khach hang (CRM)" } });
+const SKILL = pack({ id: "javis.skill-a" });
+const TOOL = pack({ id: "javis.tool-a", kind: "tool" });
 
 let catalog = { ok: true, fetched_at: Math.floor(Date.now() / 1000), packs: [SKILL, TOOL, CRM] };
 const win = { ic: (t) => "<svg data-ic=\"" + t + "\"></svg>", Alpine: { store: () => ({ go() {} }) } };
@@ -36,7 +36,7 @@ const alpineBefore = globalThis.Alpine;
 globalThis.Alpine = win.Alpine;
 new Function("window", "document", "fetch", fs.readFileSync(path.join(ROOT, "dashboard", "packs.js"), "utf8"))(
   win, doc, () => Promise.resolve({ json: () => Promise.resolve(catalog) }));
-const P = win.JeeviPacks || {};
+const P = win.JavisPacks || {};
 
 (async () => {
   await P.veKho({}, host, false, "skill");
@@ -44,13 +44,13 @@ const P = win.JeeviPacks || {};
   check("a catalog with a bundle draws the Bundle tab", h.includes('data-kho-loai="bundle"'));
   check("the Bundle tab comes last, after Connector", h.indexOf('data-kho-loai="bundle"') > h.indexOf('data-kho-loai="connector"'));
   check("the phone dropdown lists Bundle too", h.includes('<option value="bundle"'));
-  check("another tab does not show the bundle pack", !h.includes("jeevi.crm") && h.includes("jeevi.skill-a"));
+  check("another tab does not show the bundle pack", !h.includes("javis.crm") && h.includes("javis.skill-a"));
 
   await P.veKho({}, host, false, "bundle");
   const hb = host.innerHTML;
   check("the Bundle tab opens and is the active one", /class="kho-tab on" data-kho-loai="bundle"/.test(hb));
   check("the Bundle tab lists the CRM pack and nothing of another kind",
-    hb.includes("jeevi.crm") && !hb.includes("jeevi.skill-a") && !hb.includes("jeevi.tool-a"));
+    hb.includes("javis.crm") && !hb.includes("javis.skill-a") && !hb.includes("javis.tool-a"));
 
   // A bundle with a newer version: the update strip has a chip that jumps to its tab.
   catalog = { ok: true, fetched_at: Math.floor(Date.now() / 1000),
@@ -68,9 +68,9 @@ const P = win.JeeviPacks || {};
   check("opening the Bundle tab then falls back to Skill", /class="kho-tab on" data-kho-loai="skill"/.test(hn));
 
   // A pack that declares no kind lands in Bundle rather than vanishing.
-  catalog = { ok: true, fetched_at: Math.floor(Date.now() / 1000), packs: [SKILL, pack({ id: "jeevi.no-kind", kind: "" })] };
+  catalog = { ok: true, fetched_at: Math.floor(Date.now() / 1000), packs: [SKILL, pack({ id: "javis.no-kind", kind: "" })] };
   await P.veKho({}, host, false, "bundle");
-  check("a pack without a kind shows on the Bundle tab", host.innerHTML.includes("jeevi.no-kind"));
+  check("a pack without a kind shows on the Bundle tab", host.innerHTML.includes("javis.no-kind"));
 
   globalThis.Alpine = alpineBefore;
   if (fails) { console.log("\nFAIL - test_store_bundle_tab: " + fails); process.exit(1); }

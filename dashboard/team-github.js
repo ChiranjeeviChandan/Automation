@@ -62,18 +62,18 @@
   }
 
   // The picker inside `box`. opts: {sid(), brain(), current() -> [full names], changed(view), close(), connections()}.
-  // The list itself is the one of the main chat (github-connect.js, JeeviGithubRepos.list): a chosen repo has an X,
+  // The list itself is the one of the main chat (github-connect.js, JavisGithubRepos.list): a chosen repo has an X,
   // any other repo is one tap to add, each change is its own request.
   // 2026-11-15: `opts.save(names)` replaces the chat routes, so the same picker sets the repos of a PROJECT or an
   // ASSISTANT (sessions-ui.js drawer). It returns a promise of the server's answer ({ok, repos} or {ok: false, error}).
   // 2026-11-22: a failed check (network, an expired Jeevi session, a page that is not JSON) reads "Could not check" with
-  // a retry, by the rule of the main composer (github-connect.js, JeeviGithubRepos.statusState); before, it read "not
+  // a retry, by the rule of the main composer (github-connect.js, JavisGithubRepos.statusState); before, it read "not
   // connected" like a real signed-out GitHub.
   function panel(box, opts, fresh) {
     box.innerHTML = '<div class="cp-empty pg-loading">' + esc(tw("gh.loading")) + "</div>";
     api(fresh ? "/github/status?refresh=1" : "/github/status").then(function (st) {
       if (!box.isConnected) return;
-      var G = window.JeeviGithubRepos;
+      var G = window.JavisGithubRepos;
       var state = G && G.statusState ? G.statusState(st) : "unknown";
       if (state === "unknown") {
         box.innerHTML = '<div class="cp-empty">' + esc(tw("gh.panel_unknown")) + "<br>" +
@@ -93,7 +93,7 @@
   }
 
   function list(box, opts, addUrl) {
-    var G = window.JeeviGithubRepos;
+    var G = window.JavisGithubRepos;
     if (!G || !G.list) { box.innerHTML = '<div class="cp-empty">' + esc(tw("gh.err_net")) + "</div>"; return; }
     function names() { return (opts.current() || []).slice(); }
     // A project or an assistant only keeps a list of names: no worktree, so nothing a removal could lose.
@@ -131,8 +131,8 @@
 
   // The status of the team chat's pushed work, in the same detail box as a private chat (github-connect.js).
   function openStatus(sid) {
-    if (window.JeeviGithubRepos && window.JeeviGithubRepos.openDetail) window.JeeviGithubRepos.openDetail(sid);
+    if (window.JavisGithubRepos && window.JavisGithubRepos.openDetail) window.JavisGithubRepos.openDetail(sid);
   }
 
-  window.JeeviTeamGithub = { load: load, panel: panel, detach: detach, openStatus: openStatus, chipText: chipText, shortName: shortName };
+  window.JavisTeamGithub = { load: load, panel: panel, detach: detach, openStatus: openStatus, chipText: chipText, shortName: shortName };
 })();

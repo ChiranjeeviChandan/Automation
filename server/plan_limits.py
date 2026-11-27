@@ -308,7 +308,7 @@ def ghi_codex(snap: dict, now: float = None):
 
 
 def _codex_dir() -> str:
-    return os.getenv("JEEVI_CODEX_SESSIONS_DIR") or os.path.expanduser("~/.codex/sessions")
+    return os.getenv("JAVIS_CODEX_SESSIONS_DIR") or os.path.expanduser("~/.codex/sessions")
 
 
 def _ngay_moi_nhat(goc: str, n: int) -> list:
@@ -461,7 +461,7 @@ def ten_goi(raw: str, nha: str = "") -> str:
     No name table in Jeevi's code (owner, 2026-11-04): vendors rename plans (Anthropic's Max 20x became
     Ultra on 2026-10-30 under the same code "max"; OpenAI sells the code "prolite" as Pro), so a table
     here goes stale the day they do. Order: the vendor's own name (callers try `ten_goi_claude` first),
-    then jeevi-store's catalog for provider `nha` (`plan_names`, refreshed without a release), then the
+    then javis-store's catalog for provider `nha` (`plan_names`, refreshed without a release), then the
     code itself, tidied. Empty stays empty: never a guess."""
     v = str(raw or "").strip()
     if not v:

@@ -14,7 +14,7 @@
 - Tiếng Việt cho comment + chuỗi hiển thị.
 - Test là script standalone chạy `cd server && .venv\Scripts\python.exe test_update.py` (KHÔNG pytest), theo khuôn `check(name, cond)` + `sys.exit(1)` khi có FAIL (xem `server/test_path_exists.py`).
 - Chạy test bằng `.venv` (python hệ thống thiếu lib).
-- `config.STATE_DIR = Path(os.getenv("JEEVI_STATE_DIR", <server dir>))`. Test set `JEEVI_STATE_DIR` sang temp TRƯỚC khi import module.
+- `config.STATE_DIR = Path(os.getenv("JAVIS_STATE_DIR", <server dir>))`. Test set `JAVIS_STATE_DIR` sang temp TRƯỚC khi import module.
 - App trong Docker KHÔNG có docker socket - không tự đổi/lùi image (giữ nguyên).
 - Không làm auto-update nền, không viết updater sidecar Docker.
 - Repo: `blogminhquy/javis-os`. Image GHCR: `ghcr.io/blogminhquy/javis-os`.
@@ -59,7 +59,7 @@ Tạo `server/test_update.py`:
 """Test tầng cập nhật: update_state (thuần) + endpoint /update/status + updater dry-run.
 Chạy:  cd server && .venv\\Scripts\\python.exe test_update.py    (KHÔNG mạng)."""
 import os, sys, tempfile
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-update-test-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-update-test-")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 _fails = []
@@ -463,7 +463,7 @@ async def do_update():
     try:
         py = _sys.executable
         updater = str(PROJECT_ROOT / "server" / "updater.py")
-        port = os.getenv("JEEVI_PORT", "7777")
+        port = os.getenv("JAVIS_PORT", "7777")
         args = [py, updater, "--old-sha", old_sha, "--old-version", cur,
                 "--target", latest or "", "--port", str(port)]
         if mode == "windows":
@@ -575,24 +575,24 @@ def venv_python():
 def has_systemd():
     try:
         r = subprocess.run(["systemctl", "list-unit-files"], capture_output=True, text=True)
-        return r.returncode == 0 and "jeevi.service" in (r.stdout or "")
+        return r.returncode == 0 and "javis.service" in (r.stdout or "")
     except Exception:
         return False
 
 
 def stop_server():
     if os.name == "nt":
-        run(["cmd", "/c", str(ROOT / "stop-jeevi.bat")])
+        run(["cmd", "/c", str(ROOT / "stop-javis.bat")])
     else:
-        subprocess.run(["systemctl", "stop", "jeevi"], capture_output=True, text=True)
+        subprocess.run(["systemctl", "stop", "javis"], capture_output=True, text=True)
 
 
 def start_server():
     if os.name == "nt":
-        subprocess.Popen(["wscript.exe", "//nologo", str(ROOT / "start-jeevi.vbs")],
+        subprocess.Popen(["wscript.exe", "//nologo", str(ROOT / "start-javis.vbs")],
                          cwd=str(ROOT), creationflags=0x00000008)  # DETACHED_PROCESS
     else:
-        subprocess.run(["systemctl", "start", "jeevi"], capture_output=True, text=True)
+        subprocess.run(["systemctl", "start", "javis"], capture_output=True, text=True)
 
 
 def git_dirty():
@@ -630,7 +630,7 @@ def main():
     ap.add_argument("--old-sha", default="")
     ap.add_argument("--old-version", default="")
     ap.add_argument("--target", default="")
-    ap.add_argument("--port", default=os.getenv("JEEVI_PORT", "7777"))
+    ap.add_argument("--port", default=os.getenv("JAVIS_PORT", "7777"))
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
 
@@ -645,9 +645,9 @@ def main():
                     "old_version": a.old_version, "target_version": target})
 
     if os.name != "nt" and not has_systemd():
-        log("Không thấy systemd service 'jeevi' → không tự khởi động lại được. Hãy restart tay.")
+        log("Không thấy systemd service 'javis' → không tự khởi động lại được. Hãy restart tay.")
         us.write_state({"phase": "error", "result": "error",
-                        "error": "Không có systemd service 'jeevi' để tự khởi động lại.",
+                        "error": "Không có systemd service 'javis' để tự khởi động lại.",
                         "finished_at": _now()})
         return 1
 

@@ -12,7 +12,7 @@ ClaudeSDK._options once; claude_cli installs it before the secret hook, which mu
 """
 from __future__ import annotations
 
-_MARK = "_jeevi_result_reuse_hook"
+_MARK = "_javis_result_reuse_hook"
 
 
 async def compact_hook(input_data, tool_use_id, context):

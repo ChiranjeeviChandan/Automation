@@ -146,22 +146,22 @@ check("raw .md: khong target blank", !has(h, 'target="_blank"'));
 global.currentBrainPath = function () { return "D:\\Vaults\\My Bullet Journal"; };
 global.window = {
   location: {
-    origin: "https://jeevi.example.com",
-    href: "https://jeevi.example.com/chat",
+    origin: "https://javis.example.com",
+    href: "https://javis.example.com/chat",
   },
 };
-const brokenExport = "/brains/My%20Bullet%20Journal/exports/jeevi-tiec-tra-ai-warrior-plus.html";
+const brokenExport = "/brains/My%20Bullet%20Journal/exports/javis-tiec-tra-ai-warrior-plus.html";
 check("export /brains: giai ma dung path trong brain",
-  appFilePath(brokenExport) === "exports/jeevi-tiec-tra-ai-warrior-plus.html");
+  appFilePath(brokenExport) === "exports/javis-tiec-tra-ai-warrior-plus.html");
 // Tu 0.24.5 .html mo TRINH SUA thay vi tai ve, nen phep thu o day doi tu "co dung endpoint
 // tai khong" sang "co doc dung path trong brain khong" - do van la dieu muc 25 canh (link
 // /brains/... sai kieu duoc tu sua ve file that), khong phai hanh vi bam.
 h = mdToHtml("[Tải export](" + brokenExport + ")");
 check("export /brains: render thanh link file trong vault",
-  has(h, 'class="jv-floc"') && has(h, 'data-vault-path="exports/jeevi-tiec-tra-ai-warrior-plus.html"'));
-h = mdToHtml("[Tải export](https://jeevi.example.com" + brokenExport + ")");
+  has(h, 'class="jv-floc"') && has(h, 'data-vault-path="exports/javis-tiec-tra-ai-warrior-plus.html"'));
+h = mdToHtml("[Tải export](https://javis.example.com" + brokenExport + ")");
 check("export URL day du cung domain: cung duoc sua",
-  has(h, 'class="jv-floc"') && has(h, 'data-vault-path="exports/jeevi-tiec-tra-ai-warrior-plus.html"'));
+  has(h, 'class="jv-floc"') && has(h, 'data-vault-path="exports/javis-tiec-tra-ai-warrior-plus.html"'));
 
 // ---- 26. Editor nhan ca path goc brain va path da kem home cua Quan ly file ----
 const { ceilPath } = require("../../dashboard/file-editor.js");
@@ -217,9 +217,9 @@ check("bảng markdown giữ căn phải ở tiêu đề và ô dữ liệu",
   has(h, '<th style="text-align:right">Phải</th>') &&
   has(h, '<td style="text-align:right">c</td>'));
 check("copy giữa stream bỏ metadata đã đóng",
-  visibleMarkdown("Nội dung\n<!-- JEEVI_ASK: {hidden} -->\nTiếp") === "Nội dung\n\nTiếp");
+  visibleMarkdown("Nội dung\n<!-- JAVIS_ASK: {hidden} -->\nTiếp") === "Nội dung\n\nTiếp");
 check("copy giữa stream bỏ metadata chưa đóng",
-  visibleMarkdown("Nội dung\n<!-- JEEVI_METRICS: {") === "Nội dung\n");
+  visibleMarkdown("Nội dung\n<!-- JAVIS_METRICS: {") === "Nội dung\n");
 
 // ---- Security: source text cannot forge a placeholder (2026-11-10) ----
 // The last pass swaps placeholders for finished HTML. A link target that decoded to the two sentinel characters used

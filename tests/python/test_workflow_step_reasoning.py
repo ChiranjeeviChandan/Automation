@@ -18,7 +18,7 @@ from pathlib import Path
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-wf-reasoning-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-wf-reasoning-"))
 
 import main  # noqa: E402
 
@@ -31,7 +31,7 @@ def check(name, condition, extra=None):
         fails.append(name)
 
 
-brain = tempfile.mkdtemp(prefix="jeevi-wf-reasoning-brain-")
+brain = tempfile.mkdtemp(prefix="javis-wf-reasoning-brain-")
 agents = Path(brain) / "agents"
 agents.mkdir()
 (agents / "writer.md").write_text(

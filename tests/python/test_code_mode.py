@@ -1,4 +1,4 @@
-"""jeevi_code: a read-only script that chains connection reads and returns only what it prints.
+"""javis_code: a read-only script that chains connection reads and returns only what it prints.
 
     python tests/run.py code_mode
 
@@ -15,8 +15,8 @@ import json
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-code-mode-"))
-os.environ["JEEVI_SECRET_FOR_TEST"] = "sk-should-never-leak"
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-code-mode-"))
+os.environ["JAVIS_SECRET_FOR_TEST"] = "sk-should-never-leak"
 
 import code_mode  # noqa: E402
 import config  # noqa: E402
@@ -95,12 +95,12 @@ BRAIN = tempfile.mkdtemp(prefix="code-brain-")
 
 tools, route = run(mcp_hub.discover_all("full", vault_root=BRAIN, include_plugins=False, force_refresh=True))
 names = {t["fn"] for t in tools}
-check("an owner with a connected source gets jeevi_code", "jeevi_code" in names, sorted(names))
+check("an owner with a connected source gets javis_code", "javis_code" in names, sorted(names))
 
 
 def code(src):
     _calls.clear()
-    return run(mcp_client.call_route(route, "jeevi_code", {"code": src}))
+    return run(mcp_client.call_route(route, "javis_code", {"code": src}))
 
 
 # ============================================================
@@ -136,7 +136,7 @@ except ToolError as e:
 """)
 check("a write tool is refused and never reaches the shop",
       "refused:" in out and "WROTE" not in out and not any(c[0] == "create_order" for c in _calls), out)
-out = code('call("jeevi_code", {"code": "print(1)"})')
+out = code('call("javis_code", {"code": "print(1)"})')
 check("a script cannot start another script", "ERROR in the script" in out and "no tool named" in out, out)
 out = code('call("shop__get_customer", {"id": "nobody"})')
 check("a tool error raises ToolError with the tool's text", "ToolError" in out and "customer not found" in out, out)
@@ -160,7 +160,7 @@ for label, src in [
     check(f"isolation: {label} is refused", "ERROR in the script" in out and "root:" not in out
           and "uid=" not in out, out[:400])
 out = code("import json\nprint(sorted(k for k in json.decoder.__builtins__.get('__import__')('os').environ))")
-check("isolation: the script sees no keys from the server's environment", "JEEVI_SECRET_FOR_TEST" not in out, out[:300])
+check("isolation: the script sees no keys from the server's environment", "JAVIS_SECRET_FOR_TEST" not in out, out[:300])
 out = code("import math, statistics, datetime, collections, re\n"
            "print(statistics.mean([1, 2, 3]), math.sqrt(16), collections.Counter('aab')['a'])")
 check("the allowed standard modules work", "2 4.0 2" in out, out)
@@ -168,14 +168,14 @@ check("the allowed standard modules work", "2 4.0 2" in out, out)
 # ============================================================
 # 4. Bounds and errors
 # ============================================================
-os.environ["JEEVI_CODE_MODE_MAX_CALLS"] = "3"
+os.environ["JAVIS_CODE_MODE_MAX_CALLS"] = "3"
 out = code("for i in range(10):\n    call('shop__list_orders', {'page': 1})")
 check("calls are capped per run", "call limit reached (3 calls per run)" in out and len(_calls) == 3, out)
-del os.environ["JEEVI_CODE_MODE_MAX_CALLS"]
-os.environ["JEEVI_CODE_MODE_MAX_WALL_S"] = "5"
+del os.environ["JAVIS_CODE_MODE_MAX_CALLS"]
+os.environ["JAVIS_CODE_MODE_MAX_WALL_S"] = "5"
 out = code("while True:\n    pass")
 check("a script that never ends is stopped", out.startswith("ERROR:") and ("seconds" in out or "limit" in out), out)
-del os.environ["JEEVI_CODE_MODE_MAX_WALL_S"]
+del os.environ["JAVIS_CODE_MODE_MAX_WALL_S"]
 out = code("x = 1 / 0")
 check("a broken script answers with its own error line", "ZeroDivisionError" in out and "line 1" in out, out)
 out = code("x = 1")
@@ -189,22 +189,22 @@ check("empty code is refused before any process starts", code("   ").startswith(
 # ============================================================
 tools_b, route_b = run(mcp_hub.discover_all("full", vault_root=BRAIN, include_plugins=False, force_refresh=True,
                                             for_bot=True))
-check("a customer bot never gets jeevi_code", "jeevi_code" not in {t["fn"] for t in tools_b} and "jeevi_code" not in route_b)
+check("a customer bot never gets javis_code", "javis_code" not in {t["fn"] for t in tools_b} and "javis_code" not in route_b)
 _settings["mcp"]["code_mode"] = False
 mcp_hub._cache.clear()
 tools_off, _ = run(mcp_hub.discover_all("full", vault_root=BRAIN, include_plugins=False, force_refresh=True))
-check("switched off in settings, it is absent", "jeevi_code" not in {t["fn"] for t in tools_off})
+check("switched off in settings, it is absent", "javis_code" not in {t["fn"] for t in tools_off})
 _settings["mcp"]["code_mode"] = True
 _settings["mcp"]["lazy_tools"] = "on"
 mcp_hub._cache.clear()
 tools_l, route_l = run(mcp_hub.discover_all("full", vault_root=BRAIN, include_plugins=False, force_refresh=True))
 search = next(t for t in tools_l if t["fn"] == mcp_hub._LAZY_SEARCH)
 check("behind the tool search it costs one short line per turn",
-      "jeevi_code" not in {t["fn"] for t in tools_l} and "jeevi_code(code)" in search["description"]
+      "javis_code" not in {t["fn"] for t in tools_l} and "javis_code(code)" in search["description"]
       and len(mcp_hub.CODE_MODE_HINT.format(run=mcp_hub._LAZY_RUN)) < 160)
 out = run(mcp_client.call_route(route_l, mcp_hub._LAZY_RUN, {
-    "name": "jeevi_code", "args": {"code": "print(len(call('shop__list_orders', {'page': 1})['data']))"}}))
-check("through jeevi_run_tool it runs against the full route", out.rstrip().endswith("2"), out)
+    "name": "javis_code", "args": {"code": "print(len(call('shop__list_orders', {'page': 1})['data']))"}}))
+check("through javis_run_tool it runs against the full route", out.rstrip().endswith("2"), out)
 
 print()
 print(f"{len(_fails)} failed" if _fails else "all passed")

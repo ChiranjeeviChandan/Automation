@@ -6,7 +6,7 @@ answer that matters comes after it: the turn that waited for Claude Code's backg
 Jeevi opens when a tracked job ends (it adds the audio, checks the file, sends the link). Both are ordinary chat turns,
 whose answer lands in the chat only, so a phone in a pocket never hears of it.
 
-So a dashboard chat turn that ran at least `threshold_s()` (JEEVI_LONG_TURN_NOTIFY_S, default 180 seconds, 0 turns it
+So a dashboard chat turn that ran at least `threshold_s()` (JAVIS_LONG_TURN_NOTIFY_S, default 180 seconds, 0 turns it
 off), or that is a background job's follow-up, also leaves its answer in the bell, which sends the push notification.
 The push is skipped on a device where Jeevi is open and in front of the owner (dashboard/sw.js, `quiet_if_visible`).
 
@@ -32,7 +32,7 @@ PUSH_BODY = 180
 
 def threshold_s() -> float:
     """Seconds a turn must run before its answer rings the bell. 0 = only background follow-ups ring."""
-    raw = os.getenv("JEEVI_LONG_TURN_NOTIFY_S", "").strip()
+    raw = os.getenv("JAVIS_LONG_TURN_NOTIFY_S", "").strip()
     if not raw:
         return float(DEFAULT_THRESHOLD_S)
     try:

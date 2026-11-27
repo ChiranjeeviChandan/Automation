@@ -10,7 +10,7 @@ whole becomes a system that improves with time and with how the person uses it."
 2. The first knob that is not a model: how many turns worth learning must be queued before a learning batch,
    moved by plain code from how many recent batches learned nothing.
 3. A memory Jeevi learned by itself and the owner then removed counts against the model that learns.
-4. Lessons about HOW to learn are Jeevi Core's lessons: the owner says one in chat (`jeevi_tune op=teach`), every
+4. Lessons about HOW to learn are Jeevi Core's lessons: the owner says one in chat (`javis_tune op=teach`), every
    learning batch reads them first, and they are listed and revoked like any assistant's lessons.
 5. The owner's side: one status, one undo, for knobs and for the models of background jobs.
 
@@ -23,8 +23,8 @@ import os
 import tempfile
 import time
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-core-loop-"))
-os.environ["JEEVI_AUTO_BACKGROUND_PAUSED"] = "1"
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-core-loop-"))
+os.environ["JAVIS_AUTO_BACKGROUND_PAUSED"] = "1"
 
 import core_loop as cl  # noqa: E402
 import job_scorecard as sc  # noqa: E402
@@ -260,7 +260,7 @@ import memory_chat  # noqa: E402
 listed = memory_chat.run({"op": "lessons", "agent": "Jeevi Core"}, ROOT_BRAIN)
 check("they are listed like any assistant's lessons", "doanh thu từng ngày" in listed, listed[:200])
 lid = res["lesson"]
-out = memory_chat.run({"op": "lesson_revoke", "agent": "jeevi-core", "id": lid}, ROOT_BRAIN)
+out = memory_chat.run({"op": "lesson_revoke", "agent": "javis-core", "id": lid}, ROOT_BRAIN)
 check("and revoked the same way", not out.startswith("ERROR") and "doanh thu" not in main._learning_lessons_block("brain"), out)
 
 lf._spawn_readonly, lf.deps.sessions_store = real_spawn, real_store
@@ -274,7 +274,7 @@ sc.feedback = lambda job, good, note="": calls.append((job, good, note)) or True
 mem = main._brain_memory_dir("brain")
 (mem / "facts").mkdir(parents=True, exist_ok=True)
 (mem / "facts" / "hoc-sai.md").write_text(
-    "---\ntype: business\nprovenance: user\norigin: jeevi-learned\ncreated: 2026-11-01\n---\nDoanh thu 9/11 là 12 triệu.\n",
+    "---\ntype: business\nprovenance: user\norigin: javis-learned\ncreated: 2026-11-01\n---\nDoanh thu 9/11 là 12 triệu.\n",
     encoding="utf-8")
 (mem / "facts" / "chu-tu-ghi.md").write_text(
     "---\ntype: preference\ncreated: 2026-11-01\n---\nAnh thích báo cáo ngắn.\n", encoding="utf-8")
@@ -298,10 +298,10 @@ check("one undo for knobs", back["ok"] and lf.min_turns() == 2, back)
 check("and the same undo still takes a model change of the scorecard by its plain number",
       tune(op="undo", id=999999)["ok"] is False and tune(op="undo", id="")["ok"] is False)
 
-_core = (ROOT / "system" / "agents" / "jeevi-core.md").read_text(encoding="utf-8")
-check("Jeevi Core's role says it keeps background work and learning, through jeevi_tune",
-      "Background work and self-learning" in _core and "`jeevi_tune`" in _core)
-_plug = (ROOT / "system" / "plugins" / "jeevi-tune" / "plugin.py").read_text(encoding="utf-8")
+_core = (ROOT / "system" / "agents" / "javis-core.md").read_text(encoding="utf-8")
+check("Jeevi Core's role says it keeps background work and learning, through javis_tune",
+      "Background work and self-learning" in _core and "`javis_tune`" in _core)
+_plug = (ROOT / "system" / "plugins" / "javis-tune" / "plugin.py").read_text(encoding="utf-8")
 check("the tool describes teaching and knobs", "op=teach" in _plug and "op=set" in _plug)
 main._notify_owner = real_notify
 

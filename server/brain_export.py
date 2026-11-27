@@ -49,11 +49,11 @@ import localefmt
 MAX_FILES = 1_000_000                  # only against a zip of countless empty entries
 KEEP_FREE = 1024 * 1024 * 1024         # the disk keeps at least this much free after an export or an import
 CHUNK = 32 * 1024 * 1024               # one upload piece: well under Cloudflare's ~100MB per request
-MANIFEST = "jeevi-brain.json"
-IMPORT_PREFIX = ".jeevi-import-"
+MANIFEST = "javis-brain.json"
+IMPORT_PREFIX = ".javis-import-"
 _ID = re.compile(r"^[0-9a-f]{32}$")
 
-_SECRET_NAMES = {".env", ".mcp.json", ".mcp_hub.json", ".jeevi-learn.lock", ".ds_store"}
+_SECRET_NAMES = {".env", ".mcp.json", ".mcp_hub.json", ".javis-learn.lock", ".ds_store"}
 _SECRET_PREFIXES = ("id_rsa", "id_dsa", "id_ecdsa", "id_ed25519")
 _SECRET_SUFFIXES = (".tmp", ".pem", ".key", ".p12", ".pfx")
 _SKIP_DIRS = {".git", ".trash"}
@@ -61,7 +61,7 @@ _SKIP_DIRS = {".git", ".trash"}
 # MCP servers and commands in the other engines' folders. Jeevi writes its own copies when it needs them, so a brain file
 # from somebody else never brings one in. Skills kept under those folders (`.claude/skills`, `.agents/skills`) and the
 # rest of `.claude` are content and stay.
-_ENGINE_CONFIG_DIRS = {".codex", ".grok", ".agents", ".gemini", ".antigravity", ".antigravitycli", ".jeevi"}
+_ENGINE_CONFIG_DIRS = {".codex", ".grok", ".agents", ".gemini", ".antigravity", ".antigravitycli", ".javis"}
 _CLAUDE_CONFIG = re.compile(r"^\.claude/(settings[^/]*\.json|hooks(/.*)?)$")
 
 
@@ -189,7 +189,7 @@ def export_zip(root, dst: str, app_version: str = "", progress=None) -> tuple:
     files = total = 0
     with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
         zf.writestr(top + "/" + MANIFEST, json.dumps({
-            "kind": "jeevi-brain", "label": brain_label.display(root), "folder": top,
+            "kind": "javis-brain", "label": brain_label.display(root), "folder": top,
             "exported_at": time.strftime("%Y-%m-%dT%H:%M:%S"), "app_version": app_version,
         }, ensure_ascii=False, indent=2))
         for p, rel in _walk(root):
@@ -266,7 +266,7 @@ def _children(d: Path, name: str) -> list:
 
 def _plugin_dirs(root: Path) -> list:
     out = _children(root, "plugins")
-    for j in _children(root, "jeevi"):
+    for j in _children(root, "javis"):
         out += _children(j, "plugins")
     return out
 
@@ -335,7 +335,7 @@ def _off_loops(root: Path) -> int:
     longer be judged, is set aside as `<name>.md.off`, which the loader does not open."""
     n = 0
     dirs = []
-    for j in _children(root, "jeevi"):
+    for j in _children(root, "javis"):
         dirs += _children(j, "loops")
     for d in dirs:
         for f in sorted(d.iterdir()):

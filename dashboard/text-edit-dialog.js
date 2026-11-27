@@ -8,7 +8,7 @@
    Desktop: centred over the page. Phone (up to 600px): a sheet from the bottom, buttons in thumb reach, following the
    visible part of the screen while the keyboard is up (body.kb-open and --vv-* from mobile-chat.js).
 
-   JeeviTextEdit.open({
+   JavisTextEdit.open({
      title, value, max, placeholder, hint,
      kinds: [{value, label}], kind, kindLabel,     // optional: one-of chips under the text (radio group)
      saveLabel, allowEmpty,                        // allowEmpty: an empty text is a valid answer (removes a description)
@@ -38,7 +38,7 @@
   var api = { counterText: counterText, counterState: counterState, pending: pending };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (!root || typeof document === "undefined") return;
-  root.JeeviTextEdit = api;
+  root.JavisTextEdit = api;
 
   function t(key, vars) { try { return root.t ? root.t(key, vars) : key; } catch (e) { return key; } }
   function icon(name) { try { return root.ic ? root.ic(name) : ""; } catch (e) { return ""; } }

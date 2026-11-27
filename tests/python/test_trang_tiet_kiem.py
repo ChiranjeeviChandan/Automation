@@ -22,7 +22,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-tk-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-tk-")
 
 import config as cfg  # noqa: E402
 import context_runtime  # noqa: E402
@@ -148,7 +148,7 @@ check("mỗi mức có một câu nói nó đánh đổi gì",
 _that = len(main.build_system_prompt("brain")
             + main.channel_context.build_channel_block(
                 "dashboard", {"session_id": "uoc-tinh"}, telegram_running=False,
-                port=main._jeevi_port(), brain_root=main._brain_root("brain")))
+                port=main._javis_port(), brain_root=main._brain_root("brain")))
 _ti_le = _uoc.get("chu_ky_ky_tu_tren_token") or 3.0
 check("CANARY: con số đo trên prompt THẬT của brain, không phải hằng số gõ tay",
       abs((_uoc.get("chi_tiet") or {}).get("claude_md_va_bo_nho", 0) - _that / _ti_le) <= 2)
@@ -437,7 +437,7 @@ _uoc_api = asyncio.run(main._uoc_tinh_tiet_kiem("brain"))
 _ma = _uoc_api.get("muc") or {}
 _ca = _uoc_api.get("chi_tiet") or {}
 _nen_api = (len(main.build_adaptive_source_prompt("brain")) + len(main.channel_context.build_channel_block(
-    "dashboard", {"session_id": "uoc-tinh"}, telegram_running=False, port=main._jeevi_port(),
+    "dashboard", {"session_id": "uoc-tinh"}, telegram_running=False, port=main._javis_port(),
     brain_root=main._brain_root("brain")))) / (_uoc_api.get("chu_ky_ky_tu_tren_token") or 3.0)
 check("API brain: the kind is read as api", _uoc_api.get("kind_bo_nao") == "api")
 check("CANARY: API brain, the base is the adaptive source prompt plus the channel block",

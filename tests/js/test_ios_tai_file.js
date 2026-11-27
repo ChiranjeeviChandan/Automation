@@ -22,7 +22,7 @@ function check(name, cond, extra) {
   if (!cond) fails.push(name);
 }
 
-global.window = { location: { href: "https://jeevi.example/", origin: "https://jeevi.example" } };
+global.window = { location: { href: "https://javis.example/", origin: "https://javis.example" } };
 // Node 22 có sẵn `navigator` CHỈ ĐỌC: gán thẳng không ăn, phải định nghĩa lại.
 const datNav = (v) => Object.defineProperty(globalThis, "navigator", { value: v, configurable: true, writable: true });
 datNav({ userAgent: "", platform: "", maxTouchPoints: 0 });
@@ -40,12 +40,12 @@ for (const [href, dl, mong, ten] of [
   ["/files/raw?brain=brain&path=a.docx", null, true, "link /files/raw không có thuộc tính download"],
   ["/files/zip?brain=brain&path=exports", null, true, "tải cả thư mục (trang Tệp tin)"],
   ["/upload/raw?name=x.pdf", null, true, "file vừa dán vào chat"],
-  ["https://jeevi.example/files/raw?path=x.png", null, true, "URL đầy đủ cùng origin"],
-  ["blob:https://jeevi.example/123", "code.html", true, "tải khối code (blob)"],
+  ["https://javis.example/files/raw?path=x.png", null, true, "URL đầy đủ cùng origin"],
+  ["blob:https://javis.example/123", "code.html", true, "tải khối code (blob)"],
   ["#open=wiki%2Fa.md", null, false, "link mở trình sửa trong app"],
   ["https://google.com/files/raw?x=1", null, false, "link ngoài trùng đường dẫn"],
   ["/files/list?path=x", null, false, "API liệt kê file, không phải tải"],
-  ["blob:https://jeevi.example/9", null, false, "blob không có download (ảnh xem trước)"],
+  ["blob:https://javis.example/9", null, false, "blob không có download (ảnh xem trước)"],
 ]) check((mong ? "nhận là link tải: " : "KHÔNG nhận nhầm: ") + ten, CR.laLinkTaiFile(a(href, dl)) === mong);
 
 // ---- 2. Nhận diện iOS ----

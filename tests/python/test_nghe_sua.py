@@ -25,28 +25,28 @@ TV = ["Jeevi"]
 S = lambda s, tv=TV: nghe_sua.sua(s, tv)   # noqa: E731
 
 # ---- 1. Khoá âm: những cách máy nghe hay chép "Jeevi" phải về cùng một khoá ----
-for w in ("Jeevi", "David", "Davis", "Jeevi", "Gia vít", "Ja vịt", "Đa vít", "jeevit"):
+for w in ("Jeevi", "Jivi", "Jeevy", "Jeevi", "Ji vi", "Di vi", "jivy"):
     check(f"khoá âm của {w!r} trùng Jeevi", nghe_sua.khoa_am(w) == nghe_sua.khoa_am("Jeevi"))
 check("Java KHÔNG trùng khoá Jeevi", nghe_sua.khoa_am("Java") != nghe_sua.khoa_am("Jeevi"))
 
 # ---- 2. Gọi tên: sửa ở mọi vị trí khi trùng âm hoàn toàn ----
-check("đầu câu: David -> Jeevi", S("David mở trang việc giúp anh") == "Jeevi mở trang việc giúp anh")
-check("hey David", S("hey David, doanh thu hôm nay bao nhiêu") == "hey Jeevi, doanh thu hôm nay bao nhiêu")
-check("cuối câu: cảm ơn David", S("cảm ơn David") == "cảm ơn Jeevi")
-check("Jeevi -> Jeevi", S("Jeevi ơi mở lịch") == "Jeevi ơi mở lịch")
-check("bị tách hai tiếng: Gia vít ơi", S("Gia vít ơi, tóm tắt email") == "Jeevi ơi, tóm tắt email")
-check("Ja vịt giữa câu (trùng hoàn toàn)", S("hôm nay ja vịt thấy sao") == "hôm nay Jeevi thấy sao")
-check("Đa vít", S("Đa vít cho anh xem lịch") == "Jeevi cho anh xem lịch")
+check("đầu câu: Jivi -> Jeevi", S("Jivi mở trang việc giúp anh") == "Jeevi mở trang việc giúp anh")
+check("hey Jivi", S("hey Jivi, doanh thu hôm nay bao nhiêu") == "hey Jeevi, doanh thu hôm nay bao nhiêu")
+check("cuối câu: cảm ơn Jivi", S("cảm ơn Jivi") == "cảm ơn Jeevi")
+check("Jeevi stays Jeevi", S("Jeevi ơi mở lịch") == "Jeevi ơi mở lịch")
+check("bị tách hai tiếng: Gi vi ơi", S("Gi vi ơi, tóm tắt email") == "Jeevi ơi, tóm tắt email")
+check("Ji vi giữa câu (trùng hoàn toàn)", S("hôm nay ji vi thấy sao") == "hôm nay Jeevi thấy sao")
+check("Di vi", S("Di vi cho anh xem lịch") == "Jeevi cho anh xem lịch")
 check("sửa nhiều chỗ trong một câu",
-      S("David ơi, David nghe rõ không") == "Jeevi ơi, Jeevi nghe rõ không")
+      S("Jivi ơi, Jivi nghe rõ không") == "Jeevi ơi, Jeevi nghe rõ không")
 check("giữ nguyên xuống dòng và dấu câu quanh chỗ sửa",
-      S("Ok David.\nMở trang cài đặt!") == "Ok Jeevi.\nMở trang cài đặt!")
+      S("Ok Jivi.\nMở trang cài đặt!") == "Ok Jeevi.\nMở trang cài đặt!")
 
 # ---- 3. Trùng vừa phải: CHỈ sửa ở vị trí gọi tên ----
-check("Gia vị ơi (gọi tên) -> Jeevi", S("Gia vị ơi, mấy giờ rồi") == "Jeevi ơi, mấy giờ rồi")
+check("Dee vee ơi (gọi tên) -> Jeevi", S("Dee vee ơi, mấy giờ rồi") == "Jeevi ơi, mấy giờ rồi")
 check("cho gia vị vào nồi (giữa câu) giữ nguyên",
       S("cho gia vị vào nồi rồi đun") == "cho gia vị vào nồi rồi đun")
-check("Cha vít đầu câu -> Jeevi", S("Cha vít, đọc tin mới") == "Jeevi, đọc tin mới")
+check("Zivi đầu câu -> Jeevi", S("Zivi, đọc tin mới") == "Jeevi, đọc tin mới")
 
 # ---- 4. Không sửa bừa ----
 GIU = [

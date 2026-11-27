@@ -68,7 +68,7 @@ st = my_tasks.habit_state(swim, T.isoformat())
 check("a weekday habit rests on Friday, streak intact", st["rest"] and not st["frozen"] and st["cur"] > 20)
 
 # ---- reminder tick ----
-brain = Path(tempfile.mkdtemp(prefix="jeevi-habits-"))
+brain = Path(tempfile.mkdtemp(prefix="javis-habits-"))
 sent = []
 
 

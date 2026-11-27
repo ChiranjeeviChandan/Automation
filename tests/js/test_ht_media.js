@@ -77,7 +77,7 @@ check("CANARY: link ảnh được escape, không chèn được thuộc tính",
 // ---- 7. 0.231.0: a photo opens inside Jeevi (lightbox), not in a new tab ----
 const src = fs.readFileSync(path.join(__dirname, "../../dashboard/ht-media.js"), "utf8");
 check("bấm ảnh mở lightbox trong Jeevi, Ctrl/Cmd/chuột giữa vẫn mở thẻ mới",
-  /closest\("a\.ht-anh"\)/.test(src) && /window\.JeeviLightbox\.open\(href, tenAnh\(href\)\)/.test(src)
+  /closest\("a\.ht-anh"\)/.test(src) && /window\.JavisLightbox\.open\(href, tenAnh\(href\)\)/.test(src)
   && /e\.ctrlKey \|\| e\.metaKey/.test(src) && /addEventListener\("click", function \(e\) \{[\s\S]*?\}, true\);/.test(src));
 check("ảnh hỏng thì để link tự mở", /classList\.contains\("hong"\)/.test(src));
 check("tên ảnh lấy từ ?p= của đường /media", M.tenAnh("/conversations/c1/media?p=%2Fdata%2Fb%2Finbox%2Fanh-khach.jpg") === "anh-khach.jpg");

@@ -20,7 +20,7 @@ import time
 import types
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-bxa-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-bxa-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -90,7 +90,7 @@ check("owner's 'reply for me' from the inbox carries the link too", mm.get("co_a
 # 3. The photo goes INTO the chat (0.81.0): saved in the bot's brain, returned as a path for the bot's own model.
 #    No ChatGPT describing it any more; every failure falls back to the honest label.
 # ============================================================
-brain = Path(tempfile.mkdtemp(prefix="jeevi-bxa-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="javis-bxa-brain-"))
 cr._deps["brain_root"] = lambda b: str(brain)
 CFG = {"id": "bot1", "brain": "Bot Brain"}
 HTTP = []

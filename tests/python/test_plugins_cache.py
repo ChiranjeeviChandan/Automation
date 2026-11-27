@@ -20,8 +20,8 @@ import tempfile
 import time
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-plgcache-")
-os.environ.setdefault("JEEVI_STATE_DIR", _STATE)
+_STATE = tempfile.mkdtemp(prefix="javis-plgcache-")
+os.environ.setdefault("JAVIS_STATE_DIR", _STATE)
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -39,7 +39,7 @@ def check(name, cond):
         _fails.append(name)
 
 
-VAULT = Path(tempfile.mkdtemp(prefix="jeevi-plgcache-vault-"))
+VAULT = Path(tempfile.mkdtemp(prefix="javis-plgcache-vault-"))
 PDIR = VAULT / "plugins" / "thu-nghiem"
 PDIR.mkdir(parents=True, exist_ok=True)
 MANIFEST = PDIR / "plugin.yaml"

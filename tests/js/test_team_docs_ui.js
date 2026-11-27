@@ -39,7 +39,7 @@ check("'+' menu: attach a file, pin a working folder", tm.includes('data-plus-at
 check("attachments upload to /upload and go out with the message; sending waits for uploads",
   tm.includes('fetch("/upload"') && tm.includes("body.attachments = atts.map(") && tm.includes('setNote(tw("teams.attach_wait"))'));
 check("the team folder pins on the team's own conversation (same route as the main chat)",
-  tm.includes('"/coding/session/" + q(sid) + "/pin"') && tm.includes("window.JeeviPinnedFolder && window.JeeviPinnedFolder.panelFor"));
+  tm.includes('"/coding/session/" + q(sid) + "/pin"') && tm.includes("window.JavisPinnedFolder && window.JavisPinnedFolder.panelFor"));
 check("the team picture opens the info panel", tm.includes('class="tm-ava-btn" data-team-info="1"')
   && /if \(d\.teamInfo\) return S\.side && S\.tab === "info" \? closeSide\(\) : openSide\("info", t\);/.test(tm));
 check("the info panel: members, working folder, pictures, files with Add, links with Add, from the conversation assets",

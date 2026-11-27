@@ -37,7 +37,7 @@ const sandbox = {
 sandbox.globalThis = sandbox;
 vm.createContext(sandbox);
 vm.runInContext(fs.readFileSync(path.join(ROOT, "dashboard", "model-list.js"), "utf8"), sandbox);
-const ML = sandbox.window.JeeviModelList;
+const ML = sandbox.window.JavisModelList;
 const PROVS = [
   { id: "openai-compat", label: "OPENAI COMPATIBLE", configured: true },
   { id: "anthropic-compat", label: "CLAUDE COMPATIBLE", configured: true },
@@ -115,7 +115,7 @@ const count = (pid) => asked.filter((x) => x === pid).length;
 
   // ---- 7. the Models page drops the kept lists after it changes a key or a gateway ----
   const cs = fs.readFileSync(path.join(ROOT, "dashboard", "console.js"), "utf8");
-  check("console.js has forgetModelLists() calling clearCache", /function forgetModelLists\(\)[\s\S]{0,160}JeeviModelList\.clearCache\(\)/.test(cs));
+  check("console.js has forgetModelLists() calling clearCache", /function forgetModelLists\(\)[\s\S]{0,160}JavisModelList\.clearCache\(\)/.test(cs));
   check("saving the model section forgets the lists", /if \(section === "model"\) \{ forgetModelLists\(\);/.test(cs));
   const connects = cs.split("forgetModelLists();").length - 1;
   check("each gateway connect (old card forms and the key sheet) forgets them too", connects >= 4, connects);

@@ -38,11 +38,11 @@ from typing import Optional
 # 2026-11-08: 0.05 (was 0.25) so a freeze of a few hundred ms is measured to within 50 ms. One timer callback per tick.
 TICK_S = 0.05
 try:
-    BLOCK_S = max(0.2, float(os.environ.get("JEEVI_LOOP_BLOCK_S", "2")))
+    BLOCK_S = max(0.2, float(os.environ.get("JAVIS_LOOP_BLOCK_S", "2")))
 except ValueError:
     BLOCK_S = 2.0
 try:
-    SLOW_S = max(0.1, float(os.environ.get("JEEVI_LOOP_SLOW_S", "0.3")))
+    SLOW_S = max(0.1, float(os.environ.get("JAVIS_LOOP_SLOW_S", "0.3")))
 except ValueError:
     SLOW_S = 0.3
 SLOW_LOG_S = 1.0          # a slow spot this long also gets one line in the server log
@@ -222,7 +222,7 @@ def start(loop: Optional[asyncio.AbstractEventLoop] = None, state_dir: Optional[
     _state["since"] = time.time()
     _state["tick"] = time.monotonic()
     loop.create_task(_ticker())
-    threading.Thread(target=_watch, name="jeevi-loop-watch", daemon=True).start()
+    threading.Thread(target=_watch, name="javis-loop-watch", daemon=True).start()
     _state["started"] = True
     return True
 

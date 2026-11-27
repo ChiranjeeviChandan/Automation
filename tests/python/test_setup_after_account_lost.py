@@ -6,13 +6,13 @@ Owner incident 2026-11-22 (the second one, the first was 2026-11-12): the owner'
 on a VPS behind Cloudflare. With no password, POST /auth/setup is open to anyone, and a stranger's iPhone created the
 account "trolytina" from the login page. The security log named only a Cloudflare edge address (172.71.219.14), not
 the visitor. Both times, tests had been run inside the live container right before, and the test runner passed the
-container's own JEEVI_STATE_DIR (the real settings) and JEEVI_ADMIN_* to every test.
+container's own JAVIS_STATE_DIR (the real settings) and JAVIS_ADMIN_* to every test.
 
 Pinned here:
 1. tests never inherit the live state folder or the deploy variables (tests/python/_live_env.py, _paths, run.py);
 2. write_settings refuses to drop the owner's password unless the caller says so (only POST /auth/disable does);
 3. once an owner account has existed, the account form only opens on the machine itself, or after the reset tool;
-   with JEEVI_ADMIN_PASSWORD set the account is simply restored from it, 2FA kept;
+   with JAVIS_ADMIN_PASSWORD set the account is simply restored from it, 2FA kept;
 4. the security log and the sign-in lockout use the visitor's address, read through Cloudflare and local proxies,
    and an address a visitor typed into a header is never believed.
 """
@@ -24,17 +24,17 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-setup-lost-")
-os.environ["JEEVI_REQUIRE_LOGIN"] = "1"      # a VPS: the dashboard is reachable from the Internet
-os.environ.pop("JEEVI_ADMIN_PASSWORD", None)
-os.environ.pop("JEEVI_ADMIN_USER", None)
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-setup-lost-")
+os.environ["JAVIS_REQUIRE_LOGIN"] = "1"      # a VPS: the dashboard is reachable from the Internet
+os.environ.pop("JAVIS_ADMIN_PASSWORD", None)
+os.environ.pop("JAVIS_ADMIN_USER", None)
 
 from fastapi.testclient import TestClient   # noqa: E402
 import config as c          # noqa: E402
 import main                 # noqa: E402
 import security_log         # noqa: E402
 
-STATE = Path(os.environ["JEEVI_STATE_DIR"])
+STATE = Path(os.environ["JAVIS_STATE_DIR"])
 _fails = []
 
 
@@ -57,7 +57,7 @@ def via_cloudflare(visitor, edge=EDGE):
     return {"X-Forwarded-For": f"{visitor}, {edge}", "CF-Connecting-IP": visitor, "X-Real-IP": edge}
 
 
-remote = TestClient(main.app, client=("172.18.0.5", 41000), base_url="https://jeevi.example.com")
+remote = TestClient(main.app, client=("172.18.0.5", 41000), base_url="https://javis.example.com")
 here = TestClient(main.app, client=("127.0.0.1", 50000), base_url="http://localhost:7777")
 PW = "chu-may-123"
 
@@ -83,27 +83,27 @@ def status():
 sys.path.insert(0, str(ROOT / "tests" / "python"))
 import _live_env  # noqa: E402
 
-live = {"JEEVI_STATE_DIR": "/data/state", "BRAINS_DIR": "/brains", "BRAIN_PATH": "/data/brain",
-        "OBSIDIAN_VAULT_PATH": "/data/vault", "JEEVI_ADMIN_PASSWORD": "not-a-real-one", "JEEVI_ADMIN_USER": "owner",
-        "JEEVI_HOST": "0.0.0.0", "JEEVI_PORT": "7777", "JEEVI_DEPLOY_TARGET": "hostinger",
-        "DOMAIN_NAME": "jeevi.example.com", "WATCHTOWER_TOKEN": "not-a-real-one", "PATH": os.environ["PATH"]}
+live = {"JAVIS_STATE_DIR": "/data/state", "BRAINS_DIR": "/brains", "BRAIN_PATH": "/data/brain",
+        "OBSIDIAN_VAULT_PATH": "/data/vault", "JAVIS_ADMIN_PASSWORD": "not-a-real-one", "JAVIS_ADMIN_USER": "owner",
+        "JAVIS_HOST": "0.0.0.0", "JAVIS_PORT": "7777", "JAVIS_DEPLOY_TARGET": "hostinger",
+        "DOMAIN_NAME": "javis.example.com", "WATCHTOWER_TOKEN": "not-a-real-one", "PATH": os.environ["PATH"]}
 env = _live_env.scrub(dict(live))
 check("the live state folder and brains are dropped",
-      not any(k in env for k in ("JEEVI_STATE_DIR", "BRAINS_DIR", "BRAIN_PATH", "OBSIDIAN_VAULT_PATH")), env)
+      not any(k in env for k in ("JAVIS_STATE_DIR", "BRAINS_DIR", "BRAIN_PATH", "OBSIDIAN_VAULT_PATH")), env)
 check("the deploy variables are dropped (admin password, bind, deploy target, domain, update token)",
-      not any(k in env for k in ("JEEVI_ADMIN_PASSWORD", "JEEVI_ADMIN_USER", "JEEVI_HOST", "JEEVI_PORT",
-                                 "JEEVI_DEPLOY_TARGET", "DOMAIN_NAME", "WATCHTOWER_TOKEN")), env)
+      not any(k in env for k in ("JAVIS_ADMIN_PASSWORD", "JAVIS_ADMIN_USER", "JAVIS_HOST", "JAVIS_PORT",
+                                 "JAVIS_DEPLOY_TARGET", "DOMAIN_NAME", "WATCHTOWER_TOKEN")), env)
 check("PATH is untouched", env.get("PATH") == os.environ["PATH"])
-tmp_state = tempfile.mkdtemp(prefix="jeevi-kept-")
+tmp_state = tempfile.mkdtemp(prefix="javis-kept-")
 check("a state folder a test made in the temp folder is kept",
-      _live_env.scrub({"JEEVI_STATE_DIR": tmp_state}).get("JEEVI_STATE_DIR") == tmp_state)
+      _live_env.scrub({"JAVIS_STATE_DIR": tmp_state}).get("JAVIS_STATE_DIR") == tmp_state)
 check("a folder whose name merely starts like the temp folder is not",
-      "JEEVI_STATE_DIR" not in _live_env.scrub({"JEEVI_STATE_DIR": str(TEST_TMP) + "-evil"}))
+      "JAVIS_STATE_DIR" not in _live_env.scrub({"JAVIS_STATE_DIR": str(TEST_TMP) + "-evil"}))
 
 # Importing _paths (every test does it first) scrubs the process, the way the container's env reaches a test.
-child_env = {k: v for k, v in os.environ.items() if k not in ("JEEVI_TEST_ENV_SCRUBBED",)}
+child_env = {k: v for k, v in os.environ.items() if k not in ("JAVIS_TEST_ENV_SCRUBBED",)}
 child_env.update({k: v for k, v in live.items() if k != "PATH"})
-child_env.pop("JEEVI_TEST_ENV_SCRUBBED", None)
+child_env.pop("JAVIS_TEST_ENV_SCRUBBED", None)
 code = ("import sys; sys.path.insert(0, sys.argv[1]); import _paths, os, json; "
         "print(json.dumps({k: os.environ.get(k) for k in sys.argv[2:]}))")
 out = subprocess.run([sys.executable, "-c", code, str(ROOT / "tests" / "python"), *sorted(live)],
@@ -118,7 +118,7 @@ import run as test_runner  # noqa: E402
 
 renv = test_runner.child_env(dict(live))
 check("tests/run.py gives tests no live state folder and no admin password",
-      "JEEVI_STATE_DIR" not in renv and "JEEVI_ADMIN_PASSWORD" not in renv and renv.get("PYTHONIOENCODING") == "utf-8",
+      "JAVIS_STATE_DIR" not in renv and "JAVIS_ADMIN_PASSWORD" not in renv and renv.get("PYTHONIOENCODING") == "utf-8",
       sorted(renv))
 
 # ============================================================
@@ -169,7 +169,7 @@ r = remote.post("/auth/setup", data={"username": "trolytina", "password": "stran
                 headers=via_cloudflare("203.0.113.66"))
 check("a stranger through Cloudflare cannot create an account (403)", r.status_code == 403 and not c.auth_enabled(),
       r.text)
-check("the refusal says how the owner gets back in", "JEEVI_ADMIN_PASSWORD" in r.json().get("error", ""), r.text)
+check("the refusal says how the owner gets back in", "JAVIS_ADMIN_PASSWORD" in r.json().get("error", ""), r.text)
 blocked = events("setup_blocked")
 check("the attempt is logged as an alert with the stranger's real address",
       blocked and blocked[0].get("ip") == "203.0.113.66" and blocked[0].get("user") == "trolytina"
@@ -194,13 +194,13 @@ stamp.pop("owner", None)
 check("owner_known from the security log when the stamp has no mark", c.owner_known())
 
 # ============================================================
-# 5. JEEVI_ADMIN_PASSWORD brings the account back by itself, 2FA kept
+# 5. JAVIS_ADMIN_PASSWORD brings the account back by itself, 2FA kept
 # ============================================================
 cfg = c.read_settings()
 cfg["auth"]["totp"] = {"enabled": True, "secret": "JBSWY3DPEHPK3PXP", "recovery": [], "last_step": 0}
 c.write_settings(cfg)
-os.environ["JEEVI_ADMIN_PASSWORD"] = "env-pass-123"
-os.environ["JEEVI_ADMIN_USER"] = "chu"
+os.environ["JAVIS_ADMIN_PASSWORD"] = "env-pass-123"
+os.environ["JAVIS_ADMIN_USER"] = "chu"
 st = status()
 check("with the env password set, the status call restores the account", st.get("needs_setup") is False
       and c.auth_enabled(), st)
@@ -210,8 +210,8 @@ r = remote.post("/auth/login", data={"username": "chu", "password": "env-pass-12
                 headers=via_cloudflare("198.51.100.7"))
 check("the owner signs in with the env password (and is asked for the 2FA code)",
       r.status_code == 401 and r.json().get("needs_2fa") is True, r.text)
-os.environ.pop("JEEVI_ADMIN_PASSWORD", None)
-os.environ.pop("JEEVI_ADMIN_USER", None)
+os.environ.pop("JAVIS_ADMIN_PASSWORD", None)
+os.environ.pop("JAVIS_ADMIN_USER", None)
 
 # ============================================================
 # 6. On the machine itself, or after the reset tool, the owner can set a new one
@@ -245,18 +245,18 @@ check("an old reopen mark (over a day) does not open it", status().get("setup_lo
 r = here.post("/auth/setup", data={"username": "chu", "password": PW})
 assert r.json().get("ok"), r.text
 c.totp_tat()
-os.environ["JEEVI_REQUIRE_LOGIN"] = "0"
+os.environ["JAVIS_REQUIRE_LOGIN"] = "0"
 r = here.post("/auth/disable", data={"password": PW})
 check("turning login off on the machine itself still clears the password", r.json().get("ok") is True
       and not c.auth_enabled(), r.text)
-os.environ["JEEVI_REQUIRE_LOGIN"] = "1"
+os.environ["JAVIS_REQUIRE_LOGIN"] = "1"
 check("and that does not count as a blocked clear", not any(
     e.get("ts", 0) > 0 and "disable" in (e.get("detail") or "") for e in events("account_clear_blocked")))
-os.environ["JEEVI_ADMIN_PASSWORD"] = "env-pass-123"
+os.environ["JAVIS_ADMIN_PASSWORD"] = "env-pass-123"
 st = status()
 check("login turned off on purpose: the form is a first one again, and the env password waits for the next boot",
       st.get("needs_setup") is True and st.get("setup_locked") is False and not c.auth_enabled(), st)
-os.environ.pop("JEEVI_ADMIN_PASSWORD", None)
+os.environ.pop("JAVIS_ADMIN_PASSWORD", None)
 
 # ============================================================
 # 7. The real visitor's address

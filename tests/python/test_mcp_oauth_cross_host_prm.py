@@ -28,7 +28,7 @@ import tempfile
 import urllib.parse
 from unittest.mock import patch
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-oauth-xhost-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-oauth-xhost-"))
 
 import mcp_store  # noqa: E402
 import oauth_mcp  # noqa: E402
@@ -240,7 +240,7 @@ check("6. readonly: sign-in scopes stay next to the read scope",
       == ["openid", "offline_access", "mcp:read"])
 
 # 7. start_auth end to end
-REDIRECT = "https://jeevi.example.com/connect/oauth/callback"
+REDIRECT = "https://javis.example.com/connect/oauth/callback"
 
 
 def start(perm):

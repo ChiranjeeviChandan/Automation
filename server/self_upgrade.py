@@ -4,7 +4,7 @@ Owner, 14/11/2026: "khi anh yêu cầu nó cải tiến thì nó cũng có thể
 thống được", then chose the widest scope: everything in the brain AND Jeevi's source code.
 
 Before this module an assistant at Full access could already write its own file, any skill or workflow, by hand. Three
-things were missing, and this is what the tool `jeevi_improve` (system/plugins/jeevi-improve) adds on top:
+things were missing, and this is what the tool `javis_improve` (system/plugins/javis-improve) adds on top:
 
 1. A boundary. Only a turn the owner started (`la_chu`, or a Kanban job or reminder the owner set up) may change
    anything here. Auto's own wake-ups and customer bots may not: they can only suggest. The paths are limited to the
@@ -107,9 +107,9 @@ def resolve(brain_root: str, path: str) -> tuple:
             return full, rel, kind
     raise ImproveError(_c(
         f"{rel} không thuộc vùng tự cải tiến (agents/, skills/, workflows/, Jeevi/loops/, memory/, CLAUDE.md của brain). "
-        "Plugin dùng jeevi_plugin, cài đặt dùng công cụ riêng của nó.",
+        "Plugin dùng javis_plugin, cài đặt dùng công cụ riêng của nó.",
         f"{rel} is outside what an improvement may change (agents/, skills/, workflows/, Jeevi/loops/, memory/, the "
-        "brain's CLAUDE.md). Plugins go through jeevi_plugin, settings through their own tools."))
+        "brain's CLAUDE.md). Plugins go through javis_plugin, settings through their own tools."))
 
 
 def _frontmatter(text: str) -> Optional[dict]:
@@ -200,7 +200,7 @@ def _get_blob(brain_root: str, sha: str) -> Optional[str]:
 
 def _write(full: Path, text: str) -> None:
     full.parent.mkdir(parents=True, exist_ok=True)
-    tmp = full.with_name(full.name + ".jeevi-tmp")
+    tmp = full.with_name(full.name + ".javis-tmp")
     tmp.write_text(text, encoding="utf-8", newline="")
     os.replace(tmp, full)
 
@@ -437,7 +437,7 @@ def attach_source(sid: str, brain_root: str) -> dict:
 
 # ── versions (read only) ────────────────────────────────────────────────────────────────────────────────────────────
 # Owner, 23/11/2026: "anh không muốn tự update mà người dùng phải vào trang update để cập nhật lên". Until then
-# `jeevi_improve op=update` started the Update button's path by itself after the turn, so a merged fix put the machine
+# `javis_improve op=update` started the Update button's path by itself after the turn, so a merged fix put the machine
 # on the new release with nobody pressing anything. Now this module only READS the versions; the update itself is the
 # owner's press of the button on the Update page (Settings, Updates).
 

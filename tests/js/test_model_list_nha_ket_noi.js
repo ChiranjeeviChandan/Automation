@@ -26,7 +26,7 @@ const win = {
 win.window = win;
 vm.createContext(win);
 vm.runInContext(SRC, win);
-const ML = win.JeeviModelList;
+const ML = win.JavisModelList;
 
 const PROVS = [
   { id: "a-khoa", label: "A Khoa", configured: false },

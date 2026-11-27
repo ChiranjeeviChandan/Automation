@@ -1,6 +1,6 @@
 """
 JEEVI MCP HUB - điểm đấu DUY NHẤT cho mọi engine.
-- Claude Code / Codex thấy hub như MỘT MCP server http tên "jeevi" (config 1 entry).
+- Claude Code / Codex thấy hub như MỘT MCP server http tên "javis" (config 1 entry).
 - Engine API (OpenRouter/OpenAI/Anthropic) gọi in-process qua discover_all().
 Hub lo trọn: gộp tool mọi connection (namespaced), ENFORCE quyền 3 mức + mode loop
 (lớp CỨNG, không phụ thuộc prompt), audit log, cache, rate limit, meta-tool.
@@ -130,7 +130,7 @@ def hub_token():
 
 def hub_port():
     try:
-        return int(os.getenv("JEEVI_PORT", "7777"))
+        return int(os.getenv("JAVIS_PORT", "7777"))
     except ValueError:
         return 7777
 
@@ -186,44 +186,44 @@ def vault_header_refused(p) -> bool:
 
 
 def allow_patterns():
-    """Pattern cho --allowedTools của loop: mọi tool qua hub đều mang tên mcp__jeevi__*."""
-    return ["mcp__jeevi"]
+    """Pattern cho --allowedTools của loop: mọi tool qua hub đều mang tên mcp__javis__*."""
+    return ["mcp__javis"]
 
 
 # Tools that only the OWNER's own sessions may see (0.77.0). A dedicated bot at the "can write" / "full" level gets
 # hub tools, and there the person steering the model is a stranger. These two read every customer chat the reply
 # judge logged and retune the bot itself, so a customer must never reach them, not even through the lazy
-# `jeevi_run_tool`. `discover_all(for_bot=True)` drops them before the lazy tier; bot paths pass that flag (API
+# `javis_run_tool`. `discover_all(for_bot=True)` drops them before the lazy tier; bot paths pass that flag (API
 # engines directly, Claude Code through the X-Jeevi-Bot header written by `claude_config_path(bot=True)`).
-# `jeevi_team` (0.173.0) creates, edits and deletes team chats and writes assistant files: owner-only for the same reason.
-# `jeevi_watch` (0.239.0) makes the server fetch an address on a schedule and message the owner: not a customer's call.
-# `jeevi_login` (0.251.0) opens pages signed in as the owner (login vault): a customer must never browse as them.
+# `javis_team` (0.173.0) creates, edits and deletes team chats and writes assistant files: owner-only for the same reason.
+# `javis_watch` (0.239.0) makes the server fetch an address on a schedule and message the owner: not a customer's call.
+# `javis_login` (0.251.0) opens pages signed in as the owner (login vault): a customer must never browse as them.
 # Its op=browser (2026-11-21) puts a sign-in into the Playwright browser; `discover_all` then also keeps that
 # browser's own tools away from a bot.
-OWNER_ONLY_TOOLS = frozenset({"jeevi_reply_policy", "jeevi_reply_policy_tune", "jeevi_team", "jeevi_memory",
-                              "jeevi_watch", "jeevi_login",
+OWNER_ONLY_TOOLS = frozenset({"javis_reply_policy", "javis_reply_policy_tune", "javis_team", "javis_memory",
+                              "javis_watch", "javis_login",
                               # 0.403.0: changes which notices reach the owner. A customer must never mute the owner.
-                              "jeevi_notify",
+                              "javis_notify",
                               # 2026-11-04: renames Jeevi Core in the owner's brain. Not a customer's call.
-                              "jeevi_core_name",
+                              "javis_core_name",
                               # 2026-11-10: steers which model background jobs run on. Not a customer's call.
-                              "jeevi_tune",
+                              "javis_tune",
                               # 2026-11-15: rewrites assistants, skills and memory, attaches Jeevi's own code, updates
                               # and restarts the install. Only the owner asks for that.
-                              "jeevi_improve",
+                              "javis_improve",
                               # 2026-11-13: rewrites a project's instructions, notes, files and links.
-                              "jeevi_project",
+                              "javis_project",
                               # 2026-10-25: writes code that runs in the server (installed OFF, still owner's call).
-                              "jeevi_plugin",
+                              "javis_plugin",
                               # 0.259.0: tìm và đọc web. Bot nói chuyện với khách lạ không được biến
                               # máy chủ của chủ thành máy đi đọc web hộ bất kỳ ai nhắn tới.
-                              "jeevi_web_search", "jeevi_web_fetch",
+                              "javis_web_search", "javis_web_fetch",
                               # 2026-11-19 (PR 1554 review): list, read and message EVERY customer of the shop. A
                               # stranger chatting with a bot must never read other customers' chats or write to them.
                               "inbox_find", "inbox_reply",
                               # 2026-11-05 audit: adds an MCP server to the store EVERY brain shares and dials it
                               # at once. A customer must never plant a server in the owner's tool list.
-                              "jeevi_add_mcp"})
+                              "javis_add_mcp"})
 
 
 # ============================================================
@@ -314,16 +314,16 @@ def audit_tail(limit=50, conn_id=None):
 
 
 def note_query_answer(tool: str, sent_chars: int) -> None:
-    """One jeevi_query answer: the characters a model read in place of the pages it queried."""
-    _sizes_append({"ts": datetime.now().isoformat(timespec="seconds"), "conn_id": "jeevi-query",
-                   "label": "jeevi_query", "tool": tool or "jeevi_query",
+    """One javis_query answer: the characters a model read in place of the pages it queried."""
+    _sizes_append({"ts": datetime.now().isoformat(timespec="seconds"), "conn_id": "javis-query",
+                   "label": "javis_query", "tool": tool or "javis_query",
                    "raw_chars": 0, "sent_chars": int(sent_chars or 0), "shape": "query"})
 
 
 def result_size_stats(days: int = 7, top: int = 10) -> dict:
     """How large connection results were and how much of them a model was handed, from the sizes log.
 
-    Only calls a model read are counted (shape in tool_result_shaper.MODEL_KINDS), plus pages jeevi_query read
+    Only calls a model read are counted (shape in tool_result_shaper.MODEL_KINDS), plus pages javis_query read
     for itself and the answers it gave. The log is two files of 5 MB at most, so on a busy install this covers
     less than `days`; `since` says how far it goes."""
     days = max(1, min(90, int(days or 7)))
@@ -419,7 +419,7 @@ def _sizes_append(rec):
 # what tools/loop_audit.py exists to stop). They are tallied here and ride along on the next line that is written.
 _small_tally = {"calls": 0, "chars": 0}
 _small_lock = threading.Lock()
-_SHAPE_POOL = ThreadPoolExecutor(max_workers=3, thread_name_prefix="jeevi-shape")
+_SHAPE_POOL = ThreadPoolExecutor(max_workers=3, thread_name_prefix="javis-shape")
 
 
 def _shape_and_log(text, fn, conn, tool, scope):
@@ -430,7 +430,7 @@ def _shape_and_log(text, fn, conn, tool, scope):
         _small_tally["calls"] = _small_tally["chars"] = 0
     rec = {"ts": datetime.now().isoformat(timespec="seconds"), "conn_id": conn["id"],
            "label": conn.get("label"), "tool": tool, "raw_chars": shaped.raw_chars,
-           # "raw" = pages jeevi_query read for itself: none of it reached a model
+           # "raw" = pages javis_query read for itself: none of it reached a model
            "sent_chars": 0 if shaped.kind == "raw" else shaped.sent_chars, "shape": shaped.kind}
     if small_calls:
         rec["small_calls"], rec["small_chars"] = small_calls, small_chars
@@ -440,18 +440,18 @@ def _shape_and_log(text, fn, conn, tool, scope):
 
 # One line in the tool search's description when a scout is available: the model must know it exists to decide to
 # use it, and a line costs far less per turn than listing the whole tool.
-SCOUT_HINT = (" jeevi_scout(task): giao model nền ĐỌC dữ liệu nặng (nhiều nguồn, nhiều trang, kỳ dài) rồi chỉ trả "
+SCOUT_HINT = (" javis_scout(task): giao model nền ĐỌC dữ liệu nặng (nhiều nguồn, nhiều trang, kỳ dài) rồi chỉ trả "
               "về kết luận; gọi qua {run}.")
-# Same idea for jeevi_code (code_mode.py): one line, in English like every new prompt text.
-CODE_MODE_HINT = (" jeevi_code(code): run a read-only Python script that chains several tool reads and returns only "
+# Same idea for javis_code (code_mode.py): one line, in English like every new prompt text.
+CODE_MODE_HINT = (" javis_code(code): run a read-only Python script that chains several tool reads and returns only "
                   "what it prints; call via {run}.")
 
 
 def _shape_view(result, name, scope):
-    """An explicit `result_view` of jeevi_run_tool, shaped like any result and counted as what the model read (the
+    """An explicit `result_view` of javis_run_tool, shaped like any result and counted as what the model read (the
     inner call was logged as read-for-itself, with nothing sent)."""
     shaped = tool_result_shaper.shape(result, tool=name, scope=scope)
-    _sizes_append({"ts": datetime.now().isoformat(timespec="seconds"), "conn_id": "jeevi-view", "label": "result_view",
+    _sizes_append({"ts": datetime.now().isoformat(timespec="seconds"), "conn_id": "javis-view", "label": "result_view",
                    "tool": name, "raw_chars": 0, "sent_chars": shaped.sent_chars, "shape": "query"})
     return shaped.text
 
@@ -581,7 +581,7 @@ def _guard(ent, fn, mode):
 # ============================================================
 # AMBIENT / ACCOUNT MCP - connector đấu vào TÀI KHOẢN Claude (claude.ai: Drive/Gmail/lịch...).
 # Chúng KHÔNG đi qua hub: engine Claude nạp thẳng qua setting_sources thành tool NATIVE
-# mcp__<server>__*. Trước đây lazy layer + jeevi_connections MÙ với nhóm này → model tưởng chỉ
+# mcp__<server>__*. Trước đây lazy layer + javis_connections MÙ với nhóm này → model tưởng chỉ
 # có connector của hub, báo "không có Drive" dù tài khoản đã đấu. Ở đây hub ĐỌC danh sách
 # (claude mcp list, cache nền vì chậm) để KỂ cho model biết + chỉ cách gọi (native, KHÔNG qua run).
 # ============================================================
@@ -644,8 +644,8 @@ def _ambient_kind(include_ambient):
     include_ambient is True for the Claude engine (its historic meaning) or the engine name. 2026-11-23: the CLI
     engines have their own MCP servers too, outside Jeevi' hub: `[mcp_servers.*]` in ~/.codex/config.toml or
     ~/.grok/config.toml, `mcpServers` in Antigravity's ~/.gemini/config/mcp_config.json (Composio or Notion added
-    straight to the CLI). The CLI calls them natively, but the hub never named them, so jeevi_search_tools answered
-    "no tool" and jeevi_connections left them out, the same blind spot the Claude account connectors had before."""
+    straight to the CLI). The CLI calls them natively, but the hub never named them, so javis_search_tools answered
+    "no tool" and javis_connections left them out, the same blind spot the Claude account connectors had before."""
     if include_ambient is True:
         return "claude"
     k = str(include_ambient or "").strip().lower()
@@ -658,7 +658,7 @@ def _codex_config_files():
 
 
 def _grok_config_files():
-    # The user's personal Grok config. Jeevi writes only its own `jeevi` entry into <brain>/.grok/config.toml.
+    # The user's personal Grok config. Jeevi writes only its own `javis` entry into <brain>/.grok/config.toml.
     return [Path.home() / ".grok" / "config.toml"]
 
 
@@ -678,7 +678,7 @@ _native_cache = {}
 
 def _native_servers(kind):
     """MCP servers in one CLI engine's own config (not Jeevi' hub): [{"name", "prefix", "source"}]. Read from disk,
-    cached on each file's mtime; the `jeevi` entry and disabled ones left out; [] when nothing is readable."""
+    cached on each file's mtime; the `javis` entry and disabled ones left out; [] when nothing is readable."""
     files_fn, key, source = _NATIVE_SOURCES[kind]
     try:
         files = [Path(f) for f in files_fn()]
@@ -714,7 +714,7 @@ def _native_servers(kind):
             continue
         for name, conf in names.items():
             conf = conf if isinstance(conf, dict) else {}
-            if name == "jeevi" or name in seen or conf.get("enabled") is False or conf.get("disabled") is True:
+            if name == "javis" or name in seen or conf.get("enabled") is False or conf.get("disabled") is True:
                 continue
             seen.add(name)
             servers.append({"name": str(name), "prefix": re.sub(r"[^A-Za-z0-9_-]", "_", str(name)),
@@ -783,7 +783,7 @@ def _ambient_servers():
 
 def _match_ambient(ambient, query):
     """Connector tài khoản khớp query (tên xuất hiện trong query, hoặc chung từ khoá). query
-    rỗng → []. Dùng cho jeevi_search_tools chỉ model sang tool native khi hỏi đúng nguồn đó."""
+    rỗng → []. Dùng cho javis_search_tools chỉ model sang tool native khi hỏi đúng nguồn đó."""
     q = (query or "").strip().lower()
     if not q or not ambient:
         return []
@@ -869,7 +869,7 @@ def _safe_path(vault_root, p, workspace_root=None):
                                         GHI file mới, đổi ở 0.256.0)
       3. Không đâu có                -> vault, để câu báo lỗi nói về brain như cũ
 
-    Bước 2 là thứ làm `jeevi_write_file` ghi đúng chỗ: ghi `server/moi.py` trong một phiên
+    Bước 2 là thứ làm `javis_write_file` ghi đúng chỗ: ghi `server/moi.py` trong một phiên
     coding thì brain không có thư mục `server/` còn repo có, nên file rơi vào repo.
     """
     tv = _trong_goc(vault_root, p)
@@ -918,7 +918,7 @@ def _safe_read_path(vault_root, p, cho_phep_staging=False, workspace_root=None):
 
     Vì sao phải có: dashboard chèn vào câu hỏi khối "[File đính kèm để ĐỌC (đường dẫn): …]"
     với ĐƯỜNG DẪN TUYỆT ĐỐI trong `.staging` rồi dặn model "đọc thẳng file rồi trả lời".
-    Sáu engine API không có tool đọc file nào ngoài `jeevi_read_file`, mà tool đó khoá trong
+    Sáu engine API không có tool đọc file nào ngoài `javis_read_file`, mà tool đó khoá trong
     vault - nên lượt nào đính kèm file cũng nổ `ValueError: nằm ngoài vault`, và model đọc
     lỗi đó xong quay ra bảo người dùng "chuyển file vào thư mục Brain đi rồi tôi đọc". Người
     dùng báo đúng cảnh này 23/08 với một đoạn văn dán dài.
@@ -979,7 +979,7 @@ def _connections_json(include_ambient=False, hidden=None, bo_qua=None, owner_cha
         rec = {"connector": con.get("name") or c.get("connector_id"), "label": c.get("label"),
                "namespace": c.get("slug"), "perm": c.get("perm"), "enabled": c.get("enabled"),
                "is_default": c.get("is_default"), "transport": c.get("transport"),
-               "source": "jeevi_hub"}
+               "source": "javis_hub"}
         sk = suc_khoe.get(c.get("id")) or {}
         if not c.get("enabled"):
             rec["trang_thai"] = "ĐANG TẮT - bật lại ở trang Kết nối là mọi brain dùng được ngay."
@@ -1000,13 +1000,13 @@ def _connections_json(include_ambient=False, hidden=None, bo_qua=None, owner_cha
                               "Kết nối - Jeevi KHÔNG tự nâng quyền.")
         out.append(rec)
     # Connector đấu vào TÀI KHOẢN Claude (Drive/Gmail/lịch...): engine Claude đã có sẵn dưới dạng
-    # tool native mcp__<server>__* → chỉ model gọi THẲNG, KHÔNG bọc qua jeevi_run_tool/hub.
+    # tool native mcp__<server>__* → chỉ model gọi THẲNG, KHÔNG bọc qua javis_run_tool/hub.
     kind = _ambient_kind(include_ambient)
     if kind:
         for s in _ambient_for(kind):
             out.append({"connector": s["name"], "label": s["name"], "source": s.get("source") or "claude_account",
                         "goi_the_nao": f"Đã có sẵn trong danh sách tool: {_amb_tools(s)} "
-                                       "- GỌI THẲNG, không qua jeevi_run_tool."})
+                                       "- GỌI THẲNG, không qua javis_run_tool."})
     elif owner_chat:
         # 0.228.0: an engine with no Claude account (Anthropic API, OpenAI API...) never gets these connectors. Not
         # listing them let the model answer "there is no such tool" with no way forward (customer report 2026-10-19,
@@ -1066,7 +1066,7 @@ def _ghi_vung_bao_ve(p, vault_root, workspace_root, mode, for_bot=False) -> str:
         return ""
     ai = "chatbot trả lời khách" if for_bot else f"việc chạy ở mức '{mode}' (dưới Toàn quyền)"
     return (f"ERROR: {ai} không được ghi vào '{rel if rel is not None else p}'. Thư mục plugins/, Jeevi/ (loop, script, "
-            ".jeevi), .git, .claude và cấu hình engine là nơi CHỨA MÃ CHẠY hoặc việc chạy toàn quyền, nên chỉ chủ ở mức "
+            ".javis), .git, .claude và cấu hình engine là nơi CHỨA MÃ CHẠY hoặc việc chạy toàn quyền, nên chỉ chủ ở mức "
             "Toàn quyền mới ghi được. Đây là rào bảo mật, không phải lỗi ổ đĩa. Ghi nội dung vào chỗ khác (ví dụ "
             "drafts/) hoặc đưa nội dung vào câu trả lời để chủ tự xem.")
 
@@ -1074,18 +1074,18 @@ def _ghi_vung_bao_ve(p, vault_root, workspace_root, mode, for_bot=False) -> str:
 def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang="", staging=False,
                    bo_qua=None, workspace_root=None, coding_ctx_cua_phien=None, for_bot=False):
     """(tools_spec, route) các tool nội bộ cho engine API. Claude/Codex có tool file native
-    nên hub HTTP không trả nhóm này (chỉ meta jeevi_connections).
-    include_ambient=True (đường engine Claude): jeevi_connections kèm cả connector tài khoản
+    nên hub HTTP không trả nhóm này (chỉ meta javis_connections).
+    include_ambient=True (đường engine Claude): javis_connections kèm cả connector tài khoản
     Claude (Drive/Gmail...) để model biết chúng tồn tại (gọi qua tool native mcp__*, không qua hub).
     hidden: {conn_id: {perm, tools}} tool bị mức quyền lọc khỏi danh sách - kể ra trong
-    jeevi_connections để model biết mà nói đúng lý do thay vì tưởng nguồn thiếu năng lực.
-    staging=True: `jeevi_read_file` đọc được thêm file trong vùng nhận file của khung chat
+    javis_connections để model biết mà nói đúng lý do thay vì tưởng nguồn thiếu năng lực.
+    staging=True: `javis_read_file` đọc được thêm file trong vùng nhận file của khung chat
     (xem `_safe_read_path`). CHỈ đường chat của CHỦ bật; bot chuyên trách để nguyên False.
     workspace_root: thư mục làm việc của phiên Coding (0.64). Có giá trị thì tool FILE nhận
     thêm gốc đó, để engine không có tool file native chạm được vào cây mã nguồn. MCP, cron và
     nhắc hẹn KHÔNG đổi gốc - chúng thuộc về brain, xem `coding_ctx`.
     coding_ctx_cua_phien: `CodingToolContext` của phiên. Có nó VÀ có workspace_root thì hub
-    cấp thêm `jeevi_run_command`. Thiếu một trong hai thì tool đó không tồn tại - phiên chat
+    cấp thêm `javis_run_command`. Thiếu một trong hai thì tool đó không tồn tại - phiên chat
     thường không được thấy tool chạy lệnh."""
     tools, route = [], {}
     # Phiên Coding nào đang dùng nhóm tool này (0.256.0). Rỗng ở chat thường. Dùng cho sổ "đã
@@ -1137,12 +1137,12 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
             pass
 
     def add(name, description, props, required, call, effect="read"):
-        tools.append({"fn": name, "server": "jeevi", "name": name, "description": description,
+        tools.append({"fn": name, "server": "javis", "name": name, "description": description,
                       "schema": {"type": "object", "properties": props, "required": required}})
         route[name] = {
             "call": call,
             "source_type": "builtin",
-            "source_id": "jeevi-core",
+            "source_id": "javis-core",
             "effect": effect,
             "required_mode": "readonly" if effect in ("none", "read") else (
                 "safe" if effect == "write" else "full"
@@ -1150,11 +1150,11 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
             "health": "healthy",
         }
 
-    add("jeevi_connections", "Liệt kê các nguồn dữ liệu (connector/tài khoản MCP) đang đấu vào Jeevi, "
+    add("javis_connections", "Liệt kê các nguồn dữ liệu (connector/tài khoản MCP) đang đấu vào Jeevi, "
         "kèm mức quyền, trạng thái sống/hỏng, và các tool đang bị mức quyền ẩn (tool_bi_an_do_quyen). "
         "Kết nối DÙNG CHUNG cho mọi brain - không có khái niệm gắn nguồn vào brain. Gồm cả connector đấu "
         "vào TÀI KHOẢN Claude (Drive/Gmail/lịch...) - loại source='claude_account' gọi THẲNG qua "
-        "tool native mcp__<tên>__*, KHÔNG qua jeevi_run_tool. Dùng khi cần biết đang có nguồn nào / "
+        "tool native mcp__<tên>__*, KHÔNG qua javis_run_tool. Dùng khi cần biết đang có nguồn nào / "
         "tài khoản nào là mặc định, hoặc khi không tìm thấy tool tưởng phải có.",
         {}, [], lambda args: _async_const(_connections_json(include_ambient, hidden, bo_qua, owner_chat=staging)))
 
@@ -1186,13 +1186,13 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
         # Security (2026-11-10): the secret tripwire of the shell and of Claude Code's own tools also covers this tool.
         bi_mat = secret_guard.check_text(str(p))
         if bi_mat:
-            secret_guard.note_blocked("jeevi_read_file", bi_mat, str(rel or ""))
+            secret_guard.note_blocked("javis_read_file", bi_mat, str(rel or ""))
             return secret_guard.refusal(bi_mat)
         if p.suffix.lower() in _IMAGE_SUFFIXES:
             # Reading a photo as text hands the model a page of mojibake it then "describes" with confidence. Say what the
             # file is and how to actually see it (0.73.0).
             return (f"'{rel}' là file ẢNH ({p.stat().st_size // 1024} KB), tool này chỉ đọc chữ nên không cho bạn thấy ảnh. "
-                    f"Muốn biết trong ảnh có gì, gọi tool jeevi_describe_image với images=['{rel}'] (ChatGPT nhìn ảnh thật "
+                    f"Muốn biết trong ảnh có gì, gọi tool javis_describe_image với images=['{rel}'] (ChatGPT nhìn ảnh thật "
                     f"rồi tả lại). Muốn người dùng xem ảnh thì nhúng ![]({rel}) vào câu trả lời.")
         if p.suffix.lower() in doc_text.SUFFIXES:
             # PDF/Word đọc thô ra toàn mã nhị phân: bóc chữ trước để engine API và Ollama máy nhà đọc được file đính kèm (0.92.2).
@@ -1221,7 +1221,7 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
             rows.append(("[d] " if e.is_dir() else "    ") + e.name)
         return "\n".join(rows) or "(trống)"
 
-    async def _kiem_ghi(args, ten_tool="jeevi_write_file"):  # noqa: C901
+    async def _kiem_ghi(args, ten_tool="javis_write_file"):  # noqa: C901
         """(đường dẫn đã duyệt, lỗi). Mọi rào trước khi GHI, dùng chung cho ghi và sửa file."""
         if mcp_catalog.effective_perm("full", mode) == "readonly":
             # Câu này phải NÓI RÕ ĐÂY LÀ QUYỀN CỦA JEEVI, không phải lỗi máy. Bản cũ chỉ ghi
@@ -1292,9 +1292,9 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
         if _sid_coding and _trong_lam_viec(p):
             # 0.256.0: trong thư mục làm việc, chặn ghi đè mù và chặn dán nguyên output có số dòng.
             if coding_files.giong_output_doc(noi_dung):
-                return ("ERROR: nội dung trông như output của jeevi_read_file (mỗi dòng mở đầu bằng "
+                return ("ERROR: nội dung trông như output của javis_read_file (mỗi dòng mở đầu bằng "
                         "'số|'). Ghi vậy là ghi cả số dòng vào file. Bỏ tiền tố số dòng, hoặc dùng "
-                        "jeevi_edit_file để sửa đúng đoạn cần.")
+                        "javis_edit_file để sửa đúng đoạn cần.")
             chan = coding_files.chan_ghi_de(_sid_coding, p)
             if chan:
                 return chan
@@ -1308,11 +1308,11 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
 
     async def _edit(args):
         args = args or {}
-        p, loi = await _kiem_ghi(args, "jeevi_edit_file")
+        p, loi = await _kiem_ghi(args, "javis_edit_file")
         if loi:
             return loi
         if not p.is_file():
-            return (f"ERROR: không có file '{args.get('path')}'. Tạo file mới thì dùng jeevi_write_file.")
+            return (f"ERROR: không có file '{args.get('path')}'. Tạo file mới thì dùng javis_write_file.")
         canh_bao = _moc_truoc(p, f"sửa {args.get('path')}") if (_sid_coding and _trong_lam_viec(p)) else ""
         ra = await asyncio.to_thread(
             coding_files.sua_file, p, str(args.get("old_string") or ""), str(args.get("new_string") or ""),
@@ -1416,25 +1416,25 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
             return 'ERROR: task_skill_scope_unavailable'
         return text
 
-    add("jeevi_read_file", "Đọc 1 file trong vault (Second Brain). path tương đối so với gốc vault; "
+    add("javis_read_file", "Đọc 1 file trong vault (Second Brain). path tương đối so với gốc vault; "
         "nhận CẢ đường dẫn tuyệt đối của file người dùng vừa đính kèm/dán vào khung chat. PDF, Word, Excel "
         "(.xlsx: mọi sheet, giá trị công thức, ô lỗi) được bóc thành chữ. File dài: "
         "đọc từng đoạn bằng offset/limit (có số dòng).",
         {"path": {"type": "string"}, "offset": {"type": "integer"}, "limit": {"type": "integer"}},
         ["path"], _read)
-    add("jeevi_list_dir", "Liệt kê file/thư mục trong vault. path tương đối, bỏ trống = gốc vault.",
+    add("javis_list_dir", "Liệt kê file/thư mục trong vault. path tương đối, bỏ trống = gốc vault.",
         {"path": {"type": "string"}}, [], _ls)
-    add("jeevi_write_file", "Ghi/tạo file trong vault (ghi đè nếu có). Dùng khi cần lưu ghi chú, "
+    add("javis_write_file", "Ghi/tạo file trong vault (ghi đè nếu có). Dùng khi cần lưu ghi chú, "
         "báo cáo, nháp. KHÔNG dùng cho hành động ra ngoài.",
         {"path": {"type": "string"}, "content": {"type": "string"}}, ["path", "content"], _write,
         effect="write")
-    add("jeevi_edit_file", "Sửa MỘT đoạn trong file có sẵn: thay old_string (chép nguyên văn từ file, đủ "
+    add("javis_edit_file", "Sửa MỘT đoạn trong file có sẵn: thay old_string (chép nguyên văn từ file, đủ "
         "dài để chỉ khớp một chỗ) bằng new_string. Sửa vài dòng thì LUÔN dùng tool này, đừng ghi đè cả "
-        "file bằng jeevi_write_file. replace_all=true để thay mọi chỗ khớp. Trả về diff.",
+        "file bằng javis_write_file. replace_all=true để thay mọi chỗ khớp. Trả về diff.",
         {"path": {"type": "string"}, "old_string": {"type": "string"},
          "new_string": {"type": "string"}, "replace_all": {"type": "boolean"}},
         ["path", "old_string", "new_string"], _edit, effect="write")
-    add("jeevi_search_files", "Tìm trong file: target='content' tìm theo nội dung (regex), target='files' "
+    add("javis_search_files", "Tìm trong file: target='content' tìm theo nội dung (regex), target='files' "
         "tìm theo tên file (glob như '*.py' hoặc một đoạn tên). path: thư mục để tìm (bỏ trống = thư mục "
         "làm việc, hoặc gốc brain). file_glob lọc loại file, context = số dòng kèm quanh chỗ khớp.",
         {"pattern": {"type": "string"}, "target": {"type": "string", "enum": ["content", "files"]},
@@ -1446,7 +1446,7 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
             route[_fn]["hat_nhan"] = True
 
     # 0.259.0: tìm và đọc web cho engine API (Claude Code, Codex, Grok có WebSearch/WebFetch riêng).
-    # Không vào nhóm hạt nhân: lượt nào cần web thì model tìm thấy qua jeevi_search_tools khi tầng
+    # Không vào nhóm hạt nhân: lượt nào cần web thì model tìm thấy qua javis_search_tools khi tầng
     # lazy đang bật, còn lại chúng hiện thẳng như mọi tool khác. Xem web_tools.
     async def _web_search(args):
         import web_tools
@@ -1459,12 +1459,12 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
         return await web_tools.doc(str(args.get("url") or ""), args.get("offset") or 0,
                                    args.get("limit") or web_tools.DOC_MAC_DINH)
 
-    add("jeevi_web_search", "Tìm trên web (tin mới, giá cả, tài liệu, bất cứ thứ gì cần thông tin hiện tại). "
-        "Trả danh sách tiêu đề, địa chỉ, đoạn trích; đọc kỹ trang nào thì gọi jeevi_web_fetch.",
+    add("javis_web_search", "Tìm trên web (tin mới, giá cả, tài liệu, bất cứ thứ gì cần thông tin hiện tại). "
+        "Trả danh sách tiêu đề, địa chỉ, đoạn trích; đọc kỹ trang nào thì gọi javis_web_fetch.",
         {"query": {"type": "string"}, "limit": {"type": "integer", "description": "số kết quả, mặc định 5"}},
         ["query"], _web_search)
-    add("jeevi_web_fetch", "Đọc một trang web hoặc file PDF theo url, trả nội dung dạng chữ (markdown). Trang "
-        "dài thì gọi lại với offset để đọc tiếp. Trang cần đăng nhập thì dùng jeevi_login.",
+    add("javis_web_fetch", "Đọc một trang web hoặc file PDF theo url, trả nội dung dạng chữ (markdown). Trang "
+        "dài thì gọi lại với offset để đọc tiếp. Trang cần đăng nhập thì dùng javis_login.",
         {"url": {"type": "string"}, "offset": {"type": "integer"},
          "limit": {"type": "integer", "description": "số ký tự, mặc định 15000, tối đa 50000"}},
         ["url"], _web_fetch)
@@ -1483,7 +1483,7 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
     if _con_lai > 0:
         listing += (f"; …(+{_con_lai} skill nữa không liệt kê ở đây, vẫn nạp được bằng "
                     f"name=<slug> nếu biết tên - xem Jeevi/index.md)")
-    add("jeevi_use_skill",
+    add("javis_use_skill",
         "Load a skill (in-depth instructions) and FOLLOW it. Pass name=<slug> and task=<what you are about to do, in a "
         "few words, in the language of the skill's description: translate the request if needed>; a long skill may "
         "come back as the parts this task needs, listing the rest: read one with "
@@ -1491,7 +1491,7 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
         {"name": {"type": "string"}, "task": {"type": "string"}, "section": {"type": "string"},
          "full": {"type": "boolean"}}, ["name"], _skill)
 
-    # `jeevi_run_command` chỉ hiện khi phiên CÓ thư mục làm việc. Phiên chat thường không thấy
+    # `javis_run_command` chỉ hiện khi phiên CÓ thư mục làm việc. Phiên chat thường không thấy
     # nó, nên không có chuyện một câu hỏi bình thường lại gọi được lệnh máy. Mức quyền vẫn do
     # chính `run_command` cưỡng chế lần nữa theo chip của phiên (hai lớp, không thay nhau).
     # 0.256.0: mức Plan (chip suggest, hoặc lượt /plan hạ trần xuống chỉ đọc) không thấy tool này
@@ -1512,7 +1512,7 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
             )
             return run_command.ket_qua_cho_model(kq)
 
-        add("jeevi_run_command",
+        add("javis_run_command",
             "Chạy MỘT lệnh trong thư mục làm việc của phiên (chạy test, lint, git chỉ đọc). "
             "KHÔNG qua shell: '&&', ';', '|', '$(...)' đều không có tác dụng, tách thành "
             "nhiều lời gọi. Trả về mã thoát rồi tới output đã cắt bớt.",
@@ -1533,8 +1533,8 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
 
         def _nhat_ky(lenh, ket, nguy):
             try:
-                _audit_append({"ts": datetime.now().isoformat(timespec="seconds"), "conn_id": "jeevi-terminal",
-                               "tool": "jeevi_terminal", "session": _sid_coding, "cmd": str(lenh)[:500],
+                _audit_append({"ts": datetime.now().isoformat(timespec="seconds"), "conn_id": "javis-terminal",
+                               "tool": "javis_terminal", "session": _sid_coding, "cmd": str(lenh)[:500],
                                "nguy_hiem": bool(nguy), "ok": not str(ket).startswith("ERROR"),
                                "head": str(ket)[:80]})
             except Exception:
@@ -1566,16 +1566,16 @@ def _builtin_tools(mode, vault_root, include_ambient=False, hidden=None, lang=""
                                            args.get("offset") or 0, args.get("limit") or 0,
                                            args.get("timeout") or 0)
 
-        add("jeevi_terminal",
+        add("javis_terminal",
             "Terminal thật (bash) trong thư mục làm việc của phiên: pipe, &&, cd đều được, nhớ thư mục "
             "và biến export giữa các lệnh. Dev server hay lệnh chạy mãi thì background=true rồi xem bằng "
-            "jeevi_process. timeout mặc định 180 giây, tối đa 600 (xin lâu hơn thì tự chạy nền). workdir: "
+            "javis_process. timeout mặc định 180 giây, tối đa 600 (xin lâu hơn thì tự chạy nền). workdir: "
             "thư mục con chỉ cho lệnh này. Trước lệnh thay đổi file Jeevi tự tạo mốc khôi phục.",
             {"command": {"type": "string"}, "background": {"type": "boolean"},
              "timeout": {"type": "number"}, "workdir": {"type": "string"}},
             ["command"], _terminal, effect="full")
-        add("jeevi_process",
-            "Quản lý tiến trình nền do jeevi_terminal bật: action=list | poll (trạng thái + vài dòng cuối) | "
+        add("javis_process",
+            "Quản lý tiến trình nền do javis_terminal bật: action=list | poll (trạng thái + vài dòng cuối) | "
             "log (offset/limit dòng, mặc định 200 dòng cuối) | wait (chờ tới timeout giây, tối đa 600) | kill.",
             {"action": {"type": "string", "enum": ["list", "poll", "log", "wait", "kill"]},
              "process_id": {"type": "string"}, "offset": {"type": "integer"},
@@ -1592,15 +1592,15 @@ async def _async_const(v):
 # ============================================================
 # LAZY TOOLS - chống phình context khi đấu nhiều connector.
 # Thay vì phơi hết hàng trăm schema tool MCP MỖI lượt (câu nào cũng gánh), hub chỉ phơi
-# builtins + plugin + 2 meta-tool: jeevi_search_tools (tìm tool theo nhu cầu) và
-# jeevi_run_tool (gọi tool tìm được). Model tự tìm theo NGỮ CẢNH rồi mới nạp schema →
+# builtins + plugin + 2 meta-tool: javis_search_tools (tìm tool theo nhu cầu) và
+# javis_run_tool (gọi tool tìm được). Model tự tìm theo NGỮ CẢNH rồi mới nạp schema →
 # câu không cần MCP tốn gần 0 token tool. Kế thừa NGUYÊN lớp quyền/audit/rate-limit vì
 # run đi qua đúng call_route của route ĐẦY ĐỦ (đã _guard). Model chỉ THẤY meta-tool nên
 # không thể gọi thẳng tool pool → buộc qua run (protocol tự ép).
 # Kế hoạch gốc: docs/dev/2026-07-ke-hoach-ket-noi-hub.md mục 3.3 ("lazy tools", để sau).
 # ============================================================
-_LAZY_SEARCH = "jeevi_search_tools"
-_LAZY_RUN = "jeevi_run_tool"
+_LAZY_SEARCH = "javis_search_tools"
+_LAZY_RUN = "javis_run_tool"
 _WORD_RE = re.compile(r"[^\W_]{2,}", re.UNICODE)   # từ khoá ≥2 ký tự (giữ Unicode/tiếng Việt)
 
 # Nhóm tool HẠT NHÂN: luôn hiện thẳng, không bao giờ vào tầng lazy.
@@ -1614,22 +1614,22 @@ _WORD_RE = re.compile(r"[^\W_]{2,}", re.UNICODE)   # từ khoá ≥2 ký tự (g
 #   1. Schema NHỎ và CỐ ĐỊNH, không lớn lên theo số thứ user cắm thêm.
 #   2. Cần cho hầu hết mọi lượt, nên bắt model tìm trước khi dùng là lỗ vốn.
 #
-# Vì sao jeevi_use_skill KHÔNG ở đây dù skill là thứ trung tâm của Jeevi: mô tả của nó nhúng
+# Vì sao javis_use_skill KHÔNG ở đây dù skill là thứ trung tâm của Jeevi: mô tả của nó nhúng
 # nguyên danh sách skill (tới SKILL_LIST_MAX mục × SKILL_DESC_MAX ký tự), tức là chính cái
 # số hạng lớn theo N. Cho nó vào pool thì danh sách chỉ vào ngữ cảnh khi model tìm thứ khớp
 # một skill, mà _rank_tools đọc description nên tìm "viết email" vẫn trúng nó như thường.
-# jeevi_connections cũng vậy: đó là tool dùng khi bí, không phải mọi lượt.
+# javis_connections cũng vậy: đó là tool dùng khi bí, không phải mọi lượt.
 CORE_TOOL_FNS = frozenset({
-    "jeevi_read_file",
-    "jeevi_list_dir",
-    "jeevi_write_file",
+    "javis_read_file",
+    "javis_list_dir",
+    "javis_write_file",
     # Chỉ tồn tại trong phiên có thư mục làm việc, và ở đó thì gần như lượt nào cũng cần.
     # Schema nhỏ và cố định, nên đủ tiêu chí hạt nhân. Bắt model đi tìm nó trước khi dùng là
     # đốt thêm một vòng web, đúng cái hệ số 2 của tầng lazy mà engine Web phải tránh.
-    "jeevi_run_command",
+    "javis_run_command",
     # Chỉ tồn tại ở mức Toàn quyền của phiên Coding, và ở đó lượt nào cũng dùng.
-    "jeevi_terminal",
-    "jeevi_process",
+    "javis_terminal",
+    "javis_process",
 })
 
 # 0.256.0: hạt nhân CHỈ TRONG PHIÊN CODING. Ở đó gần như lượt nào cũng sửa và tìm code, bắt model
@@ -1637,14 +1637,14 @@ CORE_TOOL_FNS = frozenset({
 # mọi tool khác: hai schema này cộng lại gần 1.000 ký tự, và trần CORE_TOOLS_MAX_CHARS của
 # test_prompt_budget (gói Groq miễn phí) không chừa chỗ cho chúng ở MỌI lượt chat.
 # Route của chúng mang cờ `hat_nhan` khi dựng cho một phiên Coding; `_apply_lazy` đọc cờ đó.
-CORE_CODING_FNS = frozenset({"jeevi_edit_file", "jeevi_search_files"})
+CORE_CODING_FNS = frozenset({"javis_edit_file", "javis_search_files"})
 
 # Mô tả nhóm tool nội bộ cho thực đơn lazy. Builtin/plugin không có connector trong
-# mcp_catalog nên không tự có mô tả; thiếu dòng này thì model chỉ thấy "jeevi (jeevi, N tool)".
+# mcp_catalog nên không tự có mô tả; thiếu dòng này thì model chỉ thấy "javis (javis, N tool)".
 _LOCAL_GROUP_DESC = {
     # Cut at 70 characters in the menu. Names what the prompt promises (Kanban work, reminders, team chats) so a
-    # model looking for jeevi_team knows it sits here and searches, instead of saying it has too many tools.
-    "jeevi": "việc nền, lịch nhắc, nhóm chat, trợ lý, skill của brain, tiện ích",
+    # model looking for javis_team knows it sits here and searches, instead of saying it has too many tools.
+    "javis": "việc nền, lịch nhắc, nhóm chat, trợ lý, skill của brain, tiện ích",
     "plugin": "tool do plugin cài thêm",
 }
 
@@ -1670,7 +1670,7 @@ def _lazy_char_budget():
     """Trần ký tự schema tool được phép hiện thẳng, trước khi bắt buộc bật lazy.
 
     Vì sao cần thêm ngưỡng THEO KÍCH THƯỚC bên cạnh ngưỡng theo SỐ LƯỢNG: đếm tool không
-    nói lên chi phí. Một tool duy nhất có thể rất đắt (jeevi_use_skill nhúng cả danh sách
+    nói lên chi phí. Một tool duy nhất có thể rất đắt (javis_use_skill nhúng cả danh sách
     skill, phình theo số skill người dùng cài), trong khi mười tool schema gọn lại rẻ. Đếm
     số lượng để quyết định là đo nhầm đại lượng, và đó là lý do máy có 26 tool nặng 17k ký
     tự vẫn nằm dưới ngưỡng 40 nên lazy chưa từng kích hoạt lần nào.
@@ -1727,7 +1727,7 @@ def _connector_menu(pool, ambient=None):
                 desc = str(t.get("group_desc") or "").strip()
             if not desc and ns in _LOCAL_GROUP_DESC:
                 # Nhóm nội bộ (builtin/plugin) không có connector trong catalog nên trước đây
-                # hiện trơ là "jeevi (jeevi, N tool)" - model không đoán được skill nằm trong
+                # hiện trơ là "javis (javis, N tool)" - model không đoán được skill nằm trong
                 # đó mà tìm. Nêu rõ có gì thì nó mới biết đường gọi search.
                 desc = _LOCAL_GROUP_DESC[ns]
             seen[ns] = {"label": t.get("label") or con.get("name") or ns,
@@ -2087,7 +2087,7 @@ def _lazy_tools_and_route(visible_tools, visible_route, pool, full_route, top_k,
 
     tools = list(visible_tools)
     route = dict(visible_route)
-    tools.append({"fn": _LAZY_SEARCH, "server": "jeevi", "name": _LAZY_SEARCH,
+    tools.append({"fn": _LAZY_SEARCH, "server": "javis", "name": _LAZY_SEARCH,
                   "description": ("TÌM tool MCP theo NHU CẦU rồi mới nạp (tiết kiệm token: tool chỉ vào "
                                   "ngữ cảnh khi cần). query = mô tả việc cần làm hoặc tên nguồn. Nguồn "
                                   "đang đấu: " + (menu or "(chưa có nguồn nào)") + f". Kết quả trả tên + "
@@ -2101,7 +2101,7 @@ def _lazy_tools_and_route(visible_tools, visible_route, pool, full_route, top_k,
                       "query": {"type": "string",
                                 "description": "Việc cần làm / nguồn / từ khoá, vd 'doanh thu POS hôm nay'"}},
                       "required": ["query"]}})
-    tools.append({"fn": _LAZY_RUN, "server": "jeevi", "name": _LAZY_RUN,
+    tools.append({"fn": _LAZY_RUN, "server": "javis", "name": _LAZY_RUN,
                   "description": (f"GỌI một tool MCP đã tìm được qua {_LAZY_SEARCH}. name = tên tool (đúng "
                                   "y hệt kết quả tìm), args = tham số (object). Quyền/audit/giới hạn tần "
                                   "suất áp y như gọi trực tiếp. Nếu backend làm mất khoá trong args, "
@@ -2196,7 +2196,7 @@ def _scope_tools(tools, route, allowlist):
     if allowlist is None:
         return tools, route
     selected = {name for name in route
-                if name not in ("jeevi_run_tool", "jeevi_search_tools")
+                if name not in ("javis_run_tool", "javis_search_tools")
                 and any(fnmatch.fnmatchcase(name, pattern) for pattern in allowlist)}
     return ([tool for tool in tools if tool["fn"] in selected],
             {name: entry for name, entry in route.items() if name in selected})
@@ -2243,11 +2243,11 @@ async def _discover_all_cached(mode="full", vault_root=None, include_plugins=Tru
     """(tools_spec, route) đầy đủ cho 1 mode. route entries ĐÃ bọc quyền + audit.
     include_plugins=False: bỏ nhóm tool plugin - dùng khi engine SDK đã đấu plugin
     IN-PROCESS (header X-Jeevi-No-Plugins) để model không thấy tool trùng chức năng.
-    include_ambient=True (đường engine Claude, header X-Jeevi-Engine=claude): jeevi_connections +
+    include_ambient=True (đường engine Claude, header X-Jeevi-Engine=claude): javis_connections +
     lazy search kèm connector tài khoản Claude (Drive/Gmail...) - chúng là tool native mcp__* của
     engine, KHÔNG qua hub, hub chỉ mách chỗ cho model. Engine API (in-process) để False (không có
     tool native để mà chỉ tới).
-    staging=True: cho `jeevi_read_file` đọc thêm vùng nhận file của khung chat - CHỈ đường chat
+    staging=True: cho `javis_read_file` đọc thêm vùng nhận file của khung chat - CHỈ đường chat
     của chủ truyền vào (xem `_safe_read_path`).
     workspace_root: thư mục làm việc của phiên Coding - tool FILE nhận thêm gốc đó (0.64).
         Nhận cả DANH SÁCH: một phiên gắn được nhiều thư mục từ 0.63.9.
@@ -2267,7 +2267,7 @@ async def _discover_all_cached(mode="full", vault_root=None, include_plugins=Tru
         lang = localefmt.ngon_ngu_tra_loi()
     except Exception:
         lang = ""
-    # Mức quyền của phiên nằm TRONG khoá: route của `jeevi_run_command` ôm sẵn ctx của phiên
+    # Mức quyền của phiên nằm TRONG khoá: route của `javis_run_command` ôm sẵn ctx của phiên
     # dựng ra nó, nên hai phiên cùng repo mà khác chip quyền dùng chung cache là phiên
     # `suggest` chạy được lệnh bằng quyền của phiên `full`.
     _quyen_ctx = getattr(coding_ctx_cua_phien, "permission_mode", "") or ""
@@ -2329,7 +2329,7 @@ async def _discover_all_cached(mode="full", vault_root=None, include_plugins=Tru
 
     tools_spec, route = [], {}
     hidden = {}          # conn_id -> {"perm", "ns", "tools"} - tool CÓ THẬT nhưng bị quyền lọc
-    # 2026-11-21: once the browser has held one of the owner's sign-ins (jeevi_login op=browser), a customer bot
+    # 2026-11-21: once the browser has held one of the owner's sign-ins (javis_login op=browser), a customer bot
     # gets no tool of that browser connection at all: whoever drives it browses as the owner.
     import browser_login
     owner_browser = for_bot and browser_login.in_use()
@@ -2376,7 +2376,7 @@ async def _discover_all_cached(mode="full", vault_root=None, include_plugins=Tru
         bo_qua, workspace_root=workspace_root, coding_ctx_cua_phien=coding_ctx_cua_phien, for_bot=for_bot)
     tools_spec += b_tools
     route.update(b_route)
-    # jeevi_query: reads a stored large result back, or computes over a read-only tool's pages, so the data
+    # javis_query: reads a stored large result back, or computes over a read-only tool's pages, so the data
     # never has to pass through the model. Its two dicts are filled further down, once every route is final.
     # Only a brain with a connected source gets it: without one nothing is ever stored, and a core tool costs
     # its description on every turn.
@@ -2386,14 +2386,14 @@ async def _discover_all_cached(mode="full", vault_root=None, include_plugins=Tru
         q_entry["full_route"] = query_route      # every route behind the tool search too (job_recipes.replay)
         tools_spec.append(q_spec)
         route[q_spec["fn"]] = q_entry
-        # jeevi_code: a read-only script that chains several reads and returns only what it prints (code_mode.py).
-        # Same reach as jeevi_query (declared reads only, through the guarded routes), but it runs code the model
+        # javis_code: a read-only script that chains several reads and returns only what it prints (code_mode.py).
+        # Same reach as javis_query (declared reads only, through the guarded routes), but it runs code the model
         # wrote, so never for a customer bot.
         if code_mode.enabled() and not for_bot:
             c_spec, c_entry = code_mode.build(query_route, str(vault_root or ""))
             tools_spec.append(c_spec)
             route[c_spec["fn"]] = c_entry
-    # jeevi_scout: a read-only run on the background model that returns only its findings (scout.py). Never for a
+    # javis_scout: a read-only run on the background model that returns only its findings (scout.py). Never for a
     # customer bot (it starts a run on the owner's background model), and absent when no runner is configured.
     # Not in OWNER_ONLY_TOOLS on purpose: that set lists tools every owner session HAS, and this one is optional.
     if scout.available() and not for_bot:
@@ -2425,7 +2425,7 @@ async def _discover_all_cached(mode="full", vault_root=None, include_plugins=Tru
     except Exception as e:
         print(f"[hub] plugin host lỗi: {type(e).__name__}: {e}", file=sys.stderr)
 
-    # Owner-only tools leave a bot's list BEFORE the lazy tier, or `jeevi_run_tool` would still dispatch them.
+    # Owner-only tools leave a bot's list BEFORE the lazy tier, or `javis_run_tool` would still dispatch them.
     if for_bot:
         tools_spec = [t for t in tools_spec if t.get("fn") not in OWNER_ONLY_TOOLS]
         for fn in OWNER_ONLY_TOOLS:
@@ -2579,7 +2579,7 @@ def invalidate_cache():
 def _single_socket_unchanged() -> set:
     """Ids of live sessions that `invalidate_cache` leaves running: an account connector holding ONE live socket per
     account (catalog `isolate_home`, i.e. personal Zalo), still enabled, its session started with exactly the spec it
-    has now. Signing in a second Zalo account used to restart the first one's jeevi-zalo two or three times (sign-in,
+    has now. Signing in a second Zalo account used to restart the first one's javis-zalo two or three times (sign-in,
     status poll, companion pack), and every restart is a fresh Zalo login during which messages are missed. A real
     change still restarts it: a new spec makes `SessionPool._get` replace the session, a disabled connection is not in
     the list, and a re-login closes the session itself (`/connect/relogin`)."""
@@ -2610,7 +2610,7 @@ def _rpc_error(mid, code, message):
 # Claude/Antigravity/Grok ghi file cấu hình riêng từng lượt). Profile dùng chung
 # `~/.codex/<tên>.config.toml` thì CỐ Ý không mang header, vì nhét vào file dùng chung sẽ race
 # khi hai brain chạy đồng thời. Hệ quả không ai lường: mọi phiên Codex NGƯỜI DÙNG tự mở đều tới
-# hub với vault rỗng, và `jeevi_task`/`jeevi_schedule`/`jeevi_workflow` fail-closed với câu
+# hub với vault rỗng, và `javis_task`/`javis_schedule`/`javis_workflow` fail-closed với câu
 # "chưa biết đang làm việc trên brain nào" - đúng, nhưng vô phương chẩn đoán từ phía client.
 #
 # Luật fail-closed sinh ra để chặn một chuyện CỤ THỂ: chạy nhầm sang brain của người khác. Nó
@@ -2703,7 +2703,7 @@ def _brain_dang_mo() -> tuple:
 
 def last_used_brain() -> str:
     """The brain a call without a header falls back to (the brain of the chat touched last, or the only brain), "" when
-    none can be told. Jeevi Gate's `jeevi_brains` marks it as `last_used` (#1726)."""
+    none can be told. Jeevi Gate's `javis_brains` marks it as `last_used` (#1726)."""
     return _brain_dang_mo()[0] or ""
 
 
@@ -2767,7 +2767,7 @@ def _ghi_chu_brain(nguon, vault_root, header_hong):
 
 # Jeevi Gate (#1726): tools that never touch a brain. They get no `brain` argument and no brain line under their
 # result; connection tools (POS, Gmail...) are shared by every brain, so they are left out by their route instead.
-_GATE_BRAINLESS = frozenset({"jeevi_connections", "jeevi_web_search", "jeevi_web_fetch", _LAZY_SEARCH})
+_GATE_BRAINLESS = frozenset({"javis_connections", "javis_web_search", "javis_web_fetch", _LAZY_SEARCH})
 
 
 def _declares_brain(spec) -> bool:
@@ -2798,7 +2798,7 @@ def _gate_take_brain(name, arguments, spec, bound):
     """(arguments without the Gate's `brain`, the brain asked for or "").
 
     `brain` comes off every tool that does not declare it, so a model that passes it to a web search or a POS tool does
-    not break that call; it only picks a brain for brain-bound tools. Through the lazy `jeevi_run_tool` it may sit in
+    not break that call; it only picks a brain for brain-bound tools. Through the lazy `javis_run_tool` it may sit in
     the inner args of a Jeevi tool (not a connection tool: those are named `<source>__<tool>`)."""
     if not isinstance(arguments, dict) or _declares_brain(spec):
         return arguments, ""
@@ -2830,7 +2830,7 @@ def _chan_doan_thieu_brain(header_hong):
             "nó khởi động engine, còn phiên Codex do người dùng tự mở thì dùng profile chung "
             "vốn không mang header. Cách chữa: chat một lượt ở dashboard để Jeevi biết brain "
             "đang mở, hoặc thêm \"X-Jeevi-Vault\" = \"<đường dẫn brain>\" vào http_headers của "
-            "server jeevi trong cấu hình MCP.)")
+            "server javis trong cấu hình MCP.)")
 
 
 async def _handle_one(msg, mode, include_plugins=True, include_ambient=False, vault_root=None,
@@ -2841,7 +2841,7 @@ async def _handle_one(msg, mode, include_plugins=True, include_ambient=False, va
     if method == "initialize":
         res = {"protocolVersion": params.get("protocolVersion") or mcp_client.PROTOCOL,
                "capabilities": {"tools": {}},
-               "serverInfo": {"name": "jeevi-hub", "version": "1.0"}}
+               "serverInfo": {"name": "javis-hub", "version": "1.0"}}
         if gate is not None:
             # Jeevi Gate (20/11/2026): tells a coding agent to offer Jeevi Sync, so connecting Gate is the whole setup.
             import chat_bridge
@@ -2949,22 +2949,22 @@ async def handle_http(request):
     # → so sánh hằng-thời-gian chống dò theo timing.
     if not _secrets.compare_digest(auth, f"Bearer {hub_token()}"):
         return JSONResponse({"error": "unauthorized"}, status_code=401)
-    mode = (request.headers.get("x-jeevi-mode") or "full").strip().lower()
+    mode = (request.headers.get("x-javis-mode") or "full").strip().lower()
     # Engine SDK đấu plugin in-process gửi header này để hub bỏ nhóm plugin (tránh tool trùng)
-    include_plugins = (request.headers.get("x-jeevi-no-plugins") or "").strip() != "1"
+    include_plugins = (request.headers.get("x-javis-no-plugins") or "").strip() != "1"
     # Chỉ engine Claude (config claude_config_path gắn X-Jeevi-Engine=claude) mới có tool native
     # mcp__* của connector tài khoản Claude → chỉ nó cần gợi ý ambient. Codex/engine API không có.
-    include_ambient = _ambient_kind((request.headers.get("x-jeevi-engine") or "").strip().lower())
+    include_ambient = _ambient_kind((request.headers.get("x-javis-engine") or "").strip().lower())
     # Codex chạy MCP qua HTTP hub (khác Claude SDK đấu plugin in-process), nên nếu không mang
-    # brain hiện tại thì plugin jeevi_schedule có tool nhưng không biết phải đọc kho cron nào.
+    # brain hiện tại thì plugin javis_schedule có tool nhưng không biết phải đọc kho cron nào.
     # Header chỉ nhận đường dẫn thư mục có thật; thiếu header thì `resolve_vault` suy ra brain
     # đang mở rồi NÓI RA ở kết quả tool (xem khối chú thích ở `_brain_dang_mo`). Bearer
     # hub_token vẫn là lớp auth bắt buộc phía trên.
     # A dedicated bot's Claude Code config carries X-Jeevi-Bot: 1 (see `claude_config_path(bot=True)`), so the hub
     # hides OWNER_ONLY_TOOLS from it. The header can only take tools AWAY; leaving it out grants nothing new.
-    for_bot = (request.headers.get("x-jeevi-bot") or "").strip() == "1"
+    for_bot = (request.headers.get("x-javis-bot") or "").strip() == "1"
     tool_allowlist = None
-    raw_allowlist = request.headers.get("x-jeevi-tool-allowlist")
+    raw_allowlist = request.headers.get("x-javis-tool-allowlist")
     if raw_allowlist is not None:
         try:
             tool_allowlist = json.loads(raw_allowlist)
@@ -2993,7 +2993,7 @@ async def handle_http(request):
         with improvement_activation.cli_transport():
             return await tra_loi_jsonrpc(request, mode, include_plugins=include_plugins,
                                          include_ambient=include_ambient,
-                                         raw_vault=request.headers.get("x-jeevi-vault"), for_bot=for_bot,
+                                         raw_vault=request.headers.get("x-javis-vault"), for_bot=for_bot,
                                          **({"tool_allowlist": tool_allowlist} if tool_allowlist is not None else {}))
     finally:
         tool_result_reuse.HUB_TURN.reset(reuse_tok)
@@ -3076,11 +3076,11 @@ def _has_connections():
 
 
 def claude_config_path(mode="full", vault_root=None, bot=False):
-    """Ghi file --mcp-config 1 entry 'jeevi'. 0 connection bật → None (giữ hành vi cũ:
+    """Ghi file --mcp-config 1 entry 'javis'. 0 connection bật → None (giữ hành vi cũ:
     không config → Claude dùng MCP sẵn của máy).
 
     `vault_root` gắn thêm header X-Jeevi-Vault, tức hub cấp CẢ nhóm tool file
-    (jeevi_read_file/jeevi_write_file/jeevi_use_skill) và khoá chúng vào đúng brain đó qua
+    (javis_read_file/javis_write_file/javis_use_skill) và khoá chúng vào đúng brain đó qua
     `_safe_path`. Mặc định KHÔNG gắn, và đó là chủ ý: engine Claude bình thường đã có Read/
     Write native nên thêm nhóm này chỉ tạo hai bộ tool trùng chức năng.
 
@@ -3113,8 +3113,8 @@ def claude_config_path(mode="full", vault_root=None, bot=False):
         hau_to += "_bot"
     p = STATE_DIR / f".mcp_hub_{mode}{hau_to}.json"
     # X-Jeevi-Engine=claude: báo hub đây là engine Claude (có tool native mcp__* của connector
-    # tài khoản Claude) → jeevi_connections/lazy search kèm gợi ý ambient. Codex/engine API không gắn.
-    p.write_text(json.dumps({"mcpServers": {"jeevi": {
+    # tài khoản Claude) → javis_connections/lazy search kèm gợi ý ambient. Codex/engine API không gắn.
+    p.write_text(json.dumps({"mcpServers": {"javis": {
         "type": "http", "url": hub_url(), "headers": headers,
     }}}, ensure_ascii=False), encoding="utf-8")
     try:
@@ -3152,7 +3152,7 @@ def antigravity_config_path(mode="full", vault_root=None):
     except Exception:
         entry = {"serverUrl": hub_url(), "url": hub_url(), "headers": headers, "disabled": False}
     p = STATE_DIR / f".mcp_agy_{mode}{hau_to}.json"
-    p.write_text(json.dumps({"mcpServers": {"jeevi": entry}}, ensure_ascii=False),
+    p.write_text(json.dumps({"mcpServers": {"javis": entry}}, ensure_ascii=False),
                  encoding="utf-8")
     try:
         os.chmod(p, 0o600)   # chứa hub token
@@ -3168,16 +3168,16 @@ def _toml_str(s):
 def codex_profile_name():
     """Tên profile Codex của BẢN NÀY (file `~/.codex/<tên>.config.toml`).
 
-    Vì sao không phải hằng số "jeevi": nhiều bản Jeevi cài native trên cùng một VPS chạy chung
+    Vì sao không phải hằng số "javis": nhiều bản Jeevi cài native trên cùng một VPS chạy chung
     một user, tức chung `$HOME`. Tên cố định là bản khởi động sau ghi đè profile của bản trước,
     mà profile đó chứa URL + token của hub, nên Codex của bản A quay sang gọi hub của bản B - sai
     im lặng, không lỗi nào hiện ra. Gắn cổng vào tên là hết đụng (Docker thì mỗi container một
     HOME nên vốn đã không dính).
 
-    Cổng mặc định giữ nguyên tên "jeevi" để máy đang chạy không phải sinh file mới.
+    Cổng mặc định giữ nguyên tên "javis" để máy đang chạy không phải sinh file mới.
     """
     p = hub_port()
-    return "jeevi" if p == 7777 else f"jeevi-{p}"
+    return "javis" if p == 7777 else f"javis-{p}"
 
 
 def codex_profile_path():
@@ -3202,16 +3202,16 @@ def codex_profile(mode="full"):
     """Ghi ~/.codex/<profile>.config.toml 1 entry hub → `codex exec -p <profile>` thấy MỌI MCP của Jeevi."""
     path = codex_profile_path()
     try:
-        # Hub còn cung cấp plugin nội bộ (jeevi_schedule, datetime-vn...) ngay cả khi user chưa
+        # Hub còn cung cấp plugin nội bộ (javis_schedule, datetime-vn...) ngay cả khi user chưa
         # đấu connector ngoài. Không được xoá profile chỉ vì mcp_store đang rỗng.
-        lines = ["[mcp_servers.jeevi]",
+        lines = ["[mcp_servers.javis]",
                  f"url = {_toml_str(hub_url())}",
                  "startup_timeout_sec = 20",
                  f"{CODEX_TOOLS_APPROVAL_KEY} = {_toml_str(CODEX_TOOLS_APPROVAL)}",
-                 "[mcp_servers.jeevi.http_headers]",
+                 "[mcp_servers.javis.http_headers]",
                  f'{_toml_str("Authorization")} = {_toml_str("Bearer " + hub_token())}',
                  f'{_toml_str("X-Jeevi-Mode")} = {_toml_str(mode)}',
-                 # Tells the hub this is Codex, so search and jeevi_connections name the user's own Codex MCP
+                 # Tells the hub this is Codex, so search and javis_connections name the user's own Codex MCP
                  # servers (Codex calls them natively, outside the hub): see _ambient_kind.
                  f'{_toml_str("X-Jeevi-Engine")} = {_toml_str("codex")}', ""]
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -3233,7 +3233,7 @@ def codex_profile(mode="full"):
 # với đúng một dòng warn (rmcp-client/src/utils.rs, build_default_headers). Hub không bao giờ
 # nhận được brain, rơi về "phiên cập nhật gần nhất" của CẢ MÁY - sự cố 27/09/2026: dashboard
 # đang ở My Bullet Journal mà lệnh tạo đơn TTS chạy trên brain Ngọc Thu Phạm.
-CODEX_VAULT_KEY = "mcp_servers.jeevi.http_headers.X-Jeevi-Vault"
+CODEX_VAULT_KEY = "mcp_servers.javis.http_headers.X-Jeevi-Vault"
 
 
 def ma_hoa_vault(vault: str) -> str:
@@ -3246,7 +3246,7 @@ def ma_hoa_vault(vault: str) -> str:
 def codex_vault_override(vault_root):
     """Override `-c` theo từng tiến trình Codex để hub nhận đúng brain mà không ghi đè profile chung.
 
-    Profile jeevi là file dùng chung cho mọi cuộc chat. Nhét X-Jeevi-Vault thẳng vào file đó sẽ
+    Profile javis là file dùng chung cho mọi cuộc chat. Nhét X-Jeevi-Vault thẳng vào file đó sẽ
     race khi hai brain chạy đồng thời; override argv giữ context tách biệt theo đúng phiên.
     """
     if not vault_root:
@@ -3258,7 +3258,7 @@ def codex_vault_override(vault_root):
     return f"{CODEX_VAULT_KEY}={_toml_str(ma_hoa_vault(vault))}"
 
 
-CODEX_MODE_KEY = "mcp_servers.jeevi.http_headers.X-Jeevi-Mode"
+CODEX_MODE_KEY = "mcp_servers.javis.http_headers.X-Jeevi-Mode"
 _CODEX_MODES = ("suggest", "auto", "full", "gated")
 
 
@@ -3283,7 +3283,7 @@ def dat_codex_vault(extra_config, vault_root):
     Engine Telegram giữ nguyên một CodexCLI qua nhiều lượt. Chỉ nối thêm khi chuỗi chưa có thì
     đổi brain A -> B -> A để lại cả [A, B] trong argv, và Codex lấy giá trị đứng sau: lượt đang
     ở A vẫn chạy trên B. Bỏ cả dạng cũ có dấu nháy để bản vá này không để lại rác."""
-    cu = (CODEX_VAULT_KEY + "=", 'mcp_servers.jeevi.http_headers."X-Jeevi-Vault"=')
+    cu = (CODEX_VAULT_KEY + "=", 'mcp_servers.javis.http_headers."X-Jeevi-Vault"=')
     extra_config[:] = [x for x in extra_config if not str(x).startswith(cu)]
     override = codex_vault_override(vault_root)
     if override:
@@ -3298,12 +3298,12 @@ def dat_codex_vault(extra_config, vault_root):
 # (codex-mcp/src/connection_manager/tool_catalog.rs). Hub trả `tools/list` qua `discover_all`,
 # cache 60 giây hết hạn là dò lại mọi connector, mất khoảng 2 giây. Hai con số đua nhau nên việc
 # nền lúc có tool hub lúc không (canary 08-09/10/2026: 4 trên 12 lượt nhắc hẹn không thấy
-# `mcp__jeevi__*`), model đi vòng qua app ChatGPT hoặc báo không làm được mà nhắc hẹn vẫn ghi xong.
+# `mcp__javis__*`), model đi vòng qua app ChatGPT hoặc báo không làm được mà nhắc hẹn vẫn ghi xong.
 # `required = true` bắt Codex chờ hub tới `startup_timeout_sec` của profile; hub không lên thì
 # phiên không mở và `codex exec` thoát lỗi TRƯỚC khi gọi model (core/src/session/session.rs); câu
 # lỗi đó do claude_cli.codex_error_text đọc. Chỉ gắn khi profile hub có mặt: override vào
-# `mcp_servers.jeevi` mà thiếu entry đó thì Codex từ chối khởi động ("invalid transport").
-CODEX_REQUIRED_KEY = "mcp_servers.jeevi.required"
+# `mcp_servers.javis` mà thiếu entry đó thì Codex từ chối khởi động ("invalid transport").
+CODEX_REQUIRED_KEY = "mcp_servers.javis.required"
 # `features.apps = false` gỡ hẳn server `codex_apps` (app ChatGPT gắn với tài khoản,
 # codex-mcp/src/mcp/mod.rs). Tool của nó không đi qua hub nên không chịu mức quyền của việc, và
 # là đường vòng model từng chọn cả khi hub có mặt (canary 08/10/2026).
@@ -3314,7 +3314,7 @@ CODEX_APPS_KEY = "features.apps"
 # `tools/list` late no longer costs the tools, it costs the WHOLE run: Codex exits before it calls the model. Field
 # report 2026-11-10: 8 scheduled runs lost in ten days, mostly when several schedules opened a Codex session in the
 # same minute. Chat keeps the profile's 20 seconds; codex_steer.START_TIMEOUT_S (120) leaves room for this.
-CODEX_REQUIRED_TIMEOUT_KEY = "mcp_servers.jeevi.startup_timeout_sec"
+CODEX_REQUIRED_TIMEOUT_KEY = "mcp_servers.javis.startup_timeout_sec"
 CODEX_REQUIRED_TIMEOUT_S = 45
 
 
@@ -3336,7 +3336,7 @@ def dat_codex_team_gated(extra_config, tat_server=()):
     natively, outside the gate, so they are switched off for this process only; the user's config.toml is untouched.
     A name that is not a plain config key raises ValueError (main._team_gate_support refuses those first)."""
     for name in tat_server:
-        if not re.fullmatch(r"[A-Za-z0-9_-]+", str(name)) or name == "jeevi":
+        if not re.fullmatch(r"[A-Za-z0-9_-]+", str(name)) or name == "javis":
             raise ValueError("cannot switch off Codex MCP server: " + str(name))
     dat_codex_mode(extra_config, "gated")
     dat_codex_tat_app(extra_config)

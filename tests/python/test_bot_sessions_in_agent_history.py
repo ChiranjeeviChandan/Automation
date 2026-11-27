@@ -19,8 +19,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-botsess-")
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"       # xem test_workflow_runs_api.py
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-botsess-")
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"       # xem test_workflow_runs_api.py
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -43,7 +43,7 @@ mk = lambda ch, title: store.create_session(brain="brain", engine="cli", title=t
 web = mk("web", "chat thường của chủ")
 tg = mk("telegram", "chat telegram")
 own = mk("agent:lan", "chủ chat với Lan")
-bot1 = mk("bot:jeevi-vu", "khách nhắn Jeevi Vũ")
+bot1 = mk("bot:javis-vu", "khách nhắn Jeevi Vũ")
 bot2 = mk("bot:nhi-mai", "khách nhắn Nhi Mai")
 wf = mk("workflow:viet-bai", "chạy quy trình")
 cod = mk("coding:repo", "coding")
@@ -65,16 +65,16 @@ check("vòng tự học (channel='*') vẫn thấy mọi phiên, kể cả bot",
       {web, own, bot1, bot2, wf, cod} <= ids(store.list_sessions(limit=50, brain=["brain"], channel="*")))
 
 # 2. Lịch sử Agent
-hist = ids(store.list_sessions(limit=50, brain=["brain"], channel="agent:lan", also_channels=["bot:jeevi-vu"]))
+hist = ids(store.list_sessions(limit=50, brain=["brain"], channel="agent:lan", also_channels=["bot:javis-vu"]))
 check("lịch sử Agent thấy cuộc chủ chat và phiên của bot dùng Agent đó", hist == {own, bot1}, hist)
 check("không thấy phiên của bot dùng Agent KHÁC", bot2 not in hist)
 check("không truyền kênh phụ thì như cũ (chỉ cuộc chủ chat)",
       ids(store.list_sessions(limit=50, brain=["brain"], channel="agent:lan")) == {own})
-two = ids(store.list_sessions(limit=50, brain=["brain"], channel="agent:lan", also_channels=["bot:jeevi-vu", "bot:nhi-mai"]))
+two = ids(store.list_sessions(limit=50, brain=["brain"], channel="agent:lan", also_channels=["bot:javis-vu", "bot:nhi-mai"]))
 check("nhiều bot cùng dùng một Agent thì thấy hết", two == {own, bot1, bot2}, two)
 
 # 3. Tìm kiếm
-res = {r["session_id"] for r in store.search("đổi bộ não", brain=["brain"], channel="agent:lan", also_channels=["bot:jeevi-vu"])}
+res = {r["session_id"] for r in store.search("đổi bộ não", brain=["brain"], channel="agent:lan", also_channels=["bot:javis-vu"])}
 check("tìm trong lịch sử Agent: thấy phiên chủ và phiên bot của Agent đó", res == {own, bot1}, res)
 res = {r["session_id"] for r in store.search("đổi bộ não", brain=["brain"], channel="agent:lan")}
 check("tìm không kênh phụ thì như cũ", res == {own}, res)
@@ -121,9 +121,9 @@ for ten, kenh in lech.items():
     check(f"bot lưu brain mặc định bằng cách viết khác ({ten}) vẫn vào lịch sử Agent", kenh in k4, k4)
 check("brain riêng THẬT vẫn không lẫn vào", "bot:" + chatbot_store.get_bot(b3)["slug"] not in k4, k4)
 import unicodedata  # noqa: E402
-bn, en = chatbot_store.create_bot({"name": "Bot Vu", "agent_slug": unicodedata.normalize("NFD", "jeevi-vũ"),
+bn, en = chatbot_store.create_bot({"name": "Bot Vu", "agent_slug": unicodedata.normalize("NFD", "javis-vũ"),
                                     "brain": "brain"})
-kn = main._agent_history_channels("brain", "agent:" + unicodedata.normalize("NFC", "jeevi-vũ"))
+kn = main._agent_history_channels("brain", "agent:" + unicodedata.normalize("NFC", "javis-vũ"))
 check("tên Agent có dấu: NFD (tên file macOS) và NFC vẫn khớp", bn and "bot:" + chatbot_store.get_bot(bn)["slug"] in kn,
       (en, kn))
 

@@ -31,12 +31,12 @@ import pack_vault
 import packs
 import plugins_host
 
-PACK_ID = "jeevi.tinh-gia"
-TOOL = "jeevi_tinh_gia_ban"
+PACK_ID = "javis.tinh-gia"
+TOOL = "javis_tinh_gia_ban"
 
-MANIFEST = """format: jeevi-pack
+MANIFEST = """format: javis-pack
 spec: 1
-id: jeevi.tinh-gia
+id: javis.tinh-gia
 version: 1.0.0
 name: {vi: "Tính giá bán"}
 description: {vi: "Từ giá vốn ra giá niêm yết."}
@@ -52,7 +52,7 @@ version: 1.0.0
 enabled: true
 min_mode: readonly
 tools:
-  - jeevi_tinh_gia_ban
+  - javis_tinh_gia_ban
 hooks: []
 """
 
@@ -84,7 +84,7 @@ def _tinh(args, ctx):
 
 
 def register(ctx):
-    ctx.register_tool(name="jeevi_tinh_gia_ban", description="Tinh gia ban tu gia von",
+    ctx.register_tool(name="javis_tinh_gia_ban", description="Tinh gia ban tu gia von",
                       handler=_tinh, min_mode="readonly",
                       schema={"type": "object",
                               "properties": {"gia_von": {"type": "number"}},
@@ -114,7 +114,7 @@ def check(ten, cond):
 def dung_zip() -> bytes:
     b = io.BytesIO()
     with zipfile.ZipFile(b, "w", zipfile.ZIP_DEFLATED) as z:
-        z.writestr("jeevi-pack.yaml", MANIFEST)
+        z.writestr("javis-pack.yaml", MANIFEST)
         z.writestr("plugins/tinh-gia/plugin.yaml", PLUGIN_YAML)
         z.writestr("plugins/tinh-gia/plugin.py", PLUGIN_PY)
         z.writestr("skills/dat-gia-ban/SKILL.md", SKILL_MD)
@@ -146,7 +146,7 @@ with tempfile.TemporaryDirectory() as td:
         du = dung_zip()
 
         # --------------- 1. Soi: nói đúng gói có gì, TRƯỚC khi cài gì ---------------
-        r = pack_install.soi(du, "jeevi-tinh-gia.zip")
+        r = pack_install.soi(du, "javis-tinh-gia.zip")
         check("gói đọc được bằng bản Jeevi hiện tại", r.get("ok") is True)
         check("id khớp tên khai trong manifest", r.get("id") == PACK_ID)
         check("xếp đúng bậc code vì có tệp .py", r.get("tier") == "code")
@@ -195,7 +195,7 @@ with tempfile.TemporaryDirectory() as td:
 
         # --------------- 5. Cài lại rồi gỡ khi CHƯA sửa: phải sạch bong ---------------
         shutil.rmtree(brain / "skills" / "dat-gia-ban")
-        r2 = pack_install.soi(du, "jeevi-tinh-gia.zip")
+        r2 = pack_install.soi(du, "javis-tinh-gia.zip")
         pack_install.cai(r2["staging_id"], r2["sha256"], enable=True, brain_root=str(brain))
         check("cài lại lần hai được", sk.is_file())
         asyncio.run(pack_install.go(PACK_ID))

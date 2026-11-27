@@ -21,7 +21,7 @@ Khi có máy chủ, ô Sắp xếp chỉ cần thêm hai lựa chọn: **Nhiều
 
 ## Vì sao phải có máy chủ
 
-Store hiện chỉ là tệp tĩnh `index.json` trên GitHub (repo `jeevi-store`). Mỗi máy Jeevi tự tải về,
+Store hiện chỉ là tệp tĩnh `index.json` trên GitHub (repo `javis-store`). Mỗi máy Jeevi tự tải về,
 không có chỗ nào ghi lại ai đã cài gói gì hay ai đã vote. Muốn đếm thì mỗi máy Jeevi phải báo về
 **một nơi chung**.
 

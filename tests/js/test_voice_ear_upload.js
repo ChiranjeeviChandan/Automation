@@ -27,7 +27,7 @@ function setup(onTranscript = () => {}, opts = {}, ua = 'Chrome desktop') {
     setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {},
   };
   vm.runInNewContext(fs.readFileSync('dashboard/voice.js', 'utf8'), context);
-  const voice = new context.window.JeeviVoice({ onTranscript, ...opts });
+  const voice = new context.window.JavisVoice({ onTranscript, ...opts });
   voice.isSpeaking = () => false;
   voice.stopSpeaking = () => {};
   return { voice, context, calls };
@@ -74,7 +74,7 @@ test('a near-wake draft rejected by focus is re-checked on the ear text', async 
   const received = [];
   const accepted = [];
   const { voice, context } = setup(t => received.push(t), {
-    acceptTranscript: t => { accepted.push(t); return /^jeevi/i.test(t); },
+    acceptTranscript: t => { accepted.push(t); return /^javis/i.test(t); },
     wakeCandidate: t => /^david/i.test(t),
   });
   voice.sttUpload = true; voice._recComplete = true;
@@ -103,7 +103,7 @@ test('ordinary noise rejected by focus is never uploaded', async () => {
 test('the ear still rejects when it also hears no wake word', async () => {
   const received = [];
   const { voice, context } = setup(t => received.push(t), {
-    acceptTranscript: t => /^jeevi/i.test(t), wakeCandidate: () => true,
+    acceptTranscript: t => /^javis/i.test(t), wakeCandidate: () => true,
   });
   voice.sttUpload = true; voice._recComplete = true;
   voice._stopRecorder = async () => new Blob(['x'.repeat(3000)]);

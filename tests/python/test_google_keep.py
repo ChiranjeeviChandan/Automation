@@ -11,7 +11,7 @@ import os
 import sys
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-keeptest-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-keeptest-"))
 
 import mcp_catalog  # noqa: E402
 

@@ -18,10 +18,10 @@ import os
 import sys
 import tempfile
 
-_state = tempfile.mkdtemp(prefix="jeevi-avatar-up-")
-os.environ["JEEVI_STATE_DIR"] = _state
+_state = tempfile.mkdtemp(prefix="javis-avatar-up-")
+os.environ["JAVIS_STATE_DIR"] = _state
 os.environ["BRAINS_DIR"] = os.path.join(_state, "brains")
-os.environ["JEEVI_SESSIONS_DB"] = os.path.join(_state, "sessions.db")
+os.environ["JAVIS_SESSIONS_DB"] = os.path.join(_state, "sessions.db")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

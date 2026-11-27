@@ -19,7 +19,7 @@
 - **Test mới phải đặt tên `server/test_*.py`** thì CI (`.github/workflows/ci.yml:29-39`) mới glob thấy.
 - **Preamble test, thứ tự load-bearing** (env TRƯỚC import):
   ```python
-  os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-synctest-"))
+  os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-synctest-"))
   sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
   import system_sync  # noqa: E402
   ```
@@ -71,7 +71,7 @@ import tempfile
 import threading
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-synctest-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-synctest-"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import system_sync  # noqa: E402
@@ -103,7 +103,7 @@ def _mk_brain(prefix):
 
 
 # ---- copy đệ quy ----
-_ROOT, _SK, _MIR = _mk_brain("jeevi-mirror-")
+_ROOT, _SK, _MIR = _mk_brain("javis-mirror-")
 system_sync.mirror_skills(_ROOT)
 check("mirror có SKILL.md", (_MIR / "SKILL.md").is_file())
 check("mirror có references/chi-tiet.md", (_MIR / "references" / "chi-tiet.md").is_file())
@@ -184,7 +184,7 @@ check(f"không đổi gì -> KHÔNG còn đọc-và-băm SKILL.md (đếm đư�
       len(_reads) == 0)
 
 # ---- hai luồng đồng thời trên cùng root -> không treo ----
-_R2, _SK2, _MIR2 = _mk_brain("jeevi-mirrorpar-")
+_R2, _SK2, _MIR2 = _mk_brain("javis-mirrorpar-")
 _done = []
 
 

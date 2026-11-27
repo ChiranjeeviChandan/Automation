@@ -107,11 +107,11 @@
   }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function ic(n) { return typeof window.ic === "function" ? window.ic(n) : ""; }
-  function infoBtn() { return window.JeeviInfo ? window.JeeviInfo.btn(tw("info.more")) : ""; }
-  function infoBody(html) { return window.JeeviInfo ? window.JeeviInfo.body(html) : '<div class="info-body">' + html + "</div>"; }
-  function chatBrain() { try { return (window.JeeviSessions && window.JeeviSessions.brain()) || "brain"; } catch (e) { return "brain"; } }
+  function infoBtn() { return window.JavisInfo ? window.JavisInfo.btn(tw("info.more")) : ""; }
+  function infoBody(html) { return window.JavisInfo ? window.JavisInfo.body(html) : '<div class="info-body">' + html + "</div>"; }
+  function chatBrain() { try { return (window.JavisSessions && window.JavisSessions.brain()) || "brain"; } catch (e) { return "brain"; } }
   function pageBrain() { try { return (window.currentBrainPath && window.currentBrainPath()) || chatBrain(); } catch (e) { return chatBrain(); } }
-  function sid() { try { return (window.JeeviSessions && window.JeeviSessions.current()) || ""; } catch (e) { return ""; } }
+  function sid() { try { return (window.JavisSessions && window.JavisSessions.current()) || ""; } catch (e) { return ""; } }
   function narrow() { return !!(window.matchMedia && window.matchMedia("(max-width: 860px)").matches); }
   function api(url, body) {
     var opt = { credentials: "same-origin" };
@@ -210,7 +210,7 @@
     var more = cardHost.querySelector("[data-gh-repos]");
     if (more) more.onclick = function () { openRepos(local); };
     var gitBtn = cardHost.querySelector("[data-gh-git]");
-    if (gitBtn) gitBtn.onclick = function () { setupGit(function () { window.JeeviConnModal && window.JeeviConnModal.close(); }); };
+    if (gitBtn) gitBtn.onclick = function () { setupGit(function () { window.JavisConnModal && window.JavisConnModal.close(); }); };
   }
   // One row per repo in the look of the Tasks page (owner, 06/11/2026): a card row with the repo, a meta line, the
   // auto-merge switch and a "..." menu for Checks, Numbers and Remove (the same sheet the Tasks page opens).
@@ -250,7 +250,7 @@
   }
   // The repos of this brain, one row each with its switches. Checks and Numbers open in the same dialog and come back here.
   function openRepos(local) {
-    var M = window.JeeviConnModal;
+    var M = window.JavisConnModal;
     if (!M) return;
     var back = function () { openRepos(local); };
     var m = M.open(M.head(esc(tw("gh.local_head", { n: local.length })) + infoBtn()) + '<div class="conn-form gh-local">' +
@@ -314,7 +314,7 @@
   }
   // Cross review of one repo (owner, 08/11/2026): off by default; on = Jeevi reviews each green commit before merging.
   async function openReview(name, rec, back) {
-    var M = window.JeeviConnModal;
+    var M = window.JavisConnModal;
     if (!M) return;
     var cur = rec.review || { on: false, provider: "" };
     var html = M.head(esc(tw("gh.review_head", { name: name }))) + '<div class="conn-form gh-form">' +
@@ -340,7 +340,7 @@
   }
   // Local check commands of one repo (spec 7.2): suggested from its CI, editable, one command per line.
   async function openChecks(name, back) {
-    var M = window.JeeviConnModal;
+    var M = window.JavisConnModal;
     if (!M) return;
     var d = await api("/github/local/checks?brain=" + encodeURIComponent(pageBrain()) + "&full_name=" + encodeURIComponent(name));
     if (!d || d.ok === false) { window.alert((d && d.error) || tw("gh.err_net")); return; }
@@ -368,7 +368,7 @@
   }
   // Numbers per engine and model for one repo (spec 13.2): pick a model with data, not with a hunch.
   async function openMetrics(name, back) {
-    var M = window.JeeviConnModal;
+    var M = window.JavisConnModal;
     if (!M) return;
     var d = await api("/github/local/metrics?full_name=" + encodeURIComponent(name));
     var rows = (d && d.rows) || [];
@@ -395,7 +395,7 @@
   // polls while the install runs, then calls `then(answer)`. Closing the dialog does not stop the install: pressing
   // Connect again picks up the same install. A failure shows the command to run by hand, Try again, and a way on.
   async function setupGit(then) {
-    var M = window.JeeviConnModal;
+    var M = window.JavisConnModal;
     if (!M) return;
     var m = M.open(M.head(esc(tw("gh.git_head"))) + '<div class="conn-form gh-form gh-git"><div class="pg-loading" role="status">' +
       esc(tw("gh.git_checking")) + "</div></div>", 560);
@@ -430,7 +430,7 @@
   // make or copy), a pasted token below it for whoever prefers that, and the brain-backup token when there is one.
   // `git`: the answer of the git step when it ran; "git x.y is installed" heads the form when this visit installed it.
   function connectForm(st, git) {
-    var M = window.JeeviConnModal;
+    var M = window.JavisConnModal;
     if (!M) return;
     var gitOk = git && git.install === "ok" && git.has_git
       ? '<div class="lv-meta gh-git-ok">' + CHECK + "<span>" + esc(tw("gh.git_ok", { v: git.version ? " " + git.version : "" })) + "</span></div>" : "";
@@ -468,7 +468,7 @@
   // Device flow, step by step in the same dialog: get a code, show it with "Open GitHub" and "Copy", poll until the
   // person presses Authorize, then offer "Pick repos for Jeevi" when the app is not installed anywhere yet.
   async function signIn() {
-    var M = window.JeeviConnModal;
+    var M = window.JavisConnModal;
     if (!M) return;
     var m = M.open(M.head(esc(tw("gh.dialog_head"))) + '<div class="conn-form gh-form"><div class="lv-meta">' +
       esc(tw("gh.loading")) + "</div></div>", 560);
@@ -524,7 +524,7 @@
   }
   // Signed in but the app is on no account yet: the last step, picking repos on GitHub.
   function pickRepos(st) {
-    var M = window.JeeviConnModal;
+    var M = window.JavisConnModal;
     if (!M) return;
     var m = M.open(M.head(esc(tw("gh.signed_in", { login: st.login || "?" }))) + '<div class="conn-form gh-form">' +
       '<div class="lv-meta">' + esc(tw("gh.pick_repos_how")) + "</div>" +
@@ -535,7 +535,7 @@
   function mount(el) { cardHost = el || null; if (cardHost) loadCard(); }
   // Other screens that ride on the connection (the brain backup box, backup-link.js) hear about a new sign-in.
   function announceConnected() {
-    try { window.dispatchEvent(new CustomEvent("jeevi:github-connected")); } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent("javis:github-connected")); } catch (e) {}
   }
   // The same Connect dialog as the Connections page card, opened from elsewhere (backup-link.js).
   async function connect() {
@@ -549,7 +549,7 @@
   var attached = [], held = null, heldBrain = "", heldBase = {}, seq = 0;
   function names() { return attached.map(function (r) { return r.full_name; }); }
   function announce() {
-    try { window.dispatchEvent(new CustomEvent("jeevi:github-repos-changed", { detail: { sid: sid(), repos: attached } })); } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent("javis:github-repos-changed", { detail: { sid: sid(), repos: attached } })); } catch (e) {}
   }
   // The chip lives in the tray on top of the composer card (#cpCtx, 22/11/2026), after the pinned folder. On 21/11/2026
   // it went under the card (owner: "sắp xếp
@@ -586,7 +586,7 @@
     var t = e.target && e.target.closest ? e.target : null;
     if (t && t.closest(".cp-pin-x")) { chipRemove(); return; }
     if (t && t.closest(".gh-st")) { openDetail(sid()); return; }
-    if (window.JeeviComposerMenu) window.JeeviComposerMenu.openItem("github");
+    if (window.JavisComposerMenu) window.JavisComposerMenu.openItem("github");
   }
   // The chip's X: every repo it names leaves the chat, one request each. A repo that holds unsaved work stays, and
   // the picker opens on it with the question "keep it, or remove it anyway" (askOnOpen).
@@ -607,8 +607,8 @@
       if (!stop) return;
       if (stop.d.code === "work_at_risk") {
         askOnOpen = { name: stop.name, risk: stop.d.risk, count: stop.d.count };
-        if (window.JeeviComposerMenu) window.JeeviComposerMenu.openItem("github");
-      } else if (window.JeeviAttach) window.JeeviAttach.note(stop.d.error || tw("gh.err_net"));
+        if (window.JavisComposerMenu) window.JavisComposerMenu.openItem("github");
+      } else if (window.JavisAttach) window.JavisAttach.note(stop.d.error || tw("gh.err_net"));
     });
   }
   // Same rule in composer-folder.js: the tray hides while empty, and .is-two marks folder AND repos. Since 22/11/2026
@@ -691,7 +691,7 @@
         }, Promise.resolve(d)).then(apply);
       }
       apply(null);
-      if (window.JeeviAttach) window.JeeviAttach.note((d && d.error) || tw("gh.err_net"));
+      if (window.JavisAttach) window.JavisAttach.note((d && d.error) || tw("gh.err_net"));
     });
   }
 
@@ -1164,14 +1164,14 @@
   }
 
   function init() {
-    if (window.JeeviComposerMenu) {
-      window.JeeviComposerMenu.register({ id: "github", order: 25, icon: LOGO, label: "gh.menu",
+    if (window.JavisComposerMenu) {
+      window.JavisComposerMenu.register({ id: "github", order: 25, icon: LOGO, label: "gh.menu",
         hint: function () { return chipText(held || names(), 18); }, panel: panel });
     }
-    window.addEventListener("jeevi:sessions-changed", refresh);
+    window.addEventListener("javis:sessions-changed", refresh);
     window.addEventListener("resize", renderChip);
-    window.addEventListener("jeevi:i18n", renderChip);
-    window.addEventListener("jeevi:pinned-folder-changed", renderChip);
+    window.addEventListener("javis:i18n", renderChip);
+    window.addEventListener("javis:pinned-folder-changed", renderChip);
     refresh();
     // CI and merges move on their own: refresh the icons and the chip every 30 seconds while the page is visible.
     setInterval(function () {
@@ -1186,7 +1186,7 @@
   // `list`: the one repo list, for the pickers of team-github.js (team chat, project, assistant).
   // `statusState` / `whyText`: the one rule for reading GET /github/status, so a failed check reads "Could not check"
   // on every screen.
-  window.JeeviGithubRepos = { mount: mount, connect: connect, claimPending: claimPending, refresh: refresh, decorate: decorate, openDetail: openDetail,
+  window.JavisGithubRepos = { mount: mount, connect: connect, claimPending: claimPending, refresh: refresh, decorate: decorate, openDetail: openDetail,
     current: function () { return attached.slice(); }, logo: LOGO, list: repoList };
-  Object.assign(window.JeeviGithubRepos, { statusState: statusState, whyText: whyText });
+  Object.assign(window.JavisGithubRepos, { statusState: statusState, whyText: whyText });
 })();

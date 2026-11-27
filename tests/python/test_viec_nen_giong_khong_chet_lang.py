@@ -21,7 +21,7 @@ import os
 import re
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-bgtask-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-bgtask-"))
 
 import voice_brain as vb  # noqa: E402
 
@@ -100,7 +100,7 @@ check("has_pending_work thấy nó (hết bị dán nhầm cảnh báo hứa su�
       bs.has_pending_work(v) is True)
 
 # ---- 5. Vòng đời thẻ: tạo đang chạy -> đóng, và điều phối KHÔNG được nhặt lên chạy lại ----
-kho = TaskStore(__import__("pathlib").Path(os.environ["JEEVI_STATE_DIR"]) / "kanban-thu.sqlite3")
+kho = TaskStore(__import__("pathlib").Path(os.environ["JAVIS_STATE_DIR"]) / "kanban-thu.sqlite3")
 ROOT_THU = "/brain/thu"
 tid = kho.enqueue(ROOT_THU, title="tổng hợp việc hôm nay", intent="tổng hợp việc hôm nay",
                   status="running", created_by="voice", chat_id="web:abc")

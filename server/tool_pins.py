@@ -1,6 +1,6 @@
 """Pinned tools: the tools a brain really uses skip the search round (owner, 10/11/2026).
 
-When a brain has many tools the hub hides them behind `jeevi_search_tools` and `jeevi_run_tool` (mcp_hub, the
+When a brain has many tools the hub hides them behind `javis_search_tools` and `javis_run_tool` (mcp_hub, the
 lazy tier). That keeps every request small, but a tool the brain calls every day then costs one extra model round
 each time: search first, then run. A round re-reads the whole context, so it is the expensive part.
 
@@ -300,7 +300,7 @@ def limit_rule(current: int) -> Optional[tuple]:
 
 
 def status() -> List[dict]:
-    """Per brain: what is pinned and what the counters say, for `jeevi_tune op=status`."""
+    """Per brain: what is pinned and what the counters say, for `javis_tune op=status`."""
     _load()
     out = []
     with _lock:

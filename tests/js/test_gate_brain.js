@@ -44,7 +44,7 @@ check("a saved default whose brain is gone stays listed, selected and marked del
   assert.strictEqual(sel[0].label, "gate.brain_gone:Old");
 });
 
-const html = G.cardHtml({ ok: true, installed: true, page: "/ext/jeevi-gate/", brains: brains, default: "ca-nhan" }, H);
+const html = G.cardHtml({ ok: true, installed: true, page: "/ext/javis-gate/", brains: brains, default: "ca-nhan" }, H);
 check("the card is a Connections page card named Jeevi Gate", () => {
   assert.ok(html.includes('class="prov-card conn-card gate-card"'));
   assert.ok(html.includes(">Jeevi Gate<"));
@@ -63,7 +63,7 @@ check("names are escaped", () => {
   assert.ok(!h.includes("<b>bad</b>") && h.includes("&lt;b&gt;bad&lt;/b&gt;") && h.includes('value="x&quot;y"'));
 });
 check("the Gate page link shows only when the server gives one", () => {
-  assert.ok(html.includes('href="/ext/jeevi-gate/"') && html.includes('target="_blank"'));
+  assert.ok(html.includes('href="/ext/javis-gate/"') && html.includes('target="_blank"'));
   assert.ok(!G.cardHtml({ brains: brains, default: "" }, H).includes("gate-open"));
 });
 check("a status line for the result of a change", () => {
@@ -76,13 +76,13 @@ const CSS = read("dashboard/console.css");
 const SRC = read("dashboard/gate-brain.js");
 check("the Connections page has a spot for the card and mounts it", () => {
   assert.ok(CON.includes('id="mcpGate"'));
-  assert.ok(CON.includes('window.JeeviGateBrain.mount(document.getElementById("mcpGate"))'));
+  assert.ok(CON.includes('window.JavisGateBrain.mount(document.getElementById("mcpGate"))'));
 });
 check("the Connected tab search hides the card unless it matches", () => {
   assert.ok(/getElementById\("mcpGate"\)[\s\S]{0,200}gate\.textContent\.toLowerCase\(\)\.includes\(q\)/.test(CON));
 });
 check("loaded with the Connections page's lazy group", () => {
-  const blk = /<script id="jeevi-lazy" type="application\/json">([\s\S]*?)<\/script>/.exec(IDX);
+  const blk = /<script id="javis-lazy" type="application\/json">([\s\S]*?)<\/script>/.exec(IDX);
   const lazy = JSON.parse(blk[1]);
   assert.ok((lazy.packs || []).some(u => u.startsWith("/static/gate-brain.js?v=")));
 });

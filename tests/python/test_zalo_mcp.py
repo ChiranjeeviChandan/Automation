@@ -6,7 +6,7 @@ import tempfile
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-zalo-mcp-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-zalo-mcp-"))
 
 import mcp_catalog  # noqa: E402
 import zalo_cli  # noqa: E402
@@ -31,7 +31,7 @@ console_src = (ROOT / "dashboard" / "console.js").read_text(encoding="utf-8")
 doc = (ROOT / "docs" / "12-zalo.md").read_text(encoding="utf-8")
 prompt = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
 
-check("catalog chạy bản CLI riêng jeevi-zalo ghim theo tag phát hành, dùng cache trước",
+check("catalog chạy bản CLI riêng javis-zalo ghim theo tag phát hành, dùng cache trước",
       zalo["command"] == "npx"
       and zalo["args"] == ["-y", "--prefer-offline", zalo_cli.CLI_PACKAGE, "mcp", "start"]
       and zalo_cli.CLI_PACKAGE.startswith("https://codeload.github.com/blogminhquy/javis-zalo/tar.gz/refs/tags/v"))
@@ -69,13 +69,13 @@ check("hai plugin Zalo cũ đã được gỡ",
 
 guide_url = "https://github.com/blogminhquy/javis-os/blob/main/docs/12-zalo.md"
 check("catalog trỏ nút hướng dẫn đến doc GitHub", zalo["auth"]["guide_url"] == guide_url)
-check("doc nêu đủ mười một tool và link repo jeevi-zalo",
+check("doc nêu đủ mười một tool và link repo javis-zalo",
       all(name in doc for name in expected_read | {"zalo_mark_read", "zalo_send_message", "zalo_review_join_requests"})
       and "https://github.com/blogminhquy/javis-zalo" in doc)
 check("prompt cho gửi trực tiếp, không phụ thuộc listener/tool cũ",
       "do NOT demand a listener be" in prompt
       and 'do NOT check any "currently listening"' in prompt
-      and "do NOT use the old `jeevi_zalo_send` tool" in prompt)
+      and "do NOT use the old `javis_zalo_send` tool" in prompt)
 
 
 # Đăng nhập QR: CLI báo hỏng bằng {"event": "login_error", "message": ...} (src/commands/login.js). Trước 0.83.0 Jeevi

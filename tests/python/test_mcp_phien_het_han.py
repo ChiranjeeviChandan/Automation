@@ -3,7 +3,7 @@
     python tests/run.py mcp_phien_het_han      (KHÔNG mạng - giả lập httpx)
 
 Lỗi thật, chủ repo báo 03/09/2026 với Pancake POS "Làng Chài Xưa", và đã tái diễn nhiều lần
-trước đó (05/07, 26/08, 02/09): trang Kết nối chấm XANH, quyền đủ, `jeevi_connections` báo
+trước đó (05/07, 26/08, 02/09): trang Kết nối chấm XANH, quyền đủ, `javis_connections` báo
 "ổn", mà không bộ não nào tìm ra một tool POS nào. Người dùng đi tìm lỗi ở token, ở quyền, ở
 brain - trong khi cả ba đều đúng.
 
@@ -35,7 +35,7 @@ import os
 import sys
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-phien-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-phien-"))
 
 import httpx          # noqa: E402
 import mcp_client     # noqa: E402

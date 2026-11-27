@@ -4,10 +4,10 @@
 
 Chủ dự án 15/09: "về phần trình duyệt lên vps thì anh muốn có nút cài đặt ở trong phần plugin
 để khiến đây là 1 lựa chọn, và khởi đầu khi cài đặt hermes agent cũng đưa ra các lựa chọn có
-cài các tool hay không, anh nghĩ jeevi cũng nên như thế".
+cài các tool hay không, anh nghĩ javis cũng nên như thế".
 
 Ràng buộc không lách được, và nó quyết định cách chia:
-  - Trong Docker, Jeevi chạy bằng user `jeevi` không phải root, mã nguồn để chỉ đọc. Nên phần
+  - Trong Docker, Jeevi chạy bằng user `javis` không phải root, mã nguồn để chỉ đọc. Nên phần
     cần `apt-get` (thư viện hệ thống cho Chromium) BẮT BUỘC nằm trong ảnh - Dockerfile lo, để
     riêng một lớp đo được. CI đo thật: 108 MB trên ảnh 1824 MB.
   - Bản thân trình duyệt thì KHÔNG vào ảnh: tải lúc chạy vào `STATE_DIR/browsers`, tức trên ổ
@@ -21,7 +21,7 @@ import os
 import re
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-congcu-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-congcu-"))
 
 import optional_tools as ct  # noqa: E402
 
@@ -61,7 +61,7 @@ check("gỡ công cụ lạ cũng từ chối gọn", ct.go("khong-co-that").get
 
 # ---- 3. Nơi tải phải nằm trên ổ GẮN NGOÀI, không phải cache tạm ----
 check("tải vào STATE_DIR/browsers (sống qua mỗi lần cập nhật)",
-      ct.BROWSERS_DIR.name == "browsers" and str(ct.BROWSERS_DIR).startswith(os.environ["JEEVI_STATE_DIR"]))
+      ct.BROWSERS_DIR.name == "browsers" and str(ct.BROWSERS_DIR).startswith(os.environ["JAVIS_STATE_DIR"]))
 check("dùng đúng biến môi trường Playwright hiểu", ct.ENV_BROWSERS_PATH == "PLAYWRIGHT_BROWSERS_PATH")
 check("có trần thời gian, không tải treo vô hạn", ct.TAI_TIMEOUT > 0)
 
@@ -130,8 +130,8 @@ check("setup wizard no longer asks about the browser",
 import asyncio  # noqa: E402
 
 _orig = (ct.duong_dan_chrome, ct.shutil.which, ct._chay_tai)
-os.environ.pop("JEEVI_SKIP_BROWSER", None)
-os.environ.pop("JEEVI_BROWSER_DEPS", None)
+os.environ.pop("JAVIS_SKIP_BROWSER", None)
+os.environ.pop("JAVIS_BROWSER_DEPS", None)
 ct.REMOVED_MARKER.unlink(missing_ok=True)
 ct.duong_dan_chrome = lambda: ""
 ct.shutil.which = lambda name: "/usr/bin/npx" if name == "npx" else None
@@ -141,13 +141,13 @@ ct.duong_dan_chrome = lambda: "/opt/google/chrome/chrome"
 check("system Chrome present: no download", "already present" in ct.auto_install_skip_reason())
 ct.duong_dan_chrome = lambda: ""
 
-os.environ["JEEVI_SKIP_BROWSER"] = "1"
-check("JEEVI_SKIP_BROWSER turns it off", "JEEVI_SKIP_BROWSER" in ct.auto_install_skip_reason())
-os.environ.pop("JEEVI_SKIP_BROWSER")
+os.environ["JAVIS_SKIP_BROWSER"] = "1"
+check("JAVIS_SKIP_BROWSER turns it off", "JAVIS_SKIP_BROWSER" in ct.auto_install_skip_reason())
+os.environ.pop("JAVIS_SKIP_BROWSER")
 
-os.environ["JEEVI_BROWSER_DEPS"] = "0"
+os.environ["JAVIS_BROWSER_DEPS"] = "0"
 check("image without the system libraries: no download", "libraries" in ct.auto_install_skip_reason())
-os.environ.pop("JEEVI_BROWSER_DEPS")
+os.environ.pop("JAVIS_BROWSER_DEPS")
 
 ct.shutil.which = lambda name: None
 check("no npx: skipped quietly, the button explains", "npx" in ct.auto_install_skip_reason())
@@ -198,9 +198,9 @@ tr = open(os.path.join(ROOT, "server", "routes", "tools.py"), encoding="utf-8").
 check("download starts from a startup hook, never at import (tests import main.py)",
       '@app.on_event("startup")' in tr and "auto_install_browser(on_ready=_DEPS.lam_moi_hub)" in tr)
 check("Dockerfile tells the server when the image lacks the libraries",
-      "ENV JEEVI_BROWSER_DEPS=${WITH_BROWSER_DEPS}" in df)
+      "ENV JAVIS_BROWSER_DEPS=${WITH_BROWSER_DEPS}" in df)
 pp = open(os.path.join(ROOT, "tests", "python", "_paths.py"), encoding="utf-8").read()
-check("tests never download a real browser", '_os.environ["JEEVI_SKIP_BROWSER"] = "1"' in pp)
+check("tests never download a real browser", '_os.environ["JAVIS_SKIP_BROWSER"] = "1"' in pp)
 
 # ---- 10. Chữ hiện cho người dùng phải có dấu, và không có em dash ----
 import json  # noqa: E402

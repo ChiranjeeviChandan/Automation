@@ -58,7 +58,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-khunggo-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-khunggo-")
 from fastapi.testclient import TestClient  # noqa: E402
 import main  # noqa: E402
 import config as cfgmod  # noqa: E402
@@ -507,7 +507,7 @@ git commit -m "Composer: one rounded card with attachments, input and a single c
 
 **Interfaces:**
 - Consumes: DOM từ Task 2 (`#effBtn`, `#effTxt`, `#effPop`).
-- Produces: `window.JeeviEffortSlider = { LEVELS, levelFromRatio(r), ratioFromLevel(i), isLocked(provider, model), mount(el, {value, locked, onChange}) -> {set(v), destroy()} }`; node: `module.exports` cùng các hàm thuần. model-picker.js thêm `window.JeeviModelBar.effortLabel()` trả nhãn đang hiện.
+- Produces: `window.JavisEffortSlider = { LEVELS, levelFromRatio(r), ratioFromLevel(i), isLocked(provider, model), mount(el, {value, locked, onChange}) -> {set(v), destroy()} }`; node: `module.exports` cùng các hàm thuần. model-picker.js thêm `window.JavisModelBar.effortLabel()` trả nhãn đang hiện.
 
 - [ ] **Step 1: Test hỏng** `tests/js/test_thanh_truot_effort.js`
 
@@ -667,7 +667,7 @@ console.log("\nOK - test_thanh_truot_effort: tất cả pass");
     };
   }
   api.mount = mount;
-  window.JeeviEffortSlider = api;
+  window.JavisEffortSlider = api;
 })();
 ```
 
@@ -687,15 +687,15 @@ console.log("\nOK - test_thanh_truot_effort: tất cả pass");
   let effSlider = null;
   function effOpen() {
     const pop = $("effPop"), btn = $("effBtn");
-    if (!pop || !window.JeeviEffortSlider) return;
+    if (!pop || !window.JavisEffortSlider) return;
     close(); closePlus();
     const eff = effective();
     pop.hidden = false;
     pop.style.left = btn ? (btn.offsetLeft) + "px" : "8px";
     if (btn) btn.setAttribute("aria-expanded", "true");
-    effSlider = window.JeeviEffortSlider.mount(pop, {
+    effSlider = window.JavisEffortSlider.mount(pop, {
       value: state.reasoning,
-      locked: window.JeeviEffortSlider.isLocked(eff.provider, eff.model),
+      locked: window.JavisEffortSlider.isLocked(eff.provider, eff.model),
       onChange: async (v) => { state.reasoning = v; renderBar(); await saveModel({ reasoning: v }); },
     });
     if (effSlider.focus) effSlider.focus();
@@ -707,7 +707,7 @@ console.log("\nOK - test_thanh_truot_effort: tất cả pass");
     if (btn) btn.setAttribute("aria-expanded", "false");
   }
   function effIsOpen() { const pop = $("effPop"); return pop && !pop.hidden; }
-  function closePlus() { try { if (window.JeeviComposerMenu) window.JeeviComposerMenu.close(); } catch (e) {} }
+  function closePlus() { try { if (window.JavisComposerMenu) window.JavisComposerMenu.close(); } catch (e) {} }
 ```
 
   4. Trong `open()` (bảng model) thêm `effClose(); closePlus();` ngay đầu hàm.
@@ -721,7 +721,7 @@ console.log("\nOK - test_thanh_truot_effort: tất cả pass");
 ```
    và xoá khối `const eff = e.target.closest(".mb-eff-btn"); if (eff) {...}`.
   6. Listener Escape: `if (e.key === "Escape") { if (isOpen()) close(); if (effIsOpen()) { effClose(); const b = $("effBtn"); if (b) b.focus(); } }`.
-  7. Trong `window.JeeviModelBar` thêm `effortLabel: function () { return window.t("eff." + state.reasoning); },`.
+  7. Trong `window.JavisModelBar` thêm `effortLabel: function () { return window.t("eff." + state.reasoning); },`.
   8. Sau `chonModel` gọi `renderBar()` như cũ (chip mức đổi theo); nếu `effIsOpen()` thì `effClose(); effOpen();` để thanh trượt cập nhật khoá theo model mới.
 
 - [ ] **Step 5: style.css** thêm sau luật `.eff-pop[hidden]`:
@@ -770,7 +770,7 @@ git commit -m "Composer: separate effort chip with an orange sparkle slider (Off
 
 **Interfaces:**
 - Consumes: `settings.model.fast` (Task 1), `#fastBtn` (Task 2).
-- Produces: `window.JeeviModelBar.fastNote(provider, model)` -> `{supported: bool, note: "i18n.key"}` (hàm thuần, cũng xuất cho node qua `window.JeeviFast` không cần; test đọc bằng vm). Hằng `FAST_NOTE` trong model-picker.js.
+- Produces: `window.JavisModelBar.fastNote(provider, model)` -> `{supported: bool, note: "i18n.key"}` (hàm thuần, cũng xuất cho node qua `window.JavisFast` không cần; test đọc bằng vm). Hằng `FAST_NOTE` trong model-picker.js.
 
 - [ ] **Step 1: Test hỏng** `tests/js/test_tia_set_fast.js`
 
@@ -859,7 +859,7 @@ Trong listener `click`, ngay sau dòng xử lý `#effBtn`:
     }
 ```
 
-Trong `window.JeeviModelBar` thêm `fastNote: fastNote,`.
+Trong `window.JavisModelBar` thêm `fastNote: fastNote,`.
 
 - [ ] **Step 4: i18n** (vi / en):
   - `fast.claude`: "Tính vào usage credits, giá gấp đôi, không trừ hạn mức gói." / "Billed to usage credits at twice the price, not to your plan limits."
@@ -883,7 +883,7 @@ git commit -m "Composer: Fast mode bolt saves settings.model.fast, tooltip per b
 
 **Files:**
 - Create: `dashboard/composer-plus.js`
-- Modify: `dashboard/app.js` (lộ `window.JeeviAttach`, sau listener `fileInput` ~dòng 3550)
+- Modify: `dashboard/app.js` (lộ `window.JavisAttach`, sau listener `fileInput` ~dòng 3550)
 - Modify: `dashboard/index.html` (`<script src="composer-plus.js?v=1"></script>` sau `model-picker.js`)
 - Modify: `dashboard/style.css` (luật `.cp-menu*`)
 - Modify: `dashboard/i18n/vi.json`, `en.json`
@@ -891,7 +891,7 @@ git commit -m "Composer: Fast mode bolt saves settings.model.fast, tooltip per b
 
 **Interfaces:**
 - Consumes: `#plusBtn`, `#plusMenu`, `#folderInput`, `#chatInput` (Task 2); `GET /files/search`, `GET /files/resolve` (Task 1); `GET /connect/catalog`, `GET /connect/health`, `GET /agents`, `GET /workflows`.
-- Produces: `window.JeeviComposerMenu = { register(item), list(), open(), close(), isOpen() }`, item = `{ id, order, icon (svg string), label (i18n key), hint?: () => string, run?: (ctx) => void, submenu?: (ctx) => Promise<Array<{label, hint?, dot?: "ok"|"bad"|"unknown", run}>> }`. Node: `module.exports = { createRegistry, pickFolderFiles, runQueue, MAX_FOLDER_FILES }`. app.js: `window.JeeviAttach = { pick(), upload(file) -> Promise, addBrainFile({name, path, size, kind}), note(text) }`.
+- Produces: `window.JavisComposerMenu = { register(item), list(), open(), close(), isOpen() }`, item = `{ id, order, icon (svg string), label (i18n key), hint?: () => string, run?: (ctx) => void, submenu?: (ctx) => Promise<Array<{label, hint?, dot?: "ok"|"bad"|"unknown", run}>> }`. Node: `module.exports = { createRegistry, pickFolderFiles, runQueue, MAX_FOLDER_FILES }`. app.js: `window.JavisAttach = { pick(), upload(file) -> Promise, addBrainFile({name, path, size, kind}), note(text) }`.
 
 - [ ] **Step 1: Test hỏng** `tests/js/test_menu_cong.js`
 
@@ -938,7 +938,7 @@ check("thư mục toàn file ẩn: không còn file nào", r.files.length === 0 
   check("Ctrl+U chặn mặc định của trình duyệt (xem mã nguồn)", /key === "u"[\s\S]{0,200}preventDefault/.test(src));
   check("mục lệnh mở menu / bằng sự kiện input", src.indexOf('new Event("input"') !== -1);
   check("gọi trợ lý chèn đúng token của menu /", src.indexOf('"/agent-" + ') !== -1 && src.indexOf('"/workflow-" + ') !== -1);
-  check("app.js lộ JeeviAttach (pick, upload, addBrainFile, note)", /window\.JeeviAttach = \{[\s\S]*pick[\s\S]*upload[\s\S]*addBrainFile[\s\S]*note/.test(app));
+  check("app.js lộ JavisAttach (pick, upload, addBrainFile, note)", /window\.JavisAttach = \{[\s\S]*pick[\s\S]*upload[\s\S]*addBrainFile[\s\S]*note/.test(app));
   check("composer-plus.js nạp sau model-picker.js", html.indexOf("model-picker.js") < html.indexOf("composer-plus.js"));
   check("không chữ Việt trong mã chạy của composer-plus.js",
     !/[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i.test(src.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "")));
@@ -953,7 +953,7 @@ check("thư mục toàn file ẩn: không còn file nào", r.files.length === 0 
 
 ```js
 // Menu "+" của khung gõ (composer-plus.js, 0.148.0) dùng chung đường tải lên và danh sách đính kèm.
-window.JeeviAttach = {
+window.JavisAttach = {
   pick: () => fileInput.click(),
   upload: (f) => uploadFile(f),
   addBrainFile: (it) => {
@@ -970,7 +970,7 @@ window.JeeviAttach = {
 
 ```js
 /* composer-plus.js - menu "+" của khung gõ (0.148.0).
- * Một sổ đăng ký: tính năng mới chỉ cần JeeviComposerMenu.register({...}), không sửa khung gõ.
+ * Một sổ đăng ký: tính năng mới chỉ cần JavisComposerMenu.register({...}), không sửa khung gõ.
  * Phần thuần (sổ, lọc thư mục, hàng đợi) test bằng node.
  */
 (function () {
@@ -1019,7 +1019,7 @@ window.JeeviAttach = {
   function tw(k, v) { return window.t ? window.t(k, v) : k; }
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-  function brain() { try { return (window.JeeviSessions && window.JeeviSessions.brain()) || "brain"; } catch (e) { return "brain"; } }
+  function brain() { try { return (window.JavisSessions && window.JavisSessions.brain()) || "brain"; } catch (e) { return "brain"; } }
   function getJson(url) { return fetch(url, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }
   function input() { return $("chatInput"); }
 
@@ -1102,7 +1102,7 @@ window.JeeviAttach = {
   var badConn = 0;
 
   reg.register({ id: "attach", order: 10, icon: ICON.clip, label: "cp.attach", hint: function () { return /Mac/.test(navigator.platform) ? "Cmd+U" : "Ctrl+U"; },
-    run: function () { if (window.JeeviAttach) window.JeeviAttach.pick(); } });
+    run: function () { if (window.JavisAttach) window.JavisAttach.pick(); } });
   reg.register({ id: "folder", order: 20, icon: ICON.folder, label: "cp.folder", run: function () { var f = $("folderInput"); if (f) f.click(); } });
   reg.register({ id: "brain_file", order: 30, icon: ICON.file, label: "cp.brain_file", emptyKey: "cp.brain_empty",
     submenu: function () { return Promise.resolve(brainSearchRows("")); } });
@@ -1170,7 +1170,7 @@ window.JeeviAttach = {
           el.addEventListener("click", function () {
             var it = items[+el.getAttribute("data-file")];
             getJson("/files/resolve?brain=" + encodeURIComponent(brain()) + "&path=" + encodeURIComponent(it.path)).then(function (r) {
-              if (r && r.ok && window.JeeviAttach) window.JeeviAttach.addBrainFile(r);
+              if (r && r.ok && window.JavisAttach) window.JavisAttach.addBrainFile(r);
               close(); var i2 = input(); if (i2) i2.focus();
             });
           });
@@ -1189,8 +1189,8 @@ window.JeeviAttach = {
     if (r.over) notes.push(tw("cp.folder_over", { max: MAX_FOLDER_FILES }));
     if (!r.files.length) notes.push(tw("cp.folder_empty"));
     else notes.push(tw("cp.folder_flat"));
-    if (window.JeeviAttach) window.JeeviAttach.note(notes.join(" "));
-    if (r.files.length && window.JeeviAttach) runQueue(r.files, function (f) { return window.JeeviAttach.upload(f); }, UPLOAD_PARALLEL);
+    if (window.JavisAttach) window.JavisAttach.note(notes.join(" "));
+    if (r.files.length && window.JavisAttach) runQueue(r.files, function (f) { return window.JavisAttach.upload(f); }, UPLOAD_PARALLEL);
   }
 
   // ---- gắn sự kiện ----
@@ -1219,7 +1219,7 @@ window.JeeviAttach = {
         var other = a && a !== input() && (a.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
         if (other) return;
         e.preventDefault();
-        if (window.JeeviAttach) window.JeeviAttach.pick();
+        if (window.JavisAttach) window.JavisAttach.pick();
       }
     });
     // Đếm kết nối cần làm lại cho dòng "Kết nối" (đọc lúc mở trang, không quấy máy chủ).
@@ -1230,7 +1230,7 @@ window.JeeviAttach = {
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 
-  window.JeeviComposerMenu = { register: reg.register, list: reg.list, open: open, close: close, isOpen: isOpen };
+  window.JavisComposerMenu = { register: reg.register, list: reg.list, open: open, close: close, isOpen: isOpen };
 })();
 ```
 

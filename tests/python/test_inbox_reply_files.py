@@ -27,8 +27,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-inbox-reply-files-")
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-inbox-reply-files-")
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -53,13 +53,13 @@ def check(name, cond, extra=""):
         _fails.append(name)
 
 
-if os.environ["JEEVI_STATE_DIR"] not in str(conversations.DB_PATH):
+if os.environ["JAVIS_STATE_DIR"] not in str(conversations.DB_PATH):
     print(f"FAIL the inbox store is not in the temp dir: {conversations.DB_PATH}. STOP.")
     sys.exit(1)
 
 # ---- A brain with files, and things that must never leave it ----
-BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-brain-"))
-OUTSIDE = Path(tempfile.mkdtemp(prefix="jeevi-outside-"))
+BRAIN = Path(tempfile.mkdtemp(prefix="javis-brain-"))
+OUTSIDE = Path(tempfile.mkdtemp(prefix="javis-outside-"))
 PNG = b"\x89PNG\r\n\x1a\n" + b"0" * 64
 PDF = b"%PDF-1.4 bang gia"
 (BRAIN / "attachments").mkdir()
@@ -109,7 +109,7 @@ FAIL_ON = {"name": ""}
 async def fake_send_file(kenh, tk, chat_id, path, caption="", chat_type="private"):
     SENT.append({"kenh": kenh, "id": tk.get("id"), "token": bool(tk.get("token")), "chat": chat_id,
                  "name": Path(path).name, "exists": Path(path).is_file(), "caption": caption,
-                 "in_state": os.environ["JEEVI_STATE_DIR"] in str(path)})
+                 "in_state": os.environ["JAVIS_STATE_DIR"] in str(path)})
     if FAIL_ON["name"] and Path(path).name.endswith(FAIL_ON["name"]):
         return False, "Meta refused the upload"
     return True, ""
@@ -178,7 +178,7 @@ check("the text rides as the caption of the first file only",
 rows = owner_rows(conv)
 check("recorded as the owner's image then file, marked as sent by the tool",
       [m["message_type"] for m in rows] == ["image", "file"]
-      and all((m.get("metadata") or {}).get("via") == "tool" and (m.get("metadata") or {}).get("tu_jeevi") for m in rows)
+      and all((m.get("metadata") or {}).get("via") == "tool" and (m.get("metadata") or {}).get("tu_javis") for m in rows)
       and rows[0]["text"] == "Dạ em gửi chị bảng giá ạ" and rows[1]["text"] == "[catalog.pdf]", rows)
 md = (rows[0].get("metadata") or {}).get("sent_file") or {} if rows else {}
 check("each record points at its kept copy, the way the + button records it",
@@ -330,7 +330,7 @@ GRAPH.clear()
 GRAPH_MODE["window"] = False
 out = call({"conversation_id": late, "files": ["attachments/bang-gia.png"]})
 check("inside the window the image goes", json.loads(out).get("ok") is True, out)
-check("carrying the Page's echo tag", GRAPH and '"metadata": "jeevi"' in GRAPH[0]["body"], GRAPH[:1])
+check("carrying the Page's echo tag", GRAPH and '"metadata": "javis"' in GRAPH[0]["body"], GRAPH[:1])
 STAFF = []
 
 

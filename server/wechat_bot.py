@@ -73,7 +73,7 @@ import stt
 from bot_gateway import HangLuot, dong_vet, parse_chat_ids, ten_tool
 from messenger_bot import md_to_plain
 
-API = os.getenv("JEEVI_WECHAT_API", "https://api.weixin.qq.com").rstrip("/")
+API = os.getenv("JAVIS_WECHAT_API", "https://api.weixin.qq.com").rstrip("/")
 
 CHANNEL = "wechat"
 MAX_BYTES = 2000             # WeChat allows 2048 bytes per text; keep a margin
@@ -679,9 +679,9 @@ class WeChatBot(HangLuot):
                 fmt = re.sub(r"[^a-z0-9]", "", msg.get("Format", "").lower()) or "amr"
                 kq = await self.stt_fn(data, f"wechat_{int(time.time())}.{fmt}")
             except Exception as e:
-                kq = {"ok": False, "noi_voi_jeevi": stt.loi_thanh_dong("loi", f"{type(e).__name__}: {e}")}
+                kq = {"ok": False, "noi_voi_javis": stt.loi_thanh_dong("loi", f"{type(e).__name__}: {e}")}
             if not (kq or {}).get("ok"):
-                return (kq or {}).get("noi_voi_jeevi") or stt.loi_thanh_dong("loi")
+                return (kq or {}).get("noi_voi_javis") or stt.loi_thanh_dong("loi")
             return stt.khoi_thoai(kq.get("text"), "WeChat")
         if mtype in ("video", "shortvideo"):
             return localefmt.chu("[Người dùng gửi một video qua WeChat]", "[The user sent a video on WeChat]")

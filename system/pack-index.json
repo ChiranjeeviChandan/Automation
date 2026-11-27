@@ -1,5 +1,5 @@
 {
-  "format": "jeevi-pack-index",
+  "format": "javis-pack-index",
   "format_version": 1,
   "updated": "2026-09-05",
   "store": {
@@ -9,7 +9,7 @@
   "_doc": "ĐÃ ĐÔNG LẠI - kho thật chuyển sang repo riêng https://github.com/blogminhquy/javis-store từ 0.55.30. Tệp này ở lại để bản Jeevi 0.55.24-0.55.29 (vốn trỏ cứng vào đây) vẫn xem và cài được, nên mục bên dưới dùng địa chỉ TUYỆT ĐỐI trỏ sang kho mới. Không thêm gì vào đây nữa; thêm gói mới ở repo kho.",
   "packs": [
     {
-      "id": "jeevi.tinh-gia",
+      "id": "javis.tinh-gia",
       "kind": "tool",
       "name": { "vi": "Tính giá bán", "en": "Pricing helper" },
       "description": {
@@ -25,7 +25,7 @@
       "updated": "2026-09-04",
       "homepage": "https://github.com/blogminhquy/javis-store",
       "download": {
-        "url": "https://raw.githubusercontent.com/blogminhquy/javis-store/main/dist/jeevi-tinh-gia-1.0.0.zip",
+        "url": "https://raw.githubusercontent.com/blogminhquy/javis-store/main/dist/javis-tinh-gia-1.0.0.zip",
         "sha256": "2efc5b73e55c98573bae20d765a6cfeabe062646f6dcb9d890fd56bb557e1cdb",
         "size": 5289
       }

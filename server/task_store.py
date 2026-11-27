@@ -1,6 +1,6 @@
 """Durable SQLite store for the autonomous Jeevi task queue.
 
-The queue is runtime state, so SQLite lives in JEEVI_STATE_DIR instead of inside a
+The queue is runtime state, so SQLite lives in JAVIS_STATE_DIR instead of inside a
 brain that may be synchronized by Git. A JSON snapshot is still exported by
 ``tasks.py`` for portability and backwards compatibility with older Jeevi builds.
 """
@@ -86,7 +86,7 @@ def agent_prefix(idempotency_key: Any) -> str:
     """`agent:<mã>:` của việc giao trực tiếp cho một trợ lý (khoá `agent:<mã>:<slug>:...`, 0.142.0), rỗng nếu không phải.
 
     Một trợ lý chạy MỘT việc giao trực tiếp một lúc: giao nhiều việc không tự mở nhiều lượt model đồng thời cho cùng
-    trợ lý. Việc của trợ lý khác, việc Kanban thường vẫn chạy song song tới trần JEEVI_KANBAN_MAX_WORKERS."""
+    trợ lý. Việc của trợ lý khác, việc Kanban thường vẫn chạy song song tới trần JAVIS_KANBAN_MAX_WORKERS."""
     k = str(idempotency_key or "")
     if not k.startswith("agent:"):
         return ""

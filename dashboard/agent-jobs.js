@@ -11,9 +11,9 @@
  * Giao việc: yêu cầu, tiêu chí xong, nơi nhận kết quả (chat riêng hay một nhóm trợ lý đang ở), kiểu việc (thường hay
  * kiểm chứng), rồi một bước xác nhận trước khi tạo. `nonce` giữ nguyên qua các lần gửi lại để server trả đúng việc cũ.
  *
- * Đồng bộ trực tiếp: trong lúc tab đang gắn, nghe gói nhóm (`jeevi:team-event`), mục tiêu đổi
- * (`jeevi:resonance-agents-changed`), tin việc nền về (`jeevi:sessions-changed`) và việc vừa tạo, huỷ ở chính tab
- * (`jeevi:agent-jobs-changed`), tải lại sau 800ms gộp nhịp. Kanban chưa có gói WS riêng nên thêm một nhịp hỏi thưa lúc
+ * Đồng bộ trực tiếp: trong lúc tab đang gắn, nghe gói nhóm (`javis:team-event`), mục tiêu đổi
+ * (`javis:resonance-agents-changed`), tin việc nền về (`javis:sessions-changed`) và việc vừa tạo, huỷ ở chính tab
+ * (`javis:agent-jobs-changed`), tải lại sau 800ms gộp nhịp. Kanban chưa có gói WS riêng nên thêm một nhịp hỏi thưa lúc
  * trang đang hiện. `destroy` gỡ hết.
  *
  * Lượt trợ lý tự làm (owner, 16/11/2026): mỗi lượt Auto tự nhìn quanh, tự xem lại là một thẻ ở nguồn Auto. Server gửi mã
@@ -98,7 +98,7 @@
   function reasonText(r) {
     r = String(r || "");
     if (!/^[a-z][a-z0-9_]*$/.test(r)) return r;
-    var RS = typeof window !== "undefined" ? window.JeeviResonance : null;
+    var RS = typeof window !== "undefined" ? window.JavisResonance : null;
     var k = RS && RS.stateKey ? RS.stateKey({ status: "active", block_reason: r }) : "";
     if (k && k !== "resonance.st_working" && k !== "resonance.st_blocked" && k !== "resonance.st_running") return tw(k);
     return tw("ajobs.reason.code_generic");
@@ -351,10 +351,10 @@
 
   // The assistant's chat turn running right now (owner, 08/11/2026): a chat turn is not a queued job, so the tab used to
   // look empty while the assistant was plainly working in the chat beside it. `live`: { running, steps, buoc } from
-  // app.js (JeeviChatLive). Shows the step count and the engine's plan when it made one (chat-steps.js planHtml).
+  // app.js (JavisChatLive). Shows the step count and the engine's plan when it made one (chat-steps.js planHtml).
   function liveHtml(live) {
     if (!live || !live.running) return "";
-    var S = typeof window !== "undefined" ? window.JeeviSteps : null;
+    var S = typeof window !== "undefined" ? window.JavisSteps : null;
     var plan = live.buoc && Array.isArray(live.buoc.plan) && live.buoc.plan.length ? live.buoc.plan : null;
     var line = live.steps ? tw("ajobs.live_steps", { n: live.steps }) : tw("ajobs.live_thinking");
     return '<section class="aj-sec aj-live"><h4 class="aj-sec-h">' + esc(tw("ajobs.live_title")) + "</h4>" +
@@ -436,7 +436,7 @@
   }
 
   function changed() {
-    try { window.dispatchEvent(new CustomEvent("jeevi:agent-jobs-changed")); } catch (e) { /* node */ }
+    try { window.dispatchEvent(new CustomEvent("javis:agent-jobs-changed")); } catch (e) { /* node */ }
   }
 
   // ───────────── gắn vào trang ─────────────
@@ -690,7 +690,7 @@
     }
     var mine = host._ajActive;
     // Đồng bộ trực tiếp: các sự kiện của app gộp nhịp rồi tải lại tại chỗ. Gỡ ở destroy.
-    var EVENTS = ["jeevi:team-event", "jeevi:resonance-agents-changed", "jeevi:sessions-changed", "jeevi:agent-jobs-changed"];
+    var EVENTS = ["javis:team-event", "javis:resonance-agents-changed", "javis:sessions-changed", "javis:agent-jobs-changed"];
     var hasWin = typeof window !== "undefined" && window.addEventListener;
     // Performance (2026-11-05): switching to another chat (reason "open") adds no job: no reload for it.
     var onEvent = function (e) { if (e && e.detail && e.detail.reason === "open") return; schedule(); };
@@ -705,7 +705,7 @@
       if (wasLive && !now) schedule();
       wasLive = now;
     };
-    if (hasWin) window.addEventListener("jeevi:chat-turn", onTurn);
+    if (hasWin) window.addEventListener("javis:chat-turn", onTurn);
     if (typeof setInterval === "function") {
       poll = setInterval(function () {
         if (typeof document !== "undefined" && document.hidden) return;
@@ -723,7 +723,7 @@
         if (poll) { clearInterval(poll); poll = null; }
         if (hasWin && window.removeEventListener) {
           EVENTS.forEach(function (ev) { window.removeEventListener(ev, onEvent); });
-          window.removeEventListener("jeevi:chat-turn", onTurn);
+          window.removeEventListener("javis:chat-turn", onTurn);
         }
       } };
   }
@@ -737,6 +737,6 @@
   var api = { html: html, liveHtml: liveHtml, jobHtml: jobHtml, toolbarHtml: toolbarHtml, assignHtml: assignHtml,
     confirmHtml: confirmHtml, titleText: titleText, outcomeText: outcomeText, resultText: resultText, badgeHtml: badgeHtml, archiveHtml: archiveHtml, statusOf: statusOf, statusText: statusText, nextText: nextText, reasonText: reasonText, relTime: relTime, mount: mount, loadCounts: loadCounts,
     RELOAD_MS: RELOAD_MS, setStrings: function (o) { STR = o || {}; } };
-  if (typeof window !== "undefined") window.JeeviAgentJobs = api;
+  if (typeof window !== "undefined") window.JavisAgentJobs = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

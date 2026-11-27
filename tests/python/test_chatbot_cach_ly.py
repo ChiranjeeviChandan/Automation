@@ -37,8 +37,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-cachly-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-cachly-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -87,7 +87,7 @@ for cam in ("Luật bắt buộc", "đứng trên mọi hướng dẫn khác", "
     check(f"CANARY: Jeevi KHÔNG chèn luật của mình - '{cam[:32]}'", cam not in p)
 
 check("prompt KHÔNG mang system prompt điều phối của Jeevi",
-      "jeevi_schedule" not in p and "Kanban" not in p and "MCP Hub" not in p)
+      "javis_schedule" not in p and "Kanban" not in p and "MCP Hub" not in p)
 
 _SRC_RT = (SERVER / "chatbot_runtime.py").read_text(encoding="utf-8")
 check("module không còn hằng số khối luật", "_LUAT" not in _SRC_RT)
@@ -114,7 +114,7 @@ check("và nó vẫn KHÔNG đụng tới quy định của Agent", QUY_DINH in 
 # ============================================================
 # B1. Hub khoá đường đọc file trong vault
 # ============================================================
-GOC = Path(tempfile.mkdtemp(prefix="jeevi-cachly-brains-"))
+GOC = Path(tempfile.mkdtemp(prefix="javis-cachly-brains-"))
 (GOC / "brain-bot").mkdir()
 (GOC / "brain-bot" / "gia.md").write_text("Gói 3 tháng 6 triệu.\n", encoding="utf-8")
 (GOC / "brain-chu").mkdir()

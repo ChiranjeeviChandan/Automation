@@ -19,8 +19,8 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-team-open-")
-BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-team-open-brain-"))
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-team-open-")
+BRAIN = Path(tempfile.mkdtemp(prefix="javis-team-open-brain-"))
 (BRAIN / "agents").mkdir()
 for slug in ("lan", "minh"):
     (BRAIN / "agents" / f"{slug}.md").write_text(f"---\nname: {slug}\nrole: Helper\n---\nStay in scope.\n",

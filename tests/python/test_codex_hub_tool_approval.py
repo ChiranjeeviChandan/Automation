@@ -7,11 +7,11 @@ approval, but approval policy is never" and background jobs on Codex read no dat
 profile carries `default_tools_approval_mode = "approve"`; the hub itself still enforces X-Jeevi-Mode.
 
 Checked here without a Codex binary:
-  - the profile still parses as TOML, the key sits in the `jeevi` server table next to its `url`, headers unchanged;
+  - the profile still parses as TOML, the key sits in the `javis` server table next to its `url`, headers unchanged;
   - the app-server path (codex_steer.profile_overrides) passes the key as a `-c` override;
   - an extra ChatGPT account's folder (plan_accounts.prepare) gets a copy that carries it, replacing an older copy;
   - the chat channel block tells the model not to "fix" a refusal by editing ~/.codex/config.toml.
-When a real Codex is installed (PATH or JEEVI_CODEX_BIN), it must still load the profile (`codex -p <name> mcp list`).
+When a real Codex is installed (PATH or JAVIS_CODEX_BIN), it must still load the profile (`codex -p <name> mcp list`).
 
     python tests/run.py codex_hub_tool_approval
 """
@@ -27,8 +27,8 @@ import tomllib
 from pathlib import Path
 
 # Hard-set, not setdefault: this test writes a Codex profile under HOME and account folders under the state dir.
-_TMP = Path(tempfile.mkdtemp(prefix="jeevi-codex-approval-"))
-os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+_TMP = Path(tempfile.mkdtemp(prefix="javis-codex-approval-"))
+os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
 os.environ["HOME"] = str(_TMP / "home")
 os.environ["USERPROFILE"] = str(_TMP / "home")
 os.environ.pop("CODEX_HOME", None)
@@ -62,12 +62,12 @@ def load(path):
 
 
 def hub_entry(cfg):
-    return (cfg.get("mcp_servers") or {}).get("jeevi") or {}
+    return (cfg.get("mcp_servers") or {}).get("javis") or {}
 
 
 # Read with getattr so this file still runs (and turns RED) on a tree without the fix.
 KEY = getattr(mcp_hub, "CODEX_TOOLS_APPROVAL_KEY", "default_tools_approval_mode")
-OVERRIDE = f'mcp_servers.jeevi.{KEY}="approve"'
+OVERRIDE = f'mcp_servers.javis.{KEY}="approve"'
 
 # ---- the shared profile ----
 name = mcp_hub.codex_profile("full")
@@ -83,7 +83,7 @@ headers = entry.get("http_headers") or {}
 check("headers unchanged: hub token, mode full, engine codex",
       str(headers.get("Authorization", "")).startswith("Bearer ") and headers.get("X-Jeevi-Mode") == "full"
       and headers.get("X-Jeevi-Engine") == "codex", headers)
-check("the profile holds the hub entry only", set(cfg.get("mcp_servers") or {}) == {"jeevi"}, cfg.get("mcp_servers"))
+check("the profile holds the hub entry only", set(cfg.get("mcp_servers") or {}) == {"javis"}, cfg.get("mcp_servers"))
 
 # ---- app-server (chat turns): the profile is flattened into -c overrides ----
 overrides = codex_steer.profile_overrides(name, Path.home() / ".codex")
@@ -95,7 +95,7 @@ folder = plan_accounts.home(PROVIDER, "acct2")
 check("extra account folder exists", folder is not None and Path(folder).is_dir(), folder)
 copy = Path(folder) / mcp_hub.codex_profile_path().name
 # A copy left from before the fix: older than account 1's profile, without the key.
-copy.write_text('[mcp_servers.jeevi]\nurl = "http://127.0.0.1:7777/hub/mcp"\n', encoding="utf-8")
+copy.write_text('[mcp_servers.javis]\nurl = "http://127.0.0.1:7777/hub/mcp"\n', encoding="utf-8")
 old = time.time() - 3600
 os.utime(copy, (old, old))
 plan_accounts.prepare(PROVIDER, folder)
@@ -108,11 +108,11 @@ check("app-server on the extra account passes the approval",
 
 # ---- model guidance: a refusal is not fixed by editing the user's Codex config ----
 block = channel_context.build_channel_block("dashboard", port=7777)
-check("chat block warns against a hand-written mcp_servers.jeevi in ~/.codex/config.toml",
-      "~/.codex/config.toml" in block and "mcp_servers.jeevi" in block)
+check("chat block warns against a hand-written mcp_servers.javis in ~/.codex/config.toml",
+      "~/.codex/config.toml" in block and "mcp_servers.javis" in block)
 
 # ---- a real Codex, when installed, still loads the profile ----
-codex = os.environ.get("JEEVI_CODEX_BIN") or shutil.which("codex")
+codex = os.environ.get("JAVIS_CODEX_BIN") or shutil.which("codex")
 if codex:
     env = dict(os.environ, CODEX_HOME=str(Path.home() / ".codex"))
     try:
@@ -127,7 +127,7 @@ if codex:
                 listed = [s.get("name") for s in json.loads(r.stdout or "[]")]
             except (ValueError, AttributeError):
                 pass
-            check(f"real Codex ({version}) loads the profile with the key", r.returncode == 0 and "jeevi" in listed,
+            check(f"real Codex ({version}) loads the profile with the key", r.returncode == 0 and "javis" in listed,
                   (r.stderr or "")[-300:])
     except (OSError, subprocess.TimeoutExpired) as e:
         print(f"skip real Codex check: {type(e).__name__}: {e}")

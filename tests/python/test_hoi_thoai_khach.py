@@ -22,8 +22,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-hoithoai-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-hoithoai-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -126,7 +126,7 @@ check("loại tin đoán từ dòng gateway: ảnh -> image, chữ thường -> 
 # ============================================================
 # 2. Bot chuyên trách -> kho
 # ============================================================
-BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-hoithoai-brain-"))
+BRAIN = Path(tempfile.mkdtemp(prefix="javis-hoithoai-brain-"))
 (BRAIN / "inbox" / "khach").mkdir(parents=True)
 _dap = {"text": "Dạ shop còn size 42 ạ.", "files": []}
 

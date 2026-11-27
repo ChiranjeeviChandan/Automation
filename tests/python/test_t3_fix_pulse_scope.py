@@ -13,9 +13,9 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-fix-scope-")
-os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
-TEMP = Path(tempfile.mkdtemp(prefix="jeevi-fix-scope-w-"))
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-fix-scope-")
+os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
+TEMP = Path(tempfile.mkdtemp(prefix="javis-fix-scope-w-"))
 
 import agent_ledger as AL  # noqa: E402
 import agent_pulse as AP  # noqa: E402

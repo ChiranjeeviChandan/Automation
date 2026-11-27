@@ -27,8 +27,8 @@ import tempfile
 import time
 from pathlib import Path
 
-_TMP = tempfile.mkdtemp(prefix="jeevi-curator-")
-os.environ["JEEVI_STATE_DIR"] = _TMP
+_TMP = tempfile.mkdtemp(prefix="javis-curator-")
+os.environ["JAVIS_STATE_DIR"] = _TMP
 
 import learn  # noqa: E402
 

@@ -99,7 +99,7 @@ cả khi Jeevi nằm trên VPS. Jeevi không bao giờ đọc token: app-server 
 1. Sự kiện tới là `thread/realtime/itemAdded` với `item.type == "handoff_request"`, kèm
    `input_transcript`. Không có method riêng (khung `GPTLive` cũ đoán sai tên).
 2. Yêu cầu quá ngắn (dưới 3 tiếng) thì ghép với lời người dùng vừa nói trong ~10 giây trước.
-3. Phát `tool_call ask_jeevi` như các Live khác: `_voice_ask_jeevi` chạy nền, kèm khối ngữ cảnh
+3. Phát `tool_call ask_javis` như các Live khác: `_voice_ask_javis` chạy nền, kèm khối ngữ cảnh
    giao diện, bằng bộ não chính người dùng đã chọn.
 4. Codex luôn TỰ mở một lượt agent cho mỗi handoff (`turn/started`): gọi `turn/interrupt` ngay.
    `developerInstructions` ở trên là lưới đỡ khi interrupt thua cuộc đua.
@@ -118,19 +118,19 @@ cả khi Jeevi nằm trên VPS. Jeevi không bao giờ đọc token: app-server 
    (`voice_live.is_followup_ack`) hay chỉ lặp lại yêu cầu đang chạy (`is_same_request`) thì đóng
    bằng `send_tool_ack` (ChatGPT Live: không nói gì; Live qua API: trả một câu ghi nhận cho đúng lời
    gọi tool) và không chạy bộ não; câu có ý mới chạy với `parallel_request` (kèm việc đang chạy, báo
-   rõ chúng CHƯA xong), bộ não trả `JEEVI_NOOP` khi chẳng có gì mới thì không bong bóng, không đọc.
+   rõ chúng CHƯA xong), bộ não trả `JAVIS_NOOP` khi chẳng có gì mới thì không bong bóng, không đọc.
    Prompt cũng dặn model đừng giao việc lại khi người dùng chỉ xác nhận. (0.65.21 xếp hàng câu có ý
    mới SAU việc đang chạy; 0.71.2 bỏ khoá đó, xem mục 7.)
 7. **Hỏi giữa chừng không im re** (0.71.2, chủ dự án báo 03/10): khoá xếp hàng của 0.65.21 làm MỌI
    câu giao việc chờ cả việc dài xong. Việc chạy mấy phút thì "xong chưa", "có nghe không" đều im, rồi
    khi việc xong các câu chờ chạy lần lượt và câu trả lời cũ bị đọc dồn (câu hỏi 17:45 trả lời 17:56).
    Nay route giữ sổ `jobs` (việc nào, bắt đầu lúc nào, bước hiện tại từ `progress` của
-   `_voice_ask_jeevi`) và:
+   `_voice_ask_javis`) và:
    - câu HỎI TIẾN ĐỘ (`is_progress_question`, cố ý hẹp) khi đang có việc: trả lời NGAY bằng
      `status_line` qua `say_status`, không chạy bộ não. Hãng không có kênh nói thêm (Live qua API)
      thì trả đúng câu đó bằng `send_tool_ack`. Không đánh dấu `readback`, vì model tự nói một câu đệm
      ngay sau mỗi lần giao việc, đánh dấu sẽ nuốt nhầm câu đệm đó;
-   - việc mới thật chạy SONG SONG, mạch engine riêng (`key` dùng một lần, `_voice_ask_jeevi` dọn
+   - việc mới thật chạy SONG SONG, mạch engine riêng (`key` dùng một lần, `_voice_ask_javis` dọn
      phiên RAM của nó), kết quả về khi nào đọc khi đó, mỗi kết quả trả đúng handoff của nó;
    - `_heartbeat`: việc chạy quá `STATUS_FIRST_S` (60 giây) thì mỗi `STATUS_EVERY_S` (90 giây) Jeevi tự
      nói một câu tiến độ, chỉ khi `is_quiet()` (không ai nói, hàng lời đọc trống). Câu này là
@@ -144,7 +144,7 @@ cả khi Jeevi nằm trên VPS. Jeevi không bao giờ đọc token: app-server 
    `VOICE_BG_TIMEOUT` tính từ lúc cúp máy, rồi kết quả vào khung chat của cuộc gọi như mọi việc nền
    (`_voice_after_call`: `_notify_owner` với `web:<sid>`, có tin trong khung chat, hòm thư và thông báo đẩy).
    Không gửi gì lên socket hay nhà cung cấp đã đóng. Việc khác của cuộc gọi (nhịp báo tiến độ, bắt tay
-   WebRTC) vẫn dừng. Cuộc gọi mới trong cùng khung chat không xếp hàng sau việc còn chạy: `_voice_ask_jeevi`
+   WebRTC) vẫn dừng. Cuộc gọi mới trong cùng khung chat không xếp hàng sau việc còn chạy: `_voice_ask_javis`
    dùng mạch engine dùng một lần khi mạch chung của khung chat đang bận.
 
 **Sự kiện dịch sang khung Live chung.** `sdp` thành `webrtc_answer`; `started` thành `ready`;
@@ -326,7 +326,7 @@ giữ phần đã đối chiếu đúng với code ngày 01/10/2026. Code trỏ 
 ### A1. Đạo diễn lượt nói (voice-turn.js) và trạng thái orb
 - Module thuần, không đụng DOM hay audio. voice.js và app.js gửi sự kiện vào, nhận về một MẢNG hành động (`commit`, `hold`, `stop_tts`, `stop_turn`, `pause_tts`, `resume_tts`, `listen`, `speak_filler`, `flush_deferred`) rồi tự thực hiện.
 - Trạng thái suy ra từ cờ theo một danh sách ưu tiên (`_recompute`): reconnecting, error, interrupted, user_speaking, waiting_for_user, speaking, processing, listening, idle. Thêm trạng thái thì thêm vào danh sách này, không viết tay từng cặp chuyển.
-- Chờ hết lượt theo hai ngưỡng, một đồng hồ duy nhất, có lời mới thì đặt lại. Câu kết bằng liên từ, giới từ, dấu phẩy, tiếng ậm ừ ("ừm", "ờ", "kiểu") hoặc chỉ gọi "Jeevi" thì chờ `maxDelay` 2200 ms; còn lại chờ `minDelay` 1200 ms (`jeevi.endpoint`). Không bao giờ chốt lượt rỗng. Không có "à" trong danh sách vì "vậy à" là câu đã xong. Không dùng mô hình dò hết lượt vì LiveKit không hỗ trợ tiếng Việt.
+- Chờ hết lượt theo hai ngưỡng, một đồng hồ duy nhất, có lời mới thì đặt lại. Câu kết bằng liên từ, giới từ, dấu phẩy, tiếng ậm ừ ("ừm", "ờ", "kiểu") hoặc chỉ gọi "Jeevi" thì chờ `maxDelay` 2200 ms; còn lại chờ `minDelay` 1200 ms (`javis.endpoint`). Không bao giờ chốt lượt rỗng. Không có "à" trong danh sách vì "vậy à" là câu đã xong. Không dùng mô hình dò hết lượt vì LiveKit không hỗ trợ tiếng Việt.
 - Cụm CHỜ/DỪNG phải khớp trọn câu sau khi bỏ "Jeevi ơi" và tiểu từ đuôi; bản nói lắp vẫn nhận nếu mọi từ thuộc bộ từ vựng; câu có từ lạ ("khoan, mở Chrome") là tin thường. CHỜ thì không gửi và giữ tối đa 90 giây. DỪNG thì chỉ dừng đọc (0.65.28): lượt đang chạy viết nốt câu trả lời vào khung chat, phần còn lại không đọc.
 - **Trong cuộc gọi không có gì tự dừng lượt** (0.65.28, chủ dự án chốt 02/10 sau khi thấy "Đã dừng lượt này" liên tục ở đường Cơ bản): lượt chỉ dừng khi cúp máy hoặc bấm Dừng. Câu nói lúc Jeevi đang trả lời xếp hàng (`xepCauChoLuot`, nhiều câu thì ghép), hiện thành nháp, và chỉ gửi khi lượt cũ xong VÀ loa đọc xong (`guiCauChoLuot`, gọi từ `turn_done`, `onSpeakEnd` và nhịp canh loa). Cắt lời hay nói "thôi" thì `stop_tts` đánh dấu lượt đang chạy `imLoa`: không đọc thêm, chữ hiện đủ thay vì theo lời. Ngoài cuộc gọi (mic một lần) vẫn dừng lượt cũ rồi gửi như trước.
 - Câu tiến độ: đang xử lý quá 2,5 giây (đang gọi tool thì 1,2 giây) mà chưa có chữ thật nào ra loa thì nói đúng một lần mỗi lượt.
@@ -335,7 +335,7 @@ giữ phần đã đối chiếu đúng với code ngày 01/10/2026. Code trỏ 
 
 ### A2. Tai và miệng ở trình duyệt (voice.js, voice-chunker.js)
 - Web Speech thu mic bằng luồng riêng, không được khử vọng, nên phải ngừng nhận dạng khi TTS phát, không thì nó chép giọng Jeevi thành lời người dùng. Cũng vì thế cố ý không làm tiếng đệm "ừ, à".
-- Ngắt lời bằng NHÁ TIẾNG: 2 nhịp 100 ms vượt ngưỡng chỉ là nghi ngờ; hạ loa còn 12% trong 4 nhịp rồi đo lại, tiếng vọng tụt theo âm lượng còn giọng người thì không (còn trên 45%). Là người thì `bargeConfirmed` dừng hẳn lời đọc (không chờ chữ); lượt đang chạy KHÔNG bị dừng (0.65.28, xem A1). Mức vọng của phòng tự học, lưu `jeevi.nenVong`, chặn trên 0.3.
+- Ngắt lời bằng NHÁ TIẾNG: 2 nhịp 100 ms vượt ngưỡng chỉ là nghi ngờ; hạ loa còn 12% trong 4 nhịp rồi đo lại, tiếng vọng tụt theo âm lượng còn giọng người thì không (còn trên 45%). Là người thì `bargeConfirmed` dừng hẳn lời đọc (không chờ chữ); lượt đang chạy KHÔNG bị dừng (0.65.28, xem A1). Mức vọng của phòng tự học, lưu `javis.nenVong`, chặn trên 0.3.
 - Điện thoại chỉ cho MỘT đường thu mic: mobile không ghi âm song song và không có tai nghe lại ở đường Web Speech. WebRTC (mục 3.4) dùng đúng một đường nên chạy được.
 - Chrome Android giao final là cả câu và còn sửa câu giữa các mảnh: ghép bằng `ghepManh`, không `+=`. iOS ép `continuous=false` và hay không chốt final (ghép `_duoiTam`). Mỗi lượt tối đa 30 giây.
 - Chữ đã hiện lúc chốt là bất biến: final đến muộn, STT phụ hay AI đều không được sửa âm thầm. Stop trước khi có kết quả nào thì nhận final đầu tiên.
@@ -344,10 +344,10 @@ giữ phần đã đối chiếu đúng với code ngày 01/10/2026. Code trỏ 
 
 ### A3. Làn nhanh: bộ não giọng (voice_brain.py)
 - Tin mang `voice: true` (kể cả chữ gõ lúc rảnh tay) đi bộ não giọng. Mọi bộ não chỉ cần hợp đồng `stream(text, history)`, tự đóng sau 5 phút không nói.
-- Bốn marker không bao giờ ra loa: `JEEVI_NGHE`, `JEEVI_ASK_MAIN`, `JEEVI_UI`, `JEEVI_BO_QUA` (cái cuối chỉ còn là di sản: prompt cấm dùng, không còn xoá lời).
-- Thiếu `JEEVI_NGHE`, hoặc câu diễn giải bị `safe_transcript_rewrite` từ chối (ngưỡng âm 0,6, tối đa 4 tiếng một cụm, không đụng số, phủ định hay lệnh), thì bộ não chính nhận nguyên văn kèm `GHI_CHU_CAU_NGHE`. Việc rơi này IM LẶNG (chỉ một dòng trạng thái thoáng qua), nên khối ngữ cảnh đứng trước lời nói phải được tách đủ: `nghe_sua.split_ui_context` nhận cả khối FILE ĐANG MỞ lẫn NGỮ CẢNH GIAO DIỆN (0.65.29). Trước đó đang mở file thì mọi lượt nói lặng lẽ sang bộ não chính dù đã chọn bộ não trả lời nhanh.
-- `JEEVI_ASK_MAIN`: lượt giọng kết thúc ngay, việc chạy nền dưới khoá `voice:<sid>:<id>`. Task phải được giữ tham chiếu (`_nho_viec_nen_giong`) kẻo bộ gom rác nuốt. Chặn việc trùng (độ giống từ 0,8), tối đa 3 việc song song. "Dừng việc nền" là luật cứng trong code, không thành việc mới.
-- `JEEVI_UI` không đánh thức bộ não chính (lượt đó có lúc mang hơn 200 nghìn token ngữ cảnh).
+- Bốn marker không bao giờ ra loa: `JAVIS_NGHE`, `JAVIS_ASK_MAIN`, `JAVIS_UI`, `JAVIS_BO_QUA` (cái cuối chỉ còn là di sản: prompt cấm dùng, không còn xoá lời).
+- Thiếu `JAVIS_NGHE`, hoặc câu diễn giải bị `safe_transcript_rewrite` từ chối (ngưỡng âm 0,6, tối đa 4 tiếng một cụm, không đụng số, phủ định hay lệnh), thì bộ não chính nhận nguyên văn kèm `GHI_CHU_CAU_NGHE`. Việc rơi này IM LẶNG (chỉ một dòng trạng thái thoáng qua), nên khối ngữ cảnh đứng trước lời nói phải được tách đủ: `nghe_sua.split_ui_context` nhận cả khối FILE ĐANG MỞ lẫn NGỮ CẢNH GIAO DIỆN (0.65.29). Trước đó đang mở file thì mọi lượt nói lặng lẽ sang bộ não chính dù đã chọn bộ não trả lời nhanh.
+- `JAVIS_ASK_MAIN`: lượt giọng kết thúc ngay, việc chạy nền dưới khoá `voice:<sid>:<id>`. Task phải được giữ tham chiếu (`_nho_viec_nen_giong`) kẻo bộ gom rác nuốt. Chặn việc trùng (độ giống từ 0,8), tối đa 3 việc song song. "Dừng việc nền" là luật cứng trong code, không thành việc mới.
+- `JAVIS_UI` không đánh thức bộ não chính (lượt đó có lúc mang hơn 200 nghìn token ngữ cảnh).
 - `MODES`, `BRAIN_PROVIDERS`, `STT_PROVIDERS` là nguồn duy nhất cho cả trang Cài đặt lẫn nhánh lưu `POST /settings`.
 - Lớp sửa tên tất định `nghe_sua.sua` ("David" thành "Jeevi") chạy trước khi lưu; gỡ nó thì Jeevi đáp "anh nói là David".
 
@@ -360,16 +360,16 @@ giữ phần đã đối chiếu đúng với code ngày 01/10/2026. Code trỏ 
 
 ### A5. Live qua API key (voice_live.py, voice-live.js)
 - Trình duyệt gửi PCM16 16 kHz, nhận 24 kHz. Nhà cung cấp mới chỉ cần một lớp con `LiveProvider`.
-- `ask_jeevi` chạy nền. Gemini 3.1 Flash Live (mặc định) chưa có tool bất đồng bộ nên model im chờ; OpenAI Realtime phải xếp `response.create` chờ tới `response.done`.
+- `ask_javis` chạy nền. Gemini 3.1 Flash Live (mặc định) chưa có tool bất đồng bộ nên model im chờ; OpenAI Realtime phải xếp `response.create` chờ tới `response.done`.
 - Ngắt lời: trình duyệt gửi `played` (số ms thực đã phát) để server cắt ngữ cảnh đúng chỗ đã nghe. Gemini phải chờ `setupComplete` trước khi gửi PCM; transcript người dùng tách khỏi `turnComplete` của model.
 - `generation` sở hữu socket và callback của từng phiên. GPT-Live chưa chạy thật lần nào, và đoán sai tên khung delegation (mục 3.2).
 
-### A6. Điều khiển giao diện bằng giọng (ui_bridge.py, plugin jeevi-ui, desktop-apps)
-- Điều khiển đi bằng TOOL, không bằng khối chữ trong câu trả lời: server lột mọi `JEEVI_*`, không có đường báo kết quả về, và Telegram sẽ thấy rác.
+### A6. Điều khiển giao diện bằng giọng (ui_bridge.py, plugin javis-ui, desktop-apps)
+- Điều khiển đi bằng TOOL, không bằng khối chữ trong câu trả lời: server lột mọi `JAVIS_*`, không có đường báo kết quả về, và Telegram sẽ thấy rác.
 - `ui_bridge.request` gửi `ui_action` tới các tab và chờ `ui_result`; không có tab thì báo lỗi ngay, quá 4 giây thì hết giờ. Dashboard kiểm lại target trước khi chạy.
 - Trang mới phải thêm ở BA nơi: `RAIL_ITEMS` (console.js), `PAGES` (ui-actions.js), `PAGES` cùng bí danh không dấu trong `server/ui_targets.py`. Nhóm thanh bên dùng khoá `id` vì nhãn đổi theo ngôn ngữ.
 - desktop-apps: mở và đóng làm ngay không hỏi lại (chủ dự án chọn). Đóng mặc định là đóng lịch sự để app tự hỏi lưu; `force` chỉ khi người dùng nói ép tắt. Tự chặn khi chạy trong Docker hay Linux không màn hình.
-- Khối `[NGỮ CẢNH GIAO DIỆN: ...]` bị lột khỏi bong bóng và tiêu đề; `kênh=giọng` yêu cầu trả lời 2 đến 4 câu. Đường tắt `JEEVI_UI` chỉ có `open_page`, `open_group`, `sidebar`, `scroll`; `open_file` và `open_task` chỉ có ở tool `jeevi_ui`.
+- Khối `[NGỮ CẢNH GIAO DIỆN: ...]` bị lột khỏi bong bóng và tiêu đề; `kênh=giọng` yêu cầu trả lời 2 đến 4 câu. Đường tắt `JAVIS_UI` chỉ có `open_page`, `open_group`, `sidebar`, `scroll`; `open_file` và `open_task` chỉ có ở tool `javis_ui`.
 
 ### A7. Cửa chú ý khi im lâu (voice-attention.js)
 - Đây là cửa chú ý, KHÔNG phải nhận diện người nói. Từ 0.65.22 chỉ bật ở đường Live: im 30 giây (`IDLE_MS`) thì ngắt nhà cung cấp, câu nói thật đầu tiên (`wakes`) là nối lại. Đường Cơ bản nghe suốt cuộc gọi.
@@ -379,7 +379,7 @@ giữ phần đã đối chiếu đúng với code ngày 01/10/2026. Code trỏ 
 - Giới hạn đã biết: TV nói "Jeevi" vẫn đánh thức được.
 
 ### A8. Nhịp hội thoại thích nghi (đã gỡ khỏi giao diện ở 0.65.19, code còn chờ dọn)
-- Từng bật qua `jeevi.adaptive` (off | observe | natural). Từ 0.65.19 `voice-adaptive-ui.js` ép `off`, bỏ qua giá trị đã lưu, và không còn ô nào trên trang; code điều khiển (`voice-adaptive.js`, nhánh `adaptive` trong `app.js`) chờ một PR gỡ hẳn.
+- Từng bật qua `javis.adaptive` (off | observe | natural). Từ 0.65.19 `voice-adaptive-ui.js` ép `off`, bỏ qua giá trị đã lưu, và không còn ô nào trên trang; code điều khiển (`voice-adaptive.js`, nhánh `adaptive` trong `app.js`) chờ một PR gỡ hẳn.
 - Biên nhận SQLite (`voice_turn_protocol.py`) bảo đảm gửi lại không làm chạy lại hành động. `ack_only` (ghi nhận mà không trả lời) rất hẹp: chưa chắc thì trả lời bình thường.
 - Khi gỡ giao diện phải giữ hai bảo đảm: chữ đã chốt là bất biến, và epoch chặn callback cũ.
 
@@ -394,7 +394,7 @@ giữ phần đã đối chiếu đúng với code ngày 01/10/2026. Code trỏ 
 - `test_tts_stream.py`: Edge stream, lỗi ngay thành 502. `test_voice_privacy.py`: query `/tts` không vào log.
 - `test_luu_cai_dat_giong.py`: lưu rồi đọc lại cài đặt giọng (bẫy: phải dùng `base_url=http://127.0.0.1:7777`, không thì 403).
 - `test_stt_ao_giac.py`, `test_stt_route.py`, `test_voice_ear_select.py`, `test_voice_ear_upload.js`: tai nghe lại.
-- `test_voice_brain.py`, `test_voice_transcript_integrity.py`, `test_voice_turn_integrity.py`, `test_voice_ten_jeevi.py`, `test_nghe_sua.py`, `test_voice_tap_am.py`: marker, rào `JEEVI_NGHE`, sửa tên Jeevi.
+- `test_voice_brain.py`, `test_voice_transcript_integrity.py`, `test_voice_turn_integrity.py`, `test_voice_ten_javis.py`, `test_nghe_sua.py`, `test_voice_tap_am.py`: marker, rào `JAVIS_NGHE`, sửa tên Jeevi.
 - `test_viec_nen_giong_khong_chet_lang.py`, `test_viec_nen_giong_dung_khung_chat.py`: việc nền giữ tham chiếu, báo về đúng khung chat.
 - `test_voice_attention.js`, `test_voice_focus_app.js`, `test_voice_live_focus.py`: tập trung.
 - `test_voice_live.py`, `test_voice_live_transcription.py`, `test_voice_live_language.py`, `test_voice_live_lifecycle.js`: Live.

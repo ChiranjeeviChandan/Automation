@@ -14,7 +14,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-anhlydo-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-anhlydo-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -32,7 +32,7 @@ def check(name, cond, detail=""):
         _fails.append(name)
 
 
-BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-brain-anhlydo-"))
+BRAIN = Path(tempfile.mkdtemp(prefix="javis-brain-anhlydo-"))
 cr._deps["brain_root"] = lambda b: BRAIN
 META = {"chat_id": "g1", "chat_type": "group", "user_id": "u1", "co_anh": True, "message_id": "m1"}
 

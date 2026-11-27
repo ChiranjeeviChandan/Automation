@@ -14,7 +14,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-quotadir-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-quotadir-")
 
 import context_compiler  # noqa: E402
 import model_limits  # noqa: E402
@@ -145,13 +145,13 @@ def _p8_run(tmp, settings, objective="Giải thích entropy là gì"):
 
 
 # Hạn mức rộng: phải chạy bình thường, để biết harness dựng đúng.
-_tmp = tempfile.mkdtemp(prefix="jeevi-p8-ok-")
+_tmp = tempfile.mkdtemp(prefix="javis-p8-ok-")
 _plan = _p8_run(_tmp, _p8_settings(rolling_tpm=12_000, max_input=8_000))
 check("hạn mức rộng: Phase 8 không từ chối", _plan.action != "reject")
 shutil.rmtree(_tmp, ignore_errors=True)
 
 # Hạn mức siết tới mức không đủ cho cả phần BẮT BUỘC. Đây là toàn bộ lý do của Việc 5.
-_tmp = tempfile.mkdtemp(prefix="jeevi-p8-tight-")
+_tmp = tempfile.mkdtemp(prefix="javis-p8-tight-")
 _plan = _p8_run(_tmp, _p8_settings(rolling_tpm=60, max_input=50))
 check("hạn mức siết: KHÔNG rơi về legacy (legacy còn to hơn)", _plan.action != "legacy")
 check("hạn mức siết: từ chối hẳn", _plan.action == "reject")

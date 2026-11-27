@@ -720,7 +720,7 @@ and pin itself and must reject a foreign or missing mapping.
 ### Concrete discovery candidate and collision handling
 
 Use a task/session-specific host-generated plugin name such as
-`jeevi-effective-<pin-prefix>` (illustrative only), with manifest name and path
+`javis-effective-<pin-prefix>` (illustrative only), with manifest name and path
 bound to full pin hash. Never use a reserved/vendor namespace. Keep the selected
 SKILL.md bytes/frontmatter unchanged; plugin namespace is runtime identity, not
 an improver edit. Derive actual last-segment name from validated frontmatter and

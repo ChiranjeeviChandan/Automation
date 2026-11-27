@@ -1,25 +1,25 @@
-"""Live push from jeevi-zalo: read a personal Zalo account when a message arrives, not on a timer (2026-11-10).
+"""Live push from javis-zalo: read a personal Zalo account when a message arrives, not on a timer (2026-11-10).
 
 Owner, 10/11/2026: "when a message arrives, send it over; do not scan on a timer, some days there is no message at
-all." jeevi-zalo receives a message from Zalo in real time, but Jeevi only learned about it by calling
+all." javis-zalo receives a message from Zalo in real time, but Jeevi only learned about it by calling
 `zalo_get_messages` every 20 seconds, per account, all day.
 
-How it works (jeevi-zalo 1.10.0, `src/mcp/live-push.js`):
+How it works (javis-zalo 1.10.0, `src/mcp/live-push.js`):
   - `mcp_store.resolved()` gives every stdio `zalo` connection two environment variables: the URL of
     `POST /zalo/push?conn=<id>` on this machine and a bearer token.
-  - jeevi-zalo POSTs a wake-up there when its live buffer changes or its Zalo connection goes up or down. No message
+  - javis-zalo POSTs a wake-up there when its live buffer changes or its Zalo connection goes up or down. No message
     content travels this way: the read loop still fetches messages through the MCP tool.
   - The read loop (`zalo_personal_channel._vong`) reads an account at once when a wake-up is pending, and makes NO
-    call to jeevi-zalo for an account that pushes and has nothing pending. When every account pushes and no turn
+    call to javis-zalo for an account that pushes and has nothing pending. When every account pushes and no turn
     is on hold the loop does not tick either: it sleeps until `zalo_personal_channel.wake()` (a wake-up, a
-    jeevi-zalo process that ended, a turn put on hold, a bot or connection change).
+    javis-zalo process that ended, a turn put on hold, a bot or connection change).
 
 What makes an account "pushing" is proof, not configuration: a wake-up that arrived from the MCP session that is
-alive right now (`note` stores that session's epoch). An older jeevi-zalo ignores the variables and never calls, a
+alive right now (`note` stores that session's epoch). An older javis-zalo ignores the variables and never calls, a
 process that died no longer matches the live session, a Jeevi bound to an address 127.0.0.1 cannot reach never gets
 the first call: in each case the account simply keeps the timer it has today.
 
-The token is made per server process. A jeevi-zalo left over from an earlier lifetime carries the old one and is
+The token is made per server process. A javis-zalo left over from an earlier lifetime carries the old one and is
 refused, so it can never mark the new session as pushing.
 """
 from __future__ import annotations
@@ -39,28 +39,28 @@ _STATE: Dict[str, dict] = {}
 
 
 def enabled() -> bool:
-    """`JEEVI_ZALO_PUSH=0` turns live push off for the whole machine: nothing is given to jeevi-zalo and every
+    """`JAVIS_ZALO_PUSH=0` turns live push off for the whole machine: nothing is given to javis-zalo and every
     account is read on the timer as before."""
-    return os.environ.get("JEEVI_ZALO_PUSH", "").strip() != "0"
+    return os.environ.get("JAVIS_ZALO_PUSH", "").strip() != "0"
 
 
 def _port() -> int:
     # Same source as mcp_hub.hub_port, read here so this module imports nothing of Jeevi (mcp_store imports it).
     try:
-        return int(os.getenv("JEEVI_PORT", "7777"))
+        return int(os.getenv("JAVIS_PORT", "7777"))
     except ValueError:
         return 7777
 
 
 def env_for(conn_id: str) -> dict:
-    """The two variables for one connection's jeevi-zalo process, {} when live push is off. The values are the same
+    """The two variables for one connection's javis-zalo process, {} when live push is off. The values are the same
     for the whole life of this server, so they never change the MCP session's identity between two callers."""
     cid = str(conn_id or "").strip()
     if not cid or not enabled():
         return {}
     from urllib.parse import quote
-    return {"JEEVI_ZALO_PUSH_URL": f"http://127.0.0.1:{_port()}{PATH}?conn={quote(cid, safe='')}",
-            "JEEVI_ZALO_PUSH_TOKEN": _TOKEN}
+    return {"JAVIS_ZALO_PUSH_URL": f"http://127.0.0.1:{_port()}{PATH}?conn={quote(cid, safe='')}",
+            "JAVIS_ZALO_PUSH_TOKEN": _TOKEN}
 
 
 def token_ok(authorization: str) -> bool:
@@ -91,7 +91,7 @@ def note(conn_id: str, body: dict, epoch: int, now: Optional[float] = None) -> d
 
 
 def active(conn_id: str, epoch: int) -> bool:
-    """This connection's jeevi-zalo pushes: a wake-up came from the MCP session that is alive now."""
+    """This connection's javis-zalo pushes: a wake-up came from the MCP session that is alive now."""
     st = _STATE.get(str(conn_id or "").strip())
     return bool(enabled() and st and epoch and int(st.get("epoch") or 0) == int(epoch))
 

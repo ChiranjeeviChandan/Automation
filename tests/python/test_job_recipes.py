@@ -20,7 +20,7 @@ import os
 import tempfile
 from datetime import date
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-recipes-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-recipes-"))
 
 import config  # noqa: E402
 import engine  # noqa: E402
@@ -66,7 +66,7 @@ check("month arithmetic crosses a year", jr.evaluate(["month_start", -11], date(
       and jr.evaluate(["month_end", -1], date(2026, 3, 31)) == date(2026, 2, 28))
 
 steps = [{"tool": "shop__stats", "args": {"from": "2026-11-09", "to": "2026-11-10T23:59:59", "shop": 7}},
-         {"tool": "jeevi_query", "args": {"sql": "SELECT 1 WHERE d >= '2026-11-09'", "ref": "{{ref0}}"}}]
+         {"tool": "javis_query", "args": {"sql": "SELECT 1 WHERE d >= '2026-11-09'", "ref": "{{ref0}}"}}]
 skel, dates = jr.skeleton(steps)
 check("dates become slots, everything else is kept",
       dates == [date(2026, 11, 9), date(2026, 11, 10), date(2026, 11, 9)] or len(dates) == 3, dates)
@@ -115,9 +115,9 @@ check("from then on any day replays with the right week",
 
 check("a changed task text does not use the old recipe", jr.plan(recipe, TASK + " và tồn kho", MODE, THU) is None)
 check("a changed permission level does not either", jr.plan(recipe, TASK, "suggest", THU) is None)
-os.environ["JEEVI_RECIPES"] = "0"
-check("JEEVI_RECIPES=0 switches recipes off", jr.plan(recipe, TASK, MODE, THU) is None)
-os.environ.pop("JEEVI_RECIPES")
+os.environ["JAVIS_RECIPES"] = "0"
+check("JAVIS_RECIPES=0 switches recipes off", jr.plan(recipe, TASK, MODE, THU) is None)
+os.environ.pop("JAVIS_RECIPES")
 
 # a truly fixed date stays fixed
 JOB2 = "reminder:r_fixed:1"
@@ -192,7 +192,7 @@ check("a run that produced nothing teaches nothing", observe(TUE, week_steps(TUE
 check("a one-off or foreign job key is ignored", jr.base_job("kanban:12") == "" and jr.base_job("scout:ab") == ""
       and jr.base_job("reminder:r1:99") == "reminder:r1")
 jr.begin("reminder:r_ref:1")
-jr.note_call("reminder:r_ref:1", "jeevi_query", {"ref": "tr_" + "a" * 24, "sql": "SELECT 1"}, ok=True)
+jr.note_call("reminder:r_ref:1", "javis_query", {"ref": "tr_" + "a" * 24, "sql": "SELECT 1"}, ok=True)
 check("a reference from outside the run makes the recording unusable",
       jr.finish(BRAIN, "reminder:r_ref:1", ok=True, task=TASK, mode=MODE, run_day=TUE) == "")
 jr.begin("reminder:r_desc:1")
@@ -274,8 +274,8 @@ async def model_run(day):
         await engine._call_tool_for_model(route, mcp_hub._LAZY_RUN, {"name": "shop__describe_tools", "args": {}})
         seen = await engine._call_tool_for_model(route, mcp_hub._LAZY_RUN,
                                                  {"name": "shop__get_stats", "args": {"from": y, "to": y}})
-        ref = json.loads(seen)["jeevi_stored_result"]["ref"]
-        await engine._call_tool_for_model(route, "jeevi_query", {"ref": ref, "sql": "SELECT SUM(revenue) FROM records"})
+        ref = json.loads(seen)["javis_stored_result"]["ref"]
+        await engine._call_tool_for_model(route, "javis_query", {"ref": ref, "sql": "SELECT SUM(revenue) FROM records"})
         await engine._call_tool_for_model(route, mcp_hub._LAZY_RUN, {"name": "shop__trigger_sync", "args": {}})
         await engine._call_tool_for_model(route, mcp_hub._LAZY_RUN, {"name": "shop__send_message", "args": {"text": "hi"}})
     finally:
@@ -288,7 +288,7 @@ check("day two through the hub: confirmed", run(model_run(WED)) == "confirmed")
 hr = jr.load(HUB_BRAIN, HJOB)
 skel_steps = json.loads(hr["skeleton"])
 check("only plain reads were recorded: no describe call, no send, no tool that merely lacks a write word",
-      [s["tool"] for s in skel_steps] == ["shop__get_stats", "jeevi_query"], [s["tool"] for s in skel_steps])
+      [s["tool"] for s in skel_steps] == ["shop__get_stats", "javis_query"], [s["tool"] for s in skel_steps])
 check("the query step points at the step that produced its data, not at a dead reference",
       skel_steps[1]["args"]["ref"] == "{{ref0}}", skel_steps[1])
 plan = jr.plan(hr, HTASK, "full", THU)
@@ -342,7 +342,7 @@ check("a recipe step that is not a read is refused at replay time",
       run(do_replay([{"tool": "shop__send_message", "args": {"text": "x"}}])) is None and all(c[0] != "send_message" for c in _calls))
 check("a recipe step whose tool is gone is refused", run(do_replay([{"tool": "shop__gone", "args": {}}])) is None)
 check("a step that needs an earlier step's data cannot run alone",
-      run(do_replay([{"tool": "jeevi_query", "args": {"ref": "{{ref0}}", "sql": "SELECT 1"}}])) is None)
+      run(do_replay([{"tool": "javis_query", "args": {"ref": "{{ref0}}", "sql": "SELECT 1"}}])) is None)
 jr.finish(HUB_BRAIN, HJOB, ok=False, task=HTASK, mode="full", run_day=THU)
 
 # ============================================================
@@ -438,7 +438,7 @@ run(model_run(TUE))
 run(model_run(WED))
 plan = jr.plan(jr.load(HUB_BRAIN, HJOB), HTASK, "full", THU)
 run(do_replay(plan))
-jr.note_call(HJOB, "jeevi_query", {"ref": "tr_" + "b" * 24, "sql": "SELECT 1"}, ok=True)   # more analysis on the data
+jr.note_call(HJOB, "javis_query", {"ref": "tr_" + "b" * 24, "sql": "SELECT 1"}, ok=True)   # more analysis on the data
 check("querying the prefetched data further is NOT a re-read",
       jr.finish(HUB_BRAIN, HJOB, ok=True, task=HTASK, mode="full", run_day=THU) == "replayed"
       and jr.load(HUB_BRAIN, HJOB)["fails"] == 0)

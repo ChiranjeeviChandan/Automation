@@ -2,7 +2,7 @@
 
     python tests/run.py schedule_script_jobs
 
-Issue 1563: `jeevi_schedule` could not create a script job (the model had to call POST /reminders by hand), and a
+Issue 1563: `javis_schedule` could not create a script job (the model had to call POST /reminders by hand), and a
 run's result was cut to 2,000 characters on disk and silently again before the next run saw it.
 Issue 1480: a repeating job that fired late skipped the slots that passed meanwhile and nothing recorded it, so
 "every minute" could quietly turn into every few minutes.
@@ -14,7 +14,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-script-jobs-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-script-jobs-"))
 
 import reminders  # noqa: E402
 
@@ -27,12 +27,12 @@ def check(name, cond, extra=""):
         fails.append(name)
 
 
-spec = importlib.util.spec_from_file_location("jeevi_schedule_plugin",
-                                              ROOT / "system/plugins/jeevi-schedule/plugin.py")
+spec = importlib.util.spec_from_file_location("javis_schedule_plugin",
+                                              ROOT / "system/plugins/javis-schedule/plugin.py")
 sched = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(sched)
 
-# ---- 1563.1: jeevi_schedule creates a script job ----
+# ---- 1563.1: javis_schedule creates a script job ----
 sent = []
 
 
@@ -42,7 +42,7 @@ async def fake_post(payload, brain_name=""):
 
 
 sched._post_reminder = fake_post
-vault = tempfile.mkdtemp(prefix="jeevi-script-vault-")
+vault = tempfile.mkdtemp(prefix="javis-script-vault-")
 
 out = asyncio.run(sched._do_create(vault, {"name": "Canh don", "script": "check_shop.py", "schedule": "1m"}))
 p = sent[-1] if sent else {}
@@ -65,7 +65,7 @@ check("without `script` a job is still a model task", sent[-1].get("mode") == "t
       sent[-1])
 
 # ---- the reminder store, real ----
-brain = Path(tempfile.mkdtemp(prefix="jeevi-script-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="javis-script-brain-"))
 (brain / "Jeevi" / "scripts").mkdir(parents=True)
 (brain / "Jeevi" / "scripts" / "check_shop.py").write_text("print('ok')\n", encoding="utf-8")
 

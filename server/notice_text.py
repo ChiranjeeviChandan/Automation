@@ -9,7 +9,7 @@ ours are hard to read and people skip them". Two causes, both fixed here:
    line about what it is about to do ("Em kiểm tra hướng dẫn và lượt nhắc đến hạn, rồi đối chiếu..."), so the card
    said what Jeevi was going to do, never what it found. `headline` skips those lines.
 2. Nobody wrote a headline at all. A background run can now end with one hidden block,
-   `<!-- JEEVI_NOTIFY: {"title": "...", "line": "...", "act": true} -->`, written by the model that did the work and
+   `<!-- JAVIS_NOTIFY: {"title": "...", "line": "...", "act": true} -->`, written by the model that did the work and
    knows what matters. `split_block` takes it out of the text (channels never show it) and the bell uses it.
    `act` is the model saying the owner has to do or decide something; only then does a scheduled run ring, and only
    with a `why` from URGENT_WHY (push_policy.act_check, 2026-11-23). `line` is the owner's next step, or empty.
@@ -26,13 +26,13 @@ LINE_MAX = 160
 # The reasons an "act" (urgent) claim may give (owner, 2026-11-23); any other claim is lowered to important.
 URGENT_WHY = ("error", "money", "customer", "question", "deadline")
 
-_BLOCK_RE = re.compile(r"<!--\s*JEEVI_NOTIFY\s*:\s*(\{.*?\})\s*-->", re.S)
+_BLOCK_RE = re.compile(r"<!--\s*JAVIS_NOTIFY\s*:\s*(\{.*?\})\s*-->", re.S)
 
 # The instruction a background run gets (English, one copy for every language: the model writes the title and line in
 # the language of the job). Kept short: it rides on every scheduled run.
 PROMPT = (
     "At the very end of your answer add one hidden line for the owner's notification bell, exactly like this:\n"
-    '<!-- JEEVI_NOTIFY: {"title": "...", "line": "...", "act": false, "why": ""} -->\n'
+    '<!-- JAVIS_NOTIFY: {"title": "...", "line": "...", "act": false, "why": ""} -->\n'
     "- title: at most 8 words, the RESULT with its key number, in the job's language "
     "(\"Order #1234 cancelled, 1.2M lost\"), never what you were going to do (\"Checking the list...\").\n"
     "- line: the one thing the owner should do now, at most 10 words (\"Call the customer back before 5 pm\"), "
@@ -45,7 +45,7 @@ PROMPT = (
 # "will / is / let me", then a working verb, with no "đã" (done) in between. English: the usual openers.
 _NARRATION = re.compile(
     r"^(?:"
-    r"(?:để|bây giờ|giờ|trước tiên|đầu tiên)?\s*(?:em|mình|tôi|tớ|jeevi)\s+"
+    r"(?:để|bây giờ|giờ|trước tiên|đầu tiên)?\s*(?:em|mình|tôi|tớ|javis)\s+"
     r"(?:sẽ|đang|xin phép|tiếp tục|cần|bắt đầu|thử)?\s*"
     r"(?:kiểm tra|kiểm|xem|xem lại|đọc|rà|rà soát|tìm|tra|tra cứu|đối chiếu|mở|lấy|soát|chạy|gọi|tải|"
     r"truy vấn|nạp|quét|liệt kê|lọc|so sánh|tổng hợp|phân tích|bắt đầu|tiến hành|thử)\b"
@@ -68,7 +68,7 @@ _LEAD = "#*->•⚠✅⏰ \t"
 
 
 def split_block(text: str) -> tuple:
-    """(text without the JEEVI_NOTIFY block, {"title", "line", "act"} or {}). A broken block is removed and ignored:
+    """(text without the JAVIS_NOTIFY block, {"title", "line", "act"} or {}). A broken block is removed and ignored:
     it must never swallow the answer, nor show up raw in a chat."""
     raw = str(text or "")
     meta: dict = {}

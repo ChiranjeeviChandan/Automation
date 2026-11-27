@@ -1674,8 +1674,8 @@
  {
   "order": 167,
   "type": "APIRoute",
-  "path": "/jeevi-core/session",
-  "name": "jeevi_core_session",
+  "path": "/javis-core/session",
+  "name": "javis_core_session",
   "methods": [
    "POST"
   ],
@@ -1684,8 +1684,8 @@
  {
   "order": 168,
   "type": "APIRoute",
-  "path": "/jeevi-core/model",
-  "name": "jeevi_core_model_get",
+  "path": "/javis-core/model",
+  "name": "javis_core_model_get",
   "methods": [
    "GET"
   ],
@@ -1694,8 +1694,8 @@
  {
   "order": 169,
   "type": "APIRoute",
-  "path": "/jeevi-core/model",
-  "name": "jeevi_core_model_set",
+  "path": "/javis-core/model",
+  "name": "javis_core_model_set",
   "methods": [
    "POST"
   ],
@@ -3592,8 +3592,8 @@
  {
   "order": 360,
   "type": "APIRoute",
-  "path": "/jeevi/index",
-  "name": "jeevi_index",
+  "path": "/javis/index",
+  "name": "javis_index",
   "methods": [
    "GET"
   ],
@@ -3772,8 +3772,8 @@
  {
   "order": 378,
   "type": "APIRoute",
-  "path": "/jeevi-core/cite",
-  "name": "jeevi_core_cite",
+  "path": "/javis-core/cite",
+  "name": "javis_core_cite",
   "methods": [
    "POST"
   ],

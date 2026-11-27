@@ -10,7 +10,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-wfruns-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-wfruns-")
 
 import workflow_runs  # noqa: E402
 

@@ -219,7 +219,7 @@ Canonical của user vẫn là `skills/<slug>/SKILL.md`, `agents/<slug>.md` và 
 Activation trỏ revision overlay theo scope. Mỗi lượt dùng **effective view** = canonical đã pin + các overlay hợp lệ được chọn + luật/policy/grant host. Resolver chung phải phục vụ đồng nhất:
 
 - skill index/router và lazy loading;
-- `jeevi_use_skill`/đọc helper qua hub;
+- `javis_use_skill`/đọc helper qua hub;
 - persona/lesson của chat agent, goal và Team;
 - nội dung materialize cho engine native, gồm mirror `.claude/skills` của riêng lượt;
 - telemetry và bản giải thích đang dùng phiên bản nào.
@@ -289,7 +289,7 @@ V1 ưu tiên adapter API có tool inventory host kiểm soát. Đây là lựa c
 
 Host ghi `trial_id`, `engine_session_id`, provider/model/reasoning được yêu cầu và thực tế, native version nếu quan sát được, prompt/effective bundle hash, skill selection refs, tool inventory hash, fixture hash, grant hash, artifact hash và trạng thái kết thúc. Cấu hình thực tế không xác minh được có trường `coverage=unknown`; không giả định model alias bất biến.
 
-Tách ba tín hiệu: `available` (đã cấp vào view), `selected` (router/tool chọn), `observed_use` (host có sự kiện gọi/đọc phù hợp). Không có sự kiện `jeevi_use_skill` không chứng minh engine native không đọc skill. Không suy khả năng model hiểu/tuân thủ từ receipt. Thử sửa body cần đủ bằng chứng phiên bản mới đã được cấp theo đường dự kiến; thiếu thì `unverified_installation`, chưa kết luận patch vô ích.
+Tách ba tín hiệu: `available` (đã cấp vào view), `selected` (router/tool chọn), `observed_use` (host có sự kiện gọi/đọc phù hợp). Không có sự kiện `javis_use_skill` không chứng minh engine native không đọc skill. Không suy khả năng model hiểu/tuân thủ từ receipt. Thử sửa body cần đủ bằng chứng phiên bản mới đã được cấp theo đường dự kiến; thiếu thì `unverified_installation`, chưa kết luận patch vô ích.
 
 Nếu adapter có server/tool/session cache, key phải chứa effective bundle generation; test phải chứng minh lần sau không nạp nhầm bản cũ. Đổi activation giữa các lượt của cùng một việc chỉ có hiệu lực từ việc mới hoặc điểm nối đã chủ cho phép; turn đang chạy tiếp tục với bundle đã pin.
 
@@ -542,7 +542,7 @@ Mỗi API kiểm brain và owner principal từ auth/turn context, không tin `b
 
 Mọi mutation dùng auth+CSRF theo chuẩn repo. 409 cho stale/conflict, 403 cho ngoài quyền, 422 cho contract sai, 202 cho đã nhận; quota/provider wait là state có reason, không báo success của trial. WS dùng event id và object generation để client dedupe/reconcile sau mất mạng.
 
-V2 có công cụ `jeevi_improve` để chủ giao bằng chat: `inspect|propose|run|status|cancel`. Chỉ nhận chủ có quyền và giữ scope của turn; `apply|revert` chỉ được thêm khi có typed decision/policy tương đương UI, không cho untrusted document hoặc agent khác tự kích hoạt. Không tạo loop nền từ lời “có thể cải thiện”.
+V2 có công cụ `javis_improve` để chủ giao bằng chat: `inspect|propose|run|status|cancel`. Chỉ nhận chủ có quyền và giữ scope của turn; `apply|revert` chỉ được thêm khi có typed decision/policy tương đương UI, không cho untrusted document hoặc agent khác tự kích hoạt. Không tạo loop nền từ lời “có thể cải thiện”.
 
 ## 18. Đồng thời, phục hồi, vô hiệu hóa và retention
 
@@ -656,7 +656,7 @@ Không mở rộng một file điều phối thành hàng nghìn dòng logic m�
 
 `main.py` chỉ wire deps, route và seam build effective context. Chưa triển khai mốc sau thì không scaffold toàn bộ module/schema UI của mốc sau. Signature cụ thể và task TDD được viết trong implementation plan của từng mốc sau review spec.
 
-Điểm bắt buộc rà trên main khi thực hiện: `learn._promote_sync`; `agent_review` apply/proposal; `agent_lessons.for_prompt`; persona của DM/Team/goal; `skill_router` và `jeevi_use_skill`; mirror/native install; `system_sync`/pack update/disabled; `agent_ledger.reserve/mark_engine/settle`; usage parser/index; `team_runner._finish` và `team_acceptance`.
+Điểm bắt buộc rà trên main khi thực hiện: `learn._promote_sync`; `agent_review` apply/proposal; `agent_lessons.for_prompt`; persona của DM/Team/goal; `skill_router` và `javis_use_skill`; mirror/native install; `system_sync`/pack update/disabled; `agent_ledger.reserve/mark_engine/settle`; usage parser/index; `team_runner._finish` và `team_acceptance`.
 
 ## 22. Ma trận kiểm thử bắt buộc
 
@@ -699,7 +699,7 @@ Test giả chứng minh cơ chế; test model thật/pilot chứng minh hiệu q
 | S06 | Prior rollback không tương thích hoặc owner vừa sửa | Suspend an toàn; không đè sửa của chủ |
 | L01 | Recipe/lesson ở nhóm A, DM, `*`, brain khác | Lọc quyền/scope trước retrieval; không nhiễm chéo |
 | L02 | Recipe chỉ có selection win hoặc nhiều phần cùng đổi | Không nâng chứng cứ quá mức; NO_ENTRY hợp lệ |
-| L03 | Trial text có JEEVI_LESSON/RULE hoặc create-task directives | Không tự học/đặt việc production |
+| L03 | Trial text có JAVIS_LESSON/RULE hoặc create-task directives | Không tự học/đặt việc production |
 | L04 | Source bị xóa/evidence hết hạn | Tombstone/unavailable, không gọi là đủ hồ sơ hoặc tự tái tải |
 | U01 | Usage API/CLI summary/request tới muộn, ledger mirror | Không cộng trùng, null không thành 0, mất telemetry không giả hoàn tất |
 | U02 | Chi phí cao, quota thực chặn | Không tự giảm chất lượng; reason quota đúng và giữ baseline |

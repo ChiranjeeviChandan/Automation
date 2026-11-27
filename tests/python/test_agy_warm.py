@@ -30,9 +30,9 @@ FAKE = str(Path(__file__).with_name("_fake_agy_stream.py"))
 @pytest.fixture(autouse=True)
 def env(tmp_path, monkeypatch):
     monkeypatch.setenv("FAKE_AGY_DIR", str(tmp_path / "agy"))
-    monkeypatch.setenv("JEEVI_WARM_BUDGET_MB", "4000")
-    monkeypatch.setenv("JEEVI_AGY_MCP_HOME", "0")
-    monkeypatch.delenv("JEEVI_AGY_RESUME", raising=False)
+    monkeypatch.setenv("JAVIS_WARM_BUDGET_MB", "4000")
+    monkeypatch.setenv("JAVIS_AGY_MCP_HOME", "0")
+    monkeypatch.delenv("JAVIS_AGY_RESUME", raising=False)
     monkeypatch.setattr(agy, "co_co", lambda *names: "--input-format" in names)
     pool = warm_pool.Pool()
     monkeypatch.setattr(warm_pool, "POOL", pool)
@@ -238,7 +238,7 @@ def test_stop_mid_turn_ends_the_process_and_keeps_nothing(tmp_path, env):
 
 
 def test_switch_off_restores_one_process_per_turn(tmp_path, env, monkeypatch):
-    monkeypatch.setenv("JEEVI_AGY_RESUME", "0")
+    monkeypatch.setenv("JAVIS_AGY_RESUME", "0")
 
     async def go():
         cli = make_cli(tmp_path)

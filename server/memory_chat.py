@@ -3,7 +3,7 @@
 Owner, 16/10/2026, on the 0.187.0-0.188.0 settings: "Những phần đó người dùng không bao giờ dùng, thà nhắn tin bảo
 xóa sửa thu hồi rồi AI làm giúp còn tốt hơn." The memory list on the Jeevi Core card and the lesson lists on an
 assistant's settings column are gone from the screen; the person asks in chat and Jeevi does it with the
-`jeevi_memory` tool (system plugin `jeevi-memory`), on any engine.
+`javis_memory` tool (system plugin `javis-memory`), on any engine.
 
 The rules stay where they were (`memory_control`, `agent_lessons`): a forgotten memory keeps only a fingerprint and is
 not learnt again, a revoked lesson is not re-learnt by the agent, and the learning switch is a file the model's own

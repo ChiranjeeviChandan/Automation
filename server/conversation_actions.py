@@ -6,15 +6,15 @@ so before anyone clicks:
 
   - Profile. Messenger: name and picture from the User Profile API; Facebook never gives an app the person's profile
     link. Instagram: name, @username, picture and a link to instagram.com/<username>. Zalo personal account: display
-    name, Zalo name, avatar and phone when the person shares it (`jeevi-zalo friend info`). Groups have no profile.
+    name, Zalo name, avatar and phone when the person shares it (`javis-zalo friend info`). Groups have no profile.
   - Block (offered on EVERY channel since the owner asked on 2026-11-20: "chặn thì ở các kênh luôn"). Messenger: the
-    Page's block list (`POST /<page>/blocked` with the PSID). Zalo personal account: `jeevi-zalo friend block`. Every
+    Page's block list (`POST /<page>/blocked` with the PSID). Zalo personal account: `javis-zalo friend block`. Every
     other chat (Instagram, comments, Telegram, a Zalo group...) has no block in its API, so it is blocked in Jeevi only:
     the bot stays quiet, the chat is hidden and new messages never bring it back or count as unread (`unblock` undoes
     it, and on Messenger and Zalo also lifts the block on the platform).
-  - Leave (2026-11-20, owner: "nút rời nhóm ở zalo"). A Zalo group the account is in: `jeevi-zalo group leave`.
+  - Leave (2026-11-20, owner: "nút rời nhóm ở zalo"). A Zalo group the account is in: `javis-zalo group leave`.
   - Delete. A Facebook or Instagram comment thread: the top-level comment is deleted on the platform (its replies go
-    with it). A Threads reply (0.448.0) cannot be deleted by anyone but its author, so it is hidden under the post. Zalo personal account: the conversation is deleted on Zalo (`jeevi-zalo conv delete`). Messenger and
+    with it). A Threads reply (0.448.0) cannot be deleted by anyone but its author, so it is hidden under the post. Zalo personal account: the conversation is deleted on Zalo (`javis-zalo conv delete`). Messenger and
     Instagram direct messages: Meta lets no app delete them, so only the copy in Jeevi goes. In every case the
     conversation then leaves the Jeevi inbox. When the platform refuses, nothing is deleted in Jeevi either, so the
     owner can retry instead of losing the record of something still online.

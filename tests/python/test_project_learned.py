@@ -1,4 +1,4 @@
-"""A project that fills in its own context: tool `jeevi_project` and the "learned" layer (2026-11-13).
+"""A project that fills in its own context: tool `javis_project` and the "learned" layer (2026-11-13).
 
     python tests/python/test_project_learned.py
 
@@ -24,10 +24,10 @@ import os
 import tempfile
 from pathlib import Path
 
-STATE = tempfile.mkdtemp(prefix="jeevi-projlearn-")
-os.environ["JEEVI_STATE_DIR"] = STATE
-BR = Path(tempfile.mkdtemp(prefix="jeevi-projlearn-brain-")).resolve()
-OTHER = Path(tempfile.mkdtemp(prefix="jeevi-projlearn-other-")).resolve()
+STATE = tempfile.mkdtemp(prefix="javis-projlearn-")
+os.environ["JAVIS_STATE_DIR"] = STATE
+BR = Path(tempfile.mkdtemp(prefix="javis-projlearn-brain-")).resolve()
+OTHER = Path(tempfile.mkdtemp(prefix="javis-projlearn-other-")).resolve()
 
 import main  # noqa: E402
 import mcp_hub  # noqa: E402
@@ -45,8 +45,8 @@ def check(name, cond, extra=""):
         fails.append(name)
 
 
-spec = importlib.util.spec_from_file_location("jeevi_project_plugin",
-                                              ROOT / "system" / "plugins" / "jeevi-project" / "plugin.py")
+spec = importlib.util.spec_from_file_location("javis_project_plugin",
+                                              ROOT / "system" / "plugins" / "javis-project" / "plugin.py")
 plugin = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(plugin)
 regs = []
@@ -55,7 +55,7 @@ regs = []
 class Ctx:
     def __init__(self, vault_root):
         self.vault_root = vault_root
-        self.slug = "jeevi-project"
+        self.slug = "javis-project"
 
     def register_tool(self, *a, **kw):
         regs.append((a, kw))
@@ -78,15 +78,15 @@ pid = st.create_project("Hội Mình", brain=str(BR))
 # ============================================================
 # 1. The tool: one door, owner only
 # ============================================================
-check("one tool, jeevi_project, at level safe", name == "jeevi_project" and kw.get("min_mode") == "safe")
-check("owner only: a customer-facing bot never sees it", "jeevi_project" in mcp_hub.OWNER_ONLY_TOOLS)
+check("one tool, javis_project, at level safe", name == "javis_project" and kw.get("min_mode") == "safe")
+check("owner only: a customer-facing bot never sees it", "javis_project" in mcp_hub.OWNER_ONLY_TOOLS)
 check("the description lists every op and uses no long dash",
       all("op=" + op in desc for op in PC.OPS) and "\u2014" not in desc and "\u2013" not in desc)
 check("the schema offers exactly the ops the module runs",
       kw["schema"]["properties"]["op"]["enum"] == list(PC.OPS))
-man = (ROOT / "system" / "plugins" / "jeevi-project" / "plugin.yaml").read_text(encoding="utf-8")
+man = (ROOT / "system" / "plugins" / "javis-project" / "plugin.yaml").read_text(encoding="utf-8")
 check("manifest: bundled, on, lists the tool, both languages",
-      "enabled: true" in man and "- jeevi_project" in man and "description_en:" in man and "name_en:" in man)
+      "enabled: true" in man and "- javis_project" in man and "description_en:" in man and "name_en:" in man)
 check("an unknown op is refused", call({"op": "wipe", "project": pid}).startswith("ERROR"))
 
 # ============================================================
@@ -95,7 +95,7 @@ check("an unknown op is refused", call({"op": "wipe", "project": pid}).startswit
 out = call({"op": "note_add", "project": pid, "text": "Khách chính là mẹ bỉm sữa 25-35 tuổi", "kind": "fact"})
 notes = st.list_project_notes(pid)
 check("note_add stores one line as Jeevi's own note",
-      len(notes) == 1 and notes[0]["source"] == "jeevi" and notes[0]["kind"] == "fact" and "Đã ghi" in out, out)
+      len(notes) == 1 and notes[0]["source"] == "javis" and notes[0]["kind"] == "fact" and "Đã ghi" in out, out)
 nid = notes[0]["id"]
 out = call({"op": "note_add", "project": pid, "text": "khach chinh la me bim sua 25-35 tuoi!"})
 check("the same note without accents or case is not stored twice",
@@ -144,7 +144,7 @@ check("attaching it again adds no second row and keeps the description",
 check("a missing file says so", call({"op": "add_file", "project": pid, "path": "docs/none.md"}).startswith("ERROR"))
 # The drawer lets the owner attach anything under the browse ceiling (a whole drive on localhost). The TOOL is the
 # model's hand, so it is narrower: only what lives inside the project's own brain.
-outside = Path(tempfile.mkdtemp(prefix="jeevi-projlearn-outside-")).resolve() / "secret.txt"
+outside = Path(tempfile.mkdtemp(prefix="javis-projlearn-outside-")).resolve() / "secret.txt"
 outside.write_text("not in the brain", encoding="utf-8")
 check("a file outside the brain is refused, by absolute path and by ../, and nothing is stored",
       call({"op": "add_file", "project": pid, "path": str(outside)}).startswith("ERROR")
@@ -231,7 +231,7 @@ check("it carries the notes, the owner's first",
       "Chốt giá gói năm 990k" in block and block.index("Chốt giá gói năm 990k") < block.index("25-40"), block)
 check("it says which document holds what", "bang-gia.md: Bảng giá 3 gói, bản 11/2026" in block
       and "https://example.com/landing: Trang bán hàng chính" in block)
-check("it tells the model how to keep learning, with the project id", "jeevi_project" in block and pid in block)
+check("it tells the model how to keep learning, with the project id", "javis_project" in block and pid in block)
 check("the standing guide stays short (it rides on every turn of every project chat)", len(PC.LEARN_GUIDE) <= 650,
       len(PC.LEARN_GUIDE))
 check("no long dash anywhere in the block", "\u2014" not in block and "\u2013" not in block)
@@ -241,14 +241,14 @@ MC.set_learning(main._brain_memory_dir(str(BR)), False) if hasattr(MC, "set_lear
     (main._brain_memory_dir(str(BR)) / MC.LEARNING).write_text('{"enabled": false}', encoding="utf-8")
 off = main._project_learned_block(pid)
 check("learning switched off for the brain: what was learnt still shows, the invitation to learn more does not",
-      "Chốt giá gói năm 990k" in off and "jeevi_project`, project=" not in off, off)
+      "Chốt giá gói năm 990k" in off and "javis_project`, project=" not in off, off)
 empty_pid = st.create_project("Trống", brain=str(BR))
 check("learning off and nothing learnt: nothing is added to the prompt", main._project_learned_block(empty_pid) == "")
 (main._brain_memory_dir(str(BR)) / MC.LEARNING).write_text('{"enabled": true}', encoding="utf-8")
 check("a new project with learning on gets only the short guide",
-      "jeevi_project" in main._project_learned_block(empty_pid) and "không phải lệnh" not in main._project_learned_block(empty_pid))
+      "javis_project" in main._project_learned_block(empty_pid) and "không phải lệnh" not in main._project_learned_block(empty_pid))
 
-many = [{"id": str(i), "kind": "fact", "source": "jeevi", "created_at": i, "text": f"Ghi chú số {i} " + "x" * 200}
+many = [{"id": str(i), "kind": "fact", "source": "javis", "created_at": i, "text": f"Ghi chú số {i} " + "x" * 200}
         for i in range(40)]
 lines, hidden = PC.note_lines(many)
 check("the notes of one turn are capped, and the block says how many were left out",
@@ -261,18 +261,18 @@ check("the newest notes are the ones kept", "Ghi chú số 39" in lines[0])
 cap_pid = st.create_project("Đầy", brain=str(BR))
 first = st.add_project_note(cap_pid, "ghi chú của chủ", source="owner")
 for i in range(sessions.PROJECT_NOTES_CAP - 1):
-    st.add_project_note(cap_pid, f"jeevi note {i}", source="jeevi")
-res = st.add_project_note(cap_pid, "one more", source="jeevi")
+    st.add_project_note(cap_pid, f"javis note {i}", source="javis")
+res = st.add_project_note(cap_pid, "one more", source="javis")
 kept = st.list_project_notes(cap_pid)
 check("past the cap the oldest note Jeevi wrote makes room, and the result names it",
-      len(kept) == sessions.PROJECT_NOTES_CAP and res["dropped"] == "jeevi note 0"
+      len(kept) == sessions.PROJECT_NOTES_CAP and res["dropped"] == "javis note 0"
       and first["id"] in [n["id"] for n in kept])
 own_pid = st.create_project("Của chủ", brain=str(BR))
 for i in range(sessions.PROJECT_NOTES_CAP):
     st.add_project_note(own_pid, f"owner note {i}", source="owner")
 check("a project full of the owner's notes refuses a new one instead of dropping theirs",
-      st.add_project_note(own_pid, "jeevi wants in", source="jeevi")["id"] == ""
-      and call({"op": "note_add", "project": own_pid, "text": "jeevi wants in"}).startswith("ERROR"))
+      st.add_project_note(own_pid, "javis wants in", source="javis")["id"] == ""
+      and call({"op": "note_add", "project": own_pid, "text": "javis wants in"}).startswith("ERROR"))
 
 # ============================================================
 # 9. Clean-up follows the project and the asset
@@ -315,7 +315,7 @@ out = call({"op": "describe", "agent": "viet-bai", "path": "docs/giong-van.md", 
 check("describe rewrites an assistant document's line",
       agent_assets.doc(main._read_md(AG / "viet-bai.md")[0])["files"][0]["description"] == "Giọng văn, cách xưng hô", out)
 check("get on an assistant lists its documents and points at its lessons",
-      "Giọng văn, cách xưng hô" in (g := call({"op": "get", "agent": "viet-bai"})) and "jeevi_memory op=lessons" in g, g)
+      "Giọng văn, cách xưng hô" in (g := call({"op": "get", "agent": "viet-bai"})) and "javis_memory op=lessons" in g, g)
 check("notes and instructions stay project-only",
       call({"op": "note_add", "agent": "viet-bai", "text": "x y z"}).startswith("ERROR")
       and call({"op": "set_instructions", "agent": "viet-bai", "text": "x"}).startswith("ERROR"))
@@ -398,9 +398,9 @@ check("POST /notes saves the owner's note and GET returns it",
       r.status_code == 200 and got["notes"][0]["source"] == "owner" and got["notes"][0]["kind"] == "decision", r.text)
 r = client.post(f"/projects/{web_pid}/notes", data={"text": "password: hunter2222"})
 check("the route refuses a secret too", r.status_code == 400 and len(st.list_project_notes(web_pid)) == 1, r.text)
-jeevi_note = st.add_project_note(web_pid, "jeevi guessed this", source="jeevi")["id"]
-r = client.post(f"/projects/{web_pid}/notes/{jeevi_note}/update", data={"text": "the owner fixed this"})
-fixed = [n for n in st.list_project_notes(web_pid) if n["id"] == jeevi_note][0]
+javis_note = st.add_project_note(web_pid, "javis guessed this", source="javis")["id"]
+r = client.post(f"/projects/{web_pid}/notes/{javis_note}/update", data={"text": "the owner fixed this"})
+fixed = [n for n in st.list_project_notes(web_pid) if n["id"] == javis_note][0]
 check("a note the owner edits becomes theirs", r.json().get("ok") and fixed["source"] == "owner"
       and fixed["text"] == "the owner fixed this")
 r = client.post(f"/projects/{web_pid}/notes/{note_id}/delete")

@@ -28,8 +28,8 @@ global.window.dispatchEvent = () => {};
 global.window.addEventListener = () => {};
 
 require(path.join(root, "dashboard", "graph.js"));
-const JeeviGraph = window.JeeviGraph;
-const M = JeeviGraph._layoutMemory;
+const JavisGraph = window.JavisGraph;
+const M = JavisGraph._layoutMemory;
 
 // A stand-in for the force-graph library: records what the graph asks of it.
 function fakeLib() {
@@ -61,7 +61,7 @@ function edges(list) { return list.slice(1).map((n, i) => ({ source: list[i].id,
 async function open(nodeList, lib) {
   global.window.ForceGraph = () => () => lib.api;
   global.fetch = async () => ({ ok: true, json: async () => ({ nodes: nodeList.map((n) => ({ ...n })), edges: edges(nodeList) }) });
-  const g = new JeeviGraph({ clientWidth: 800, clientHeight: 600, style: {}, addEventListener() {} });
+  const g = new JavisGraph({ clientWidth: 800, clientHeight: 600, style: {}, addEventListener() {} });
   await g.load("source=brain");
   return g;
 }
@@ -81,7 +81,7 @@ function run(g, lib, ticks, ms) {
   check("nothing remembered: a small graph keeps its 24 warm-up steps and five seconds of physics",
     lib.last("warmupTicks") === 24 && lib.last("cooldownTime") === 5000);
   check("the warm-up shrinks as the graph grows (it runs in one go before the first frame)",
-    JeeviGraph.warmupFor(40, "") === 24 && JeeviGraph.warmupFor(900, "") === 12 && JeeviGraph.warmupFor(2600, "") === 6);
+    JavisGraph.warmupFor(40, "") === 24 && JavisGraph.warmupFor(900, "") === 12 && JavisGraph.warmupFor(2600, "") === 6);
   check("nothing is kept before the physics has stopped", !store[M.KEY + "source=brain"]);
   run(g, lib, 191, 5000);   // a fast machine: 38 steps a second
   const rec = JSON.parse(store[M.KEY + "source=brain"] || "null");
@@ -133,7 +133,7 @@ function run(g, lib, ticks, ms) {
   g = await open(list, lib);
   run(g, lib, 36, 5000);   // a phone: 7 steps a second, each one a visible stutter
   check("a machine too slow to animate the settling is remembered as such", JSON.parse(store[M.KEY + "source=brain"]).s === 1
-    && JeeviGraph.slowRun(36, 5000) && !JeeviGraph.slowRun(191, 5000));
+    && JavisGraph.slowRun(36, 5000) && !JavisGraph.slowRun(191, 5000));
   lib = fakeLib();
   g = await open(list, lib);
   check("it keeps the layout it ended on: no physics on the next opening", lib.last("cooldownTime") === 0);
@@ -169,7 +169,7 @@ function run(g, lib, ticks, ms) {
     g.setThinking(true);
     check("thinking wakes it", lib.running === true);
     g.setThinking(false);
-    pass(JeeviGraph.AN_HAN_MS + 100);
+    pass(JavisGraph.AN_HAN_MS + 100);
     check("and it sleeps again once the grace period is over", lib.running === false);
     g.resize();
     check("a new size wakes it for the redraw", lib.running === true);

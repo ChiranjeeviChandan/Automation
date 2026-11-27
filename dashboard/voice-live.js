@@ -240,10 +240,10 @@
 
   // The speaker picked in Settings > Voice (audio-devices.js); the default when none is picked or it is gone.
   function toSpeaker(target) {
-    try { var dev = window.JeeviAudioDevices; if (dev && dev.applySpeaker) dev.applySpeaker(target); } catch (e) {}
+    try { var dev = window.JavisAudioDevices; if (dev && dev.applySpeaker) dev.applySpeaker(target); } catch (e) {}
   }
   try {
-    window.addEventListener("jeevi:audio-devices", function (e) {
+    window.addEventListener("javis:audio-devices", function (e) {
       if (e && e.detail && e.detail.kind !== "speaker") return;
       if (outCtx && outCtx.state !== "closed") toSpeaker(outCtx);
       if (rtcAudioEl) toSpeaker(rtcAudioEl);
@@ -395,7 +395,7 @@
 
   var MIC_OPTIONS = { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 };
   function getMic() {
-    var dev = window.JeeviAudioDevices;
+    var dev = window.JavisAudioDevices;
     if (dev && dev.getMic) return dev.getMic(MIC_OPTIONS);    // the chosen mic, the default when it is gone
     return navigator.mediaDevices.getUserMedia({ audio: MIC_OPTIONS });
   }
@@ -409,7 +409,7 @@
     if (useWorklet) {
       try {
         src = inCtx.createMediaStreamSource(stream);
-        proc = new window.AudioWorkletNode(inCtx, "jeevi-mic", { numberOfInputs: 1, numberOfOutputs: 0, channelCount: 1 });
+        proc = new window.AudioWorkletNode(inCtx, "javis-mic", { numberOfInputs: 1, numberOfOutputs: 0, channelCount: 1 });
         proc.port.onmessage = function (ev) {
           if (id !== generation || ws !== socket || socket.readyState !== WebSocket.OPEN) return;
           try { ws.send(ev.data); } catch (e) { socket.onerror(e); }
@@ -544,7 +544,7 @@
     rtcAudioEl = null;
   }
 
-  window.JeeviVoiceLive = { start: start, stop: stop, unlock: unlock, release: release, sendText: sendText, sendContext: sendContext, ask: ask, attachMic: attachMic,
+  window.JavisVoiceLive = { start: start, stop: stop, unlock: unlock, release: release, sendText: sendText, sendContext: sendContext, ask: ask, attachMic: attachMic,
                             hasMic: function () { return !!stream; },
                             playedMs: playedMs, progress: progress, resetProgress: resetProgress,
                             setMuted: setMuted, isMuted: function () { return muted; },

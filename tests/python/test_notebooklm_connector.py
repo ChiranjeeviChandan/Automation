@@ -122,7 +122,7 @@ import stat  # noqa: E402
 import tempfile  # noqa: E402
 import mcp_store  # noqa: E402
 
-home = tempfile.mkdtemp(prefix="jeevi-nblm-home-")
+home = tempfile.mkdtemp(prefix="javis-nblm-home-")
 paste = '{"cookies":[{"name":"SID","value":"a"}],"origins":[]}'
 env = {"NOTEBOOKLM_AUTH_JSON": paste, "HOME": home}
 check("the paste is handed over as a file", mcp_store.notebooklm_session_file(env, home) is True)
@@ -133,7 +133,7 @@ if os.name == "posix":
           oct(stat.S_IMODE(os.stat(f).st_mode)))
 check("the env value is removed (the library would read it before the file)", "NOTEBOOKLM_AUTH_JSON" not in env, env)
 check("CANARY: no NOTEBOOKLM_PROFILE is set (rule 4)", "NOTEBOOKLM_PROFILE" not in env, env)
-first_tag = env.get("JEEVI_NOTEBOOKLM_PASTE")
+first_tag = env.get("JAVIS_NOTEBOOKLM_PASTE")
 check("a tag of the paste joins the spawn env", bool(first_tag) and len(first_tag) == 12, env)
 
 rotated = '{"cookies":[{"name":"SID","value":"rotated-by-google"}],"origins":[]}'
@@ -142,17 +142,17 @@ env2 = {"NOTEBOOKLM_AUTH_JSON": paste, "HOME": home}
 mcp_store.notebooklm_session_file(env2, home)
 check("a restart with the same paste keeps the cookies the library rotated", open(f).read() == rotated)
 check("the same paste keeps the same tag (the running server is not restarted)",
-      env2.get("JEEVI_NOTEBOOKLM_PASTE") == first_tag)
+      env2.get("JAVIS_NOTEBOOKLM_PASTE") == first_tag)
 
 new_paste = '{"cookies":[{"name":"SID","value":"new-login"}],"origins":[]}'
 env3 = {"NOTEBOOKLM_AUTH_JSON": new_paste, "HOME": home}
 mcp_store.notebooklm_session_file(env3, home)
 check("a new paste replaces the file", open(f).read() == new_paste)
-check("a new paste changes the tag, so the server restarts on it", env3.get("JEEVI_NOTEBOOKLM_PASTE") != first_tag)
+check("a new paste changes the tag, so the server restarts on it", env3.get("JAVIS_NOTEBOOKLM_PASTE") != first_tag)
 
 env4 = {"HOME": home}
 check("no paste: nothing happens", mcp_store.notebooklm_session_file(env4, home) is False and env4 == {"HOME": home})
-blocked = os.path.join(tempfile.mkdtemp(prefix="jeevi-nblm-blocked-"), "a-file")
+blocked = os.path.join(tempfile.mkdtemp(prefix="javis-nblm-blocked-"), "a-file")
 open(blocked, "w").write("x")
 env5 = {"NOTEBOOKLM_AUTH_JSON": paste}
 check("a folder that cannot be made leaves the env value as before",

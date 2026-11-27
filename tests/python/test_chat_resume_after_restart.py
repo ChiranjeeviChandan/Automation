@@ -16,9 +16,9 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-chat-resume-")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-chat-resume-brains-")
-os.environ.pop("JEEVI_RESUME_AFTER_RESTART", None)
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-chat-resume-")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-chat-resume-brains-")
+os.environ.pop("JAVIS_RESUME_AFTER_RESTART", None)
 
 import turn_ledger as TL  # noqa: E402
 from chat_runtime import ChatRuntime  # noqa: E402
@@ -42,7 +42,7 @@ def old_boot(session_id=None):
 
 
 # ---------- the ledger ----------
-TL.configure(Path(tempfile.mkdtemp(prefix="jeevi-turn-ledger-")) / "turns.sqlite3")
+TL.configure(Path(tempfile.mkdtemp(prefix="javis-turn-ledger-")) / "turns.sqlite3")
 TL.begin("s1", 11, "Câu hỏi 1", "câu 1", "brain")
 TL.begin("s2", 21, "Câu hỏi 2", None, "brain")
 check("a running turn is on disk with the exact text it was given", [(r["session_id"], r["user_mid"], r["user_message"], r["user_text"])
@@ -75,9 +75,9 @@ check("a cut turn too old to answer is dropped, not handed out", TL.take_cut() =
 TL.begin("s3", 0, "tiếp tục việc nền", None, "brain")
 TL.drop("s3")
 check("drop forgets a row", TL.rows() == [])
-os.environ["JEEVI_RESUME_AFTER_RESTART"] = "0"
-check("the switch reads JEEVI_RESUME_AFTER_RESTART", TL.resume_on() is False)
-os.environ.pop("JEEVI_RESUME_AFTER_RESTART", None)
+os.environ["JAVIS_RESUME_AFTER_RESTART"] = "0"
+check("the switch reads JAVIS_RESUME_AFTER_RESTART", TL.resume_on() is False)
+os.environ.pop("JAVIS_RESUME_AFTER_RESTART", None)
 check("and is on by default", TL.resume_on() is True)
 
 # ---------- the runtime tells the host when a job is over ----------
@@ -133,7 +133,7 @@ check("an old job ending under a newer one of the same chat does not close the n
 import main  # noqa: E402
 from starlette.testclient import TestClient  # noqa: E402
 
-TL.configure(Path(os.environ["JEEVI_STATE_DIR"]) / "turn_ledger.sqlite3")
+TL.configure(Path(os.environ["JAVIS_STATE_DIR"]) / "turn_ledger.sqlite3")
 main.cfgmod.gate_active = lambda: False
 client = TestClient(main.app, base_url="http://127.0.0.1")
 store = main.get_store()
@@ -246,12 +246,12 @@ check("a question that is no longer the last message is left alone", CALLS == []
 # Switched off.
 CALLS.clear()
 sid = cut_chat("Câu khi tắt tự chạy lại")
-os.environ["JEEVI_RESUME_AFTER_RESTART"] = "0"
+os.environ["JAVIS_RESUME_AFTER_RESTART"] = "0"
 try:
     connect(wait_done=False)
 finally:
-    os.environ.pop("JEEVI_RESUME_AFTER_RESTART", None)
-check("JEEVI_RESUME_AFTER_RESTART=0: nothing runs again, as before", CALLS == [] and last(sid).get("role") == "user", last(sid))
+    os.environ.pop("JAVIS_RESUME_AFTER_RESTART", None)
+check("JAVIS_RESUME_AFTER_RESTART=0: nothing runs again, as before", CALLS == [] and last(sid).get("role") == "user", last(sid))
 
 # ---------- wiring ----------
 hub = (SERVER / "mcp_hub.py").read_text(encoding="utf-8")

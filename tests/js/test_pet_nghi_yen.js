@@ -75,7 +75,7 @@ global.FormData = function () { this.append = function () {}; };
 Math.random = () => 0.5;
 
 require(path.join(root, "dashboard", "pet.js"));
-const P = window.JeeviPet;
+const P = window.JavisPet;
 
 // Run frames 16 ms apart until the loop stops asking for one (rest) or a limit.
 function chayKhung(toiDa) {

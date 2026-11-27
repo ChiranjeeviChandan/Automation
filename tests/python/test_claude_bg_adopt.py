@@ -15,7 +15,7 @@ import time
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-cbga-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-cbga-")
 import asyncio  # noqa: E402
 
 import tien_trinh_nen as T  # noqa: E402
@@ -32,18 +32,18 @@ def check(name, cond, extra=""):
 
 
 # ---- turn_done_notice (every platform) ----
-os.environ.pop("JEEVI_LONG_TURN_NOTIFY_S", None)
+os.environ.pop("JAVIS_LONG_TURN_NOTIFY_S", None)
 check("a short turn does not ring", not N.should_notify(30, "hi", "answer"))
 check("a turn of 3 minutes or more rings", N.should_notify(200, "make the video", "Here is the video"))
 check("an empty answer never rings", not N.should_notify(900, "x", "  "))
 check("a background job's follow-up rings however short",
       N.should_notify(5, N.FOLLOWUP_HEAD + " ffmpeg (4 phút).\nLàm tiếp: ...", "Done, link below"))
-os.environ["JEEVI_LONG_TURN_NOTIFY_S"] = "0"
-check("JEEVI_LONG_TURN_NOTIFY_S=0 keeps only follow-ups",
+os.environ["JAVIS_LONG_TURN_NOTIFY_S"] = "0"
+check("JAVIS_LONG_TURN_NOTIFY_S=0 keeps only follow-ups",
       not N.should_notify(5000, "x", "y") and N.should_notify(1, N.FOLLOWUP_HEAD, "y"))
-os.environ["JEEVI_LONG_TURN_NOTIFY_S"] = "nonsense"
+os.environ["JAVIS_LONG_TURN_NOTIFY_S"] = "nonsense"
 check("a broken threshold falls back to the default", N.threshold_s() == N.DEFAULT_THRESHOLD_S)
-os.environ.pop("JEEVI_LONG_TURN_NOTIFY_S", None)
+os.environ.pop("JAVIS_LONG_TURN_NOTIFY_S", None)
 check("a long answer is cut for the bell", len(N.notice_text("a" * 5000)) <= N.MAX_BODY + 3)
 src_main = (SERVER / "main.py").read_text(encoding="utf-8")
 check("the follow-up turn opens with the shared head", "turn_done_notice.FOLLOWUP_HEAD} {mo_ta}" in src_main)
@@ -68,14 +68,14 @@ class _H(warm_pool.Handle):
 
 
 async def _forget():
-    os.environ["JEEVI_WARM_BUDGET_MB"] = "4000"
+    os.environ["JAVIS_WARM_BUDGET_MB"] = "4000"
     pool = warm_pool.Pool()
     h = _H()
     slot = pool.admit("conv1", "claude", "fp", h)
     before = pool.peek("conv1") is slot
     pool.detach(slot)
     await asyncio.sleep(0.05)
-    del os.environ["JEEVI_WARM_BUDGET_MB"]
+    del os.environ["JAVIS_WARM_BUDGET_MB"]
     return before, pool.peek("conv1"), h.closed
 
 before, left, closed = asyncio.run(_forget())
@@ -180,7 +180,7 @@ if not T.POSIX:
     print("\nOK - test_claude_bg_adopt")
     sys.exit(0)
 
-WD = tempfile.mkdtemp(prefix="jeevi-cbga-wd-")
+WD = tempfile.mkdtemp(prefix="javis-cbga-wd-")
 
 
 def marked_env(mark):
@@ -200,7 +200,7 @@ T.dat_loi_dan("web:A", "add the audio and send the video")
 check("co_nhom_song sees the marked work", T.co_nhom_song("chat:A:1"))
 ds = T.nhan_nuoi_theo_tag("chat:A:1", WD, "web:A")
 check("the end of the turn adopts it", len(ds) == 1, ds)
-check("jeevi_job op=then is no longer dropped for Claude Code",
+check("javis_job op=then is no longer dropped for Claude Code",
       bool(ds) and ds[0].get("sau_khi_xong") == "add the audio and send the video" and ds[0].get("noi_tiep"))
 check("an adopted group is not adopted twice", T.groups_left_by_mark("conv-A") == [])
 done = []

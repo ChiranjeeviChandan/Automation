@@ -39,7 +39,7 @@ MAX_CHILD_TABLES = 8
 MAX_ROWS_OUT = 500
 SQL_TIMEOUT_S = 8.0
 MAX_SQL_CHARS = 8000
-DATASET_KEY = "jeevi_dataset"
+DATASET_KEY = "javis_dataset"
 _NAME_RE = re.compile(r"[^A-Za-z0-9_]+")
 _SQL_STRING_RE = re.compile(r"'(?:[^']|'')*'|\"(?:[^\"]|\"\")*\"")
 _SQL_COMMENT_RE = re.compile(r"--[^\n]*|/\*.*?\*/", re.S)
@@ -155,7 +155,7 @@ def slice_records(loaded: dict, ref: str, fields=None, offset=0, limit=50, max_c
         head["fields"] = names
         if more:
             head["fields_not_listed"] = more
-    return _dumps({"jeevi_query": head, "records": out})
+    return _dumps({"javis_query": head, "records": out})
 
 
 # ---------------------------------------------------------------- text
@@ -187,7 +187,7 @@ def text_view(text: str, ref: str, search: str = "", offset=0, limit=80, max_cha
             last = block[-1][0]
             room -= size
             shown += 1
-        header = (f"[jeevi_query ref={ref} search={search!r} matched_lines={len(hits)} ({mode}) shown={shown} "
+        header = (f"[javis_query ref={ref} search={search!r} matched_lines={len(hits)} ({mode}) shown={shown} "
                   f"total_lines={len(lines)}]")
         return header + "\n" + "\n".join(out)
     try:
@@ -204,7 +204,7 @@ def text_view(text: str, ref: str, search: str = "", offset=0, limit=80, max_cha
         room -= len(ln) + 1
         i += 1
     nxt = i if i < len(lines) else None
-    header = f"[jeevi_query ref={ref} lines {offset + 1}-{i} of {len(lines)} next_offset={nxt}]"
+    header = f"[javis_query ref={ref} lines {offset + 1}-{i} of {len(lines)} next_offset={nxt}]"
     return header + "\n" + "\n".join(out)
 
 
@@ -527,7 +527,7 @@ def run_sql(loaded: dict, ref: str, sql: str, max_chars: int = OUTPUT_CHARS_DEFA
             if truncated:
                 head["truncated"] = True
                 head["hint"] = "More rows exist than fit. Aggregate (GROUP BY), select fewer columns, or add LIMIT/OFFSET."
-            return _dumps({"jeevi_query": head, "columns": names, "rows": rows})
+            return _dumps({"javis_query": head, "columns": names, "rows": rows})
         finally:
             db.set_progress_handler(None, 0)
             if not ent["cached"]:
@@ -538,7 +538,7 @@ def schema_view(loaded: dict, ref: str, max_chars: int = OUTPUT_CHARS_DEFAULT, c
     ent = _open_database(loaded["records"], cache_key)
     with ent["lock"]:
         try:
-            return _dumps({"jeevi_query": {"ref": ref, "total_records": len(loaded["records"]),
+            return _dumps({"javis_query": {"ref": ref, "total_records": len(loaded["records"]),
                                            "records_at": loaded["pointer"], **ent["notes"]},
                            "tables": describe(ent["schema"], ent["db"], max_chars - 400)})
         finally:

@@ -40,7 +40,7 @@ activation on a real brain.
 ## Checkpoint Claude Opus 5.5, 25/10/2026
 
 Owner re-issued the full M0–M8 Goal in a Claude Code session (Goal section 19); section 18
-narrowing is history. Worktree `D:/Project/Jeevi-OS/.claude/worktrees/jeevi-agent-skill-improvement-3dc1ea`,
+narrowing is history. Worktree `D:/Project/Jeevi-OS/.claude/worktrees/javis-agent-skill-improvement-3dc1ea`,
 pushed to `codex/agent-skill-improvement-m2d1` (PR #803, retitled 0.314.0). The Codex worktree
 `C:/Users/admin/.codex/worktrees/agent-skill-improvement-m2a` is untouched (two untracked WIP files left there).
 
@@ -48,7 +48,7 @@ Done in this session:
 - Merged origin/main 0.312.0 into the M2D1 branch (`44ee0349`): 10 conflicts, branch logic kept for
   task-scope skill reads, i18n and script tags unioned, route table regenerated. Version 0.314.0 reserved (`b9a4fe23`).
 - M2E manual activation (`a3359bff`): schema 11 `improvement_activations`, apply/revert/reconcile,
-  read-time resolver in lazy router, in-process `jeevi_use_skill` and task scope; CLI hub requests and
+  read-time resolver in lazy router, in-process `javis_use_skill` and task scope; CLI hub requests and
   non-DM channels keep canonical. API `GET/POST /improvement-activations`, `POST .../{id}/revert`.
   Studio candidate panel: apply block and applied list with Revert. Ops doc `docs/dev/improvement-manual-apply.md`.
 - M2F simulated feasibility (`a3359bff`): `test_improvement_feasibility_simulated.py`, four labelled
@@ -59,7 +59,7 @@ Done in this session:
 | M0, M1, M2A–C | Released 0.287–0.296 (reused) | None claimed | Suggest-only |
 | M2 (D1 integrated, E manual apply, F simulated feasibility) | **Released 0.314.0** (`f3348f04`, #803): full CI green, 2 independent reviews fixed, native profile re-qualified on CLI 2.1.310 (20/20), Docker publish green | None; real feasibility PENDING | Manual, API engines, assistant chat only |
 | M3 (canary, owner verdicts, monitoring, promotion, grants, pilot conclusion) | **Released 0.316.0** (`b7c81dc7`, #822): CI green, review 2 important + 7 minor fixed, native re-qualified (20/20), Docker green | None; live canary and pilot PENDING | Off until the owner applies |
-| M4 (routing evaluator, description overlay for the main chat, telemetry, UI) | **Released 0.320.0** (`e1d57392`, #823): CI green, review fixed, native re-qualified (20/20). Open: API-engine trial adapter (spec 10.3), native CLI routing measurement, hub `jeevi_use_skill` description still canonical | None; real engine smoke PENDING | Main chat, API engines, off until the owner applies |
+| M4 (routing evaluator, description overlay for the main chat, telemetry, UI) | **Released 0.320.0** (`e1d57392`, #823): CI green, review fixed, native re-qualified (20/20). Open: API-engine trial adapter (spec 10.3), native CLI routing measurement, hub `javis_use_skill` description still canonical | None; real engine smoke PENDING | Main chat, API engines, off until the owner applies |
 | M5 (agent procedure overlay, surfaces dm/team/kanban/workflow, session pin, owner-rule drift, learn/review staging, lesson linkage, UI) | **Released 0.323.0** (`22ef0375`, #825): CI green, review 4 important + 6 minor fixed, native re-qualified (20/20) | None; agent pilot and agent canary PENDING (owner) | Off until the owner applies |
 | M6 (agent-skill bundle: validator, atomic pointer, all-or-nothing read gate, recovery, attribution labels, UI) | **Released 0.325.0** (`485ad69f`, #828): CI green, review 1 critical + 7 important fixed, native re-qualified (20/20). Not built: executable helpers in the sandbox (owner grant for the executable kind), skill split/merge with alias, real ablation arms and a bundle qualification | None; real agent-only/skill-only arms PENDING | Off until the owner applies |
 | M7 (Team trial pins and comparison T01, scoped reports T02, untested recipe transfer, API) | **Released 0.327.0** (`409219ad`, #830): CI green, review 1 critical + 5 important fixed, native re-qualified (20/20). Not built: a real Team trial runner, per-step artifact handoff, aggregate trial acceptance, plan/source pinning, lesson freezing during arms, UI | None; a Team business comparison PENDING (owner, real runs) | API only |

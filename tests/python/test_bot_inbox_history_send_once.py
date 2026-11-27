@@ -24,7 +24,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-bot-send-once-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-bot-send-once-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -173,7 +173,7 @@ REPLY["v"] = "Dạ em gửi chị mã vận đơn VD123 ạ"
 record("s2", "customer", "Mã vận đơn đâu em?", mid="s2-d2")
 turn(sess2, "s2", "Mã vận đơn đâu em?", "s2-d2")
 REPLY["v"] = "Dạ mai giao ạ."
-record("s2", "human", "Dạ em gửi chị mã vận đơn VD123 ạ", metadata={"tu_jeevi": True, "via": "tool"})
+record("s2", "human", "Dạ em gửi chị mã vận đơn VD123 ạ", metadata={"tu_javis": True, "via": "tool"})
 record("s2", "customer", "Cảm ơn shop", mid="s2-e")
 turn(sess2, "s2", "Cảm ơn shop", "s2-e")
 check("A2 what the bot sent itself with a tool is not added a second time",
@@ -333,7 +333,7 @@ class _FakeChannel:
 
 
 _spec = channels.KenhSpec(id="fakech", nhan="Fake", kind="webhook",
-                          nang_luc={"tra_loi_tu_jeevi": True, "gui_file": True})
+                          nang_luc={"tra_loi_tu_javis": True, "gui_file": True})
 _orig_spec, _orig_module = channels.spec, channels.module
 channels.spec = lambda k: _spec if k == "fakech" else _orig_spec(k)
 channels.module = lambda k: _FakeChannel if k == "fakech" else _orig_module(k)

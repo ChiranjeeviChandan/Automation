@@ -17,8 +17,8 @@ import sys
 import tempfile
 import time
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-gh-oauth-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-gh-oauth-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -28,8 +28,8 @@ except Exception:
 from _fake_github import FakeGitHub, GOOD_TOKEN  # noqa: E402
 
 fake = FakeGitHub(scopes=None)          # GitHub App tokens carry no X-OAuth-Scopes header
-os.environ["JEEVI_GITHUB_API"] = fake.url
-os.environ["JEEVI_GITHUB_WEB"] = fake.url
+os.environ["JAVIS_GITHUB_API"] = fake.url
+os.environ["JAVIS_GITHUB_WEB"] = fake.url
 
 import config  # noqa: E402
 import github_oauth  # noqa: E402
@@ -58,7 +58,7 @@ def reset_device(**kw):
 # ---- 1. Start ----
 check("the app's client id is the registered one", github_oauth.client_id() == "Iv23limeL0BsyXptmTz2")
 check("repos are picked on the Jeevi OS app page",
-      github_oauth.install_url() == "https://github.com/apps/jeevi-os/installations/new")
+      github_oauth.install_url() == "https://github.com/apps/javis-os/installations/new")
 reset_device(pending=2, slow=True)
 d = github_oauth.start()
 check("start returns the code to type", d["user_code"] == "ABCD-1234")
@@ -96,7 +96,7 @@ github_repos._write_conn(conn)
 check("a stale missing-scopes flag stored for an app sign-in is not shown", github_repos.status()["missing"] == [])
 fake.scopes = None
 check("status says the app is installed somewhere", st["installs"] == 1)
-check("status carries the install link", "jeevi-os" in st["install_url"])
+check("status carries the install link", "javis-os" in st["install_url"])
 check("status never returns the token", GOOD_TOKEN not in json.dumps(st))
 raw = json.loads(config.SETTINGS_PATH.read_text(encoding="utf-8"))
 check("the token is not stored in clear", GOOD_TOKEN not in json.dumps(raw))

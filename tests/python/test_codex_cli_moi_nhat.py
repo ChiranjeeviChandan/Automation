@@ -38,12 +38,12 @@ def main():
             path.write_text("mock")
 
         old_functions = (cc._home_dir, cc.tim_binary, cc._codex_version)
-        old_env = {name: os.environ.get(name) for name in ("APPDATA", "JEEVI_CODEX_BIN")}
+        old_env = {name: os.environ.get(name) for name in ("APPDATA", "JAVIS_CODEX_BIN")}
         versions = {}
         cc._home_dir = lambda: home
         cc._codex_version = lambda path: versions.get(path)
         os.environ["APPDATA"] = str(appdata)
-        os.environ.pop("JEEVI_CODEX_BIN", None)
+        os.environ.pop("JAVIS_CODEX_BIN", None)
         try:
             if os.name == "nt":
                 cc.tim_binary = lambda name: None
@@ -75,7 +75,7 @@ def main():
 
                 override = home / "custom-codex"
                 override.write_text("mock")
-                os.environ["JEEVI_CODEX_BIN"] = str(override)
+                os.environ["JAVIS_CODEX_BIN"] = str(override)
                 check("explicit CLI override remains authoritative", cc.find_codex_cli() == str(override))
         finally:
             cc._home_dir, cc.tim_binary, cc._codex_version = old_functions

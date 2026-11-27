@@ -23,7 +23,7 @@ import time
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-claude-conn-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-claude-conn-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -34,7 +34,7 @@ import config as cfgmod  # noqa: E402
 
 _fails = []
 TOK = "sk-ant-oat01-" + "Ab3_x-" * 15 + "Q9zK"
-CRED = Path(tempfile.mkdtemp(prefix="jeevi-claude-cred-")) / ".credentials.json"
+CRED = Path(tempfile.mkdtemp(prefix="javis-claude-cred-")) / ".credentials.json"
 claude_auth.login_file = lambda: CRED
 
 

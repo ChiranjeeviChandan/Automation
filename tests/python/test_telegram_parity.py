@@ -17,7 +17,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-tgparity-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-tgparity-"))
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

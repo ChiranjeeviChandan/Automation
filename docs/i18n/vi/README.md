@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://jeevios.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI. Mã nguồn mở, tự host, jeevios.com"></a>
+<a href="https://javisos.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI. Mã nguồn mở, tự host, javisos.com"></a>
 
 # Jeevi OS
 
@@ -8,7 +8,7 @@
 
 Jeevi OS biến **Claude, ChatGPT, Gemini, Grok** và các model bạn chọn thành một đội ngũ làm việc 24/7 ngay trên máy hoặc server của bạn. Mỗi cộng sự có vai trò riêng, dùng chung trí nhớ và công cụ, và vẫn làm tiếp ở chế độ nền. Là AI agentic đổi được bộ não: có model mới tốt hơn thì đổi, mọi thứ đội đã học vẫn còn nguyên.
 
-**🌐 Website: [jeevios.com](https://jeevios.com)** · Mã nguồn mở · Tự host · 15 nhà cung cấp AI
+**🌐 Website: [javisos.com](https://javisos.com)** · Mã nguồn mở · Tự host · 15 nhà cung cấp AI
 
 <!-- flags:start -->
 <p align="center">
@@ -119,7 +119,7 @@ Nhờ vậy:
 | Tự cải thiện | Không | **Vòng lặp tự chạy nền** + hàng đợi việc do AI tự vận hành |
 | Giao diện | Khung chat | Dashboard + đồ thị tri thức + **giọng nói rảnh tay** + Telegram |
 | Công việc của bạn | Nằm trên máy chủ nhà cung cấp, theo định dạng của họ | **File thường trên máy bạn**: lịch sử, trí nhớ, skill, agent, workflow mang sang được mọi model mới |
-| Triển khai | Khoá vào 1 nhà cung cấp | **Tự host**: [Hostinger](https://www.hostinger.com?REFERRALCODE=JEEVIOS) 1-click / Docker / VPS bất kỳ |
+| Triển khai | Khoá vào 1 nhà cung cấp | **Tự host**: [Hostinger](https://www.hostinger.com?REFERRALCODE=JAVISOS) 1-click / Docker / VPS bất kỳ |
 
 > 💡 **Triết lý:** Jeevi *biên dịch một lần* tri thức từ ghi chú thô → Wiki, rồi *duy trì* nó sống cùng mỗi nguồn mới. Tri thức **tích luỹ**, không tái phát hiện mỗi lần.
 
@@ -145,7 +145,7 @@ Nhờ vậy:
 - 🗃️ **Việc (Kanban)** - giao một "goal" bằng lời, AI tự đặc tả, chọn worker, chạy nền và chỉ gọi bạn khi có ngoại lệ.
 - 🧠 **Tự học** - sau mỗi hội thoại Jeevi tự rút ký ức, đúc tri thức Wiki và kỹ năng; mỗi lần học là một commit git nên **hoàn tác được một chạm**.
 - 🔌 **Kho kết nối đa tài khoản** - Pancake POS, Zalo, Meta/Google/TikTok Ads, Google Workspace, Slack, Webcake, Substack… nhiều tài khoản cùng một dịch vụ, mỗi tài khoản một mức quyền riêng, Jeevi **chặn cứng** thao tác vượt quyền.
-- 📱 **Telegram & Zalo** - hỏi Jeevi qua Telegram; đọc, tìm lịch sử và gửi tin Zalo bằng MCP của `jeevi-zalo`, bản CLI Zalo riêng của Jeevi.
+- 📱 **Telegram & Zalo** - hỏi Jeevi qua Telegram; đọc, tìm lịch sử và gửi tin Zalo bằng MCP của `javis-zalo`, bản CLI Zalo riêng của Jeevi.
 - 💬 **Slack & WhatsApp** - chat với Jeevi và đặt bot khách hàng trên Slack (không cần tên miền) và WhatsApp (API chính thức của Meta). Hướng dẫn: [docs/29](../../../docs/29-slack-whatsapp.md).
 - 🎨 **Tạo ảnh** bằng chính gói ChatGPT đã đăng nhập, không cần API key riêng.
 - 📊 **Mức dùng** - Jeevi tự đo token vào/ra và chi phí theo ngày, theo nhà cung cấp, tách rõ phần bạn gõ tay với phần Jeevi tự chạy nền.
@@ -169,7 +169,7 @@ Nhờ vậy:
 > - **Windows 10/11:** tải [JeeviOS-Setup.exe](https://github.com/blogminhquy/javis-os/releases/download/desktop/JeeviOS-Setup.exe) về rồi mở.
 > - **macOS 11+:** mở **Terminal** (Launchpad, gõ Terminal), dán dòng này rồi Enter. Cài cách này macOS không hiện cảnh báo:
 >   ```
->   curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-jeevi.sh | bash
+>   curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-javis.sh | bash
 >   ```
 >   Thích tải file hơn? [JeeviOS-macOS.dmg](https://github.com/blogminhquy/javis-os/releases/download/desktop/JeeviOS-macOS.dmg) cài ra đúng app đó. File chưa ký bằng Apple Developer ID, nên lần mở đầu macOS sẽ chặn cho tới khi bạn vào **System Settings → Privacy & Security** bấm **Open Anyway**.
 >
@@ -177,21 +177,21 @@ Nhờ vậy:
 
 ### Cách 1 - Hostinger Docker Manager (tên miền + HTTPS) ⚡
 
-> 🛒 **Chưa có VPS?** [Đăng ký VPS Hostinger tại đây](https://www.hostinger.com?REFERRALCODE=JEEVIOS). VPS có sẵn Docker Manager nên cài Jeevi đúng một cú bấm. Thuê xong quay lại làm các bước dưới.
+> 🛒 **Chưa có VPS?** [Đăng ký VPS Hostinger tại đây](https://www.hostinger.com?REFERRALCODE=JAVISOS). VPS có sẵn Docker Manager nên cài Jeevi đúng một cú bấm. Thuê xong quay lại làm các bước dưới.
 
 VPS Hostinger → **Docker Manager → Compose → URL** → dán **file Hostinger** rồi **Deploy**:
 ```
 https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hostinger.yml
 ```
 Ô **Environment** của mẫu mới chỉ còn 3 trường cần thiết: `DOMAIN_NAME`,
-`JEEVI_ADMIN_USER`, `JEEVI_ADMIN_PASSWORD`, cộng một trường tuỳ chọn
-`JEEVI_AUTO_UPDATE` (đặt `true` là Jeevi tự cập nhật mỗi ngày, bỏ trống thì cập
+`JAVIS_ADMIN_USER`, `JAVIS_ADMIN_PASSWORD`, cộng một trường tuỳ chọn
+`JAVIS_AUTO_UPDATE` (đặt `true` là Jeevi tự cập nhật mỗi ngày, bỏ trống thì cập
 nhật bằng nút trong app). Các biến kỹ thuật về cổng, state, brain và thư mục chạy
 đã được ẩn vì Docker image tự đặt đúng.
 
 Đặt `DOMAIN_NAME` để Traefik của Hostinger cấp HTTPS:
-- **Link miễn phí** (không cần mua tên miền): `DOMAIN_NAME=jeevi.<hostname-vps>.hstgr.cloud`
-  (hostname xem ở hPanel → VPS, vd `jeevi.srv1562015.hstgr.cloud`).
+- **Link miễn phí** (không cần mua tên miền): `DOMAIN_NAME=javis.<hostname-vps>.hstgr.cloud`
+  (hostname xem ở hPanel → VPS, vd `javis.srv1562015.hstgr.cloud`).
 - **Tên miền riêng:** `DOMAIN_NAME=tenmien.com` + trỏ DNS A về IP VPS.
 
 Deploy → đợi 1-3 phút Traefik cấp SSL → mở `https://<DOMAIN_NAME>`. (Chi tiết + xử lý sự cố: [DEPLOY.md](../../../DEPLOY.md).)
@@ -199,43 +199,43 @@ Deploy → đợi 1-3 phút Traefik cấp SSL → mở `https://<DOMAIN_NAME>`. 
 > Chỉ muốn chạy nhanh bằng `http://<ip>:7777` (chưa cần tên miền): dùng `docker-compose.yml` (Cách 2).
 
 **3 việc làm 1 lần:**
-1. **Để image GHCR ở chế độ Public:** GitHub → repo → **Packages** → `jeevi-os` → *Package settings* → Visibility = **Public**.
+1. **Để image GHCR ở chế độ Public:** GitHub → repo → **Packages** → `javis-os` → *Package settings* → Visibility = **Public**.
 2. **Tạo tài khoản admin** (chọn 1):
-   - *Khuyến nghị:* điền sẵn `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` đang có trong ô Environment → mở app **đăng nhập luôn**.
+   - *Khuyến nghị:* điền sẵn `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` đang có trong ô Environment → mở app **đăng nhập luôn**.
    - *Hoặc:* bỏ trống rồi mở app **ngay sau khi deploy** và tự đặt tên đăng nhập + mật khẩu (tối thiểu 8 ký tự). Lưu ý: khi chưa có admin, ai mở link trước sẽ tạo được tài khoản, nên đừng để trống lâu.
    - Vào được rồi thì **bật 2FA** (xem [Bảo mật & tài khoản](../../../docs/14-bao-mat-tai-khoan.md)).
 3. **Đăng nhập bộ não:** App terminal → `claude auth login --claudeai` → mở link, dán code. (Dùng gói ChatGPT thì đăng nhập ở trang **Models** sau khi mở app.)
 
 ### Cách 2 - Docker trên VPS bất kỳ (pull image, không cần clone)
 
-> 🛒 **Cần thuê VPS?** [VPS Hostinger](https://www.hostinger.com?REFERRALCODE=JEEVIOS) chạy được cả cách này.
+> 🛒 **Cần thuê VPS?** [VPS Hostinger](https://www.hostinger.com?REFERRALCODE=JAVISOS) chạy được cả cách này.
 
 ```bash
 # Cần Docker (chưa có?  curl -fsSL https://get.docker.com | sh)
-mkdir jeevi && cd jeevi
+mkdir javis && cd javis
 curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml
 
-docker compose run --rm jeevi claude auth login --claudeai   # đăng nhập Claude 1 lần
+docker compose run --rm javis claude auth login --claudeai   # đăng nhập Claude 1 lần
 docker compose up -d                                          # pull image + chạy
 ```
-Mở `http://<ip-vps>:7777` → màn tạo tài khoản admin: đặt tên đăng nhập + mật khẩu (tối thiểu 8 ký tự), làm ngay sau khi chạy vì ai mở link trước sẽ tạo được admin (hoặc đặt sẵn `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` trong env). Vào được rồi thì bật 2FA.
+Mở `http://<ip-vps>:7777` → màn tạo tài khoản admin: đặt tên đăng nhập + mật khẩu (tối thiểu 8 ký tự), làm ngay sau khi chạy vì ai mở link trước sẽ tạo được admin (hoặc đặt sẵn `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` trong env). Vào được rồi thì bật 2FA.
 
 ### Cách 3 - Cài trực tiếp lên Linux/macOS (không Docker)
 
 ```bash
-git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi
+git clone https://github.com/blogminhquy/javis-os.git javis && cd javis
 chmod +x install.sh && ./install.sh
 ```
 Script tự cài Python + Node + hai engine CLI (Claude Code, Codex), tạo venv, đăng ký dịch vụ systemd tự chạy khi boot, in ra địa chỉ. Báo Claude chưa đăng nhập thì chạy 1 lần: `claude auth login --claudeai`.
 
-> 🍎 **macOS - mở như một app:** sau khi cài xong, double-click `JEEVI OS.app` (hoặc `Start JEEVI OS.command`) để chạy server + mở dashboard; từ 0.306.0 `./install.sh` cho Jeevi tự chạy khi đăng nhập máy và tự mở dashboard (tắt: `./bin/jeevi-autostart.sh uninstall`). Chi tiết: [bin/README.md](../../../bin/README.md).
+> 🍎 **macOS - mở như một app:** sau khi cài xong, double-click `JEEVI OS.app` (hoặc `Start JEEVI OS.command`) để chạy server + mở dashboard; từ 0.306.0 `./install.sh` cho Jeevi tự chạy khi đăng nhập máy và tự mở dashboard (tắt: `./bin/javis-autostart.sh uninstall`). Chi tiết: [bin/README.md](../../../bin/README.md).
 
 ### Cách 4 - Windows (máy cá nhân)
 
 **Một lệnh, cài hết:**
 
 ```powershell
-git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi
+git clone https://github.com/blogminhquy/javis-os.git javis; cd javis
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
@@ -245,25 +245,25 @@ Không có `winget` để tự cài Python/Node thì cài tay trước: Python 3
 
 ```
 Chạy hiện cửa sổ (xem log trực tiếp):  setup.bat
-Chạy ngầm từ lần sau:                  start-jeevi.vbs   (log ở server\jeevi.log)
-Dừng:                                  stop-jeevi.bat
+Chạy ngầm từ lần sau:                  start-javis.vbs   (log ở server\javis.log)
+Dừng:                                  stop-javis.bat
 Mở dashboard:                          http://localhost:7777
 ```
 
-> ⚠️ **Cài thêm một CLI sau khi Jeevi đang chạy thì phải khởi động lại Jeevi** (`stop-jeevi.bat` rồi `start-jeevi.vbs`). Tiến trình đang chạy giữ PATH của lúc nó bật, nên CLI vừa cài nó không thấy - trang Models sẽ vẫn báo "CLI chưa cài" cho một CLI đã nằm sẵn trên ổ đĩa.
+> ⚠️ **Cài thêm một CLI sau khi Jeevi đang chạy thì phải khởi động lại Jeevi** (`stop-javis.bat` rồi `start-javis.vbs`). Tiến trình đang chạy giữ PATH của lúc nó bật, nên CLI vừa cài nó không thấy - trang Models sẽ vẫn báo "CLI chưa cài" cho một CLI đã nằm sẵn trên ổ đĩa.
 
-> 🪟 **Windows - mở như một app:** sau khi `setup.bat` chạy xong lần đầu, từ đó về sau chỉ cần double-click **`JEEVI OS.bat`** - server tự chạy nền (không cửa sổ đen) rồi dashboard tự mở thành **cửa sổ riêng** không thanh địa chỉ, có ô riêng trên taskbar. Từ 0.306.0 bộ cài cho Jeevi tự chạy khi đăng nhập máy và tự mở dashboard (tắt: `jeevi-autostart.bat uninstall` hoặc nút trong Cài đặt).
+> 🪟 **Windows - mở như một app:** sau khi `setup.bat` chạy xong lần đầu, từ đó về sau chỉ cần double-click **`JEEVI OS.bat`** - server tự chạy nền (không cửa sổ đen) rồi dashboard tự mở thành **cửa sổ riêng** không thanh địa chỉ, có ô riêng trên taskbar. Từ 0.306.0 bộ cài cho Jeevi tự chạy khi đăng nhập máy và tự mở dashboard (tắt: `javis-autostart.bat uninstall` hoặc nút trong Cài đặt).
 
 ### Nhiều bản Jeevi trên cùng một VPS (mỗi bản một link riêng)
 
 Chạy được bao nhiêu bản cũng được - brain, cài đặt và tài khoản của mỗi bản tách bạch hoàn toàn.
-Chỉ cần ba giá trị khác nhau giữa các bản: `JEEVI_NAME`, `JEEVI_HOST_PORT`, `DOMAIN_NAME`.
+Chỉ cần ba giá trị khác nhau giữa các bản: `JAVIS_NAME`, `JAVIS_HOST_PORT`, `DOMAIN_NAME`.
 
 - **Hostinger:** deploy `docker-compose.hostinger.yml` thành stack thứ hai, điền ba ô đó.
 - **VPS tự quản:** chạy proxy dùng chung `docker-compose.proxy.yml` **một lần cho cả máy**, rồi
   mỗi bản một thư mục riêng dùng kèm `docker-compose.multi.yml`. Proxy tự phát hiện bản mới,
   tự xin SSL - thêm bản không phải sửa gì ở proxy.
-- **Native:** `JEEVI_NAME=jeevi-shop JEEVI_PORT=7778 ./install.sh`.
+- **Native:** `JAVIS_NAME=javis-shop JAVIS_PORT=7778 ./install.sh`.
 
 Bỏ trống các biến = y hệt cách cài cũ. Từng bước một: **[DEPLOY.md](../../../DEPLOY.md)**.
 
@@ -305,7 +305,7 @@ Thanh điều hướng bên trái gom **22 trang** thành **5 nhóm** (bấm tê
 | | **Việc định kỳ** | Nhiều vòng lặp chạy nền + nhắc hẹn theo giờ hoặc cron. | [Việc định kỳ & Nhắc hẹn](../../../docs/08-viec-dinh-ky.md) |
 | **Kết nối** | **Kết nối** | Kho dịch vụ ngoài, đa tài khoản cùng một dịch vụ, phân quyền 3 mức. | [Kết nối & số liệu](../../../docs/09-mcp-va-so-lieu.md) |
 | | **Kênh** | Bật bot Telegram, Zalo, Slack, WhatsApp (hỏi Jeevi qua điện thoại). | [Kênh Telegram](../../../docs/11-telegram.md) · [Kênh Zalo](../../../docs/12-zalo.md) · [Slack và WhatsApp](../../../docs/29-slack-whatsapp.md) |
-| | *(terminal)* | `pip install jeevi-cli` rồi gõ `jeevi "..."` - kênh thứ ba, cùng một Jeevi. | [Jeevi CLI](../../../docs/24-cli-terminal.md) |
+| | *(terminal)* | `pip install javis-cli` rồi gõ `javis "..."` - kênh thứ ba, cùng một Jeevi. | [Jeevi CLI](../../../docs/24-cli-terminal.md) |
 | | **Models** | Main model + các provider + mức suy nghĩ + model việc nền. | [Models & engine](../../../docs/10-models-va-engine.md) |
 | **Hệ thống** | **Mức dùng** | Token và chi phí theo ngày, theo nhà cung cấp, theo nguồn phát sinh. | [Mức dùng](../../../docs/23-muc-dung-token.md) |
 | | **Cài đặt** | Trạng thái hệ thống, giao diện & brain, giọng nói, thương hiệu, tên miền. | [Bắt đầu & thiết lập](../../../docs/01-bat-dau-thiet-lap.md) |
@@ -333,18 +333,18 @@ File mẫu cố ý **chỉ có dòng `TÊN=giá trị`, không một dòng chú 
 
 | Biến | Ý nghĩa | Mặc định |
 |---|---|---|
-| `JEEVI_HOST` | Địa chỉ nghe. `127.0.0.1`=chỉ máy này; `0.0.0.0`=public | `127.0.0.1` |
-| `JEEVI_PORT` | Cổng | `7777` |
-| `JEEVI_REQUIRE_LOGIN` | `1`/`0` ép bật/tắt bắt buộc đăng nhập (mặc định: bật khi bind public) | *(auto)* |
-| `JEEVI_ADMIN_USER` / `JEEVI_ADMIN_PASSWORD` | Tạo sẵn admin lúc deploy (khuyến nghị khi chạy public) | - |
-| `JEEVI_ALLOWED_HOSTS` | Thêm hostname vào danh sách cho phép (chống CSRF / DNS-rebinding) | localhost + tên miền đã đặt |
-| `JEEVI_SECURE_COOKIE` | Ép cookie `Secure`. Chỉ bật khi chắc chắn HTTPS đầu-cuối | *(auto theo tên miền)* |
-| `JEEVI_STATE_DIR` | Nơi ghi state (settings, sessions, khoá mã hoá, cấu hình việc định kỳ) | `server/` (Docker: `/data/state`) |
+| `JAVIS_HOST` | Địa chỉ nghe. `127.0.0.1`=chỉ máy này; `0.0.0.0`=public | `127.0.0.1` |
+| `JAVIS_PORT` | Cổng | `7777` |
+| `JAVIS_REQUIRE_LOGIN` | `1`/`0` ép bật/tắt bắt buộc đăng nhập (mặc định: bật khi bind public) | *(auto)* |
+| `JAVIS_ADMIN_USER` / `JAVIS_ADMIN_PASSWORD` | Tạo sẵn admin lúc deploy (khuyến nghị khi chạy public) | - |
+| `JAVIS_ALLOWED_HOSTS` | Thêm hostname vào danh sách cho phép (chống CSRF / DNS-rebinding) | localhost + tên miền đã đặt |
+| `JAVIS_SECURE_COOKIE` | Ép cookie `Secure`. Chỉ bật khi chắc chắn HTTPS đầu-cuối | *(auto theo tên miền)* |
+| `JAVIS_STATE_DIR` | Nơi ghi state (settings, sessions, khoá mã hoá, cấu hình việc định kỳ) | `server/` (Docker: `/data/state`) |
 | `BRAINS_DIR` | Thư mục CHA chứa mọi brain | `brains/` (Docker: `/brains`) |
 | `OBSIDIAN_VAULT_PATH` | Vault Second Brain ngoài (nếu bạn đã có vault sẵn) | `vault/` (Docker: `/data/vault`) |
 | `CLAUDE_CWD` | Thư mục dự phòng của bộ não Claude (chat chạy trong thư mục brain) | repo root |
-| `JEEVI_ENABLE_USER_PLUGINS` | `false` để tắt plugin do bạn cài (chúng chạy code Python thật trong server) | *(bật)* |
-| `WATCHTOWER_TOKEN` | Token cho nút "Cập nhật ngay" trên bản Docker | `jeevi-update` |
+| `JAVIS_ENABLE_USER_PLUGINS` | `false` để tắt plugin do bạn cài (chúng chạy code Python thật trong server) | *(bật)* |
+| `WATCHTOWER_TOKEN` | Token cho nút "Cập nhật ngay" trên bản Docker | `javis-update` |
 | `TTS_VOICE` / `TTS_RATE` | Giọng đọc + tốc độ (Edge TTS) | `en-US-EmmaMultilingualNeural` / `+5%` |
 
 Danh sách đầy đủ mọi biến: [docs/16 - Cấu hình .env](../../../docs/16-cau-hinh-env.md).
@@ -354,11 +354,11 @@ Danh sách đầy đủ mọi biến: [docs/16 - Cấu hình .env](../../../docs
 ## 🔐 Bảo mật
 
 - Khi chạy public, **bắt buộc đăng nhập** trước khi dùng bất kỳ chức năng nào (bộ não chạy full quyền trên máy).
-- Màn chạy lần đầu chỉ hỏi tên đăng nhập + mật khẩu. Trên server public, **ai mở link trước khi có admin sẽ tạo được admin** → đặt sẵn admin qua env (`JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD`) hoặc tạo tài khoản ngay sau khi deploy, rồi **bật 2FA** (TOTP).
+- Màn chạy lần đầu chỉ hỏi tên đăng nhập + mật khẩu. Trên server public, **ai mở link trước khi có admin sẽ tạo được admin** → đặt sẵn admin qua env (`JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD`) hoặc tạo tài khoản ngay sau khi deploy, rồi **bật 2FA** (TOTP).
 - **Rate-limit** đăng nhập (khoá tạm sau nhiều lần sai), mật khẩu ≥ 8 ký tự, cookie `secure` khi HTTPS, session hết hạn 30 ngày.
 - **Chặn CSRF và DNS-rebinding**: mọi request ghi có Origin lạ đều bị từ chối.
-- **Khoá bí mật được mã hoá** trong `settings.json` (API key, token OAuth, token bot Telegram, token backup) bằng khoá riêng của máy ở `JEEVI_STATE_DIR/.secret_key`.
-- **Plugin do bạn cài được tải mặc định, nhưng từng plugin vẫn tắt cho tới khi bạn bật nó trong app**; đặt `JEEVI_ENABLE_USER_PLUGINS=false` nếu muốn tắt hết.
+- **Khoá bí mật được mã hoá** trong `settings.json` (API key, token OAuth, token bot Telegram, token backup) bằng khoá riêng của máy ở `JAVIS_STATE_DIR/.secret_key`.
+- **Plugin do bạn cài được tải mặc định, nhưng từng plugin vẫn tắt cho tới khi bạn bật nó trong app**; đặt `JAVIS_ENABLE_USER_PLUGINS=false` nếu muốn tắt hết.
 - Truy cập từ xa nên qua **HTTPS** (Hostinger `*.hstgr.cloud` hoặc Cloudflare Tunnel) - đừng phơi cổng thô.
 
 [Code signing policy](../../code-signing-policy.md) (chính sách ký số bộ cài) · [Privacy policy](../../../PRIVACY.md) (chính sách quyền riêng tư)
@@ -372,7 +372,7 @@ Danh sách đầy đủ mọi biến: [docs/16 - Cấu hình .env](../../../docs
 git add -A && git commit -m "..." && git push     # → CI tự build image mới lên GHCR
 
 # Trên VPS: kéo bản mới
-cd jeevi && ./update.sh          # tự pull image + restart (dữ liệu trong volume KHÔNG mất)
+cd javis && ./update.sh          # tự pull image + restart (dữ liệu trong volume KHÔNG mất)
 ```
 
 Trong app: mở **Cập nhật** (nhóm Hệ thống) → **⬆ Cập nhật ngay** nếu môi trường hỗ trợ, có thanh tiến trình và nút lùi bản khi bản mới hỏng.
@@ -411,8 +411,8 @@ Zalo Agent MCP ──────────────┤          │       
 
 | Hiện tượng | Cách xử lý |
 |---|---|
-| Sửa code mà không thấy đổi | Đã đổi `.py`? **Khởi động lại server** (Windows: `stop-jeevi.bat` → `start-jeevi.vbs`). Đổi giao diện? **Ctrl+Shift+R**. |
-| Port 7777 bị giữ, bản mới không lên | Kill tiến trình cũ TRƯỚC (`stop-jeevi.bat`, hoặc `taskkill /F /PID <pid>`), rồi start lại. |
+| Sửa code mà không thấy đổi | Đã đổi `.py`? **Khởi động lại server** (Windows: `stop-javis.bat` → `start-javis.vbs`). Đổi giao diện? **Ctrl+Shift+R**. |
+| Port 7777 bị giữ, bản mới không lên | Kill tiến trình cũ TRƯỚC (`stop-javis.bat`, hoặc `taskkill /F /PID <pid>`), rồi start lại. |
 | Hostinger không pull được image | Để package GHCR = **Public**; đợi GitHub Action build xong (tab Actions). |
 | Bộ não báo chưa đăng nhập | Vào **Models**, thẻ nhà cung cấp tương ứng, bấm đăng nhập. Hoặc chạy 1 lần `claude auth login --claudeai` (Docker: trong App terminal). |
 | Ảnh cũ trong hội thoại hiện ô xám | Đúng thiết kế: `attachments/` là vùng cache, hết hạn 30 ngày hoặc 300MB. Xem [Khắc phục sự cố](../../../docs/17-khac-phuc-su-co.md). |
@@ -422,7 +422,7 @@ Zalo Agent MCP ──────────────┤          │       
 ## 📂 Cấu trúc thư mục
 
 ```
-jeevi-os/
+javis-os/
 ├── server/              # Backend FastAPI (engine, kết nối, việc nền, kênh, bộ nhớ…)
 │   └── routes/          # Route tách riêng (tên miền, đồ thị)
 ├── dashboard/           # Frontend (voice, đồ thị, console, studio, usage)
@@ -488,7 +488,7 @@ Không tiện donate cũng không sao - dùng Jeevi, góp ý, hay gửi một Pu
 
 <a href="https://nguyenminhquy.com"><img src="../../assets/author.webp" width="96" height="96" alt="Minh Quý"></a><br>
 
-**[jeevios.com](https://jeevios.com)**
+**[javisos.com](https://javisos.com)**
 
 Made with ☕ by **[Minh Quý](https://nguyenminhquy.com)** · Repo: `github.com/blogminhquy/javis-os`
 

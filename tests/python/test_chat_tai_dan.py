@@ -20,7 +20,7 @@ import os
 import sys
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-taidan-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-taidan-"))
 
 from fastapi.testclient import TestClient  # noqa: E402
 import main  # noqa: E402
@@ -35,7 +35,7 @@ def check(name, cond, them=""):
         fails.append(name)
 
 
-BRAIN = tempfile.mkdtemp(prefix="jeevi-brain-taidan-")
+BRAIN = tempfile.mkdtemp(prefix="javis-brain-taidan-")
 st = get_store()
 SID = "cuoc-sieu-dai"
 st.get_or_create(SID, brain=BRAIN, engine="cli", model="x")

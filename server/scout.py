@@ -1,4 +1,4 @@
-"""`jeevi_scout`: hand a data-heavy read to the background model and get back only the findings.
+"""`javis_scout`: hand a data-heavy read to the background model and get back only the findings.
 
 The idea, measured in the session that designed it: a sub-run that read real shop, sheet and site
 data used about 242,000 tokens; what came back to the main conversation was one page. A scout
@@ -29,7 +29,7 @@ from typing import Awaitable, Callable, Optional
 
 import turn_context
 
-TOOL = "jeevi_scout"
+TOOL = "javis_scout"
 TAG_CAREFUL = "scout"            # mid tier on an Automatic background model
 TAG_QUICK = "scout-quick"        # light tier (listed in aux_engine.LIGHT_TAGS)
 JOB_PREFIX = "scout:"
@@ -45,14 +45,14 @@ SYSTEM_PROMPT = (
     "Rules:\n"
     "- You can only READ. Writes and outside actions are refused by the system; do not try them.\n"
     "- Find the right tool with the tool search, then read real data. Never invent a number.\n"
-    "- For every total, count, average, grouping or top-N use jeevi_query with sql: the code computes over ALL "
+    "- For every total, count, average, grouping or top-N use javis_query with sql: the code computes over ALL "
     "records. Never add numbers by reading records. A large result arrives as a partial view with a ref; query "
-    "that ref instead of calling the source again. To cover a whole period, give jeevi_query the source `tool` "
+    "that ref instead of calling the source again. To cover a whole period, give javis_query the source `tool` "
     "and `pages`.\n"
     "- You cannot send another scout and you cannot ask questions. If something is missing, say exactly what.\n\n"
     "Report format, in the language of the task, at most about 600 words, no preamble:\n"
     "FINDINGS: the facts asked for, each number with its unit, period and the source tool it came from.\n"
-    "REFS: any jeevi_query ref that holds the underlying records, with one line on what it contains.\n"
+    "REFS: any javis_query ref that holds the underlying records, with one line on what it contains.\n"
     "GAPS: what you could not get and why (not connected, permission, error text, incomplete pages).\n"
     "Report what the data says, not what would be nice to hear.")
 
@@ -90,8 +90,8 @@ def available() -> bool:
 
 
 def enabled() -> bool:
-    """`mcp.scout`: true (default) | false. JEEVI_SCOUT=0|1 wins."""
-    v = (os.getenv("JEEVI_SCOUT") or "").strip().lower()
+    """`mcp.scout`: true (default) | false. JAVIS_SCOUT=0|1 wins."""
+    v = (os.getenv("JAVIS_SCOUT") or "").strip().lower()
     if v in ("0", "false", "off", "no"):
         return False
     if v in ("1", "true", "on", "yes"):
@@ -111,11 +111,11 @@ def _env_int(name: str, default: int, low: int, high: int) -> int:
 
 
 def wall_seconds() -> int:
-    return _env_int("JEEVI_SCOUT_MAX_WALL_S", WALL_S_DEFAULT, 30, 3600)
+    return _env_int("JAVIS_SCOUT_MAX_WALL_S", WALL_S_DEFAULT, 30, 3600)
 
 
 def max_parallel() -> int:
-    return _env_int("JEEVI_SCOUT_MAX_PARALLEL", MAX_PARALLEL_DEFAULT, 1, 16)
+    return _env_int("JAVIS_SCOUT_MAX_PARALLEL", MAX_PARALLEL_DEFAULT, 1, 16)
 
 
 def in_scout() -> bool:
@@ -187,7 +187,7 @@ async def run(vault_root: str, task: str, effort: str = "careful") -> str:
     if usage.get("input") or usage.get("output"):
         bits.append(f"tokens in={int(usage.get('input') or 0)} out={int(usage.get('output') or 0)}")
     note = ("Scout report (" + ", ".join(bits) + "). It read the data on a separate model; check any number you "
-            "will quote that looks off by querying its REFS with jeevi_query.")
+            "will quote that looks off by querying its REFS with javis_query.")
     return note + "\n\n" + await asyncio.to_thread(_bound_answer, text, str(vault_root or ""))
 
 
@@ -198,10 +198,10 @@ def build(vault_root, mode: str) -> tuple:
         args = args if isinstance(args, dict) else {}
         return await run(str(vault_root or ""), args.get("task"), args.get("effort") or "careful")
 
-    spec = {"fn": TOOL, "server": "jeevi", "name": TOOL, "namespace": "jeevi", "description": DESCRIPTION,
+    spec = {"fn": TOOL, "server": "javis", "name": TOOL, "namespace": "javis", "description": DESCRIPTION,
             "schema": SCHEMA}
     # Not a core tool: a scout is for the occasional heavy read, so it lives behind the tool search like any other
     # tool, and the search tool's description names it in one short line (mcp_hub.SCOUT_HINT).
-    entry = {"call": _call, "source_type": "builtin", "source_id": "jeevi",
+    entry = {"call": _call, "source_type": "builtin", "source_id": "javis",
              "effect": "read", "required_mode": "readonly", "health": "healthy"}
     return spec, entry

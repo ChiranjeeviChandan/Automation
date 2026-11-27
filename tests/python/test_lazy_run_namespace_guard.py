@@ -1,4 +1,4 @@
-"""Qualified tool calls (`namespace__tool`) in `jeevi_run_tool` must never silently route to another connector.
+"""Qualified tool calls (`namespace__tool`) in `javis_run_tool` must never silently route to another connector.
 
     python tests/python/test_lazy_run_namespace_guard.py
 """
@@ -8,7 +8,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ns-guard-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ns-guard-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -48,7 +48,7 @@ full_route = {
     "zalo-main__zalo_get_history": {"tool": "zalo_get_history", "spec": {"transport": "http", "url": "http://invalid/z"}},
 }
 _tools, route = mcp_hub._lazy_tools_and_route([], {}, pool, full_route, top_k=10)
-run_tool = route["jeevi_run_tool"]["call"]
+run_tool = route["javis_run_tool"]["call"]
 
 # 1. Bare name with single match still auto-resolves
 out = asyncio.run(run_tool({"name": "zalo_get_history", "args": {"limit": 5}}))

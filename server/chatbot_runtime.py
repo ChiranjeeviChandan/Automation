@@ -219,7 +219,7 @@ TÀI LIỆU, nên lượt này hãy nói bạn chưa có thông tin thay vì tr�
 _TU_MO_TAI_LIEU = """
 ## Tự tra tài liệu
 
-Bạn có công cụ jeevi_docs_search, jeevi_docs_list và jeevi_docs_read để tự tìm và mở tài liệu trong
+Bạn có công cụ javis_docs_search, javis_docs_list và javis_docs_read để tự tìm và mở tài liệu trong
 brain của bạn. Phần tra sẵn chỉ khớp theo chữ nên hay sót khi khách dùng chữ khác tài liệu. Câu hỏi
 cần thông tin cụ thể mà phần tra sẵn không có thì PHẢI tự tìm trước (thử vài cách gọi khác, xem danh
 sách tài liệu), rồi mới trả lời theo tài liệu đã mở.{chat}
@@ -754,7 +754,7 @@ async def nghe_cho_bot(meta: dict, cfg: dict) -> str:
     async def _one(url: str, i: int) -> str:
         if hear is None:
             return "(khách gửi một tin thoại nhưng bạn không nghe được: Jeevi chưa nối bộ nghe. Nhờ khách gõ chữ.) "
-        with tempfile.TemporaryDirectory(prefix="jeevi-voice-") as d:
+        with tempfile.TemporaryDirectory(prefix="javis-voice-") as d:
             saved, why = await zalo_attachments.fetch_file({"url": url, "name": f"voice{i}.m4a"}, Path(d), AUDIO_MAX_BYTES)
             if not saved:
                 _ghi_ly_do_anh(cfg, "không tải được tin thoại: " + why)
@@ -3436,8 +3436,8 @@ async def relay_staff_answer(req: dict) -> dict:
 # ============================================================
 # Thử bot (0.78.0): chạy một tin giả qua đúng các bước thật, KHÔNG gửi, KHÔNG để lại dấu vết
 # ============================================================
-TRY_CHAT_ID = "jeevi-try"
-TRY_USER_ID = "jeevi-try-user"
+TRY_CHAT_ID = "javis-try"
+TRY_USER_ID = "javis-try-user"
 TRY_MAX_CHARS = 2000
 _TRY_BUSY: set = set()       # bot đang có một lượt thử chạy dở: không cho bấm chồng
 
@@ -3723,7 +3723,7 @@ def start_bot(bot_id: str) -> tuple[bool, str]:
             **chung,
         )
         tb.account_id = aid
-        tb.jeevi_bot_id = bot_id    # NOT `bot_id`: Telegram and Slack transports use that for the platform's own id
+        tb.javis_bot_id = bot_id    # NOT `bot_id`: Telegram and Slack transports use that for the platform's own id
         try:
             tb.start()
         except ValueError as e:     # a transport may refuse a bad account mapping at start: skip that account

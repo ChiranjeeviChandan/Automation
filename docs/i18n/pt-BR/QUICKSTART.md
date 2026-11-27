@@ -14,7 +14,7 @@ Instale o Jeevi como qualquer outro app: baixe um arquivo, abra e pronto, você 
 - **Windows 10/11:** baixe [JeeviOS-Setup.exe](https://github.com/blogminhquy/javis-os/releases/download/desktop/JeeviOS-Setup.exe), dê dois cliques e aperte Next até o fim. O progresso da instalação aparece dentro da própria janela do Setup, passo a passo (alguns minutos), sem uma janela preta separada. No final aparece um ícone JEEVI OS na Área de Trabalho e no menu Iniciar.
 - **macOS 11 ou mais novo:** abra o **Terminal** (Launchpad, digite Terminal), cole esta linha e aperte Enter. Instalando assim, o macOS não mostra nenhum aviso:
   ```
-  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-jeevi.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/macos/get-javis.sh | bash
   ```
   O comando baixa o Jeevi, copia **JEEVI OS** para **Applications** e instala ali mesmo, na janela do Terminal (pode pedir para criar uma conta de administrador do Jeevi e a senha do Mac uma vez). Depois, abra o JEEVI OS pelo Launchpad.
 
@@ -24,7 +24,7 @@ Ao clicar no ícone, o Jeevi abre em uma janela própria (sem barra de endereço
 
 **Windows: instalar sem a tela de aviso (recomendado).** O instalador do Windows ainda não tem assinatura de código, então um download pelo navegador é bloqueado na primeira vez. Cole uma linha em vez disso e você recebe o mesmo instalador com o logo do Jeevi, sem bloqueio: aperte Iniciar, digite `PowerShell`, abra, cole esta linha e aperte Enter:
 ```
-irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-jeevi.ps1 | iex
+irm https://raw.githubusercontent.com/blogminhquy/javis-os/main/packaging/windows/get-javis.ps1 | iex
 ```
 
 O que os instaladores mudam no seu computador, quem os assina e o que o Jeevi envia e para onde: [Code signing policy](../../../docs/code-signing-policy.md) · [Privacy policy](../../../PRIVACY.md) (em inglês).
@@ -40,7 +40,7 @@ Se você já baixou o arquivo pelo navegador e ele foi bloqueado:
 
 ## Opção 1 - VPS da Hostinger (Docker Manager, em um clique)
 
-> 🛒 **Ainda não tem VPS?** [Contrate uma VPS da Hostinger aqui](https://www.hostinger.com?REFERRALCODE=JEEVIOS). Ela já vem com o Docker Manager, então o Jeevi instala em um clique. Quando estiver pronta, volte aos passos abaixo.
+> 🛒 **Ainda não tem VPS?** [Contrate uma VPS da Hostinger aqui](https://www.hostinger.com?REFERRALCODE=JAVISOS). Ela já vem com o Docker Manager, então o Jeevi instala em um clique. Quando estiver pronta, volte aos passos abaixo.
 
 1. hPanel → VPS → **Docker Manager** → **Compose** → **Compose from URL**.
 2. Cole esta URL:
@@ -49,9 +49,9 @@ Se você já baixou o arquivo pelo navegador e ele foi bloqueado:
    ```
 3. (Opcional, para HTTPS + um domínio) defina isto na caixa **Environment**:
    ```
-   DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud
+   DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud
    ```
-   (O hostname fica em hPanel → VPS, ex.: `jeevi.srv1782015.hstgr.cloud`.)
+   (O hostname fica em hPanel → VPS, ex.: `javis.srv1782015.hstgr.cloud`.)
 4. **Deploy**. Espere 1-3 minutos. Abra o app pelo botão **Open** (ou em `https://<DOMAIN_NAME>`).
 5. Na primeira execução, a tela pede para você criar uma conta de admin. Depois disso, faça login no Claude Code uma vez pelo terminal do container: `claude auth login --claudeai`.
 
@@ -59,7 +59,7 @@ Para atualizar: clique em **Redeploy** no Docker Manager (imagem `:latest`, `pul
 
 ## Opção 2 - Docker em qualquer máquina ou VPS
 
-> 🛒 **Precisa de uma VPS?** Uma [VPS da Hostinger](https://www.hostinger.com?REFERRALCODE=JEEVIOS) também roda esta opção.
+> 🛒 **Precisa de uma VPS?** Uma [VPS da Hostinger](https://www.hostinger.com?REFERRALCODE=JAVISOS) também roda esta opção.
 
 ```
 docker compose -f docker-compose.yml up -d
@@ -70,7 +70,7 @@ Abra http://localhost:7777. Para ter HTTPS via Caddy, adicione `-f docker-compos
 
 1. Instale o Python 3.12 + Node 22.
 2. Na pasta do projeto, rode `setup.bat` uma vez: ele cria o .venv, instala as dependências e instala para você os dois motores CLI (Claude Code, Codex).
-3. `start-jeevi.bat` para rodar em segundo plano (`stop-jeevi.bat` para parar).
+3. `start-javis.bat` para rodar em segundo plano (`stop-javis.bat` para parar).
 4. Abra http://localhost:7777.
 
 ## Depois que estiver rodando

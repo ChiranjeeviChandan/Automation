@@ -20,7 +20,7 @@ import random
 import tempfile
 import time
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-dictation-speed-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-dictation-speed-"))
 
 import main  # noqa: E402
 import nghe_sua  # noqa: E402
@@ -78,8 +78,8 @@ KEEP = [
 ]
 for t in KEEP:
     check(f"everyday words stay: {t!r}", nghe_sua.sua(t, TV) == t)
-check("a misheard name is still fixed: David ơi", nghe_sua.sua("David ơi, mở lịch", TV) == "Jeevi ơi, mở lịch")
-check("a name split in two is still fixed: Gia vít ơi", nghe_sua.sua("Gia vít ơi, tóm tắt email", TV).startswith("Jeevi ơi"))
+check("a misheard name is still fixed: Jivi ơi", nghe_sua.sua("Jivi ơi, mở lịch", TV) == "Jeevi ơi, mở lịch")
+check("a name split in two is still fixed: Gi vi ơi", nghe_sua.sua("Gi vi ơi, tóm tắt email", TV).startswith("Jeevi ơi"))
 check("an everyday group spelled like the term is still the term", nghe_sua.sua("mở Jeevi OS giúp anh", TV) == "mở Jeevi OS giúp anh")
 
 # ---- the MCP names go to the prompt, not to the rules ----

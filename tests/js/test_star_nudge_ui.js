@@ -28,13 +28,13 @@ const check = (ten, ok, them) => {
 };
 
 // 1. Dây nối các khoảnh khắc vui
-check("thả tim/like thành công phát jeevi:react-positive",
-  /rv === "love" \|\| rv === "like"[\s\S]{0,160}jeevi:react-positive/.test(CR));
-check("star-nudge nghe sự kiện thả tim", /addEventListener\("jeevi:react-positive", function \(\) \{ moment\("heart"\); \}\)/.test(SN));
-check("app.js: việc nền trả kết quả là một khoảnh khắc", /data\.type === "inbox"[\s\S]{0,600}JeeviStar\.moment\("work"\)/.test(APP));
-check("app.js: lượt làm từ 3 bước trở lên là một khoảnh khắc", /t\.buoc\.so\) \|\| 0\) >= 3[\s\S]{0,40}JeeviStar\.moment\("work"\)/.test(APP));
+check("thả tim/like thành công phát javis:react-positive",
+  /rv === "love" \|\| rv === "like"[\s\S]{0,160}javis:react-positive/.test(CR));
+check("star-nudge nghe sự kiện thả tim", /addEventListener\("javis:react-positive", function \(\) \{ moment\("heart"\); \}\)/.test(SN));
+check("app.js: việc nền trả kết quả là một khoảnh khắc", /data\.type === "inbox"[\s\S]{0,600}JavisStar\.moment\("work"\)/.test(APP));
+check("app.js: lượt làm từ 3 bước trở lên là một khoảnh khắc", /t\.buoc\.so\) \|\| 0\) >= 3[\s\S]{0,40}JavisStar\.moment\("work"\)/.test(APP));
 check("mở app thì hỏi server có cột mốc / bản mới không", /moment\("load"\)/.test(SN));
-check("trang Cập nhật có thẻ Ủng hộ Jeevi", /JeeviStar\.theUngHo\(\)/.test(CON) && /\.sn-ho \.sn-go/.test(CON));
+check("trang Cập nhật có thẻ Ủng hộ Jeevi", /JavisStar\.theUngHo\(\)/.test(CON) && /\.sn-ho \.sn-go/.test(CON));
 check("nút Tặng sao ở góc trái", /querySelector\("\.rail-foot"\)/.test(SN) && /rf-star/.test(CSS));
 // Chủ repo 25/10: nhét nút vào cột phiên bản thì "Give a star" gãy làm hai dòng. Nút là hàng riêng,
 // trải hết bề ngang, chữ một dòng; thanh thu gọn chỉ còn ngôi sao.
@@ -58,7 +58,7 @@ check("số sao đọc từ server, không viết cứng", /phanSo\(d\.count\)/.
 
 // 4. Linh vật là ngôi sao của logo Jeevi
 const saoLogo = (LOGO.match(/<path d="(M145 81[^"]+)"/) || [])[1];
-const saoThe = (SN.match(/var SAO_JEEVI = ([\s\S]*?);\n/) || [])[1];
+const saoThe = (SN.match(/var SAO_JAVIS = ([\s\S]*?);\n/) || [])[1];
 const noiChuoi = saoThe ? saoThe.replace(/"\s*\+\s*"/g, "").replace(/^"|"$/g, "").trim() : "";
 check("đường hình sao trùng logo.svg", !!saoLogo && noiChuoi === saoLogo, noiChuoi.slice(0, 40));
 check("màu thân và viền của logo", /fill: #FD6100/.test(CSS) && /stroke: #FBBA9C/.test(CSS));

@@ -20,7 +20,7 @@ Ba gốc rễ, test này canh cả ba:
      endpoint `/background` + dải trạng thái trong khung chat.
 
   3. **Không chạy luôn.** Điều phối Kanban mặc định `off`, nên việc giao từ chat nằm im vô
-     thời hạn. Plugin `jeevi-task` có sẵn một dòng cảnh báo cho chuyện này, nhưng cổng viết
+     thời hạn. Plugin `javis-task` có sẵn một dòng cảnh báo cho chuyện này, nhưng cổng viết
      sai (`not view.get("orchestration")` - mà giá trị là chuỗi "off", luôn truthy) nên nó
      CHƯA TỪNG in ra lần nào, và `op=add` thì còn hứa thẳng "Việc chạy nền. Kết quả tự về".
 
@@ -35,7 +35,7 @@ import tempfile
 
 from _paths import ROOT, SERVER, DASHBOARD, SYSTEM  # noqa: E402,F401
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-bgstatus-test-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-bgstatus-test-"))
 
 import background_status as bg  # noqa: E402
 import channel_context  # noqa: E402
@@ -203,8 +203,8 @@ check("web: prompt nói rõ server tự kiểm lời hứa",
       "the server paste a correction line" in BLOCK_WEB)
 
 
-# ─────────── 5. Plugin jeevi-task: cổng điều phối phải ĐÚNG ───────────
-PLUGIN = (SYSTEM / "plugins" / "jeevi-task" / "plugin.py").read_text(encoding="utf-8")
+# ─────────── 5. Plugin javis-task: cổng điều phối phải ĐÚNG ───────────
+PLUGIN = (SYSTEM / "plugins" / "javis-task" / "plugin.py").read_text(encoding="utf-8")
 check("bỏ cổng sai `not view.get(\"orchestration\")` (chuỗi 'off' luôn truthy)",
       'not view.get("orchestration")' not in PLUGIN)
 check("cổng mới so đúng với 'auto'", '== "auto"' in PLUGIN)
@@ -251,9 +251,9 @@ check("dải nói thẳng khi việc KHÔNG tự chạy",
 check("dải không vẽ lại DOM khi trạng thái không đổi (đỡ nháy)",
       "lastKey" in STRIP and "if (key === lastKey) { capNhatTuoi(); return; }" in STRIP)
 check("app.js làm tươi dải khi lượt xong và khi việc nền báo về",
-      APPJS.count("window.JeeviBackground.refresh()") >= 2)
+      APPJS.count("window.JavisBackground.refresh()") >= 2)
 check("app.js dọn dải khi đổi/mở hội thoại khác",
-      APPJS.count("window.JeeviBackground.reset()") >= 2)
+      APPJS.count("window.JavisBackground.reset()") >= 2)
 check("CSS có hai tông run/stall", ".bg-run" in CSS and ".bg-stall" in CSS)
 
 

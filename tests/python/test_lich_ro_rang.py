@@ -23,7 +23,7 @@ import self_improve  # noqa: E402
 
 # 0.426.0: reminders are shown and edited on the Tasks page (dashboard/tasks.js), the old Scheduled page left console.js.
 TASKS = (ROOT / "dashboard" / "tasks.js").read_text(encoding="utf-8")
-PLUGIN = (ROOT / "system" / "plugins" / "jeevi-schedule" / "plugin.py").read_text(encoding="utf-8")
+PLUGIN = (ROOT / "system" / "plugins" / "javis-schedule" / "plugin.py").read_text(encoding="utf-8")
 
 fails = []
 
@@ -61,7 +61,7 @@ check("cron rác không làm vỡ chỗ hiển thị", cron_util.describe_cron("
 
 # ── Dựng feature nhắc hẹn tối giản (không mạng, không engine) ────────────────
 def make_feature(notify_ready=None):
-    brain = Path(tempfile.mkdtemp(prefix="jeevi-lich-brain-"))
+    brain = Path(tempfile.mkdtemp(prefix="javis-lich-brain-"))
 
     async def fake_send(_chat, _text):
         return True, ""
@@ -171,8 +171,8 @@ check("thiếu dep kiểm tra thì không dựng rào (test/embed tối giản)"
 
 # ── 5. "Vòng lặp tự cải thiện" không được hồi sinh ──────────────────────────
 def make_loop_feature():
-    state = Path(tempfile.mkdtemp(prefix="jeevi-lich-state-"))
-    brain = Path(tempfile.mkdtemp(prefix="jeevi-lich-loopbrain-"))
+    state = Path(tempfile.mkdtemp(prefix="javis-lich-state-"))
+    brain = Path(tempfile.mkdtemp(prefix="javis-lich-loopbrain-"))
     deps = self_improve.LoopDeps(
         build_system_prompt=lambda _b: "",
         brain_root=lambda _b: str(brain),
@@ -242,7 +242,7 @@ check("form sửa được nhắc hẹn qua /reminders/update", '"/reminders/upd
 check("thiếu kênh báo thì hỏi lại chứ không im lặng",
       "r.can_force" in TASKS and 'tw("nv.f.force")' in TASKS)
 check("trang Nhiệm vụ cảnh báo khi chưa có kênh báo", "bad = nt.ok === false" in TASKS and 'tw("nv.nochan.go")' in TASKS)
-check("tool jeevi_schedule có op=update để sửa lịch bằng chat",
+check("tool javis_schedule có op=update để sửa lịch bằng chat",
       '"update"' in PLUGIN and "_do_update" in PLUGIN)
 check("tool KHÔNG tự vượt rào thiếu kênh",
       "KHÔNG tự quyết hộ" in PLUGIN and "allow_no_channel" in PLUGIN)

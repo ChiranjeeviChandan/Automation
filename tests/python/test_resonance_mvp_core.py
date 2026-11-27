@@ -3,7 +3,7 @@
     python tests/run.py resonance_mvp_core -v
 
 Không gọi model thật: engine giả cho đường framer. Bộ não quyết định tạo hay nối mục tiêu bằng
-tool `jeevi_goal` ngay trong lượt chat; route_request chỉ ĐỌC những gì lượt đó đã thật sự làm
+tool `javis_goal` ngay trong lượt chat; route_request chỉ ĐỌC những gì lượt đó đã thật sự làm
 (sự kiện trong kho mục tiêu, việc Kanban đã giao), không gọi thêm model, không dò từ khoá.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
@@ -16,8 +16,8 @@ import tempfile
 import time
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-resonance-m2-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-resonance-m2-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 
 import resonance as R  # noqa: E402
 import resonance_store as RS  # noqa: E402
@@ -45,7 +45,7 @@ def raises(exc, fn):
 BRAIN = str(Path(tempfile.mkdtemp(prefix="brain-a-")).resolve())
 OTHER = str(Path(tempfile.mkdtemp(prefix="brain-b-")).resolve())
 OWNER = RS.Principal(kind="owner", id="owner", brain_id=BRAIN)
-JEEVI = RS.Principal(kind="agent", id="jeevi", brain_id=BRAIN)
+JEEVI = RS.Principal(kind="agent", id="javis", brain_id=BRAIN)
 STRANGER = RS.Principal(kind="owner", id="owner", brain_id=OTHER)
 
 USER_TEXT = ("Mỗi sáng gom giúp anh các việc đang dở thành một ghi chú trong Dashboard, "
@@ -246,7 +246,7 @@ def ctx(msg_id, text, **kw):
     return c
 
 
-# Đề xuất từ chính bộ não (tool jeevi_goal): KHÔNG gọi model thêm
+# Đề xuất từ chính bộ não (tool javis_goal): KHÔNG gọi model thêm
 eng0 = FakeEngine([])
 dp0 = deps_with(eng0)
 gp = asyncio.run(R.form_goal("msg:s2:1", ctx(1, USER_TEXT, proposal=proposal()), dp0))

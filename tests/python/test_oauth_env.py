@@ -14,7 +14,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-oauthenv-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-oauthenv-"))
 
 import mcp_catalog  # noqa: E402
 import mcp_store  # noqa: E402
@@ -111,7 +111,7 @@ check("CANARY: without oauth_env the token stays out of the environment",
 
 # ---- a pack that declares oauth_env is a code pack ----
 check("oauth_env is listed as a field that runs something", "oauth_env" in packs._CODE_FIELD)
-empty_dir = Path(tempfile.mkdtemp(prefix="jeevi-oauthenv-pack-"))
+empty_dir = Path(tempfile.mkdtemp(prefix="javis-oauthenv-pack-"))
 check("a connector with only oauth_env makes the pack tier code",
       packs._tier(empty_dir, [{"id": "x", "transport": "http", "oauth_env": MAPPING}]) == "code")
 

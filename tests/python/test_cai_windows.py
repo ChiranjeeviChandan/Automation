@@ -33,7 +33,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-caiwin-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-caiwin-")
 
 import claude_cli as cc  # noqa: E402
 
@@ -57,25 +57,25 @@ def _binary_gia(thu_muc: Path, ten: str) -> Path:
 # ============================================================
 # 1. NHỚ chỗ đã thấy: PATH bị cắt cụt vẫn tìm ra binary còn trên ổ đĩa
 # ============================================================
-_bin_dir = Path(tempfile.mkdtemp(prefix="jeevi-fakebin-"))
-_fake = _binary_gia(_bin_dir, "jeevifakecli")
+_bin_dir = Path(tempfile.mkdtemp(prefix="javis-fakebin-"))
+_fake = _binary_gia(_bin_dir, "javisfakecli")
 _path_that = os.environ.get("PATH", "")
 os.environ["PATH"] = str(_bin_dir)
-check("tìm được binary trên PATH", cc.tim_binary("jeevifakecli") == str(_fake))
+check("tìm được binary trên PATH", cc.tim_binary("javisfakecli") == str(_fake))
 
 # Đây là ca Antigravity: PATH bị một installer khác ghi đè/cắt cụt, binary KHÔNG mất.
-os.environ["PATH"] = str(Path(tempfile.mkdtemp(prefix="jeevi-empty-")))
+os.environ["PATH"] = str(Path(tempfile.mkdtemp(prefix="javis-empty-")))
 cc._BIN_NHO["data"] = None          # tiến trình mới: đọc lại bản nhớ từ file
 check("PATH bị cắt cụt vẫn dùng lại được chỗ đã nhớ",
-      cc.tim_binary("jeevifakecli") == str(_fake))
+      cc.tim_binary("javisfakecli") == str(_fake))
 check("bản nhớ ghi xuống file trong STATE_DIR",
-      (Path(os.environ["JEEVI_STATE_DIR"]) / "bin_paths.json").exists())
+      (Path(os.environ["JAVIS_STATE_DIR"]) / "bin_paths.json").exists())
 
 # Gỡ THẬT thì phải báo là chưa cài - bản nhớ không được biến thành lời nói dối.
 _fake.unlink()
 cc._BIN_NHO["data"] = None
 check("gỡ CLI thật thì trả None, không giữ đường dẫn chết",
-      cc.tim_binary("jeevifakecli") is None)
+      cc.tim_binary("javisfakecli") is None)
 os.environ["PATH"] = _path_that
 
 # ============================================================
@@ -89,7 +89,7 @@ check("danh sách thư mục Windows có npm global, nvm, volta, scoop",
 check("có cả %LOCALAPPDATA%\\npm, không chỉ %APPDATA%\\npm",
       any("LOCALAPPDATA" in m and "npm" in m for m in cc._THU_MUC_BIN_WINDOWS))
 # Bung biến môi trường: biến không tồn tại thì BỎ, không được trả về chuỗi còn dấu %.
-_tmp_appdata = tempfile.mkdtemp(prefix="jeevi-appdata-")
+_tmp_appdata = tempfile.mkdtemp(prefix="javis-appdata-")
 os.environ["APPDATA"] = _tmp_appdata
 Path(_tmp_appdata, "npm").mkdir(exist_ok=True)
 os.environ.pop("NVM_SYMLINK", None)
@@ -102,17 +102,17 @@ check("biến môi trường không có thì bỏ, không trả chuỗi còn d�
 # ============================================================
 # 3. Env override cho cả bốn CLI (trước đây `claude` là cái duy nhất thiếu)
 # ============================================================
-_claude_gia = _binary_gia(Path(tempfile.mkdtemp(prefix="jeevi-cl-")), "claude-gia")
-os.environ["JEEVI_CLAUDE_BIN"] = str(_claude_gia)
-check("JEEVI_CLAUDE_BIN chỉ thẳng được đường dẫn lạ",
+_claude_gia = _binary_gia(Path(tempfile.mkdtemp(prefix="javis-cl-")), "claude-gia")
+os.environ["JAVIS_CLAUDE_BIN"] = str(_claude_gia)
+check("JAVIS_CLAUDE_BIN chỉ thẳng được đường dẫn lạ",
       cc.find_claude_cli() == str(_claude_gia))
-os.environ.pop("JEEVI_CLAUDE_BIN", None)
+os.environ.pop("JAVIS_CLAUDE_BIN", None)
 src_cc = (SERVER / "claude_cli.py").read_text(encoding="utf-8")
 src_agy = (SERVER / "antigravity_cli.py").read_text(encoding="utf-8")
 src_grok = (SERVER / "grok_cli.py").read_text(encoding="utf-8")
 check("cả bốn CLI đều có cửa thoát bằng biến môi trường",
-      "JEEVI_CLAUDE_BIN" in src_cc and "JEEVI_CODEX_BIN" in src_cc
-      and "JEEVI_AGY_BIN" in src_agy and "JEEVI_GROK_BIN" in src_grok)
+      "JAVIS_CLAUDE_BIN" in src_cc and "JAVIS_CODEX_BIN" in src_cc
+      and "JAVIS_AGY_BIN" in src_agy and "JAVIS_GROK_BIN" in src_grok)
 
 # ============================================================
 # 4. Câu báo thiếu CLI phải nói ĐỦ ba việc

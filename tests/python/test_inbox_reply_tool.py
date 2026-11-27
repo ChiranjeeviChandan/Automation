@@ -20,9 +20,9 @@ import os
 import sys
 import tempfile
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-inbox-reply-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
+_STATE = tempfile.mkdtemp(prefix="javis-inbox-reply-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

@@ -17,10 +17,10 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-xuatnhap-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-xuatnhap-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 os.environ["BRAINS_DIR"] = str(Path(_STATE) / "brains")
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -114,7 +114,7 @@ check("xuất ra file zip, tên theo tên bộ não", r.status_code == 200 and r
 zdata = r.content
 names = zipfile.ZipFile(io.BytesIO(zdata)).namelist()
 check("zip có ghi chú, ảnh và manifest", "Kho Hang/wiki/hang.md" in names and "Kho Hang/attachments/anh.png" in names
-      and "Kho Hang/jeevi-brain.json" in names, names)
+      and "Kho Hang/javis-brain.json" in names, names)
 check("zip KHÔNG có chat thô và token", not any("conversations" in n or ".grok" in n for n in names), names)
 r = cl.post("/brains/export/start", data={"brain": "path:" + tempfile.gettempdir()})
 check("thư mục ngoài BRAINS_DIR: không xuất", r.status_code == 404)
@@ -136,7 +136,7 @@ check("dựng sẵn cấu trúc chuẩn cho bộ não mới", (dst / "Jeevi" / "
 names = [b["name"] for b in cl.get("/brains").json()["brains"]]
 check("bộ não mới hiện trong danh sách", "Kho Hang (2)" in names, names)
 work = Path(_STATE) / "brain-import"
-check("dọn sạch mảnh tải lên và thư mục tạm", not list(work.glob("*.part")) and not list(work.glob(".jeevi-import-*")),
+check("dọn sạch mảnh tải lên và thư mục tạm", not list(work.glob("*.part")) and not list(work.glob(".javis-import-*")),
       list(work.iterdir()))
 
 r = upload(zdata, label="Tên riêng")

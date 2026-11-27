@@ -14,7 +14,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-macdinh-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-macdinh-"))
 
 import engine  # noqa: E402
 import main  # noqa: E402
@@ -40,7 +40,7 @@ known = set(engine.DEFAULT_MODELS.values()) | {"gpt-5.5", "gpt-5-codex"}   # Cod
 check("engine không có giá trị dự phòng nào nằm ngoài bảng", fallbacks <= known, str(sorted(fallbacks - known)))
 
 # ---- 2. tên mặc định từng thẻ ----
-home = Path(tempfile.mkdtemp(prefix="jeevi-macdinh-home-"))
+home = Path(tempfile.mkdtemp(prefix="javis-macdinh-home-"))
 os.environ["HOME"] = str(home)
 for v in ("CODEX_HOME", "GROK_HOME", "CLAUDE_CONFIG_DIR"):
     os.environ.pop(v, None)

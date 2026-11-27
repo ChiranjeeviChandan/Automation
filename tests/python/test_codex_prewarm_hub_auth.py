@@ -2,7 +2,7 @@
 
     python tests/run.py codex_prewarm_hub_auth
 
-The bug: `codex_steer._recipe` looked for the lane argument with the bare prefix `mcp_servers.jeevi.http_headers.`.
+The bug: `codex_steer._recipe` looked for the lane argument with the bare prefix `mcp_servers.javis.http_headers.`.
 The flattened hub profile puts `...http_headers.Authorization="Bearer <hub token>"` in argv ahead of the turn key, so
 the prewarm replaced the hub Bearer with the lane key. Every prewarmed process then got 401 from /hub/mcp and the next
 chat turn ran without a single Jeevi tool.
@@ -18,7 +18,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-codex-prewarm-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-codex-prewarm-"))
 
 import codex_steer  # noqa: E402
 import turn_context  # noqa: E402
@@ -33,7 +33,7 @@ def check(name, cond, extra=""):
 
 
 class _Cli:
-    cwd = tempfile.mkdtemp(prefix="jeevi-codex-prewarm-cwd-")
+    cwd = tempfile.mkdtemp(prefix="javis-codex-prewarm-cwd-")
     tag = "chat-test"
     sandbox = "workspace-write"
     model = ""
@@ -65,19 +65,19 @@ def _argv_of_prewarm(args):
     return seen.get("argv")
 
 
-home = Path(tempfile.mkdtemp(prefix="jeevi-codex-prewarm-home-"))
-(home / "jeevi.config.toml").write_text(
-    '[mcp_servers.jeevi]\n'
+home = Path(tempfile.mkdtemp(prefix="javis-codex-prewarm-home-"))
+(home / "javis.config.toml").write_text(
+    '[mcp_servers.javis]\n'
     'url = "http://127.0.0.1:7777/hub/mcp"\n'
     'startup_timeout_sec = 20\n'
-    '[mcp_servers.jeevi.http_headers]\n'
+    '[mcp_servers.javis.http_headers]\n'
     '"Authorization" = "Bearer HUB-TOKEN"\n'
     '"X-Jeevi-Mode" = "full"\n', encoding="utf-8")
-profile = codex_steer.profile_overrides("jeevi", home)
+profile = codex_steer.profile_overrides("javis", home)
 auth_arg = next((a for a in profile if ".http_headers.Authorization=" in a), None)
 check("the flattened profile carries the hub Bearer", auth_arg is not None, profile)
 
-vault_arg = 'mcp_servers.jeevi.http_headers.X-Jeevi-Vault="/brains/Test"'
+vault_arg = 'mcp_servers.javis.http_headers.X-Jeevi-Vault="/brains/Test"'
 turn_arg = f'{turn_context.CODEX_HEADER_KEY}="turn-key-of-the-last-turn"'
 
 

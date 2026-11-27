@@ -25,8 +25,8 @@ def check(name, cond):
 
 
 now = time.time()
-state = Path(tempfile.mkdtemp(prefix="jeevi-sentinel-state-"))
-brains_dir = Path(tempfile.mkdtemp(prefix="jeevi-sentinel-brains-"))
+state = Path(tempfile.mkdtemp(prefix="javis-sentinel-state-"))
+brains_dir = Path(tempfile.mkdtemp(prefix="javis-sentinel-brains-"))
 shop = brains_dir / "shop"
 (shop / "Jeevi").mkdir(parents=True)
 
@@ -70,7 +70,7 @@ check("nothing was written", all(p.stat().st_mtime == m for p, m in before.items
 check("markdown lists the issue", "3x" in sentinel.to_markdown(rep))
 check("empty state is an empty report", sentinel.scan(Path(tempfile.mkdtemp()), [])["issues"] == [])
 
-out = Path(tempfile.mkdtemp(prefix="jeevi-sentinel-out-"))
+out = Path(tempfile.mkdtemp(prefix="javis-sentinel-out-"))
 r = subprocess.run([sys.executable, str(ROOT / "tools" / "sentinel.py"), "--state-dir", str(state),
                     "--brains-dir", str(brains_dir), "--json", "--out", str(out)],
                    capture_output=True, text=True, env=dict(os.environ, PYTHONIOENCODING="utf-8"))

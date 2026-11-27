@@ -21,7 +21,7 @@ import re
 import tempfile
 from contextlib import redirect_stderr
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-voicefb-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-voicefb-")
 
 from fastapi.testclient import TestClient   # noqa: E402
 import voice_brain as vb   # noqa: E402

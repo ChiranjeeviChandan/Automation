@@ -18,7 +18,7 @@
 # survive an uninstall.
 #
 # NO WINDOW OF ITS OWN: the wizard runs this file hidden and shows every line it prints inside
-# the Setup window (jeevi-setup.iss, ExecAndLogOutput). So nothing here may wait on the
+# the Setup window (javis-setup.iss, ExecAndLogOutput). So nothing here may wait on the
 # keyboard (the wizard passes -NoPause and standard input is empty), and every outside program
 # goes through Invoke-Capped, which waits for that one process and gives up after a time cap.
 # Before this, an error waited for Enter in a black window hidden behind the wizard, and the

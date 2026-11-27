@@ -4,7 +4,7 @@
 
 Vì sao file này tồn tại (0.64.72): chủ dự án 27/09 nói "tìm hiểu cho anh Workers for Platforms
 của Cloudflare" và "KV của Cloudflare"; máy nghe chép "Quốc cơ ford plat form của clap Play",
-"cave". Bộ não giọng viết lại đúng ở dòng JEEVI_NGHE nhưng rào voice_brain.safe_transcript_rewrite
+"cave". Bộ não giọng viết lại đúng ở dòng JAVIS_NGHE nhưng rào voice_brain.safe_transcript_rewrite
 chặn (cụm 5 tiếng vượt trần 4; "KV" quá ngắn; so mặt chữ tiếng Anh với tiếng Việt), lượt quay
 về câu gốc, bộ não chính trả lời mở đầu "Em hiểu 'cave' là KV..." còn bong bóng vẫn chữ sai.
 Chủ dự án: "đáng nhẽ không cần giải thích mà có một bộ định tuyến điền đúng ngữ cảnh vào khung
@@ -14,7 +14,7 @@ from _paths import ROOT, SERVER  # noqa: E402,F401
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-diengiai-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-diengiai-"))
 
 import voice_brain as vb  # noqa: E402
 

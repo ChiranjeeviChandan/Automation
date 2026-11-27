@@ -15,7 +15,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-prevrounds-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-prevrounds-"))
 
 import self_improve  # noqa: E402
 
@@ -28,7 +28,7 @@ def check(name, cond):
         _fails.append(name)
 
 
-_BRAIN = tempfile.mkdtemp(prefix="jeevi-prevrounds-brain-")
+_BRAIN = tempfile.mkdtemp(prefix="javis-prevrounds-brain-")
 
 
 def _atomic_write(path, text):
@@ -43,7 +43,7 @@ deps = self_improve.LoopDeps(
     aux_model=lambda: None,
     atomic_write_text=_atomic_write,
     project_root=Path("."),
-    state_dir=Path(os.environ["JEEVI_STATE_DIR"]),
+    state_dir=Path(os.environ["JAVIS_STATE_DIR"]),
     safe_tools=["Read", "Write", "Edit", "Glob", "Grep"],
     readonly_tools=["Read", "Glob", "Grep", "LS"],
 )

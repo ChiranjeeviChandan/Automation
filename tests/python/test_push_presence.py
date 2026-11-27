@@ -12,7 +12,7 @@ import tempfile
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-presence-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-presence-")
 
 import push_presence as P  # noqa: E402
 import webpush  # noqa: E402

@@ -33,11 +33,11 @@ def test_la_anh_va_khong_lan_sang_chu():
 
 
 def test_tran_anh_mac_dinh_va_env(monkeypatch):
-    monkeypatch.delenv("JEEVI_SYNC_ANH_MAX_MB", raising=False)
+    monkeypatch.delenv("JAVIS_SYNC_ANH_MAX_MB", raising=False)
     assert git_brain.anh_max_bytes() == git_brain.ANH_MAX_MB_DEFAULT * 1024 * 1024
-    monkeypatch.setenv("JEEVI_SYNC_ANH_MAX_MB", "2")
+    monkeypatch.setenv("JAVIS_SYNC_ANH_MAX_MB", "2")
     assert git_brain.anh_max_bytes() == 2 * 1024 * 1024
-    monkeypatch.setenv("JEEVI_SYNC_ANH_MAX_MB", "rac")
+    monkeypatch.setenv("JAVIS_SYNC_ANH_MAX_MB", "rac")
     assert git_brain.anh_max_bytes() == git_brain.ANH_MAX_MB_DEFAULT * 1024 * 1024
 
 
@@ -81,7 +81,7 @@ def test_bat_chep_anh_va_tra_danh_sach(tmp_path):
 
 
 def test_bat_anh_qua_tran_bi_bo_va_khong_bi_prune(tmp_path, monkeypatch):
-    monkeypatch.setenv("JEEVI_SYNC_ANH_MAX_MB", "1")
+    monkeypatch.setenv("JAVIS_SYNC_ANH_MAX_MB", "1")
     src, mirror = tmp_path / "brains", tmp_path / "mirror"
     _w(src / "b" / "attachments" / "to.jpg", b"j" * (1024 * 1024 + 1))
     _w(mirror / "b" / "attachments" / "to.jpg", b"cu")   # từng sync được (trần cũ cao hơn)

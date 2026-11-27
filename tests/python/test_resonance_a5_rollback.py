@@ -22,9 +22,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-resonance-a5rb-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
-os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
+_STATE = tempfile.mkdtemp(prefix="javis-resonance-a5rb-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
+os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
 
 import resonance as R  # noqa: E402
 import resonance_store as RS  # noqa: E402
@@ -117,7 +117,7 @@ def deps(mod, store, clock):
         return (REV if s == getattr(mod, "REVIEW_SYSTEM", None) else WORK), {"provider": "fake", "model": "fake-1",
                                                                              "text_only": True}
     return mod.GoalDeps(engine_factory=factory, budget=mod.CallBudget(0), clock=lambda: clock[0], store=store,
-                        principal=P("agent", "jeevi", BRAIN), brain_root=BRAIN, evidence=EV, notify=_nt)
+                        principal=P("agent", "javis", BRAIN), brain_root=BRAIN, evidence=EV, notify=_nt)
 
 
 def proposal(path):

@@ -17,7 +17,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-toolscache-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-toolscache-"))
 
 import mcp_client  # noqa: E402
 
@@ -153,7 +153,7 @@ for line in sys.stdin:
         continue
     print(json.dumps({"jsonrpc": "2.0", "id": mid, "result": result}), flush=True)
 '''
-helper = Path(tempfile.mkdtemp(prefix="jeevi-toolscache-srv-")) / "changing_server.py"
+helper = Path(tempfile.mkdtemp(prefix="javis-toolscache-srv-")) / "changing_server.py"
 helper.write_text(SERVER_SRC, encoding="utf-8")
 mcp_client.SessionPool._make = real_make
 pool2 = mcp_client.SessionPool()

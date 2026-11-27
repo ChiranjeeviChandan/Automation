@@ -18,7 +18,7 @@ import os
 import queue
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-codexrt-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-codexrt-"))
 
 import codex_realtime  # noqa: E402
 

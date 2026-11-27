@@ -12,7 +12,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-openlocal-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-openlocal-")
 
 import main  # noqa: E402
 import local_open  # noqa: E402
@@ -27,8 +27,8 @@ def check(name, cond, extra=""):
         _fails.append(name)
 
 
-home = Path(tempfile.mkdtemp(prefix="jeevi-home-")).resolve()
-outside = Path(tempfile.mkdtemp(prefix="jeevi-outside-")).resolve()
+home = Path(tempfile.mkdtemp(prefix="javis-home-")).resolve()
+outside = Path(tempfile.mkdtemp(prefix="javis-outside-")).resolve()
 (home / "Documents").mkdir()
 deck = home / "Documents" / "06 Vocab.html"
 deck.write_text("<h1>x</h1>")

@@ -2,7 +2,7 @@
 // brains-ui.js - Nhiều second brain trong 1 thư mục (BRAINS_DIR), nạp TỪ SERVER.
 // Bổ sung cho app.js, KHÔNG sửa app.js (file UTF-16 dễ hỏng). Chỉ thao tác DOM:
 //   - Đổ dropdown #graphSource từ GET /brains (thay vì localStorage).
-//   - window.JeeviBrains.create / rename / remove / forget / adopt: what the brain picker panel (brain-picker.js)
+//   - window.JavisBrains.create / rename / remove / forget / adopt: what the brain picker panel (brain-picker.js)
 //     calls from each brain's row (POST /brains/new, /brains/label, /brains/delete; delete needs the folder name typed).
 // Vẫn giữ "chọn folder ngoài bất kỳ" (option data-custom do app.js thêm).
 // ============================================================
@@ -48,7 +48,7 @@
   async function pruneCustomBrains(realBrains) {
     let moved = false;
     let list;
-    try { list = JSON.parse(localStorage.getItem("jeevi.brains") || "[]"); }
+    try { list = JSON.parse(localStorage.getItem("javis.brains") || "[]"); }
     catch (e) { list = []; }
     if (!Array.isArray(list)) list = [];
     const realPaths = new Set((realBrains || []).map((b) => normPath(b.path)));
@@ -62,7 +62,7 @@
       // còn lại: đã bị xoá / không phải thư mục → loại
     }
     if (kept.length !== list.length) {
-      localStorage.setItem("jeevi.brains", JSON.stringify(kept));
+      localStorage.setItem("javis.brains", JSON.stringify(kept));
     }
     // Gỡ các option thư mục ngoài (do app.js đã render) không còn trong danh sách giữ lại.
     const keepVals = new Set(kept.map((b) => "path:" + b.path));
@@ -70,7 +70,7 @@
       if (keepVals.has(o.value)) return;
       if (sel.value === o.value) {           // đang chọn đúng cái bị gỡ → về brain mặc định
         sel.value = "brain";
-        localStorage.setItem("jeevi.graphSource", "brain");
+        localStorage.setItem("javis.graphSource", "brain");
         sel.dispatchEvent(new Event("change"));
         moved = true;
       }
@@ -153,7 +153,7 @@
         // The brain in use is gone from the list: deleted (here or on another device), or the saved choice app.js
         // selected at startup no longer exists. Go to Brain Default and say so, so every page follows.
         sel.value = "brain";
-        localStorage.setItem("jeevi.graphSource", "brain");
+        localStorage.setItem("javis.graphSource", "brain");
         sel.dispatchEvent(new Event("change"));
       }
     }
@@ -162,11 +162,11 @@
       const want = "path:" + selectPath;
       if ([...sel.options].some((o) => o.value === want)) {
         sel.value = want;
-        localStorage.setItem("jeevi.graphSource", want);
+        localStorage.setItem("javis.graphSource", want);
         sel.dispatchEvent(new Event("change"));
       }
     } else if (restoreSaved) {
-      const saved = localStorage.getItem("jeevi.graphSource");
+      const saved = localStorage.getItem("javis.graphSource");
       if (saved && saved !== sel.value && [...sel.options].some((o) => o.value === saved)) {
         sel.value = saved;
         sel.dispatchEvent(new Event("change"));
@@ -206,7 +206,7 @@
     const r = await post("/brains/label", { brain: value, label: (label || "").trim() });
     if (!r.ok) return { ok: false, error: r.error || window.t("brains.rename_failed") };
     await loadBrains(null, false);
-    try { window.dispatchEvent(new CustomEvent("jeevi:brain-renamed", { detail: { brain: value, label: r.label } })); } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent("javis:brain-renamed", { detail: { brain: value, label: r.label } })); } catch (e) {}
     return r;
   }
 
@@ -222,7 +222,7 @@
     const wasCurrent = sel.value === value;
     if (wasCurrent) {
       sel.value = "brain";
-      localStorage.setItem("jeevi.graphSource", "brain");
+      localStorage.setItem("javis.graphSource", "brain");
     }
     await loadBrains(null, false);
     if (wasCurrent) sel.dispatchEvent(new Event("change"));
@@ -242,7 +242,7 @@
     await loadBrains(null, false);
     if (stayOn && optionOf(stayOn)) {
       sel.value = stayOn;
-      localStorage.setItem("jeevi.graphSource", stayOn);
+      localStorage.setItem("javis.graphSource", stayOn);
       sel.dispatchEvent(new Event("change"));
     }
     return r;
@@ -253,14 +253,14 @@
     const opt = optionOf(value);
     if (!opt || !opt.dataset.custom) return { ok: false, error: window.t("brains.only_listed") };
     let list;
-    try { list = JSON.parse(localStorage.getItem("jeevi.brains") || "[]"); } catch (e) { list = []; }
+    try { list = JSON.parse(localStorage.getItem("javis.brains") || "[]"); } catch (e) { list = []; }
     if (!Array.isArray(list)) list = [];
     list = list.filter((b) => b && ("path:" + b.path) !== value);
-    localStorage.setItem("jeevi.brains", JSON.stringify(list));
+    localStorage.setItem("javis.brains", JSON.stringify(list));
     const wasCurrent = sel.value === value;
     if (wasCurrent) {
       sel.value = "brain";
-      localStorage.setItem("jeevi.graphSource", "brain");
+      localStorage.setItem("javis.graphSource", "brain");
     }
     const grp = opt.parentNode;
     opt.remove();
@@ -276,5 +276,5 @@
 
   loadBrains(null, true);
 
-  window.JeeviBrains = { reload: () => loadBrains(null, false), create, rename, remove, forget, adopt, setDefault };
+  window.JavisBrains = { reload: () => loadBrains(null, false), create, rename, remove, forget, adopt, setDefault };
 })();

@@ -1,10 +1,10 @@
-"""Personal Zalo: Jeevi reads an account when jeevi-zalo says a message arrived, not on a timer (2026-11-10).
+"""Personal Zalo: Jeevi reads an account when javis-zalo says a message arrived, not on a timer (2026-11-10).
 
     python tests/run.py zalo_live_push      (no network, fake MCP)
 
 Owner, 10/11/2026: "when a message arrives, send it over; do not scan on a timer, some days there is no message at
-all." jeevi-zalo 1.10.0 POSTs a wake-up to /zalo/push; the read loop reads at once on a wake-up and makes no call to
-jeevi-zalo for an account that pushes and has nothing pending.
+all." javis-zalo 1.10.0 POSTs a wake-up to /zalo/push; the read loop reads at once on a wake-up and makes no call to
+javis-zalo for an account that pushes and has nothing pending.
 
 Contract:
   1. zalo_push: the two variables per connection, the per-process token, `active` only for the live MCP session.
@@ -13,9 +13,9 @@ Contract:
      It ticks only while a turn is on hold (released by time), and stops once that turn is released.
   4. A wake-up is read at once (well inside one tick), and a wake-up that lands during a read causes one more read.
   5. A pushing account whose process ended is read at once (the exit listener wakes the loop; that read restarts
-     jeevi-zalo). A bot taking or leaving its post and a saved connection wake the loop too.
+     javis-zalo). A bot taking or leaving its post and a saved connection wake the loop too.
   6. /zalo/push: local requests with this process's bearer only; an unknown connection records nothing.
-  7. `JEEVI_ZALO_PUSH=0` turns everything off.
+  7. `JAVIS_ZALO_PUSH=0` turns everything off.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
 import asyncio
@@ -25,9 +25,9 @@ import sys
 import tempfile
 import time
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zpush-")
-os.environ.pop("JEEVI_ZALO_PUSH", None)
-os.environ["JEEVI_PORT"] = "7791"
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zpush-")
+os.environ.pop("JAVIS_ZALO_PUSH", None)
+os.environ["JAVIS_PORT"] = "7791"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -50,11 +50,11 @@ def check(name, cond, extra=None):
 # ---- 1. zalo_push --------------------------------------------------------------------------------------------
 env = zalo_push.env_for("zalo 1/a")
 check("the URL points at this machine and names the connection (escaped)",
-      env.get("JEEVI_ZALO_PUSH_URL") == "http://127.0.0.1:7791/zalo/push?conn=zalo%201%2Fa", env)
+      env.get("JAVIS_ZALO_PUSH_URL") == "http://127.0.0.1:7791/zalo/push?conn=zalo%201%2Fa", env)
 check("the token is long and the same on every call (the session identity must not change)",
-      len(env.get("JEEVI_ZALO_PUSH_TOKEN", "")) >= 32 and zalo_push.env_for("zalo 1/a") == env)
+      len(env.get("JAVIS_ZALO_PUSH_TOKEN", "")) >= 32 and zalo_push.env_for("zalo 1/a") == env)
 check("no connection id, no variables", zalo_push.env_for("") == {})
-tok = env["JEEVI_ZALO_PUSH_TOKEN"]
+tok = env["JAVIS_ZALO_PUSH_TOKEN"]
 check("the bearer of this process is accepted", zalo_push.token_ok("Bearer " + tok) and zalo_push.token_ok("bearer " + tok))
 check("a wrong, empty or bare token is refused",
       not zalo_push.token_ok("Bearer nope") and not zalo_push.token_ok("") and not zalo_push.token_ok(tok))
@@ -69,9 +69,9 @@ check("active for that session only", zalo_push.active("c1", 5) and not zalo_pus
       and not zalo_push.active("c1", 0) and not zalo_push.active("other", 5))
 check("take returns the pending wake-up once", zalo_push.take("c1") and not zalo_push.take("c1")
       and not zalo_push.pending("c1"))
-os.environ["JEEVI_ZALO_PUSH"] = "0"
-check("JEEVI_ZALO_PUSH=0: no variables and never active", zalo_push.env_for("c1") == {} and not zalo_push.active("c1", 5))
-os.environ.pop("JEEVI_ZALO_PUSH")
+os.environ["JAVIS_ZALO_PUSH"] = "0"
+check("JAVIS_ZALO_PUSH=0: no variables and never active", zalo_push.env_for("c1") == {} and not zalo_push.active("c1", 5))
+os.environ.pop("JAVIS_ZALO_PUSH")
 
 src_store = (ROOT / "server" / "mcp_store.py").read_text(encoding="utf-8")
 check("the variables are set where every caller resolves the connection (stdio zalo only)",
@@ -192,7 +192,7 @@ async def loop_tests():
         check("the loop asked to be told about saved connections and ended MCP processes",
               zc.wake in mcp_store.ON_SAVE and zc._on_mcp_exit in mcp_client.STDIO_EXIT_LISTENERS)
 
-        # 5. The process died: the exit listener wakes the loop, which reads at once (that read restarts jeevi-zalo).
+        # 5. The process died: the exit listener wakes the loop, which reads at once (that read restarts javis-zalo).
         await asyncio.sleep(0.1)
         n = len(reads)
         state["alive"] = False

@@ -91,5 +91,5 @@
     return quaApi(s).then(function () { nhay(btn, true); return true; }).catch(lui);
   }
 
-  window.JeeviCopy = chep;
+  window.JavisCopy = chep;
 })();

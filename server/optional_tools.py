@@ -12,7 +12,7 @@ SÁCH CÓ TÊN các công cụ tuỳ chọn, bỏ qua lúc đầu được, cài
 
 Ranh giới không lách được
 -------------------------
-Trong Docker, Jeevi chạy bằng user `jeevi` (uid 10001), mã nguồn để chỉ đọc. Nên phần nào cần
+Trong Docker, Jeevi chạy bằng user `javis` (uid 10001), mã nguồn để chỉ đọc. Nên phần nào cần
 `apt-get` thì PHẢI nằm sẵn trong ảnh (Dockerfile lo, xem lớp WITH_BROWSER_DEPS); ở đây chỉ làm
 được phần tải về thư mục ghi được. Chia đúng như vậy thì ảnh chỉ nặng thêm phần thư viện, còn
 bản thân trình duyệt chỉ tải khi có người bấm.
@@ -30,8 +30,8 @@ shell in the background when the machine has nothing Jeevi can drive. It still s
 Docker image: in STATE_DIR it survives updates. The download no longer has to match the Playwright
 version the MCP runs: since 16/11/2026 Jeevi hands the MCP the exact file (`executable_env()`),
 because the two drifted apart and broke every Playwright call. It skips when a system Chrome/Edge exists, when the user pressed Remove
-(marker file), when JEEVI_SKIP_BROWSER is set, and when the image was built without the system
-libraries (JEEVI_BROWSER_DEPS=0), since the download could not run there anyway.
+(marker file), when JAVIS_SKIP_BROWSER is set, and when the image was built without the system
+libraries (JAVIS_BROWSER_DEPS=0), since the download could not run there anyway.
 """
 from __future__ import annotations
 
@@ -61,8 +61,8 @@ PYLIBS_DIR = STATE_DIR / "pylibs"
 # Written by `go()`, cleared by a manual install. Lives OUTSIDE BROWSERS_DIR because `go()` deletes
 # that whole folder. Without it, the next start would download again what the user just removed.
 REMOVED_MARKER = STATE_DIR / "browser-removed"
-ENV_SKIP = "JEEVI_SKIP_BROWSER"
-ENV_DEPS = "JEEVI_BROWSER_DEPS"   # set by the Dockerfile from the WITH_BROWSER_DEPS build-arg
+ENV_SKIP = "JAVIS_SKIP_BROWSER"
+ENV_DEPS = "JAVIS_BROWSER_DEPS"   # set by the Dockerfile from the WITH_BROWSER_DEPS build-arg
 
 # Trần thời gian tải. Mạng VPS chậm vẫn phải xong trong chừng này, còn treo lâu hơn là hỏng
 # thật chứ không phải chậm - và treo im vô hạn là kiểu lỗi tệ nhất (không kết quả, không lỗi).

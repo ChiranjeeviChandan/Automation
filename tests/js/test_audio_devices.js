@@ -34,7 +34,7 @@ function load(opts = {}) {
   if (opts.sink !== false) box.HTMLMediaElement.prototype.setSinkId = function () {};
   box.window = box;
   vm.runInNewContext(src, box);
-  return box.JeeviAudioDevices;
+  return box.JavisAudioDevices;
 }
 
 function fakeMedia(behaviour) {
@@ -54,7 +54,7 @@ function err(name) { const e = new Error(name); e.name = name; return e; }
   const BASE = { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 };
 
   // ---- Microphone ----
-  let D = load({ saved: { "jeevi.mic": "usb-mic" } });
+  let D = load({ saved: { "javis.mic": "usb-mic" } });
   let md = fakeMedia(() => "stream-usb");
   check("picked mic goes in as deviceId exact, call options kept",
         (await D.getMic(BASE, md)) === "stream-usb" && md.calls[0].audio.deviceId.exact === "usb-mic"
@@ -77,13 +77,13 @@ function err(name) { const e = new Error(name); e.name = name; return e; }
   await D.getMic(BASE, md);
   check("nothing picked: the default mic, no deviceId", md.calls.length === 1 && !md.calls[0].audio.deviceId, md.calls);
 
-  D = load({ saved: { "jeevi.mic": "usb-mic" }, broken: true });
+  D = load({ saved: { "javis.mic": "usb-mic" }, broken: true });
   md = fakeMedia(() => "stream");
   await D.getMic(BASE, md);
   check("storage that throws (private window): defaults, no error", !md.calls[0].audio.deviceId && D.mic() === "");
 
   // ---- Speaker ----
-  D = load({ saved: { "jeevi.speaker": "headset" } });
+  D = load({ saved: { "javis.speaker": "headset" } });
   const el = { sinkId: "", setSinkId(id) { this.calls = (this.calls || []).concat(id); this.sinkId = id; return Promise.resolve(); } };
   check("picked speaker reaches setSinkId", (await D.applySpeaker(el)) === true && el.sinkId === "headset", el.calls);
   await D.applySpeaker(el);
@@ -156,14 +156,14 @@ function err(name) { const e = new Error(name); e.name = name; return e; }
     check("page: speaker list shown and filled", !spk.hidden && spk.children.length === 2);
     check("page: no permission hint once names are known", els.vcDevHint.hidden === true);
     check("page: lists follow plugged devices and the dictionary", typeof listeners.devicechange === "function"
-          && typeof listeners["win:jeevi:i18n"] === "function");
+          && typeof listeners["win:javis:i18n"] === "function");
     mic.value = "usb"; mic._l.change();
     spk.value = "spk"; spk._l.change();
-    check("page: choices remembered in this browser", ls.m.get("jeevi.mic") === "usb" && ls.m.get("jeevi.speaker") === "spk");
+    check("page: choices remembered in this browser", ls.m.get("javis.mic") === "usb" && ls.m.get("javis.speaker") === "spk");
     check("page: a running call hears about the change",
-          (box.sent || []).map(e => e.type + ":" + e.detail.kind).join() === "jeevi:audio-devices:mic,jeevi:audio-devices:speaker");
+          (box.sent || []).map(e => e.type + ":" + e.detail.kind).join() === "javis:audio-devices:mic,javis:audio-devices:speaker");
     mic.value = ""; mic._l.change();
-    check("page: back to the default forgets the device", !ls.m.has("jeevi.mic"));
+    check("page: back to the default forgets the device", !ls.m.has("javis.mic"));
 
     // Safari: no setSinkId, the speaker list hides; its test button stays (HTML below).
     const els2 = {};
@@ -193,25 +193,25 @@ function err(name) { const e = new Error(name); e.name = name; return e; }
     const winListeners = {};
     const box = {
       window: { AudioContext, addEventListener(ev, fn) { winListeners[ev] = fn; },
-        JeeviAudioDevices: { getMic(opts) { seen.mic = opts; return new Promise(() => {}); },
+        JavisAudioDevices: { getMic(opts) { seen.mic = opts; return new Promise(() => {}); },
                              applySpeaker(target) { seen.sinks.push(target); return Promise.resolve(true); } } },
       navigator: { mediaDevices: { getUserMedia() { seen.direct = true; return new Promise(() => {}); } } },
       location: { protocol: "http:", host: "localhost" }, WebSocket, Audio: function () { this.setAttribute = () => {}; },
       ArrayBuffer, Int16Array, Float32Array, setTimeout, clearTimeout, setInterval() { return 0; }, clearInterval() {},
     };
     vm.runInNewContext(live, box);
-    box.window.JeeviVoiceLive.start({});
+    box.window.JavisVoiceLive.start({});
     await tick();
     check("Live call opens the picked mic with its call options",
           seen.mic && seen.mic.echoCancellation === true && seen.mic.channelCount === 1 && !seen.direct, seen.mic);
     check("Live call routes its playback context to the picked speaker",
           seen.sinks.some(s => s instanceof AudioContext), seen.sinks.length);
-    box.window.JeeviVoiceLive.unlock();
+    box.window.JavisVoiceLive.unlock();
     const n = seen.sinks.length;
     check("Live call's <audio> element goes to the picked speaker too", seen.sinks.some(s => s instanceof box.Audio));
-    winListeners["jeevi:audio-devices"]({ detail: { kind: "speaker" } });
+    winListeners["javis:audio-devices"]({ detail: { kind: "speaker" } });
     check("a speaker changed mid-call is applied at once", seen.sinks.length > n);
-    box.window.JeeviVoiceLive.stop();
+    box.window.JavisVoiceLive.stop();
   }
 
   // ---- Voice card ----

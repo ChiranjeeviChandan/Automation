@@ -4,7 +4,7 @@
 
 Bug 2026-09-28: nhờ Jeevi (engine ChatGPT qua Codex) làm 3 ảnh công thức 9:16. Codex vẽ bằng
 skill `imagegen` riêng của nó, lưu ở `~/.codex/generated_images/<thread>/exec-*.png`, NGOÀI
-brain. Câu trả lời dẫn `[Thành phẩm](/home/jeevi/.codex/generated_images/...png)`: bấm vào
+brain. Câu trả lời dẫn `[Thành phẩm](/home/javis/.codex/generated_images/...png)`: bấm vào
 ra 404, ảnh không hiện trong khung chat, lại thêm dòng "không tìm thấy trong brain", người dùng
 phải tự đi lưu ảnh về.
 
@@ -25,9 +25,9 @@ import tempfile
 import time
 from pathlib import Path
 
-TMP = Path(tempfile.mkdtemp(prefix="jeevi-anhcodex-"))
+TMP = Path(tempfile.mkdtemp(prefix="javis-anhcodex-"))
 os.environ["CODEX_HOME"] = str(TMP / "codexhome")
-os.environ.setdefault("JEEVI_STATE_DIR", str(TMP / "state"))
+os.environ.setdefault("JAVIS_STATE_DIR", str(TMP / "state"))
 
 import anh_codex  # noqa: E402
 from claude_cli import CodexCLI  # noqa: E402
@@ -98,7 +98,7 @@ check("file ngoài generated_images giữ nguyên, không chép",
 check("trả đúng danh sách đường tuyệt đối trong brain",
       len(ds) == 4 and all(Path(x).is_file() and Path(x).parent == attach for x in ds), ds)
 check("PNG được gắn nhãn Jeevi như ảnh tự tạo",
-      b"jeevios" in (attach / "codex-01a0e847-exec-aaa.png").read_bytes().lower())
+      b"javisos" in (attach / "codex-01a0e847-exec-aaa.png").read_bytes().lower())
 
 # Chạy lại (resume, gọi hai lần) → không đẻ bản sao.
 moi2, _ = anh_codex.dua_anh_ve_brain(cau, THREAD, t0, str(vault))

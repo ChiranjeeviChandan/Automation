@@ -37,8 +37,8 @@ for f in (agy, grok):
     f.write_bytes(b"MZ")
 
 os.environ.update({"USERPROFILE": str(home), "HOME": str(home), "LOCALAPPDATA": str(local),
-                   "PATH": str(tmp / "empty"), "JEEVI_STATE_DIR": str(tmp / "state")})
-for k in ("JEEVI_AGY_BIN", "JEEVI_GROK_BIN", "APPDATA"):
+                   "PATH": str(tmp / "empty"), "JAVIS_STATE_DIR": str(tmp / "state")})
+for k in ("JAVIS_AGY_BIN", "JAVIS_GROK_BIN", "APPDATA"):
     os.environ.pop(k, None)
 (tmp / "state").mkdir()
 

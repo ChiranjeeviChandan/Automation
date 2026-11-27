@@ -12,7 +12,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-pack-multi-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-pack-multi-"))
 
 import improvement_assets  # noqa: E402
 import pack_vault  # noqa: E402
@@ -27,7 +27,7 @@ def check(name, cond, extra=None):
 
 
 def make_pack(root: Path, version: str) -> Path:
-    pack = root / "jeevi.humanizer"
+    pack = root / "javis.humanizer"
     (pack / "skills" / "humanizer").mkdir(parents=True, exist_ok=True)
     (pack / "skills" / "humanizer" / "SKILL.md").write_text(
         f"---\nname: humanizer\ndescription: v{version}\n---\nBody {version}\n", encoding="utf-8")
@@ -37,11 +37,11 @@ def make_pack(root: Path, version: str) -> Path:
     return pack
 
 
-tmp = Path(tempfile.mkdtemp(prefix="jeevi-pack-multi-fs-"))
+tmp = Path(tempfile.mkdtemp(prefix="javis-pack-multi-fs-"))
 saved_dir = pack_vault.HIEU_UNG_DIR
 pack_vault.HIEU_UNG_DIR = tmp / "packs-state"
 pack_vault.HIEU_UNG_DIR.mkdir(parents=True)
-pid = "jeevi.humanizer"
+pid = "javis.humanizer"
 try:
     brain_a, brain_b = tmp / "Thao M-Mola", tmp / "EMBA"
     for b in (brain_a, brain_b):

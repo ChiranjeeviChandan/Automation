@@ -34,7 +34,7 @@ lines = [ln for ln in (ROOT / "Dockerfile").read_text(encoding="utf-8").splitlin
 body = "\n".join(lines)
 step = re.search(r"^RUN\s+python\s+-m\s+compileall\b[^\n]*\bserver\b", body, re.M)
 copy = re.search(r"^COPY \. \.$", body, re.M)
-user = re.search(r"^USER\s+jeevi\b", body, re.M)
+user = re.search(r"^USER\s+javis\b", body, re.M)
 check("the Dockerfile has a `RUN python -m compileall ... server` step", bool(step))
 check("the step runs after the source is copied in", bool(step and copy and copy.start() < step.start()))
 check("the step runs before the image drops to the unprivileged user (root owns /app)",
@@ -43,7 +43,7 @@ check("the image still stops the running server writing bytecode (so the build s
       "PYTHONDONTWRITEBYTECODE=1" in body)
 
 # The claim the step relies on, checked for real on a throwaway package.
-tmp = Path(tempfile.mkdtemp(prefix="jeevi-image-bytecode-"))
+tmp = Path(tempfile.mkdtemp(prefix="javis-image-bytecode-"))
 pkg = tmp / "server"
 pkg.mkdir()
 (pkg / "sample_module.py").write_text("VALUE = 41 + 1\n", encoding="utf-8")

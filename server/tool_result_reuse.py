@@ -29,7 +29,7 @@ agent never pays twice for a result it already holds).
    of an unchanged file (it already answers "File unchanged since last read"), and terminal output.
 
 All of it follows the owner's saving level: choosing Off ("send everything") on the Usage page turns it off, like tool
-result shaping. `mcp.result_repeat_refs` (true/false/"auto") and JEEVI_RESULT_REPEAT_REFS=0|1 switch the first one
+result shaping. `mcp.result_repeat_refs` (true/false/"auto") and JAVIS_RESULT_REPEAT_REFS=0|1 switch the first one
 alone, which is how an A/B run measures it (tools/quality_eval.py).
 """
 from __future__ import annotations
@@ -53,9 +53,9 @@ COMPACT_MIN_GAIN = 0.05
 
 # The content of something the model may quote, copy or edit exactly. Never re-formatted.
 CONTENT_TOOLS = frozenset({
-    "jeevi_read_file", "jeevi_write_file", "jeevi_edit_file", "jeevi_search_files", "jeevi_terminal",
-    "jeevi_process", "jeevi_run_command", "jeevi_web_fetch", "jeevi_web_search", "jeevi_use_skill",
-    "jeevi_query",
+    "javis_read_file", "javis_write_file", "javis_edit_file", "javis_search_files", "javis_terminal",
+    "javis_process", "javis_run_command", "javis_web_fetch", "javis_web_search", "javis_use_skill",
+    "javis_query",
 })
 
 REFERENCE_MARK = "[Jeevi: identical to another result"
@@ -70,9 +70,9 @@ CLI_MAX_TURNS = 256      # turn records kept at once (oldest dropped first)
 CLI_MAX_ENTRIES = 512    # distinct results remembered per turn
 CLI_TURN_TTL_S = 6 * 3600
 
-_LOG_POOL = ThreadPoolExecutor(max_workers=1, thread_name_prefix="jeevi-reuse-log")
+_LOG_POOL = ThreadPoolExecutor(max_workers=1, thread_name_prefix="javis-reuse-log")
 # The turn of the hub request being served (set by mcp_hub.handle_http from the X-Jeevi-Turn header).
-HUB_TURN: contextvars.ContextVar = contextvars.ContextVar("jeevi_hub_reuse_turn", default=None)
+HUB_TURN: contextvars.ContextVar = contextvars.ContextVar("javis_hub_reuse_turn", default=None)
 _switch_cache = {"ts": 0.0, "on": True}
 
 
@@ -104,7 +104,7 @@ def repeat_refs_on_cached() -> bool:
 
 def repeat_refs_on() -> bool:
     """Whether repeated identical results become references in this turn."""
-    env = _flag(os.getenv("JEEVI_RESULT_REPEAT_REFS", ""))
+    env = _flag(os.getenv("JAVIS_RESULT_REPEAT_REFS", ""))
     if env is not None:
         return env
     try:
@@ -119,8 +119,8 @@ def note_saving(kind: str, tool: str, raw_chars: int, sent_chars: int) -> None:
     """Add one saving to the hub's sizes log, the meter behind the Usage page line on tool results.
 
     Written on a worker thread: this runs inside the tool loop on the event loop."""
-    rec = {"ts": datetime.now().isoformat(timespec="seconds"), "conn_id": "jeevi-turn",
-           "label": "jeevi", "tool": str(tool or ""), "raw_chars": int(raw_chars), "sent_chars": int(sent_chars),
+    rec = {"ts": datetime.now().isoformat(timespec="seconds"), "conn_id": "javis-turn",
+           "label": "javis", "tool": str(tool or ""), "raw_chars": int(raw_chars), "sent_chars": int(sent_chars),
            "shape": kind}
 
     def write():

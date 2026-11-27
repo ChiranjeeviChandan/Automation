@@ -182,7 +182,7 @@ every description key, not just the original one.
 ### 6. Server-side text, Connections store, starter brain
 
 Since 0.67.0, server-side text follows the interface language of the DEVICE making the request
-(cookie `jeevi_lang`, set by `dashboard/i18n/index.js`). Anything with no Thai version yet is
+(cookie `javis_lang`, set by `dashboard/i18n/index.js`). Anything with no Thai version yet is
 shown in English (the order is: chosen language, then English, then Vietnamese, see
 `lang_registry.chon_ban_dich`), so none of the steps below is required before inviting Thai
 users in.

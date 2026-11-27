@@ -6,7 +6,7 @@ was busy).
 Before this, every team model call added one snapshot to usage.json, kept 30 days, and every record() re-read, filtered
 and rewrote the whole file on the event loop. The file grew with Team use and each model call froze the server longer.
 
-Self-contained: JEEVI_STATE_DIR points at a temp dir. No network, no model.
+Self-contained: JAVIS_STATE_DIR points at a temp dir. No network, no model.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
 import hashlib
@@ -15,8 +15,8 @@ import os
 import tempfile
 from pathlib import Path
 
-_TMP = Path(tempfile.mkdtemp(prefix="jeevi-usage-team-snap-"))
-os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+_TMP = Path(tempfile.mkdtemp(prefix="javis-usage-team-snap-"))
+os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
 (_TMP / "state").mkdir(parents=True, exist_ok=True)
 
 import usage_store as us  # noqa: E402

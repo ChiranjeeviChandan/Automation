@@ -10,8 +10,8 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-agent-voice-state-")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-agent-voice-brains-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-agent-voice-state-")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-agent-voice-brains-")
 
 import main  # noqa: E402
 import voice_live  # noqa: E402

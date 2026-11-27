@@ -12,7 +12,7 @@ import subprocess
 import sys
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-utf8-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-utf8-"))
 
 import config  # noqa: E402
 

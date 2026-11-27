@@ -36,16 +36,16 @@ const doc = {
   body: { appendChild() {} },
 };
 const pack = (o) => Object.assign({
-  id: "jeevi.x", kind: "skill", name: { vi: "X" }, description: { vi: "mo ta" }, tier: "data", verified: true,
+  id: "javis.x", kind: "skill", name: { vi: "X" }, description: { vi: "mo ta" }, tier: "data", verified: true,
   nguon: "kho", author: { name: "Jeevi" }, version: "1.0.0", installed: false,
   download: { url: "https://x/y.zip", sha256: "a" }, nhom: "Ban hang", upstream: {},
 }, o);
-const AGENT = pack({ id: "jeevi.agent-a", kind: "agent", name: { vi: "Tro ly ban hang" } });
-const SKILL = pack({ id: "jeevi.skill-a", name: { vi: "Viet bai" }, upstream: { repo: "a/b", synced: "2026-11-01" } });
-const FLOW = pack({ id: "jeevi.flow-a", kind: "workflow", name: { vi: "Chot don" } });
-const TOOL = pack({ id: "jeevi.tool-a", kind: "tool", name: { vi: "May tinh" } });
-const CONN = pack({ id: "jeevi.conn-a", kind: "connector", name: { vi: "Zalo" }, nhom: "" });
-const CRM = pack({ id: "jeevi.crm", kind: "bundle", name: { vi: "CRM" } });
+const AGENT = pack({ id: "javis.agent-a", kind: "agent", name: { vi: "Tro ly ban hang" } });
+const SKILL = pack({ id: "javis.skill-a", name: { vi: "Viet bai" }, upstream: { repo: "a/b", synced: "2026-11-01" } });
+const FLOW = pack({ id: "javis.flow-a", kind: "workflow", name: { vi: "Chot don" } });
+const TOOL = pack({ id: "javis.tool-a", kind: "tool", name: { vi: "May tinh" } });
+const CONN = pack({ id: "javis.conn-a", kind: "connector", name: { vi: "Zalo" }, nhom: "" });
+const CRM = pack({ id: "javis.crm", kind: "bundle", name: { vi: "CRM" } });
 const ALL = [AGENT, SKILL, FLOW, TOOL, CONN, CRM];
 
 let catalog = { ok: true, fetched_at: Math.floor(Date.now() / 1000), packs: ALL };
@@ -60,7 +60,7 @@ const alpineBefore = globalThis.Alpine;
 globalThis.Alpine = win.Alpine;
 new Function("window", "document", "fetch", fs.readFileSync(path.join(ROOT, "dashboard", "packs.js"), "utf8"))(
   win, doc, () => Promise.resolve({ json: () => Promise.resolve(catalog) }));
-const P = win.JeeviPacks || {};
+const P = win.JavisPacks || {};
 const type = (text) => { search.value = text; search.oninput({ isComposing: false }); };
 
 (async () => {
@@ -85,31 +85,31 @@ const type = (text) => { search.value = text; search.oninput({ isComposing: fals
     const at = html.indexOf(id + " ·");
     return html.slice(html.lastIndexOf('<div class="cat-card', at), at);
   };
-  check("an All card carries its kind", card(h, "jeevi.agent-a").includes(">Trợ lý<"));
-  check("an All card keeps its group", card(h, "jeevi.agent-a").includes(">Ban hang<"));
+  check("an All card carries its kind", card(h, "javis.agent-a").includes(">Trợ lý<"));
+  check("an All card keeps its group", card(h, "javis.agent-a").includes(">Ban hang<"));
   check("a pack with no group shows its kind once",
-    card(h, "jeevi.conn-a").split(">Kết nối<").length === 2);
+    card(h, "javis.conn-a").split(">Kết nối<").length === 2);
 
   await P.veKho({}, host, false, "agent");
-  check("a kind tab does not repeat the kind on its cards", !card(host.innerHTML, "jeevi.agent-a").includes(">Trợ lý<"));
+  check("a kind tab does not repeat the kind on its cards", !card(host.innerHTML, "javis.agent-a").includes(">Trợ lý<"));
 
   // ---- 3. Search on All finds a pack of any kind ----
   await P.veKho({}, host, false, "all");
   type("chot don");
-  check("searching All finds a workflow", host.innerHTML.includes("jeevi.flow-a") && !host.innerHTML.includes("jeevi.agent-a"));
+  check("searching All finds a workflow", host.innerHTML.includes("javis.flow-a") && !host.innerHTML.includes("javis.agent-a"));
   type("zalo");
-  check("searching All finds a connector", host.innerHTML.includes("jeevi.conn-a") && !host.innerHTML.includes("jeevi.flow-a"));
+  check("searching All finds a connector", host.innerHTML.includes("javis.conn-a") && !host.innerHTML.includes("javis.flow-a"));
 
   // ---- 4. A search that finds nothing in a kind tab offers the same search on All ----
   await P.veKho({}, host, false, "agent");
   type("zalo");
   const hm = host.innerHTML;
-  check("a miss in a kind tab shows no card", !hm.includes("jeevi.conn-a"));
+  check("a miss in a kind tab shows no card", !hm.includes("javis.conn-a"));
   check("a miss in a kind tab offers to search All, with the count", hm.includes("data-kho-search-all") && hm.includes("(1)"));
   bound["data-kho-search-all"].onclick();
   const hj = host.innerHTML;
   check("the offer jumps to the All tab", /class="kho-tab on" data-kho-loai="all"/.test(hj));
-  check("the jump keeps the typed words", hj.includes('value="zalo"') && hj.includes("jeevi.conn-a"));
+  check("the jump keeps the typed words", hj.includes('value="zalo"') && hj.includes("javis.conn-a"));
 
   await P.veKho({}, host, false, "agent");
   type("khong-co-goi-nao-ten-the-nay");

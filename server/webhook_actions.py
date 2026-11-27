@@ -37,7 +37,7 @@ Safety:
     loopback, private, link-local, CGNAT, multicast and reserved ranges are refused unless `allow_private`;
     redirects are not followed (Apps Script: one GET to Google's echo host, whose address is checked too);
   - an action's level: http, apps_script and plugin handlers with `min_mode: full` need the hook at `full`;
-  - nothing here calls a model. `JEEVI_WH_NO_NETWORK=1` makes the default HTTP transport refuse every request (tests).
+  - nothing here calls a model. `JAVIS_WH_NO_NETWORK=1` makes the default HTTP transport refuse every request (tests).
 """
 from __future__ import annotations
 
@@ -67,7 +67,7 @@ RETRY_SAFETY = ("manual_on_ambiguous", "idempotent", "at_least_once")
 _ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,31}$")
 _HEADER_RE = re.compile(r"^[A-Za-z0-9-]{1,64}$")
 _FORBIDDEN_HEADERS = {"host", "content-length", "cookie", "transfer-encoding", "connection", "idempotency-key",
-                      "x-jeevi-delivery", "x-jeevi-event-id"}
+                      "x-javis-delivery", "x-javis-event-id"}
 APPS_SCRIPT_HOSTS = ("script.google.com",)
 APPS_SCRIPT_ECHO_HOSTS = ("script.googleusercontent.com",)
 STATES = ("completed", "accepted", "retry", "unknown", "failed", "blocked", "waiting")
@@ -222,7 +222,7 @@ def validate(actions: Any) -> list:
             tool = str(a.get("tool") or "")
             if not re.match(r"^[A-Za-z][A-Za-z0-9_.-]{0,127}$", tool):
                 raise ActionError(f"action {aid}: needs `tool` (the tool's name as the hub lists it)")
-            if tool in ("jeevi_run_tool", "jeevi_search_tools"):
+            if tool in ("javis_run_tool", "javis_search_tools"):
                 raise ActionError(f"action {aid}: name the tool itself, not {tool}")
             args = a.get("args") or {}
             if not isinstance(args, dict) or len(args) > ARGS_MAX:
@@ -458,14 +458,14 @@ def _meta(ctx: dict) -> dict:
 
 
 def build_body(action: dict, ctx: dict) -> tuple:
-    """(bytes, content_type) of what is sent. `fields`: the mapped fields plus `_jeevi`; `event`: fields, the parsed
-    payload and `_jeevi`; `raw`: the original body unchanged (and its own content type)."""
+    """(bytes, content_type) of what is sent. `fields`: the mapped fields plus `_javis`; `event`: fields, the parsed
+    payload and `_javis`; `raw`: the original body unchanged (and its own content type)."""
     if action.get("body") == "raw":
         return bytes(ctx.get("body") or b""), str(ctx.get("content_type") or "application/octet-stream")
     doc = dict(ctx.get("fields") or {})
     if action.get("body") == "event":
         doc = {"fields": ctx.get("fields") or {}, "payload": ctx.get("payload")}
-    doc["_jeevi"] = _meta(ctx)
+    doc["_javis"] = _meta(ctx)
     return json.dumps(doc, ensure_ascii=False, default=str).encode("utf-8"), "application/json"
 
 
@@ -477,11 +477,11 @@ def target_url(action: dict, ctx: dict) -> str:
     if action.get("delivery_ref") != "query":
         if not (test and action.get("kind") == "apps_script"):
             return action["url"]
-        q = {"jeevi_test": "1"}          # doPost reads no header: a test event must say so in the query
+        q = {"javis_test": "1"}          # doPost reads no header: a test event must say so in the query
     else:
-        q = {"jeevi_delivery": ctx["delivery_id"], "jeevi_event": ctx["event_id"]}
+        q = {"javis_delivery": ctx["delivery_id"], "javis_event": ctx["event_id"]}
         if test:
-            q["jeevi_test"] = "1"
+            q["javis_test"] = "1"
     u = urlsplit(action["url"])
     extra = urlencode(q)
     return urlunsplit((u.scheme, u.netloc, u.path, (u.query + "&" if u.query else "") + extra, u.fragment))
@@ -498,7 +498,7 @@ def _headers(action: dict, ctx: dict, content_type: str) -> dict:
     h["X-Jeevi-Delivery"] = ctx["delivery_id"]
     h["X-Jeevi-Event-Id"] = ctx["event_id"]
     if ctx.get("source") == "test":
-        h["X-Jeevi-Test"] = "1"          # a raw body cannot carry `_jeevi.test`: the receiver sees it here
+        h["X-Jeevi-Test"] = "1"          # a raw body cannot carry `_javis.test`: the receiver sees it here
     return h
 
 
@@ -617,9 +617,9 @@ def _call_release(h, delivery, ctx, did, slug=""):
 
 def default_transport(allow_private: bool = False, resolve: Optional[Callable] = None):
     import httpx
-    if os.environ.get("JEEVI_WH_NO_NETWORK") == "1":
+    if os.environ.get("JAVIS_WH_NO_NETWORK") == "1":
         def refuse(request):
-            raise NoNetwork(f"network disabled (JEEVI_WH_NO_NETWORK): {request.url.host}")
+            raise NoNetwork(f"network disabled (JAVIS_WH_NO_NETWORK): {request.url.host}")
         return httpx.MockTransport(refuse)
     # Pinned connections (no DNS rebinding), always: an explicit transport makes httpx ignore the *_PROXY variables,
     # so a proxy setting never routed these calls anyway and must not switch the pinning off.

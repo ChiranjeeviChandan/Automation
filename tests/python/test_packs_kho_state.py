@@ -43,7 +43,7 @@ def check(name, cond):
         _fails.append(name)
 
 
-MANIFEST = """format: jeevi-pack
+MANIFEST = """format: javis-pack
 spec: 1
 id: {pid}
 version: 1.0.0
@@ -74,7 +74,7 @@ def lam_goi(goc, pid, *, cid="demo-con", transport="http", auth="apikey", icon="
             manifest=None, connector=None, khai_id=None, them_py=False):
     d = goc / pid
     (d / "connectors").mkdir(parents=True, exist_ok=True)
-    (d / "jeevi-pack.yaml").write_text(
+    (d / "javis-pack.yaml").write_text(
         manifest if manifest is not None else MANIFEST.format(pid=khai_id or pid),
         encoding="utf-8")
     (d / "connectors" / "demo.yaml").write_text(
@@ -96,7 +96,7 @@ with tempfile.TemporaryDirectory() as td:
     kho = Path(td) / "packs"
     kho.mkdir()
     goc_dir, packs.PACKS_DIR = packs.PACKS_DIR, kho
-    goc_env = os.environ.pop("JEEVI_DISABLE_PACKS", None)
+    goc_env = os.environ.pop("JAVIS_DISABLE_PACKS", None)
     try:
         lam_moi()
         so_goc = len(mcp_catalog.tat_ca())
@@ -161,7 +161,7 @@ with tempfile.TemporaryDirectory() as td:
 
         # Connector trỏ ra NGOÀI thư mục gói.
         d = lam_goi(kho, "acme.ra-ngoai")
-        (d / "jeevi-pack.yaml").write_text(
+        (d / "javis-pack.yaml").write_text(
             MANIFEST.format(pid="acme.ra-ngoai").replace(
                 "connectors/demo.yaml", "../../mcp_servers.json"), encoding="utf-8")
         lam_moi()
@@ -173,12 +173,12 @@ with tempfile.TemporaryDirectory() as td:
         # ─────────────── 4. Manifest sai thì cả gói không nạp ───────────────
         for ten, mf, dau_hieu in (
             ("thiếu format", "spec: 1\nid: acme.x\n", "format"),
-            ("spec lạ", "format: jeevi-pack\nspec: 99\nid: acme.x\n", "spec"),
-            ("YAML hỏng", "format: jeevi-pack\nspec: 1\n  id: [khong dong\n", "lỗi"),
+            ("spec lạ", "format: javis-pack\nspec: 99\nid: acme.x\n", "spec"),
+            ("YAML hỏng", "format: javis-pack\nspec: 1\n  id: [khong dong\n", "lỗi"),
             ("compat không khớp",
-             "format: jeevi-pack\nspec: 1\nid: acme.x\ncompat: {app: '>=99.0.0'}\n", "cần Jeevi"),
+             "format: javis-pack\nspec: 1\nid: acme.x\ncompat: {app: '>=99.0.0'}\n", "cần Jeevi"),
             ("id khai lệch tên thư mục",
-             "format: jeevi-pack\nspec: 1\nid: khac-han\n", "khác tên thư mục"),
+             "format: javis-pack\nspec: 1\nid: khac-han\n", "khác tên thư mục"),
         ):
             lam_goi(kho, "acme.x", manifest=mf)
             lam_moi()
@@ -218,11 +218,11 @@ with tempfile.TemporaryDirectory() as td:
         # ─────────────── 6. Công tắc tắt sạch ───────────────
         lam_moi()
         check("trước khi tắt vẫn còn gói", len(mcp_catalog.load()) == so_goc + 1)
-        os.environ["JEEVI_DISABLE_PACKS"] = "true"
+        os.environ["JAVIS_DISABLE_PACKS"] = "true"
         lam_moi()
-        check("JEEVI_DISABLE_PACKS tắt sạch mọi gói", len(mcp_catalog.load()) == so_goc)
+        check("JAVIS_DISABLE_PACKS tắt sạch mọi gói", len(mcp_catalog.load()) == so_goc)
         check("và kho gốc vẫn đủ", mcp_catalog.get("composio") is not None)
-        os.environ.pop("JEEVI_DISABLE_PACKS", None)
+        os.environ.pop("JAVIS_DISABLE_PACKS", None)
         lam_moi()
         check("bỏ biến môi trường thì gói quay lại", len(mcp_catalog.load()) == so_goc + 1)
 
@@ -241,7 +241,7 @@ with tempfile.TemporaryDirectory() as td:
         (d / "assets" / "x.png").write_bytes(b"\x89PNG\r\n")
         lam_moi()
         check("asset trong gói lấy được", packs.asset_path("acme.asset", "x.png") is not None)
-        for xau in ("../jeevi-pack.yaml", "../../mcp_servers.json", "/etc/passwd",
+        for xau in ("../javis-pack.yaml", "../../mcp_servers.json", "/etc/passwd",
                     "..\\..\\.secret_key"):
             check(f"chặn đường dẫn leo ra ngoài: {xau}",
                   packs.asset_path("acme.asset", xau) is None)
@@ -249,9 +249,9 @@ with tempfile.TemporaryDirectory() as td:
               packs.asset_path("../..", "x.png") is None)
         check("file không tồn tại trả None", packs.asset_path("acme.asset", "khong-co.png") is None)
     finally:
-        os.environ.pop("JEEVI_DISABLE_PACKS", None)
+        os.environ.pop("JAVIS_DISABLE_PACKS", None)
         if goc_env is not None:
-            os.environ["JEEVI_DISABLE_PACKS"] = goc_env
+            os.environ["JAVIS_DISABLE_PACKS"] = goc_env
         packs.PACKS_DIR = goc_dir
         lam_moi()
 
@@ -291,14 +291,14 @@ for f in (".gitignore", ".dockerignore"):
 # Đọc VERSION phải neo vào CÂY MÃ NGUỒN, không suy từ STATE_DIR
 # ============================================================
 # Lỗi thật ở 0.55.26: `PROJECT_ROOT` suy từ `STATE_DIR.parent`, đúng khi chạy từ gốc repo với
-# state mặc định, và SAI ở mọi bản cài có đặt `JEEVI_STATE_DIR` - Docker `/data/state` ra
+# state mặc định, và SAI ở mọi bản cài có đặt `JAVIS_STATE_DIR` - Docker `/data/state` ra
 # `/data`, chỗ không có VERSION. `_app_version()` trả rỗng, `_hop_compat` so với (0,0,0), nên
 # MỌI gói khai `compat.app` bị từ chối ở bước validate: "cần Jeevi >=0.55.25, bản này là "
 # (bỏ trống). Cả kho không cài được gì, trên đúng những bản cài người dùng thật đang chạy.
 
 # Chạy với STATE_DIR mặc định thì mã CŨ cũng qua (state mặc định nằm trong cây repo), nên
 # phép kiểm ở tiến trình này không bắt được lỗi. Phải nạp `packs` trong một tiến trình con có
-# `JEEVI_STATE_DIR` trỏ đi CHỖ KHÁC - đúng hình dạng của Docker và của bản cài thật.
+# `JAVIS_STATE_DIR` trỏ đi CHỖ KHÁC - đúng hình dạng của Docker và của bản cài thật.
 import subprocess
 
 with tempfile.TemporaryDirectory() as _td:
@@ -306,11 +306,11 @@ with tempfile.TemporaryDirectory() as _td:
         [sys.executable, "-c",
          "import packs;print(packs._app_version());print(packs._hop_compat('>=0.0.1')[0])"],
         cwd=str(SERVER), capture_output=True, text=True,
-        env={**os.environ, "JEEVI_STATE_DIR": _td, "PYTHONIOENCODING": "utf-8"})
+        env={**os.environ, "JAVIS_STATE_DIR": _td, "PYTHONIOENCODING": "utf-8"})
     _dong = [x.strip() for x in (_r.stdout or "").splitlines() if x.strip()]
 
 _that = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-check("đặt JEEVI_STATE_DIR đi chỗ khác thì VẪN đọc được VERSION",
+check("đặt JAVIS_STATE_DIR đi chỗ khác thì VẪN đọc được VERSION",
       len(_dong) >= 1 and _dong[0] == _that)
 check("nên gói khai compat vẫn cài được, không chết ở bước validate",
       len(_dong) >= 2 and _dong[1] == "True")

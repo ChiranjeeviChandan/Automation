@@ -8,8 +8,8 @@ do **not** automatically have identical context windows.
 
 | Context | Previous default | New default | Environment override | Maximum |
 | --- | ---: | ---: | --- | ---: |
-| Partner Markdown body | 4,000 characters | 12,000 characters | `JEEVI_VOICE_AGENT_BODY_CHARS` | 24,000 |
-| Partner memory | 2,000 characters | 6,000 characters | `JEEVI_VOICE_AGENT_MEMORY_CHARS` | 12,000 |
+| Partner Markdown body | 4,000 characters | 12,000 characters | `JAVIS_VOICE_AGENT_BODY_CHARS` | 24,000 |
+| Partner memory | 2,000 characters | 6,000 characters | `JAVIS_VOICE_AGENT_MEMORY_CHARS` | 12,000 |
 
 These budgets are Unicode character counts **inside Jeevi**, not provider
 context-window sizes or audio token allowances. Overrides are loaded at server
@@ -24,10 +24,10 @@ provider limits, voice stability and cost still need real-call testing.
 An owner can put essential Voice rules anywhere in the partner Markdown file:
 
 ```md
-<!-- JEEVI_VOICE_RULES_START -->
+<!-- JAVIS_VOICE_RULES_START -->
 For ABC Company's sales assistant, check authoritative price and delivery
 sources before quoting. Never claim an order was placed without a tool receipt.
-<!-- JEEVI_VOICE_RULES_END -->
+<!-- JAVIS_VOICE_RULES_END -->
 ```
 
 Jeevi moves this block ahead of ordinary partner instructions before applying

@@ -9,7 +9,7 @@ connection when a Team is used a lot).
 2. `team_api._team_usage_cached`: calls that arrive while a team is being added up do not start the same work again,
    and figures that took long to add up are kept longer.
 
-Self-contained: JEEVI_STATE_DIR points at a temp dir. No network, no model.
+Self-contained: JAVIS_STATE_DIR points at a temp dir. No network, no model.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
 import os
@@ -21,9 +21,9 @@ from collections import defaultdict
 from pathlib import Path
 from unittest.mock import patch
 
-_TMP = Path(tempfile.mkdtemp(prefix="jeevi-team-usage-scale-"))
-os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
-os.environ["JEEVI_NO_REAL_TEAM_ENGINE"] = "1"
+_TMP = Path(tempfile.mkdtemp(prefix="javis-team-usage-scale-"))
+os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
+os.environ["JAVIS_NO_REAL_TEAM_ENGINE"] = "1"
 (_TMP / "state").mkdir(parents=True, exist_ok=True)
 
 import team_api  # noqa: E402

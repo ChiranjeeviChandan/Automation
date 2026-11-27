@@ -6,7 +6,7 @@ Goal section 13 applies: code and technical checks first; an agent pilot and can
 ## Facts from the code (survey 25/10)
 
 - Every agent prompt except chatbots and goals comes from `_workflow_agent_helpers._agent_sysprompt(slug)`
-  (server/main.py): name/role/body, skills list, assets, the whole agent MEMORY.md, JEEVI_LESSON/JEEVI_RULE
+  (server/main.py): name/role/body, skills list, assets, the whole agent MEMORY.md, JAVIS_LESSON/JAVIS_RULE
   instructions, toolkit. It knows only the slug.
 - Surfaces and how the turn identifies them: dashboard DM (`kenh=dashboard`, `agent` set), CLI `/chat agent` and
   Telegram `@agent` (`kenh=cli|telegram`, no `agent`), workflow steps (slug only), Team (`_team_agent_info`, kenh
@@ -26,7 +26,7 @@ Goal section 13 applies: code and technical checks first; an agent pilot and can
 A procedure overlay is an owner-approved text block (planning, source checks, output checks, handoff format,
 use of granted skills) appended to the agent prompt as its own section. The agent file, its MEMORY.md, owner rules,
 persona, model/provider/reasoning, skills list, grants, schedule and the Auto switch are never touched, so A01
-holds by construction. Host checks on the text: size bound; no `JEEVI_RULE:`/`JEEVI_LESSON:` or other host
+holds by construction. Host checks on the text: size bound; no `JAVIS_RULE:`/`JAVIS_LESSON:` or other host
 markers; no lines that try to set model, provider, reasoning, permissions or skills (closed keyword list, refusal
 rather than rewrite). Meaning-level contradiction with owner rules needs an independent reviewer (model) and the
 owner's judgement: the apply step requires the owner's explicit confirmation of the exact text; the automated

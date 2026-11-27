@@ -23,8 +23,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-projrepo-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-projrepo-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -34,8 +34,8 @@ except Exception:
 from _fake_github import FakeGitHub, GOOD_TOKEN  # noqa: E402
 
 fake = FakeGitHub()
-os.environ["JEEVI_GITHUB_API"] = fake.url
-BR = Path(tempfile.mkdtemp(prefix="jeevi-projrepo-brain-")).resolve()
+os.environ["JAVIS_GITHUB_API"] = fake.url
+BR = Path(tempfile.mkdtemp(prefix="javis-projrepo-brain-")).resolve()
 
 import main  # noqa: E402
 import agent_assets  # noqa: E402
@@ -179,7 +179,7 @@ check("a repo that fails is reported, not marked, and leaves nothing bound",
       res["attached"] == [] and [f["full_name"] for f in res["failed"]] == ["acme/missing"]
       and "acme/missing" not in github_repos.seeded(sid) and session_names(sid) == ["acme/app"], res)
 
-plain = Path(tempfile.mkdtemp(prefix="jeevi-projrepo-plain-")).resolve()
+plain = Path(tempfile.mkdtemp(prefix="javis-projrepo-plain-")).resolve()
 folder = coding_store.them_thu_muc(str(plain), brain=B, ten="plain")
 coding_store.dat_rang_buoc("chat-pinned", thu_muc_ids=[folder["id"]])
 github_repos.seed_session("chat-pinned", B, B, ["acme/web"])
@@ -238,8 +238,8 @@ check("the drawer has a repo part for a project and an assistant only",
       'function pdCoRepo() { return pdCheDo === "project" || pdCheDo === "agent"; }' in ui
       and 'data-mode="repo"' in ui and "dsRepoHtml(p)" in ui)
 check("the drawer saves through <its route>/repos with the team picker", 'pdPost("/repos", { repos: (names || []).join(",") })' in ui
-      and "window.JeeviTeamGithub.panel(box, {" in ui and "save: luuRepos" in ui)
-check("the picker is loaded on demand on pages that lack it", 'window.JeeviNapCham.cho("teams")' in ui)
+      and "window.JavisTeamGithub.panel(box, {" in ui and "save: luuRepos" in ui)
+check("the picker is loaded on demand on pages that lack it", 'window.JavisNapCham.cho("teams")' in ui)
 gh = (ROOT / "dashboard" / "team-github.js").read_text(encoding="utf-8")
 # 21/11/2026: the list is the shared one (github-connect.js); a project saves its names through opts.save as before.
 check("the team picker can save somewhere other than a chat",

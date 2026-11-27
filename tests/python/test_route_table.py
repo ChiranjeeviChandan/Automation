@@ -14,7 +14,7 @@ mà nằm trong một đối tượng bọc, nên hàm snapshot() phải đi đ�
 Khi test đỏ mà bạn KHÔNG cố ý đổi route thì đó là bug của lần bóc vừa rồi, đừng --update.
 Chỉ --update khi thật sự thêm/xoá/đổi tên một endpoint, và commit file .json chung với thay đổi đó.
 
-KHÔNG mạng. Dùng JEEVI_STATE_DIR tạm nên không đụng dữ liệu thật.
+KHÔNG mạng. Dùng JAVIS_STATE_DIR tạm nên không đụng dữ liệu thật.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401  - nạp server/ vào sys.path (xem tests/python/_paths.py)
 import json
@@ -23,7 +23,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-routetest-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-routetest-"))
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")

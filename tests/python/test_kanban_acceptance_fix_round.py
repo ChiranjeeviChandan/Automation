@@ -278,7 +278,7 @@ def test_route_and_dashboard_are_wired():
 def _plugin():
     import importlib.util
     spec = importlib.util.spec_from_file_location(
-        "jeevi_task_plugin_acceptance", ROOT / "system" / "plugins" / "jeevi-task" / "plugin.py")
+        "javis_task_plugin_acceptance", ROOT / "system" / "plugins" / "javis-task" / "plugin.py")
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
@@ -331,7 +331,7 @@ def test_chat_tool_schema_offers_note_and_cancel():
             seen[name] = (desc, schema, kw)
 
     m.register(Reg())
-    desc, schema, kw = seen["jeevi_task"]
+    desc, schema, kw = seen["javis_task"]
     props = schema["properties"]
     assert "cancel" in props["op"]["enum"] and "note" in props and "reason" in props
     assert "op=cancel" in desc and kw.get("min_mode") == "safe"

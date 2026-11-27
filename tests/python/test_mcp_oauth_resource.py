@@ -20,7 +20,7 @@ import tempfile
 import urllib.parse
 from unittest.mock import patch
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-oauth-resource-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-oauth-resource-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -40,7 +40,7 @@ def check(name, cond, extra=""):
 
 
 MCP = "https://mcp.spacemail.com/mcp"
-REDIR = "https://jeevi.example/connect/oauth/callback"
+REDIR = "https://javis.example/connect/oauth/callback"
 
 # ---- 1. canonical_resource
 cr = oauth_mcp.canonical_resource

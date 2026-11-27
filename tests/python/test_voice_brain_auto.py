@@ -15,7 +15,7 @@ from _paths import ROOT, SERVER  # noqa: E402,F401
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-brain-auto-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-brain-auto-"))
 
 import codex_realtime  # noqa: E402
 import main  # noqa: E402

@@ -54,8 +54,8 @@ check("thu chỉ ẩn CỘT HỘI THOẠI - ô nhập vẫn trải dài (không 
   /\.chatpage-main\.edit-on\.echat-thu > \.chatpage-slot > \.transcript,\s*\.chatpage-main\.edit-on\.echat-thu > \.chatpage-slot > \.cedit-thu-btn\{ display:none; \}/.test(CSS));
 check("icon lật gương thành panel-right (bộ icon chưa có panel-right)",
   /\.cedit-thu-btn svg, \.cedit-expand svg\{ transform:scaleX\(-1\); \}/.test(CSS));
-check("JS gắn nút + nhớ localStorage jeevi_editchat_thu",
-  cjs.indexOf('"jeevi_editchat_thu"') !== -1 && cjs.indexOf('et.className = "cedit-thu-btn"') !== -1);
+check("JS gắn nút + nhớ localStorage javis_editchat_thu",
+  cjs.indexOf('"javis_editchat_thu"') !== -1 && cjs.indexOf('et.className = "cedit-thu-btn"') !== -1);
 
 // ---- 3. Màn hẹp giữ lối cũ, trang Tệp tin không vạ lây ----
 check("màn hẹp vẫn ẩn khung chat (không đủ chỗ)",

@@ -44,7 +44,7 @@ hành vi ở cả ba chỗ (60 lên 150, 100 lên 150, 140 lên 150) và đổi 
 đang bật đều bị cắt**:
 
 - `html-to-webcake` 376 ký tự, mất 316 (84%)
-- `jeevi-builder` 333, mất 273 (82%)
+- `javis-builder` 333, mất 273 (82%)
 - `ingest-source` 266, mất 206
 - `query-wiki` 249, mất 189
 - `lint-wiki` 213, mất 153
@@ -56,7 +56,7 @@ khoảng 31 ký tự thật sự phân biệt được skill này với skill ki
 đúng cái phần khiến routing hoạt động, đều bị vứt sạch.
 
 Tệ nhất là **tài liệu đang chủ động dạy viết sai**. CLAUDE.md bảo description phải "viết rõ
-trigger", `jeevi-builder` bảo "viết kỹ", trong khi runtime cắt cụt. Hermes cảnh báo đúng
+trigger", `javis-builder` bảo "viết kỹ", trong khi runtime cắt cụt. Hermes cảnh báo đúng
 hiện tượng này và gọi nó là lỗi không-cosmetic: mô tả quá hạn bị cắt im lặng và skill không
 bao giờ route được.
 
@@ -109,7 +109,7 @@ hỏng thì trả rỗng và đi tiếp. **Sidecar hỏng tuyệt đối không 
 
 ### A2. Điểm đếm
 
-Handler `_skill` trong `server/mcp_hub.py:259` (tool `jeevi_use_skill`). Một chỗ duy nhất,
+Handler `_skill` trong `server/mcp_hub.py:259` (tool `javis_use_skill`). Một chỗ duy nhất,
 mọi engine đi qua (Claude Code, Codex, OpenRouter, OpenAI, Anthropic API). Bump khi nạp
 skill thành công, không bump khi slug sai.
 
@@ -202,7 +202,7 @@ vì mọi skill đều mở đầu như vậy.
 ### B3. Bộ chuẩn dùng chung
 
 Một hằng số text (theo mẫu `_AUTHORING_STANDARDS` của `hermes/agent/learn_prompt.py`),
-nhúng vào cả prompt learn (`learn.py:_build_prompt`) lẫn `jeevi-builder/SKILL.md`.
+nhúng vào cả prompt learn (`learn.py:_build_prompt`) lẫn `javis-builder/SKILL.md`.
 
 Nội dung:
 
@@ -265,17 +265,17 @@ Không đụng vào nó.
 5 skill hệ thống sửa ở NGUỒN `<project>/.claude/skills/`, KHÔNG sửa bản mirror trong brain:
 
 - `html-to-webcake` 376 ký tự, dư 226 (nặng nhất, rủi ro cao nhất)
-- `jeevi-builder` 333, dư 183
+- `javis-builder` 333, dư 183
 - `ingest-source` 266, dư 116
 - `query-wiki` 249, dư 99
 - `lint-wiki` 213, dư 63 (nhẹ nhất)
 
 Sửa luôn hai chỗ tài liệu đang dạy sai: CLAUDE.md (mục description "viết rõ trigger") và
-`jeevi-builder` (mục description "viết kỹ").
+`javis-builder` (mục description "viết kỹ").
 
 ### B6. Lỗi lệch phát hiện trong lúc đọc
 
-`jeevi-builder` đang dạy ghi skill vào `.claude/skills/`, trong khi CLAUDE.md và `skill_router`
+`javis-builder` đang dạy ghi skill vào `.claude/skills/`, trong khi CLAUDE.md và `skill_router`
 nói canonical là `skills/<slug>/SKILL.md` còn `.claude/skills` chỉ là bản mirror phái sinh.
 Skill builder đang dạy ghi vào chỗ mirror.
 
@@ -293,10 +293,10 @@ thẳng, dùng helper tự viết `check(name, cond)` gom lỗi vào `_fails` r�
 cuối (mẫu chuẩn: `server/test_loop_ambient.py:23-30` và `:117-120`).
 
 Preamble bắt buộc, thứ tự load-bearing (env TRƯỚC import, vì module state đọc
-`JEEVI_STATE_DIR` lúc import):
+`JAVIS_STATE_DIR` lúc import):
 
 ```python
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-<x>test-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-<x>test-"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import <module>  # noqa: E402
 ```

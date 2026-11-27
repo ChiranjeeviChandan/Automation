@@ -11,7 +11,7 @@ import os
 import sys
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-eleven-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-eleven-"))
 
 import httpx  # noqa: E402
 
@@ -134,7 +134,7 @@ import voice_note  # noqa: E402
 
 FakeClient.post_resp = FakeResp(200, b"ID3note")
 main.cfgmod.read_settings = lambda: cfg
-vault = tempfile.mkdtemp(prefix="jeevi-eleven-vault-")
+vault = tempfile.mkdtemp(prefix="javis-eleven-vault-")
 r = run(voice_note.make(vault, "Nhắc anh: 3 giờ chiều họp với nhà cung cấp"))
 check("voice note: ElevenLabs chosen -> the note is ElevenLabs audio",
       r["ok"] and open(os.path.join(vault, r["rel_path"]), "rb").read() == b"ID3note", r)

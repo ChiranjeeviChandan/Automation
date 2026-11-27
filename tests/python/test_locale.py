@@ -125,7 +125,7 @@ check("ngôn ngữ chưa có bộ chữ cron thì rơi về tiếng Việt, KHÔ
 _GHIM = re.compile(r"timezone\(\s*timedelta\(\s*hours\s*=\s*7\s*\)\s*\)")
 MIEN_TRU = {
     "server/localefmt.py",                      # nơi khai mặc định - việc của nó
-    "system/plugins/jeevi-schedule/plugin.py",  # dự phòng khi chạy ngoài tiến trình server
+    "system/plugins/javis-schedule/plugin.py",  # dự phòng khi chạy ngoài tiến trình server
     "system/plugins/datetime-vn/plugin.py",     # cùng lý do
 }
 vi_pham = []

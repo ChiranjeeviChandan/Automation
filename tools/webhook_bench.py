@@ -43,7 +43,7 @@ import httpx, uvicorn
 from fastapi import FastAPI
 import webhook_triggers as wt
 
-S = Path(os.environ["JEEVI_STATE_DIR"])
+S = Path(os.environ["JAVIS_STATE_DIR"])
 SLOW = float(os.environ["BENCH_SLOW"])
 GUARD = S / "model_calls.txt"
 
@@ -153,10 +153,10 @@ def _settled(db: Path, sent: int, timeout: float) -> dict:
 def run(seconds: float = 60, rate: float = 20, hooks: int = 5, size_kib: int = 10, slow: float = 0.0,
         settle_s: float = 120, ai_control: bool = False) -> dict:
     """`ai_control` gives hook 0 an AI action: the guard must then count model calls (it proves the guard works)."""
-    state = Path(tempfile.mkdtemp(prefix="jeevi-wh-bench-"))
+    state = Path(tempfile.mkdtemp(prefix="javis-wh-bench-"))
     port = _free_port()
-    env = dict(os.environ, JEEVI_STATE_DIR=str(state), PYTHONPATH=str(SERVER), BENCH_PORT=str(port),
-               BENCH_HOOKS=str(hooks), BENCH_SLOW=str(slow), JEEVI_NO_REAL_JUDGE_ENGINE="1",
+    env = dict(os.environ, JAVIS_STATE_DIR=str(state), PYTHONPATH=str(SERVER), BENCH_PORT=str(port),
+               BENCH_HOOKS=str(hooks), BENCH_SLOW=str(slow), JAVIS_NO_REAL_JUDGE_ENGINE="1",
                BENCH_AI="1" if ai_control else "0")
     for k in ("HTTPS_PROXY", "HTTP_PROXY", "https_proxy", "http_proxy", "ALL_PROXY", "all_proxy"):
         env.pop(k, None)

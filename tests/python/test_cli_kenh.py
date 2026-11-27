@@ -16,7 +16,7 @@ Bốn thứ file này canh, theo đúng thứ tự rủi ro.
    và người dùng nhận một đống ký tự gạch dọc trong terminal.
 
 4. **Luật Unix của CLI.** Câu trả lời ra stdout, mọi thứ khác ra stderr. Hỏng luật đó thì
-   `jeevi "..." > ghi-chu.md` dính spinner vào giữa nội dung.
+   `javis "..." > ghi-chu.md` dính spinner vào giữa nội dung.
 """
 from _paths import ROOT, SERVER, moi_duong_dan  # noqa: E402,F401
 import asyncio
@@ -25,7 +25,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-cli-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-cli-")
 
 import config as cfg  # noqa: E402
 import channel_context  # noqa: E402
@@ -177,7 +177,7 @@ check("phần cách trả lời cũng biết kênh cli", "CLI" in _out)
 _CLI = ROOT / "cli"
 check("có gói CLI", (_CLI / "pyproject.toml").is_file())
 _pyproj = (_CLI / "pyproject.toml").read_text(encoding="utf-8")
-check("lệnh cài xong tên là jeevi", 'jeevi = "jeevi_cli.__main__:main"' in _pyproj)
+check("lệnh cài xong tên là javis", 'javis = "javis_cli.__main__:main"' in _pyproj)
 # Gói này phải cài được trên máy chưa từng có Jeevi. Kéo theo fastapi/uvicorn là bắt người
 # dùng tải cả một web framework về chỉ để gõ một câu hỏi.
 #
@@ -193,27 +193,27 @@ for _cam in ("fastapi", "uvicorn", "starlette", "pydantic", "rich"):
     check(f"CANARY: CLI không kéo theo {_cam}", _cam not in _deps)
 check("chỉ phụ thuộc httpx", _deps.strip() == 'dependencies = ["httpx>=0.24"]')
 
-_render = (_CLI / "jeevi_cli" / "render.py").read_text(encoding="utf-8")
+_render = (_CLI / "javis_cli" / "render.py").read_text(encoding="utf-8")
 check("câu trả lời ra stdout", "sys.stdout.write" in _render)
 check("trạng thái ra stderr", "sys.stderr.write" in _render)
 # Đây là luật sống còn: chỉ hàm tra_loi được ghi stdout. Thêm một chỗ nữa là pipe dính rác.
 check("CANARY: đúng MỘT chỗ ghi stdout", _render.count("sys.stdout.write") == 1)
 check("không tô màu khi đổ vào pipe", "isatty" in _render)
 
-_cmds = (_CLI / "jeevi_cli" / "commands.py").read_text(encoding="utf-8")
+_cmds = (_CLI / "javis_cli" / "commands.py").read_text(encoding="utf-8")
 check("CANARY: gói lạ bị bỏ qua im lặng, không làm vỡ CLI",
       "Mọi `type` lạ: BỎ QUA im lặng" in _cmds)
 check("lỗi thì thoát khác 0", "return 1" in _cmds)
-check("jeevi up nói rõ nó KHÔNG chứa server",
+check("javis up nói rõ nó KHÔNG chứa server",
       "KHÔNG chứa server bên trong" in _cmds)
 
-_cfg_cli = (_CLI / "jeevi_cli" / "config.py").read_text(encoding="utf-8")
+_cfg_cli = (_CLI / "javis_cli" / "config.py").read_text(encoding="utf-8")
 check("CANARY: file cấu hình chứa token phải chmod 600", "0o600" in _cfg_cli)
-check("biến môi trường đè lên file (cho CI/Docker)", "JEEVI_TOKEN" in _cfg_cli)
+check("biến môi trường đè lên file (cho CI/Docker)", "JAVIS_TOKEN" in _cfg_cli)
 
-# Chạy THẬT bộ phân tích tham số: `jeevi "câu hỏi"` phải là đường chính, không bắt gõ lệnh con.
+# Chạy THẬT bộ phân tích tham số: `javis "câu hỏi"` phải là đường chính, không bắt gõ lệnh con.
 sys.path.insert(0, str(_CLI))
-import jeevi_cli.__main__ as cli_main  # noqa: E402
+import javis_cli.__main__ as cli_main  # noqa: E402
 
 _goi = {}
 _goc_hoi = cli_main.cmd.hoi
@@ -244,10 +244,10 @@ try:
           _seen.get("cau") == "hôm nay thế nào")
     _seen.clear()
     cli_main.main(["chat", "--agent", "quick-check"])
-    check("jeevi chat --agent <slug> keeps the agent", _seen.get("chat_agent") == "quick-check")
+    check("javis chat --agent <slug> keeps the agent", _seen.get("chat_agent") == "quick-check")
     _seen.clear()
     cli_main.main(["--agent", "quick-check", "chat"])
-    check("jeevi --agent <slug> chat keeps the agent", _seen.get("chat_agent") == "quick-check")
+    check("javis --agent <slug> chat keeps the agent", _seen.get("chat_agent") == "quick-check")
     _seen.clear()
     cli_main.main(["hôm nay thế nào"])
     check("no --agent: the agent stays empty", not _seen.get("agent"))

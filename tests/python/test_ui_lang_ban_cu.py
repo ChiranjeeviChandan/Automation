@@ -13,8 +13,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_tmp = Path(tempfile.mkdtemp(prefix="jeevi-uilang-"))
-os.environ["JEEVI_STATE_DIR"] = str(_tmp)
+_tmp = Path(tempfile.mkdtemp(prefix="javis-uilang-"))
+os.environ["JAVIS_STATE_DIR"] = str(_tmp)
 import config as cfgmod  # noqa: E402
 
 cfgmod.SETTINGS_PATH = _tmp / "settings.json"

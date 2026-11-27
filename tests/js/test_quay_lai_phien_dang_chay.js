@@ -1,4 +1,4 @@
-// Back on a chat whose turn is still running (owner, 05/11/2026): "khi jeevi đang chat, anh back ra khung chat khác và
+// Back on a chat whose turn is still running (owner, 05/11/2026): "khi javis đang chat, anh back ra khung chat khác và
 // truy cập lại thì nó hiện 1 bong bóng rỗng". Opening the chat again drew an empty answer bubble above the activity chip
 // while Jeevi had not written a word yet. Now a bubble is drawn only when the turn has text.
 //
@@ -26,7 +26,7 @@ function run(turnState) {
     convo: [], savedSessionId: null, _dangDungLoat: false, _tinCu: null, _phienMoLuc: null,
     hideActivity() {}, goMoiTinCu() {}, chatArea: { innerHTML: "" }, ngoaiAlpine(f) { f(); },
     veTinDaLuu() { return null; }, datMoiTinCu() {}, veNhanBrain() {}, graphSource: { value: "brain" },
-    window: { t: (k) => k, JeeviResume: null, JeeviInbox: null, JeeviBackground: null },
+    window: { t: (k) => k, JavisResume: null, JavisInbox: null, JavisBackground: null },
     turns: { s1: turnState },
     createStreamingBubble() { const b = el("bubble"); area.push(b); return b; },
     markdownToHtml: (x) => "<p>" + x + "</p>",

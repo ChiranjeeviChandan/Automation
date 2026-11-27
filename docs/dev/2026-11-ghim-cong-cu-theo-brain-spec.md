@@ -1,11 +1,11 @@
 # Ghim sẵn công cụ hay dùng theo từng brain
 
-Spec viết ngày 10/11/2026, đi tiếp sau `2026-11-vong-cai-tien-jeevi-core-spec.md` (mục 6.3). Chủ repo chốt: "Nên làm
+Spec viết ngày 10/11/2026, đi tiếp sau `2026-11-vong-cai-tien-javis-core-spec.md` (mục 6.3). Chủ repo chốt: "Nên làm
 ngay: ghim sẵn công cụ hay dùng theo từng brain".
 
 ## 1. Vấn đề
 
-Khi một brain đấu nhiều nguồn, hub giấu các công cụ sau hai công cụ `jeevi_search_tools` và `jeevi_run_tool` để mỗi
+Khi một brain đấu nhiều nguồn, hub giấu các công cụ sau hai công cụ `javis_search_tools` và `javis_run_tool` để mỗi
 request nhẹ đi. Cái giá: công cụ nào dùng hằng ngày cũng tốn thêm MỘT VÒNG gọi model mỗi lần (tìm trước, rồi mới gọi).
 Một vòng là đọc lại toàn bộ ngữ cảnh, nên đây là phần đắt, nhất là với loop: mỗi vòng lặp là một phiên mới, lần nào
 cũng phải tìm lại.
@@ -54,8 +54,8 @@ mức nhất vẫn vừa.
 Không có màn hình hay ô cài đặt mới.
 
 - **Chuông.** Khi một brain có công cụ mới được ghim: một thông báo mức thấp nêu brain, tên công cụ và câu để tắt.
-- **Nói với Jeevi.** "Đang ghim công cụ nào" (`jeevi_tune op=status`, mục `pinned_tools`: danh sách ghim, số lượt gọi
-  thẳng, số lượt còn phải tìm trước). "Đừng ghim công cụ nữa" (`jeevi_tune op=set knob=tools.pin_limit value=0`).
+- **Nói với Jeevi.** "Đang ghim công cụ nào" (`javis_tune op=status`, mục `pinned_tools`: danh sách ghim, số lượt gọi
+  thẳng, số lượt còn phải tìm trước). "Đừng ghim công cụ nữa" (`javis_tune op=set knob=tools.pin_limit value=0`).
 - Giá trị chủ đặt thì luật để yên 30 ngày (luật mới của vòng, áp cho mọi núm).
 
 ## 5. Hiệu năng

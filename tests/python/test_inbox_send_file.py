@@ -19,8 +19,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-inbox-file-")
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-inbox-file-")
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -151,7 +151,7 @@ check("sending takes the chat over", r.json().get("tiep_quan") is True
 # ============================================================
 # 5. Every channel that sends files can do it from the inbox
 # ============================================================
-missing = [s.id for s in channels.danh_sach() if s.nl("gui_file") and s.nl("tra_loi_tu_jeevi")
+missing = [s.id for s in channels.danh_sach() if s.nl("gui_file") and s.nl("tra_loi_tu_javis")
            and not hasattr(channels.module(s.id), "send_file")]
 check("every channel that sends files and answers from the inbox has send_file", not missing, missing)
 

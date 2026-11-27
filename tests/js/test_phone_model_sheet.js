@@ -75,7 +75,7 @@ check("the sheet is for the same width as the rest of the phone layout (860px)",
 check("opening: the sheet moves to <body>, then draws only the panel asked for, under its own title",
   /document\.body\.appendChild\(s\);\s*s\.classList\.add\("is-open"\);/.test(blk)
   && /if \(part === "model"\) \{\s*pop\.hidden = false;/.test(blk)
-  && /\} else if \(part === "eff"\) effMount\(\);/.test(blk) && /else \{ try \{ if \(window\.JeeviPlanLimit[^}]*showInSheet\(\)/.test(blk)
+  && /\} else if \(part === "eff"\) effMount\(\);/.test(blk) && /else \{ try \{ if \(window\.JavisPlanLimit[^}]*showInSheet\(\)/.test(blk)
   && blk.includes('const SHEET_TITLE = { model: "cps.model", eff: "eff.title", limit: "lim.title" };')
   && blk.includes("ttl.textContent = window.t(SHEET_TITLE[part]);"));
 check("closing: every panel is hidden and the sheet goes back into the card",

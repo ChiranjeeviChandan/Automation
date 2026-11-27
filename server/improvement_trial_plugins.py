@@ -32,15 +32,15 @@ _SLUG = re.compile(r"[a-z0-9][a-z0-9._-]{0,63}\Z")
 _TOOL = re.compile(r"[a-z][a-z0-9_]{0,63}\Z")
 _LOCK_TYPES = (type(threading.Lock()), type(threading.RLock()))
 _SESSION_FIELDS = {"id", "brain", "channel", "engine", "model", "project_id", "pinned_provider", "pinned_model", "archived"}
-_RESERVED = {"jeevi_connections", "jeevi_read_file", "jeevi_list_dir", "jeevi_write_file", "jeevi_use_skill",
-    "jeevi_edit_file", "jeevi_search_files", "jeevi_run_command", "jeevi_terminal", "jeevi_process",
-    "jeevi_web_search", "jeevi_web_fetch"}
-_GOAL_FILE = Path(__file__).resolve().parent.parent / "system" / "plugins" / "jeevi-goal" / "plugin.py"
+_RESERVED = {"javis_connections", "javis_read_file", "javis_list_dir", "javis_write_file", "javis_use_skill",
+    "javis_edit_file", "javis_search_files", "javis_run_command", "javis_terminal", "javis_process",
+    "javis_web_search", "javis_web_fetch"}
+_GOAL_FILE = Path(__file__).resolve().parent.parent / "system" / "plugins" / "javis-goal" / "plugin.py"
 # Pin the audited data-only branch; a coherent edited source+cache is still not
 # authority to reinterpret an arbitrary predicate as the ordinary-owner result.
 # Re-pinned 2026-11-09 after an audit of the diff: the plugin opens the store with `RS.shared()` instead of
 # `RS.GoalStore()` (one opened store per file); `_visible`'s branches and what they return are unchanged.
-_GOAL_SOURCE_HASH = "cf2eb26b4198cadcd067aa036a1aa129b6db4e1456098fdb34014542c858406e"
+_GOAL_SOURCE_HASH = "d054883554308f03879ba2a82be85a05eeea767fd2f908c4a44bc4d55e5a087a"
 
 
 def _plain(value):
@@ -255,7 +255,7 @@ class PluginCapabilityProjection:
         if (any(item["kind"] == "directory" and not item["name"].startswith((".", "_")) for item in pack_members or [])
                 or packs._cache.get("packs") or packs._cache.get("connectors") or (ledger_raw and _mapping(ledger_raw))):
             raise ValueError("unsupported_pack_context")
-        pack_off = str(os.getenv("JEEVI_DISABLE_PACKS", "")).strip().lower() in ("1", "true", "yes", "on")
+        pack_off = str(os.getenv("JAVIS_DISABLE_PACKS", "")).strip().lower() in ("1", "true", "yes", "on")
         if pack_off:
             pack_signature = "off"
         elif pack_members is None:
@@ -268,7 +268,7 @@ class PluginCapabilityProjection:
                 pack_signature.append(("_so", info.st_mtime_ns, info.st_size))
             pack_signature = tuple(pack_signature)
         user_env = [str(os.getenv(key, "") or "").strip().lower() for key in
-                    ("JEEVI_ENABLE_USER_PLUGINS", "JEEVI_ENABLE_VAULT_PLUGINS")]
+                    ("JAVIS_ENABLE_USER_PLUGINS", "JAVIS_ENABLE_VAULT_PLUGINS")]
         effective_env = next((value for value in user_env if value), "")
         user_enabled = effective_env not in ("0", "false", "no", "off")
         flat = observation.directory(root, "plugins")
@@ -426,7 +426,7 @@ class PluginCapabilityProjection:
                 if vis is not None and not skipped:
                     visibility = function(vis, pdir)
                     module = sys.modules.get(vis.__module__)
-                    if (source != "bundled" or lp.slug != "jeevi-goal" or pdir / "plugin.py" != _GOAL_FILE
+                    if (source != "bundled" or lp.slug != "javis-goal" or pdir / "plugin.py" != _GOAL_FILE
                             or hashlib.sha256(observation.read(pdir, "plugin.py", required=True).encode("utf-8")).hexdigest() != _GOAL_SOURCE_HASH
                             or vis.__name__ != "_visible" or type(module) is not types.ModuleType or vis.__globals__ is not module.__dict__):
                         raise ValueError("unsupported_plugin_visibility")

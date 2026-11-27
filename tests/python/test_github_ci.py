@@ -17,7 +17,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ghci-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ghci-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -26,7 +26,7 @@ except Exception:
 from _fake_github import FakeGitHub, GOOD_TOKEN, git  # noqa: E402
 
 fake = FakeGitHub()
-os.environ["JEEVI_GITHUB_API"] = fake.url
+os.environ["JAVIS_GITHUB_API"] = fake.url
 
 import github_repos  # noqa: E402
 import github_store  # noqa: E402
@@ -87,7 +87,7 @@ check("only required checks count", w.aggregate([mk("test", "completed", "succes
 (wt / "src/a.py").write_text("a = 2\n", encoding="utf-8")
 run(w.after_turn("chat", BRAIN, "sửa giúp anh lỗi đăng nhập"))
 r = row()
-check("the gate passed and the branch got its final name from the chat title", r["branch"].startswith("jeevi/sua-loi-dang-nhap-"))
+check("the gate passed and the branch got its final name from the chat title", r["branch"].startswith("javis/sua-loi-dang-nhap-"))
 check("the commit is on GitHub", fake.branch_sha("acme/app", r["branch"]) == r["head_sha"] != "")
 prs = fake.pulls["acme/app"]
 check("a draft PR is opened against the default branch", len(prs) == 1 and prs[0]["draft"] and prs[0]["base"]["ref"] == "main")
@@ -195,7 +195,7 @@ check("a runner failure is rerun once instead of a fix round", 801 in fake.rerun
 run(w.tick())
 check("a second failure on the same commit is real: a fix round", len(turns) == n_turns + 1)
 
-# ---- a red job with no log at all (owner 23/11/2026, jeevios-blog PR #58: the job never ran) ----
+# ---- a red job with no log at all (owner 23/11/2026, javisos-blog PR #58: the job never ran) ----
 (wt / "src/a.py").write_text("a = 200\n", encoding="utf-8")
 run(w.after_turn("chat", BRAIN, "log trống"))
 fake.set_checks(row()["head_sha"], [("Build", "completed", "failure", 901)])
@@ -216,7 +216,7 @@ run(w.tick())
 check("a log GitHub refuses is a missing token permission: no rerun, the fix round names Actions (Read)",
       902 not in fake.reruns and len(turns) == n_turns + 1 and "Actions" in turns[-1][1] and "403" in turns[-1][1])
 
-# ---- a person asks to rerun the red CI (jeevi_github op=rerun) ----
+# ---- a person asks to rerun the red CI (javis_github op=rerun) ----
 n_turns, n_posts = len(turns), len(posted)
 out = run(w.rerun_ci("chat", "acme/app"))
 check("rerun_ci reruns the failed Actions job of the PR head", out["rerun"] == ["Build"] and fake.reruns[-1] == 902

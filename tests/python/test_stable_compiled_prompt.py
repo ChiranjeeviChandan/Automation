@@ -20,10 +20,10 @@ import sys
 import tempfile
 from pathlib import Path
 
-SCRATCH = Path(tempfile.mkdtemp(prefix="jeevi-stable-compiled-"))
-os.environ["JEEVI_STATE_DIR"] = str(SCRATCH / "state")
-os.environ["JEEVI_NO_REAL_JUDGE_ENGINE"] = "1"
-os.environ["JEEVI_NO_REAL_REVIEW_ENGINE"] = "1"
+SCRATCH = Path(tempfile.mkdtemp(prefix="javis-stable-compiled-"))
+os.environ["JAVIS_STATE_DIR"] = str(SCRATCH / "state")
+os.environ["JAVIS_NO_REAL_JUDGE_ENGINE"] = "1"
+os.environ["JAVIS_NO_REAL_REVIEW_ENGINE"] = "1"
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")

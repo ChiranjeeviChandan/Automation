@@ -14,7 +14,7 @@ import time
 from contextlib import closing
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-team-release-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-team-release-")
 
 import team_store  # noqa: E402
 
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS agent_busy(
   agent_key TEXT PRIMARY KEY, team_id TEXT NOT NULL, turn_id TEXT NOT NULL, lease_until REAL NOT NULL);
 """
 
-d = Path(tempfile.mkdtemp(prefix="jeevi-team-release-store-"))
+d = Path(tempfile.mkdtemp(prefix="javis-team-release-store-"))
 path = d / "team.sqlite3"
 now = time.time()
 with closing(sqlite3.connect(str(path))) as c:

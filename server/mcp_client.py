@@ -1,7 +1,7 @@
 """
 MCP client của Jeevi - để MỌI bộ não (API/OAuth lẫn hub) dùng được MCP.
 v2: SESSION POOL sống lâu giữa các tin nhắn (hết cảnh mỗi tool call mở session mới),
-thêm transport stdio (MCP local như jeevi-zalo, webcake-landing-mcp) và
+thêm transport stdio (MCP local như javis-zalo, webcake-landing-mcp) và
 "internal" (cầu nối Python nội bộ như botcake_mcp).
 
 3 transport:
@@ -72,7 +72,7 @@ _DIAL_SONG_SONG = 8      # số connection dò tool CÙNG LÚC (đừng để np
 # pass, and it runs while the server is still starting: eight `npx` / `uvx` processes starting together, each a Node
 # or Python runtime plus a package install when its cache is cold, took a small VPS's disk and memory exactly when
 # the server had its first requests to answer (owner: "right after an update the hub is flooded and the server
-# drops"). JEEVI_MCP_WARM_PARALLEL overrides it.
+# drops"). JAVIS_MCP_WARM_PARALLEL overrides it.
 _WARM_SONG_SONG = "3"
 _DIAL_TRAN = "20"        # giây - trần dò tool CHO MỖI connection (0 = không giới hạn)
 _WARM_TRAN = "180"       # giây - trần cho vòng LÀM NÓNG lúc khởi động (xem tran_warm)
@@ -194,7 +194,7 @@ class McpHttpSession:
           - `discover_resolved` thấy 0 tool thì `continue`, KHÔNG ghi vào `bo_qua` → hub
             tưởng vòng dò đủ, đóng băng danh sách thiếu nguồn suốt 60 giây.
           - `connect_health` thấy không có ngoại lệ → `ok=True, tools=0` → trang Kết nối
-            chấm XANH ghi "Hoạt động bình thường (0 công cụ)", `jeevi_connections` báo "ổn".
+            chấm XANH ghi "Hoạt động bình thường (0 công cụ)", `javis_connections` báo "ổn".
         Đúng cảnh chủ repo gặp nhiều lần: kết nối xanh, quyền đủ, mà không bộ não nào tìm ra
         một tool POS nào, rồi "để 15-20 phút tự hết" - chính là lúc phiên chết bị dọn.
         """
@@ -227,7 +227,7 @@ class McpHttpSession:
         """
         res = await self._rpc("initialize", {
             "protocolVersion": PROTOCOL, "capabilities": {},
-            "clientInfo": {"name": "jeevi-os", "version": "1.0"},
+            "clientInfo": {"name": "javis-os", "version": "1.0"},
         }, cho_lam_moi=False)
         if isinstance(res, dict) and res.get("error"):
             raise McpHttpError("initialize lỗi: "
@@ -388,7 +388,7 @@ class McpStdioSession:
             pass
         finally:
             # The pipe closed: the process ended (or was closed by us). Whoever keeps state per process is told now
-            # instead of finding out at its next call (2026-11-10: the Zalo read loop restarts jeevi-zalo at once).
+            # instead of finding out at its next call (2026-11-10: the Zalo read loop restarts javis-zalo at once).
             for fn in list(STDIO_EXIT_LISTENERS):
                 try:
                     fn(self.key)
@@ -544,11 +544,11 @@ class McpStdioSession:
             folder = self.npx_check.get("dir") if self._cold_start else None
             npx_cache.claim(folder)
             try:
-                timeout = (_env_seconds("JEEVI_MCP_INSTALL_TIMEOUT", _INSTALL_TIMEOUT) if self._cold_start
-                           else _env_seconds("JEEVI_MCP_INIT_TIMEOUT", _INIT_TIMEOUT))
+                timeout = (_env_seconds("JAVIS_MCP_INSTALL_TIMEOUT", _INSTALL_TIMEOUT) if self._cold_start
+                           else _env_seconds("JAVIS_MCP_INIT_TIMEOUT", _INIT_TIMEOUT))
                 await self._rpc("initialize", {
                     "protocolVersion": PROTOCOL, "capabilities": {},
-                    "clientInfo": {"name": "jeevi-os", "version": "1.0"},
+                    "clientInfo": {"name": "javis-os", "version": "1.0"},
                 }, timeout=timeout)
                 await self._rpc("notifications/initialized", notify=True)
                 self._init_done = True
@@ -700,7 +700,7 @@ class SessionPool:
         off for good ("another session of this account keeps taking the connection"). The QR sign-in saves its
         connection from a worker thread (`zalo_login._reader`), and `mcp_hub.invalidate_cache` dropped every session
         from there. With no running loop in that thread this method used to do nothing, so the first account's
-        `jeevi-zalo mcp start` kept running outside the pool while the read loop started a second one on the same
+        `javis-zalo mcp start` kept running outside the pool while the read loop started a second one on the same
         HOME: two sessions of one account evicting each other. Windows and macOS never reaped the orphan
         (`mcp_orphans.reap_same_home` needs /proc). Now the close runs on the sessions' own loop, and with no loop
         known the process tree is killed right here."""
@@ -792,7 +792,7 @@ class SessionPool:
         """Số hiệu của phiên MCP đang sống cho spec này, 0 nếu chưa có phiên nào.
 
         Đổi mỗi khi phiên bị dựng lại (tiến trình chết, đổi cấu hình, đóng vì rảnh). Cần cho những
-        MCP giữ trạng thái TRONG tiến trình, ví dụ bộ đệm tin của jeevi-zalo đánh số thứ tự từ
+        MCP giữ trạng thái TRONG tiến trình, ví dụ bộ đệm tin của javis-zalo đánh số thứ tự từ
         1 sau mỗi lần khởi động: con trỏ đọc giữ qua một lần dựng lại phiên là bỏ qua tin mới.
         """
         ent = self._sessions.get(spec.get("key") or _spec_hash(spec))
@@ -1149,7 +1149,7 @@ def tran_dial():
     Bỏ nguồn chậm ở vòng này KHÔNG mất gì lâu dài: cache hub hết hạn sau 60s là dò lại, và
     nguồn khoẻ vẫn lên tool đầy đủ ngay lượt đó.
     """
-    raw = os.getenv("JEEVI_MCP_DISCOVER_TIMEOUT", _DIAL_TRAN)
+    raw = os.getenv("JAVIS_MCP_DISCOVER_TIMEOUT", _DIAL_TRAN)
     try:
         v = float(raw)
     except (TypeError, ValueError):
@@ -1168,7 +1168,7 @@ def tran_warm():
     Docker mất sạch cache npm/uv sau mỗi lần đổi ảnh), và máy chủ HTTP phía dịch vụ cũng
     phải dựng lại phiên từ đầu.
     """
-    raw = os.getenv("JEEVI_MCP_WARM_TIMEOUT", _WARM_TRAN)
+    raw = os.getenv("JAVIS_MCP_WARM_TIMEOUT", _WARM_TRAN)
     try:
         v = float(raw)
     except (TypeError, ValueError):
@@ -1179,7 +1179,7 @@ def tran_warm():
 def warm_parallel() -> int:
     """How many connections the start-up warm pass opens at the same time (see `_WARM_SONG_SONG`)."""
     try:
-        v = int(os.getenv("JEEVI_MCP_WARM_PARALLEL", _WARM_SONG_SONG))
+        v = int(os.getenv("JAVIS_MCP_WARM_PARALLEL", _WARM_SONG_SONG))
     except (TypeError, ValueError):
         v = int(_WARM_SONG_SONG)
     return max(1, min(v, _DIAL_SONG_SONG))
@@ -1324,7 +1324,7 @@ async def discover_resolved(conns, bo_qua=None):
             # Dial được mà KHÔNG có tool nào là một dạng hỏng, không phải một trạng thái bình
             # thường: nguồn có máy chủ thật thì nó phải có tool, bằng không nó vô dụng. Ghi vào
             # `bo_qua` để hub biết vòng dò này THIẾU và chỉ cache 10 giây (thay vì đóng băng 60
-            # giây một danh sách vắng nguồn), và để `jeevi_connections` nói thật với model thay
+            # giây một danh sách vắng nguồn), và để `javis_connections` nói thật với model thay
             # vì im lặng. Connector ảo (không có gì để dial) không tính - nó vốn không có tool.
             if bo_qua is not None and co_server_de_dial(spec):
                 bo_qua.add(conn["id"])
@@ -1354,11 +1354,11 @@ async def call_route(route, fn, arguments):
     """Gọi 1 tool theo fn. Entry: {"call"} (hub bọc sẵn) | {"spec","tool"} (pool) | {"server","tool"} (legacy)."""
     ent = route.get(fn)
     if not ent:
-        lazy = route.get("jeevi_run_tool")
-        if lazy and lazy.get("call") and fn not in ("jeevi_run_tool", "jeevi_search_tools"):
-            # 2026-11-19: with the hub's lazy tier on, most tools (jeevi_team, jeevi_task...) sit behind
-            # jeevi_search_tools. The prompt names them, so a model calls them by name, and that answered
-            # "tool không tồn tại" although the tool is there. Hand the call to jeevi_run_tool: it dispatches
+        lazy = route.get("javis_run_tool")
+        if lazy and lazy.get("call") and fn not in ("javis_run_tool", "javis_search_tools"):
+            # 2026-11-19: with the hub's lazy tier on, most tools (javis_team, javis_task...) sit behind
+            # javis_search_tools. The prompt names them, so a model calls them by name, and that answered
+            # "tool không tồn tại" although the tool is there. Hand the call to javis_run_tool: it dispatches
             # through the full guarded route (same permission, audit, owner-only filter), and a name that
             # really is missing still gets its hint to search first.
             return await lazy["call"]({"name": fn, "args": arguments or {}})

@@ -27,14 +27,14 @@ cứng vào đó) vẫn xem và cài được. Đừng thêm gì vào đó nữa
 
 ```json
 {
-  "format": "jeevi-pack-index",
+  "format": "javis-pack-index",
   "format_version": 1,
   "updated": "2026-09-04",
   "store": {"name": "Kho gói Jeevi", "url": "https://github.com/..."},
   "packs": [
     {
-      "id": "jeevi.pricing",
-      "replaces": ["jeevi.tinh-gia"],
+      "id": "javis.pricing",
+      "replaces": ["javis.tinh-gia"],
       "name": {"vi": "Tính giá bán", "en": "Pricing helper"},
       "description": {"vi": "Tính giá bán từ giá vốn và biên lợi nhuận."},
       "version": "1.0.0",
@@ -46,9 +46,9 @@ cứng vào đó) vẫn xem và cài được. Đừng thêm gì vào đó nữa
       "verified": true,
       "updated": "2026-09-04",
       "homepage": "https://github.com/...",
-      "icon": "packs/jeevi.pricing/assets/pricing.png",
+      "icon": "packs/javis.pricing/assets/pricing.png",
       "download": {
-        "url": "https://github.com/.../releases/download/v1.0.0/jeevi-tinh-gia.zip",
+        "url": "https://github.com/.../releases/download/v1.0.0/javis-tinh-gia.zip",
         "sha256": "abc123...",
         "size": 3052
       },
@@ -122,16 +122,16 @@ Làm trong repo kho, không phải repo này.
 
 1. Đặt mã nguồn ở `packs/<id>/`, rồi đóng gói và lấy luôn dấu vân tay:
    ```bash
-   python tools/dong-goi.py jeevi.pricing
+   python tools/dong-goi.py javis.pricing
    ```
    Lệnh in ra đường dẫn tệp và `sha256`. Đóng bằng `zip -r` cũng được, nhưng nhớ loại
    `__pycache__` ra: nó lọt vào chữ ký nội dung mã nên hai máy sẽ ra hai `sha256` khác nhau.
-   Manifest `jeevi-pack.yaml` phải nằm ở gốc tệp nén, hoặc trong đúng một thư mục bọc kiểu
+   Manifest `javis-pack.yaml` phải nằm ở gốc tệp nén, hoặc trong đúng một thư mục bọc kiểu
    zipball của GitHub, Jeevi tự bóc.
    Lệnh tự đặt tệp vào `dist/` với tên kèm phiên bản và in sẵn khối JSON để dán.
 
 2. Thêm một mục vào `packs[]` trong `index.json`, khai `download.url` **tương đối**
-   (`dist/jeevi-tinh-gia-1.0.0.zip`). Jeevi ghép nó với địa chỉ của chính file index.
+   (`dist/javis-tinh-gia-1.0.0.zip`). Jeevi ghép nó với địa chỉ của chính file index.
 
    Tệp và mục danh mục nằm trong CÙNG một commit, nên không bao giờ có cảnh index đã trỏ sang
    bản mới mà tệp thì chưa lên. Gói lớn thì dùng Release và khai địa chỉ tuyệt đối.
@@ -139,7 +139,7 @@ Làm trong repo kho, không phải repo này.
 3. Đẩy lên nhánh `main` của repo kho, hoặc mở Pull Request nếu bạn không phải chủ kho.
 
 Mã nguồn nằm cạnh tệp phát hành là có chủ ý: gói bậc `code` chạy Python thật trong máy chủ Jeevi
-của người cài, nên họ phải đọc được nó mà không cần tải gì về trước. `packs/jeevi.pricing/` là
+của người cài, nên họ phải đọc được nó mà không cần tải gì về trước. `packs/javis.pricing/` là
 gói chạy được để chép làm khuôn.
 
 Jeevi cache danh mục 6 giờ, nên sau khi đẩy thì bấm **Làm mới** trên trang Kho cài đặt để thấy ngay.
@@ -174,10 +174,10 @@ KHÁC: gói cũ không bao giờ được cập nhật, gói mới nằm cạnh 
 02/11: mã gói phải bằng tiếng Anh) thì gói mới khai mã cũ, ở CẢ manifest lẫn mục danh mục:
 
 ```yaml
-id: jeevi.crm
+id: javis.crm
 version: 1.1.0
 replaces:
-  - jeevi.khach-hang-crm
+  - javis.khach-hang-crm
 compat:
   app: ">=0.440.0"
 ```

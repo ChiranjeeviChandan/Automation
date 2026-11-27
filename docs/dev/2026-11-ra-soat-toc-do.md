@@ -39,7 +39,7 @@ gộp khoảng 120 file thành một gói, trang phục vụ chỉ còn 4 thẻ 
     chỉ thiếu các lần đọc dữ liệu sau đăng nhập.
   - API đo **trong một tiến trình riêng**: nạp đúng `main.app` thật, tắt cổng đăng nhập cho riêng tiến trình đó,
     không mở cổng mạng, không chạy tác vụ khởi động, chỉ gọi các lần đọc không có tác dụng phụ.
-  - Muốn đo tới ô chat: chạy lại bench trình duyệt với `JEEVI_BENCH_COOKIE=<giá trị cookie jeevi_session>`.
+  - Muốn đo tới ô chat: chạy lại bench trình duyệt với `JAVIS_BENCH_COOKIE=<giá trị cookie javis_session>`.
 - **Một tác dụng phụ đã xảy ra, nói rõ:** lần gọi `/usage/summary` kích hoạt `usage_index.refresh` (quét lại file
   phiên của Codex và cập nhật chỉ mục usage, đúng việc trang Usage vẫn làm khi mở). Nó chạy hơn 45 giây, bị dừng,
   và hai API usage đã bị gỡ khỏi script đo.
@@ -169,7 +169,7 @@ Cỡ các kho SQLite: `conversations.db` 53,5 MB; `customer_conversations.sqlite
 - Danh sách tool của hub dùng bản cũ trong lúc làm mới.
 - Ngân sách lời gọi chặn vòng lặp sự kiện (`tests/python/test_loop_blocking_budget.py`), ngân sách prompt
   (`tests/python/test_prompt_budget.py`).
-- Chủ repo đã chốt **không cắt chữ trong prompt của lượt chat** (`2026-11-jeevi-nhe-token-spec.md` mục 0). Prompt
+- Chủ repo đã chốt **không cắt chữ trong prompt của lượt chat** (`2026-11-javis-nhe-token-spec.md` mục 0). Prompt
   hệ thống trung vị 57.698 ký tự được ghi nhận ở đây như số đo, không phải đề xuất cắt.
 
 ## 5. Hướng cải thiện, xếp theo lợi trên công
@@ -318,7 +318,7 @@ Ngưỡng là đích đề xuất, đặt sát số đo hiện tại hoặc số
 ## 8. Chưa đo được
 
 - **Thời gian tới lúc ô chat gõ được, và số lần gọi trùng sau khi đăng nhập:** chưa đo được, vì không dùng phiên
-  đăng nhập nào trên bản thật. Chạy lại với `JEEVI_BENCH_COOKIE`.
+  đăng nhập nào trên bản thật. Chạy lại với `JAVIS_BENCH_COOKIE`.
 - **Thời gian API qua mạng trên bản đang chạy:** chưa đo được, cùng lý do. Số ở mục 3.3 là thời gian trong máy chủ.
 - **Dòng `[turn timing]`:** chưa đo được, vì nó ghi ra stderr của container, không đọc được từ bên trong.
 - **Tách phần recall, ghi SQLite, nối hub MCP bên trong một lượt:** chưa đo được, vì sự kiện chỉ ghi một mốc
@@ -444,7 +444,7 @@ Giới hạn, nói thẳng:
   nguội và ghi `cold_parts: ["new_thread_prompt"]`.
 - Đoán sai (lượt kế hoá ra vẫn nối luồng cũ) tốn đúng một lần khởi động nguội, và sự kiện ghi `resume` trong
   `cold_parts`.
-- Tắt bằng `JEEVI_WARM_NEW_THREAD=0`.
+- Tắt bằng `JAVIS_WARM_NEW_THREAD=0`.
 
 **Việc cần chủ máy quyết, chưa đổi.** Jeevi xoay luồng Claude theo tổng token của cả lượt. Số đo thật: cỡ
 luồng thật (đầu vào của lần gọi cuối) có trung vị 159.889 token, lớn nhất 175.388, trong khi 24% lượt có tổng
@@ -458,7 +458,7 @@ mới kế tiếp" ở B1 của mục 5 vẫn còn nguyên, chưa làm).
 
 ### 11.3 Việc 3: B2
 
-Chuyển sang nhóm nạp chậm sẵn có (`<script id="jeevi-lazy">` trong `dashboard/index.html`), không thêm bundler:
+Chuyển sang nhóm nạp chậm sẵn có (`<script id="javis-lazy">` trong `dashboard/index.html`), không thêm bundler:
 
 - Nhóm `congviec`: `studio.js`, `workspace.js`, `improvement-candidates.js`, `improvement-experiments.js`,
   `improvement-candidates.css`.
@@ -502,8 +502,8 @@ mạng ở lần đầu: trước trung bình 1.325 KB, sau 1.262 KB (bớt 63 K
 `graph.js`, `coding.js`, `voice.js`, `dictate.js`, `dataview.js`, `editor-cmds.js`, `pet.js`. Muốn rút tiếp các
 file này phải tách phần màn chat dùng ra khỏi phần chỉ một trang dùng, là việc lớn hơn một lần chuyển nhóm.
 
-Đã kiểm trong trình duyệt thật trên máy chủ thử: lúc trang sẵn sàng, `JeeviWorkspace`, `JeeviStudio` và
-`JeeviMessenger` chưa nạp, `window.openStudio` vẫn gọi được; mở trang Cộng sự, trang Skills và thẻ Messenger ở
+Đã kiểm trong trình duyệt thật trên máy chủ thử: lúc trang sẵn sàng, `JavisWorkspace`, `JavisStudio` và
+`JavisMessenger` chưa nạp, `window.openStudio` vẫn gọi được; mở trang Cộng sự, trang Skills và thẻ Messenger ở
 trang Kết nối đều vẽ đúng, không lỗi trang; gõ lệnh `/agent` hai lần trong lúc mã còn đang tải thì chỉ mở cộng
 sự đúng một lần.
 

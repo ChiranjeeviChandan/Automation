@@ -113,7 +113,7 @@
     // Cả hai chuỗi đều TRA TỪ ĐIỂN lúc vẽ. Bản trước CHỤP placeholder từ DOM một lần lúc
     // khởi tạo, mà lúc đó applyDom() của i18n chưa chạy, nên cái chụp được luôn là chuỗi
     // tiếng Việt viết cứng trong index.html - chọn tiếng Anh thì ô nhập trên màn rộng vẫn
-    // nói tiếng Việt. Từ điển về sau DOMContentLoaded nên còn phải vẽ lại ở "jeevi:i18n".
+    // nói tiếng Việt. Từ điển về sau DOMContentLoaded nên còn phải vẽ lại ở "javis:i18n".
     var chatInput = document.getElementById("chatInput");
     function setPlaceholder() {
       if (!chatInput) return;
@@ -121,7 +121,7 @@
       var chu = window.t(khoa);
       // t() trả về CHÍNH cái khoá khi từ điển chưa về (hoặc thiếu khoá). Ghi đè lúc đó là
       // in "bar.input_ph" vào ô nhập, tệ hơn hẳn chuỗi tiếng Việt sẵn trong HTML. Bỏ qua,
-      // lượt "jeevi:i18n" bên dưới sẽ vẽ lại bằng chữ thật.
+      // lượt "javis:i18n" bên dưới sẽ vẽ lại bằng chữ thật.
       if (chu === khoa) return;
       chatInput.setAttribute("placeholder", chu);
     }
@@ -161,7 +161,7 @@
     function refitGraph(delay) {
       setTimeout(function () {
         try {
-          var g = window.__jeeviGraph;
+          var g = window.__javisGraph;
           if (g && typeof g.refit === "function") g.refit(360);
           else if (g && typeof g.resize === "function") g.resize();
         } catch (e) {}
@@ -275,9 +275,9 @@
     function applyAll() { placeHeader(); placeSystem(); setPlaceholder(); syncBrainMax(); syncKeyboard(); }
     applyAll();
 
-    // Từ điển nạp bất đồng bộ (i18n/index.js fetch xong mới bắn "jeevi:i18n"), nên mọi chữ
+    // Từ điển nạp bất đồng bộ (i18n/index.js fetch xong mới bắn "javis:i18n"), nên mọi chữ
     // vẽ bằng window.t() ở trên đều chạy TRƯỚC khi có từ điển. Vẽ lại đúng những chỗ đó.
-    window.addEventListener("jeevi:i18n", function () {
+    window.addEventListener("javis:i18n", function () {
       setPlaceholder();
       if (sysLbl) sysLbl.textContent = window.t("nav.group.he_thong");
       if (brainMaxBtn) {

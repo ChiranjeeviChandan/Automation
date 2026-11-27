@@ -3,7 +3,7 @@
 Vì sao có module này (0.440.0)
 ------------------------------
 Gói "Jeevi trong ChatGPT" (nay là Jeevi Gate) cho ChatGPT gọi tool của Jeevi qua MCP. Khi ChatGPT
-muốn Jeevi LÀM một việc, đường duy nhất là `jeevi_task`: việc rơi vào Kanban và chạy ngầm. Người
+muốn Jeevi LÀM một việc, đường duy nhất là `javis_task`: việc rơi vào Kanban và chạy ngầm. Người
 dùng báo (02/11): không biết việc đó đang chạy, đã dừng hay vẫn sống, và Jeevi không học được gì
 vì trao đổi giữa hai bên không đi qua khung chat, mà vòng tự học chỉ đọc khung chat.
 
@@ -27,7 +27,7 @@ Ghi chép (0.441.0)
 ------------------
 Chủ dự án 02/11: "chat ở bên nào thì cũng copy hội thoại đấy vào Jeevi để có ngữ cảnh". Jeevi không
 đọc được lịch sử chat của ChatGPT hay Claude (chúng chỉ gửi sang thứ chúng tự truyền vào lúc gọi
-tool), nên tool thứ năm `jeevi_chat_note` để AI bên ngoài tự ghi lại phần đáng giữ: chủ hỏi gì, đã
+tool), nên tool thứ năm `javis_chat_note` để AI bên ngoài tự ghi lại phần đáng giữ: chủ hỏi gì, đã
 chốt gì, vì sao. Ghi chép KHÔNG chạy lượt nào của Jeevi (không tốn hạn mức bộ não), nhưng đi qua đúng
 đường lưu lượt chat (`main._persist_turn`): vào Lịch sử, `memory/conversations` và vòng tự học. Mỗi
 cuộc chat bên ngoài có một hội thoại riêng "Từ ChatGPT: <tên>", hoặc ghi thẳng vào một hội thoại có
@@ -35,18 +35,18 @@ sẵn của Jeevi khi AI đưa `id`.
 
 Model, effort và báo khi xong (owner, 14/11/2026)
 -------------------------------------------------
-1. "ChatGPT gửi lệnh cho Jeevi thì đổi được model và effort ngay trong câu lệnh." `jeevi_chat_send` nhận `model`
+1. "ChatGPT gửi lệnh cho Jeevi thì đổi được model và effort ngay trong câu lệnh." `javis_chat_send` nhận `model`
    (ghim cho hội thoại đó, y như chủ chọn trên thanh model của khung chat, nên chip thấy và chủ đổi lại được) và
    `effort` (CHỈ cho tin này, không ghi gì vào cài đặt: effort của khung chat là của cả thẻ model, ChatGPT đổi nó là
-   đổi luôn mọi hội thoại khác). `jeevi_chat_models` liệt kê model của các thẻ đã kết nối và thang effort.
+   đổi luôn mọi hội thoại khác). `javis_chat_models` liệt kê model của các thẻ đã kết nối và thang effort.
 2. "Việc lâu thì ChatGPT không đợi được, Jeevi xong thì báo để nó đọc." ChatGPT và Claude KHÔNG cho máy ngoài đánh
    thức một cuộc chat (11/2026 chưa có đường chính thức nào), nên làm phần làm được:
    - mỗi tin gửi qua Gate vào một sổ nhỏ (`SO_VIEC`); AI bên ngoài đọc được câu trả lời là đánh dấu đã đọc;
    - lượt chat kết thúc mà sau `CHO_DOC_S` giây AI đó vẫn chưa đọc (nó đã thôi chờ), Jeevi để câu trả lời vào chuông,
      chuông đẩy về điện thoại, kèm câu chủ chỉ cần nhắn sang ChatGPT;
-   - `jeevi_chat_updates` trả mọi việc AI đó giao mà chưa đọc, nên câu "xem kết quả Jeevi" chạy được cả ở một cuộc
+   - `javis_chat_updates` trả mọi việc AI đó giao mà chưa đọc, nên câu "xem kết quả Jeevi" chạy được cả ở một cuộc
      chat MỚI bên ChatGPT, không cần nó còn giữ `after_id`;
-   - lời nhắc của `jeevi_chat_result` bảo AI chờ tiếp trong cùng lượt (tới khoảng 10 phút) thay vì bỏ cuộc sau 25 giây.
+   - lời nhắc của `javis_chat_result` bảo AI chờ tiếp trong cùng lượt (tới khoảng 10 phút) thay vì bỏ cuộc sau 25 giây.
 """
 from __future__ import annotations
 
@@ -71,7 +71,7 @@ MAX_GHI_CHEP = 4000       # mỗi trường của một ghi chép
 SO_GHI_CHEP = STATE_DIR / "gate-notes.json"   # {"<nguồn>|<tên cuộc chat đã gập>": mã hội thoại}
 SO_VIEC = STATE_DIR / "gate-jobs.json"        # việc AI bên ngoài giao mà nó chưa đọc kết quả, xem `_ghi_viec`
 MAX_CHU_BAO = 500         # phần câu trả lời trong mẩu chuông
-MAX_MODEL_MOT_THE = 40    # OpenRouter có hàng trăm model: jeevi_chat_models lọc bằng `query`
+MAX_MODEL_MOT_THE = 40    # OpenRouter có hàng trăm model: javis_chat_models lọc bằng `query`
 CHO_DOC_S = 60            # giây sau khi lượt xong mà AI vẫn chưa đọc thì rung chuông: nó đã thôi chờ
 GIU_VIEC_S = 7 * 24 * 3600
 MAX_VIEC = 100
@@ -173,7 +173,7 @@ def _sach(m: dict) -> str:
     import share_render
     if m.get("role") == "user":
         return share_render.chu_nguoi_go(m.get("content") or "")
-    return share_render.chu_jeevi_hien(m.get("content") or "")
+    return share_render.chu_javis_hien(m.get("content") or "")
 
 
 def _cat(s: str, n: int) -> str:
@@ -266,7 +266,7 @@ def chon_model(q: Any, ds: List[dict]) -> dict:
     if khop:
         return {"ok": False, "error": f"several connected models match '{q0}': " + "; ".join(ten)
                 + ". Pass one of them exactly as model (the part before the space)."}
-    return {"ok": False, "error": f"no connected model matches '{q0}'. Call jeevi_chat_models to see the choices."}
+    return {"ok": False, "error": f"no connected model matches '{q0}'. Call javis_chat_models to see the choices."}
 
 
 def ds_model(sid: str = "", q: str = "") -> dict:
@@ -285,7 +285,7 @@ def ds_model(sid: str = "", q: str = "") -> dict:
             muc["more_models"] = len(ms) - MAX_MODEL_MOT_THE
         the.append(muc)
     out = {"ok": True, "providers": the, "main": d.get("main") or {}, "efforts": list(muc_effort()),
-           "how": ("Pass model to jeevi_chat_send as '<provider>/<model id>', a model id only one card has, a provider "
+           "how": ("Pass model to javis_chat_send as '<provider>/<model id>', a model id only one card has, a provider "
                    "for its default model, or 'default' to follow Jeevi's main model. The model stays pinned on that "
                    "conversation, as if the owner picked it in the chat's model bar. effort counts for that one "
                    "message only; 'ultra' is the engine's maximum.")}
@@ -300,8 +300,8 @@ def ds_model(sid: str = "", q: str = "") -> dict:
 
 # ─────────────────────────── sổ việc AI bên ngoài giao ───────────────────────────
 # Mỗi tin gửi qua Gate là một dòng: {sid, after_id, nguon, title, brain, gui, bao?}. AI đó đọc được câu trả lời
-# (jeevi_chat_result trả done, hoặc jeevi_chat_updates) là dòng đó đi. Còn lại sau khi lượt xong là AI đã thôi chờ:
-# chuông báo chủ, và jeevi_chat_updates trả nó cho lần chủ hỏi sau.
+# (javis_chat_result trả done, hoặc javis_chat_updates) là dòng đó đi. Còn lại sau khi lượt xong là AI đã thôi chờ:
+# chuông báo chủ, và javis_chat_updates trả nó cho lần chủ hỏi sau.
 
 _DANG_DOI: set = set()
 
@@ -375,7 +375,7 @@ def noi_dung_bao(nguon: str, ten: str, tra_loi: str) -> str:
 
 def luot_xong(sid: str) -> None:
     """main gọi khi một lượt chat kết thúc. Có việc AI bên ngoài giao mà chưa đọc thì đợi `CHO_DOC_S` giây (để lần
-    jeevi_chat_result đang chờ kịp nhận) rồi mới báo. Không chặn gì: chạy nền."""
+    javis_chat_result đang chờ kịp nhận) rồi mới báo. Không chặn gì: chạy nền."""
     if sid in _DANG_DOI or "bao" not in _HOST or not co_viec(sid):
         return
     try:
@@ -399,7 +399,7 @@ async def _bao_khi_xong(sid: str) -> None:
         after = min(int(x.get("after_id") or 0) for x in cho)
         tra_loi = _tra_loi_sau(st, sid, after) if st.get_session(sid) else ""
         for x in cho:
-            x["bao"] = True     # một lần thôi, kể cả khi chuông hỏng: sổ vẫn giữ cho jeevi_chat_updates
+            x["bao"] = True     # một lần thôi, kể cả khi chuông hỏng: sổ vẫn giữ cho javis_chat_updates
         _ghi_viec(ds)
         if not tra_loi.strip():
             return              # dừng giữa chừng hoặc lỗi: chủ đã thấy trên khung chat, không rung cho một câu rỗng
@@ -601,7 +601,7 @@ async def gui(sid: str, text: str, nguon: str, model: Any = None, effort: Any = 
     dang_chay = _dang_chay(row["id"])
     if dang_chay and (doi_model or eff):
         return {"ok": False, "error": "Jeevi is answering in this conversation right now; model and effort only change "
-                                      "between turns. Wait with jeevi_chat_result, then send again, or send without "
+                                      "between turns. Wait with javis_chat_result, then send again, or send without "
                                       "model and effort to add the message to the turn that is running."}
     if doi_model:
         if "models" not in _HOST or "ghim" not in _HOST:
@@ -673,10 +673,10 @@ async def ket_qua(sid: str, after_id: int = 0, cho: float = CHO_MAC_DINH) -> dic
         job = _rt().get_job(row["id"])
         dang_viet = _cat(str(getattr(job, "text", "") or "")[-3000:], 3000)
         out = {"ok": True, "status": "running", "answer_so_far": chu, "writing_now": dang_viet,
-               "hint": (f"Jeevi is still working. Call jeevi_chat_result again now with the same after_id, and keep "
+               "hint": (f"Jeevi is still working. Call javis_chat_result again now with the same after_id, and keep "
                         f"waiting in this reply for up to about {CHO_KHUYEN_S // 60} minutes in total. Past that, tell "
                         "the owner Jeevi carries on by itself and will notify their phone when it is done; when they "
-                        "ask, call jeevi_chat_updates.")}
+                        "ask, call javis_chat_updates.")}
         gui_luc = [float(x.get("gui") or 0) for x in _doc_viec()
                    if x["sid"] == row["id"] and int(x.get("after_id") or 0) >= after_id]
         if gui_luc:
@@ -738,7 +738,7 @@ def _last_used_path() -> str:
     try:
         import mcp_hub
         return mcp_hub.last_used_brain()
-    except Exception:  # noqa: BLE001 - jeevi_brains then just marks no brain as last used
+    except Exception:  # noqa: BLE001 - javis_brains then just marks no brain as last used
         return ""
 
 
@@ -793,7 +793,7 @@ def _wrong_brain(row: dict, brain: Optional[dict], or_else: str = "") -> str:
     if gate_brain.same_brain(row.get("brain") or "brain", brain["path"]):
         return ""
     return (f'conversation {row.get("id")} is in the brain "{_brain_name(row.get("brain"))}", not "{brain["name"]}". '
-            f"Find a conversation of that brain with jeevi_chat_find (pass brain){or_else}.")
+            f"Find a conversation of that brain with javis_chat_find (pass brain){or_else}.")
 
 
 def noi_dung_ghi_chep(nguon: str, hoi: str, tra_loi: str, chot: str) -> str:
@@ -860,8 +860,8 @@ async def ghi_chep(nguon: str, ten: str = "", hoi: str = "", tra_loi: str = "", 
 
 # ─────────────────────────── coding-agent transcripts ───────────────────────────
 # Owner, 20/11/2026: "hook tự động cho cả Claude Code và Codex". The Gate tools only save what the outside AI chooses
-# to send, and a coding agent busy writing code almost never calls jeevi_chat_note, so its sessions never reached
-# Jeevi. `tools/jeevi-sync/jeevi_sync.py` runs as a Claude Code Stop hook and as Codex's `notify` program and posts
+# to send, and a coding agent busy writing code almost never calls javis_chat_note, so its sessions never reached
+# Jeevi. `tools/javis-sync/javis_sync.py` runs as a Claude Code Stop hook and as Codex's `notify` program and posts
 # each finished turn (the owner's prompt, the agent's final answer) to POST /chat/external, which lands here. Nothing
 # runs on Jeevi's side: each turn goes through the same save path as a Gate note (History, memory/conversations, the
 # learning queue), one Jeevi conversation per outside session, titled "From Claude Code: <project>: <first prompt>".
@@ -995,7 +995,7 @@ async def log_transcript(source: str, session: str, turns: Any, project: str = "
     return {"ok": True, "id": row["id"], "title": row.get("title") or "", "saved": saved, "skipped": skipped}
 
 
-SYNC_SCRIPT_URL = "https://raw.githubusercontent.com/blogminhquy/javis-os/main/tools/jeevi-sync/jeevi_sync.py"
+SYNC_SCRIPT_URL = "https://raw.githubusercontent.com/blogminhquy/javis-os/main/tools/javis-sync/javis_sync.py"
 MAX_SYNC_TOKENS = 20
 _URL_RE = re.compile(r"^https?://[A-Za-z0-9.-]+(:\d{1,5})?(/[^\s'\"]*)?$")
 
@@ -1004,27 +1004,27 @@ _URL_RE = re.compile(r"^https?://[A-Za-z0-9.-]+(:\d{1,5})?(/[^\s'\"]*)?$")
 # itself, after one yes from the owner.
 GATE_INSTRUCTIONS = (
     "This server is the owner's Jeevi, their personal assistant. Jeevi keeps context from the owner's other AI chats. "
-    "If you are a coding agent with a shell (Claude Code, Codex) and the file ~/.jeevi-sync/config.json does not exist "
+    "If you are a coding agent with a shell (Claude Code, Codex) and the file ~/.javis-sync/config.json does not exist "
     "on this machine, ask the owner once, in their language, whether to turn on Jeevi Sync (every turn of this coding "
-    "agent saved into Jeevi automatically). If they agree, call jeevi_sync_setup and run the command it returns. Do not "
-    "ask again in this session if they decline. Without Jeevi Sync, call jeevi_chat_note when the owner settles "
+    "agent saved into Jeevi automatically). If they agree, call javis_sync_setup and run the command it returns. Do not "
+    "ask again in this session if they decline. Without Jeevi Sync, call javis_chat_note when the owner settles "
     "something worth remembering. "
     # #1726: claude.ai cannot pick a brain with a header, so the choice is made in the tools, and asked for first.
     "Jeevi can hold several brains (separate knowledge bases, for example work and personal). Every tool that reads or "
-    "writes a brain takes an optional brain argument (a name from jeevi_brains); without it Jeevi uses the default "
-    "brain that jeevi_brains shows. Before you write anything (a file, a note, a task, a reminder, a message into a "
-    "chat), call jeevi_brains once: if it lists more than one brain and the owner has not said which one, ask the "
+    "writes a brain takes an optional brain argument (a name from javis_brains); without it Jeevi uses the default "
+    "brain that javis_brains shows. Before you write anything (a file, a note, a task, a reminder, a message into a "
+    "chat), call javis_brains once: if it lists more than one brain and the owner has not said which one, ask the "
     "owner which brain to use, in their language, then pass it as brain. Every write result names the brain it used.")
 
 
-def sync_setup(source: str, jeevi_url: str = "", system: str = "", gate_url: str = "") -> dict:
+def sync_setup(source: str, javis_url: str = "", system: str = "", gate_url: str = "") -> dict:
     """Jeevi Gate: mint a `sync` API token and give the outside AI the one command that installs Jeevi Sync on its
-    machine. The token reaches only POST /chat/external, which saves transcripts: what jeevi_chat_note does already.
+    machine. The token reaches only POST /chat/external, which saves transcripts: what javis_chat_note does already.
 
-    Address order: `jeevi_url` from the AI, then `gate_url` (the public address the Gate package answered on, the one
-    the AI already reaches, jeevi.gate 2.2.3+), then this server's own guess (`_gate_base_url` in main)."""
+    Address order: `javis_url` from the AI, then `gate_url` (the public address the Gate package answered on, the one
+    the AI already reaches, javis.gate 2.2.3+), then this server's own guess (`_gate_base_url` in main)."""
     import config as cfgmod
-    url = str(jeevi_url or "").strip().rstrip("/") or str(gate_url or "").strip().rstrip("/")
+    url = str(javis_url or "").strip().rstrip("/") or str(gate_url or "").strip().rstrip("/")
     if not url and "base_url" in _HOST:
         try:
             url = str(_HOST["base_url"]() or "").strip().rstrip("/")
@@ -1032,10 +1032,10 @@ def sync_setup(source: str, jeevi_url: str = "", system: str = "", gate_url: str
             url = ""
     if not url:
         return {"ok": False, "error": (
-            "Jeevi does not know its public address. Call jeevi_sync_setup again with jeevi_url = the scheme and host "
-            "of this MCP server's URL in your own MCP config (for example https://jeevi.example.com).")}
+            "Jeevi does not know its public address. Call javis_sync_setup again with javis_url = the scheme and host "
+            "of this MCP server's URL in your own MCP config (for example https://javis.example.com).")}
     if not _URL_RE.match(url):
-        return {"ok": False, "error": "jeevi_url must look like https://jeevi.example.com"}
+        return {"ok": False, "error": "javis_url must look like https://javis.example.com"}
     mine = [t for t in cfgmod.list_api_tokens() if t.get("scope") == "sync"]
     if len(mine) >= MAX_SYNC_TOKENS:
         return {"ok": False, "error": (
@@ -1044,11 +1044,11 @@ def sync_setup(source: str, jeevi_url: str = "", system: str = "", gate_url: str
     tok = cfgmod.create_api_token(f"Jeevi Sync ({ten_nguon(source)})", "sync")["token"]
     win = str(system or "").strip().lower().startswith("win")
     if win:
-        cmd = (f"irm {SYNC_SCRIPT_URL} -OutFile $env:TEMP\\jeevi_sync.py; "
-               f"python $env:TEMP\\jeevi_sync.py install --url {url} --token {tok}")
+        cmd = (f"irm {SYNC_SCRIPT_URL} -OutFile $env:TEMP\\javis_sync.py; "
+               f"python $env:TEMP\\javis_sync.py install --url {url} --token {tok}")
     else:
-        cmd = (f"curl -fsSL {SYNC_SCRIPT_URL} -o /tmp/jeevi_sync.py && "
-               f"python3 /tmp/jeevi_sync.py install --url {url} --token {tok}")
+        cmd = (f"curl -fsSL {SYNC_SCRIPT_URL} -o /tmp/javis_sync.py && "
+               f"python3 /tmp/javis_sync.py install --url {url} --token {tok}")
     return {"ok": True, "command": cmd, "shell": "powershell" if win else "sh",
             "how": ("Run the command in a shell on THIS machine (it adds a Claude Code Stop hook and a Codex notify "
                     "line, with backups, and tests the connection first), then tell the owner in one or two "
@@ -1058,10 +1058,10 @@ def sync_setup(source: str, jeevi_url: str = "", system: str = "", gate_url: str
 
 # ─────────────────────────── tool cho cửa Gate ───────────────────────────
 
-_ID = {"type": "string", "description": "Conversation id from jeevi_chat_find."}
+_ID = {"type": "string", "description": "Conversation id from javis_chat_find."}
 
 TOOLS: Dict[str, dict] = {
-    "jeevi_brains": {
+    "javis_brains": {
         "muc": "doc",
         "description": (
             "List the owner's Jeevi brains (separate knowledge bases): name, path, which one is the default for "
@@ -1069,7 +1069,7 @@ TOOLS: Dict[str, dict] = {
             "names a brain, to get its exact name for the brain argument of the other tools."),
         "schema": {"type": "object", "properties": {}},
     },
-    "jeevi_chat_find": {
+    "javis_chat_find": {
         "muc": "doc",
         "description": (
             "Find the owner's Jeevi conversations by title (accents ignored) or by words in their messages. "
@@ -1078,9 +1078,9 @@ TOOLS: Dict[str, dict] = {
         "schema": {"type": "object", "properties": {
             "query": {"type": "string", "description": "Words from the chat title or content. Empty = latest chats."},
             "limit": {"type": "integer", "description": "Max results, 1-30 (default 10)."},
-            "brain": {"type": "string", "description": "Optional: only chats of this brain (a name from jeevi_brains)."}}},
+            "brain": {"type": "string", "description": "Optional: only chats of this brain (a name from javis_brains)."}}},
     },
-    "jeevi_chat_read": {
+    "javis_chat_read": {
         "muc": "doc",
         "description": (
             "Read the last messages of one Jeevi conversation, oldest first, so you can advise the owner "
@@ -1088,23 +1088,23 @@ TOOLS: Dict[str, dict] = {
         "schema": {"type": "object", "required": ["id"], "properties": {
             "id": _ID, "last": {"type": "integer", "description": "How many recent messages, 1-60 (default 20)."}}},
     },
-    "jeevi_chat_send": {
+    "javis_chat_send": {
         "muc": "full",
         "description": (
             "Post a message into a Jeevi conversation as if the owner typed it there, so Jeevi does the work "
             "in that chat: the owner watches it live, can press Stop, and Jeevi learns from it. Only send "
             "after the owner agreed. Start the message with one line on what the owner approved and why, "
             "then the instruction. model and effort: set them when the owner asks for a model or an effort, or "
-            "agreed to the one you proposed (jeevi_chat_models lists them); the model stays pinned on that "
+            "agreed to the one you proposed (javis_chat_models lists them); the model stays pinned on that "
             "conversation as if the owner picked it in the chat's model bar, the effort counts for this message "
-            "only. Waits up to wait_seconds for the reply; if Jeevi is still working, call jeevi_chat_result with "
-            "the returned after_id. Prefer this over jeevi_task for work in a chat."),
+            "only. Waits up to wait_seconds for the reply; if Jeevi is still working, call javis_chat_result with "
+            "the returned after_id. Prefer this over javis_task for work in a chat."),
         "schema": {"type": "object", "required": ["id", "message"], "properties": {
             "id": _ID,
             "message": {"type": "string", "description": "The instruction for Jeevi, in the owner's language."},
             "model": {"type": "string", "description": (
                 "Optional. The model this conversation runs on from now: '<provider>/<model id>' from "
-                "jeevi_chat_models, a model id, a provider for its default model, or 'default' to follow Jeevi's "
+                "javis_chat_models, a model id, a provider for its default model, or 'default' to follow Jeevi's "
                 "main model. Leave out to keep the current one.")},
             "effort": {"type": "string", "enum": ["off", "low", "medium", "high", "xhigh", "ultra"],
                        "description": ("Optional. How hard Jeevi thinks, for this message only. 'ultra' is the "
@@ -1115,27 +1115,27 @@ TOOLS: Dict[str, dict] = {
             "wait_seconds": {"type": "integer",
                              "description": f"Seconds to wait for the reply, 0-{CHO_TOI_DA} (default {CHO_MAC_DINH})."}}},
     },
-    "jeevi_chat_models": {
+    "javis_chat_models": {
         "muc": "doc",
         "description": (
             "List the models Jeevi can run on (its connected providers, each with its models) and the effort "
-            "levels; with id, also the model and effort that conversation uses now. Use it before jeevi_chat_send "
+            "levels; with id, also the model and effort that conversation uses now. Use it before javis_chat_send "
             "with model or effort, or when the owner asks which models Jeevi has."),
         "schema": {"type": "object", "properties": {
             "id": {"type": "string", "description": "Optional: a conversation id, to see its current model and effort."},
             "query": {"type": "string", "description": "Optional: words to filter models by, e.g. 'opus' or 'gpt'."}}},
     },
-    "jeevi_chat_updates": {
+    "javis_chat_updates": {
         "muc": "doc",
         "description": (
-            "Results of the work YOU sent Jeevi with jeevi_chat_send that you have not read yet, across all "
+            "Results of the work YOU sent Jeevi with javis_chat_send that you have not read yet, across all "
             "conversations: finished ones with Jeevi's answer, unfinished ones with how long Jeevi has been at it. "
             "Call it when the owner asks what Jeevi finished, for example 'check Jeevi results', 'xem kết quả "
             "Jeevi', 'Jeevi xong chưa', 'xem tiếp', also in a new chat where you no longer have an after_id. Jeevi "
             "notifies the owner's phone when such work finishes while you are not waiting."),
         "schema": {"type": "object", "properties": {}},
     },
-    "jeevi_chat_note": {
+    "javis_chat_note": {
         "muc": "ghi",
         "description": (
             "Save a note of THIS chat into Jeevi so Jeevi keeps the context and remembers the owner's decisions. "
@@ -1153,30 +1153,30 @@ TOOLS: Dict[str, dict] = {
             "decided": {"type": "string", "description": "What the owner decided, and why. Empty if nothing yet."},
             "id": {"type": "string", "description": "Optional: a Jeevi conversation id to note into instead."},
             "brain": {"type": "string", "description": (
-                "Optional: the brain to note into (a name from jeevi_brains). Leave out to use the default brain.")}}},
+                "Optional: the brain to note into (a name from javis_brains). Leave out to use the default brain.")}}},
     },
-    "jeevi_sync_setup": {
+    "javis_sync_setup": {
         "muc": "ghi",
         "description": (
             "Turn on Jeevi Sync on this machine: every Claude Code / Codex turn (the owner's prompt and your final "
             "answer) then saves into Jeevi automatically, through a Stop hook / notify program. Call it when the owner "
-            "agrees to Jeevi Sync or asks for it, then run the returned command in your shell. Pass jeevi_url only if "
+            "agrees to Jeevi Sync or asks for it, then run the returned command in your shell. Pass javis_url only if "
             "the tool asks for it; system='windows' on Windows."),
         "schema": {"type": "object", "properties": {
-            "jeevi_url": {"type": "string", "description": "Optional: Jeevi's address, e.g. https://jeevi.example.com."},
+            "javis_url": {"type": "string", "description": "Optional: Jeevi's address, e.g. https://javis.example.com."},
             "system": {"type": "string", "description": "Optional: 'windows' for a PowerShell command."}}},
     },
-    "jeevi_chat_result": {
+    "javis_chat_result": {
         "muc": "doc",
         "description": (
-            "Wait for and return Jeevi's reply after jeevi_chat_send. status: done (answer), running (call again), "
+            "Wait for and return Jeevi's reply after javis_chat_send. status: done (answer), running (call again), "
             "no_answer (stopped or failed). While it is running, call it again straight away with the same after_id "
             f"and keep waiting in this same reply for up to about {CHO_KHUYEN_S // 60} minutes (working_for_s says "
             "how long Jeevi has been at it). Past that, tell the owner Jeevi carries on by itself and will notify "
-            "their phone when it is done; when they ask, call jeevi_chat_updates."),
+            "their phone when it is done; when they ask, call javis_chat_updates."),
         "schema": {"type": "object", "required": ["id", "after_id"], "properties": {
             "id": _ID,
-            "after_id": {"type": "integer", "description": "after_id returned by jeevi_chat_send."},
+            "after_id": {"type": "integer", "description": "after_id returned by javis_chat_send."},
             "wait_seconds": {"type": "integer",
                              "description": f"Seconds to wait, 0-{CHO_TOI_DA} (default {CHO_MAC_DINH})."}}},
     },
@@ -1220,29 +1220,29 @@ async def goi_tool(ten: str, args: Optional[dict], mode: str, nguon: str, base_u
     try:
         # #1726: the brain the AI named, resolved among the registered brains only; an unknown name stops the call.
         brain = None
-        if ten in ("jeevi_chat_find", "jeevi_chat_note", "jeevi_chat_send") and str(a.get("brain") or "").strip():
+        if ten in ("javis_chat_find", "javis_chat_note", "javis_chat_send") and str(a.get("brain") or "").strip():
             import gate_brain
             brain, problem = await asyncio.to_thread(gate_brain.resolve, a.get("brain"))
             if problem:
                 return "ERROR: " + problem
-        if ten == "jeevi_brains":
+        if ten == "javis_brains":
             import gate_brain
             kq = await asyncio.to_thread(gate_brain.listing, _last_used_path())
-        elif ten == "jeevi_chat_find":
+        elif ten == "javis_chat_find":
             kq = tim(a.get("query") or "", _so(a.get("limit"), 10), brain)
-        elif ten == "jeevi_chat_read":
+        elif ten == "javis_chat_read":
             kq = doc(str(a.get("id") or ""), _so(a.get("last"), 20))
-        elif ten == "jeevi_chat_note":
+        elif ten == "javis_chat_note":
             kq = await ghi_chep(nguon, str(a.get("title") or ""), str(a.get("asked") or ""),
                                 str(a.get("answered") or ""), str(a.get("decided") or ""), str(a.get("id") or ""),
                                 brain)
-        elif ten == "jeevi_sync_setup":
-            kq = sync_setup(nguon, str(a.get("jeevi_url") or ""), str(a.get("system") or ""), base_url)
-        elif ten == "jeevi_chat_models":
+        elif ten == "javis_sync_setup":
+            kq = sync_setup(nguon, str(a.get("javis_url") or ""), str(a.get("system") or ""), base_url)
+        elif ten == "javis_chat_models":
             kq = ds_model(str(a.get("id") or ""), str(a.get("query") or ""))
-        elif ten == "jeevi_chat_updates":
+        elif ten == "javis_chat_updates":
             kq = cap_nhat(nguon)
-        elif ten == "jeevi_chat_send":
+        elif ten == "javis_chat_send":
             kq = await gui(str(a.get("id") or ""), str(a.get("message") or ""), nguon,
                            a.get("model"), a.get("effort") or "", brain)
             if kq.get("ok"):

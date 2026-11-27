@@ -37,7 +37,7 @@ const win = {
 const ctx = { window: win, console, encodeURIComponent, String, Object, Array, Number, JSON };
 vm.createContext(ctx);
 vm.runInContext(MOD, ctx);
-const F = win.JeeviConvFilters;
+const F = win.JavisConvFilters;
 check("module phơi ra đủ hàm", F && ["emptyState", "sanitize", "load", "save", "activeCount", "query", "tagChips", "tagChip",
   "rowMenuItems", "rowMenuHtml", "tagMenuHtml"].every((k) => typeof F[k] === "function"));
 check("dropdown builders of the pre-v5 filter row are gone", ["botOptions", "statusOptions", "typeOptions", "channelOptions",
@@ -73,11 +73,11 @@ check("query: from/to as days, last_by, pinned=1", /&from=2026-10-01&to=2026-10-
 F.save({ bot: "b1", status: "unread", type: "private", channel: "", who: "" });
 check("lưu rồi đọc lại đúng (chosen 'All' stays All)", JSON.stringify(F.load()) ===
   '{"bot":"b1","status":"unread","type":"private","channel":"","who":"","accs":[],"tagsAny":[],"tagsNone":[],"when":null,"lastBy":"","pinned":"","kind":"","phone":""}');
-store["jeevi.inbox.filters"] = JSON.stringify({ bot: "b1" });
+store["javis.inbox.filters"] = JSON.stringify({ bot: "b1" });
 check("nothing saved about who yet (first visit, pre-v5 browser): opens on Needs you", F.load().who === "you" && F.load().bot === "b1");
-store["jeevi.inbox.filters"] = "không phải json";
+store["javis.inbox.filters"] = "không phải json";
 check("dữ liệu lưu hỏng thì về không lọc (mở ở Cần bạn), không sập", JSON.stringify(F.load()) === EMPTY.replace('"who":""', '"who":"you"'));
-store["jeevi.inbox.filters"] = JSON.stringify({ status: "hack" });
+store["javis.inbox.filters"] = JSON.stringify({ status: "hack" });
 check("dữ liệu lưu có giá trị lạ thì bỏ giá trị đó", F.load().status === "");
 const oldLs = win.localStorage;
 win.localStorage = { getItem() { throw new Error("chặn"); }, setItem() { throw new Error("chặn"); } };
@@ -102,10 +102,10 @@ check("quick row: kind takes All, Messages or Comments only; phone is on or off"
 check("quick row: a browser that saved the old 'phone or email' filter gets Has phone, and the old key is gone",
   F.sanitize({ contact: "1" }).phone === "1" && F.sanitize({ contact: true }).phone === "1" && F.sanitize({ status: "contact" }).phone === "1" &&
   F.sanitize({ status: "contact" }).status === "" && !("contact" in F.sanitize({ contact: "1" })));
-store["jeevi.inbox.filters"] = JSON.stringify({ who: "", contact: "1", status: "unread" });
+store["javis.inbox.filters"] = JSON.stringify({ who: "", contact: "1", status: "unread" });
 check("quick row: the old saved filter comes back as Has phone on load, then saves in the new shape",
-  F.load().phone === "1" && F.load().status === "unread" && (F.save(F.load()), JSON.parse(store["jeevi.inbox.filters"]).phone === "1") &&
-  !("contact" in JSON.parse(store["jeevi.inbox.filters"])));
+  F.load().phone === "1" && F.load().status === "unread" && (F.save(F.load()), JSON.parse(store["javis.inbox.filters"]).phone === "1") &&
+  !("contact" in JSON.parse(store["javis.inbox.filters"])));
 check("quick row: query sends kind and has_phone (never the old has_contact)",
   F.query({ kind: "comment" }) === "&kind=comment" && F.query({ kind: "message", phone: "1" }) === "&kind=message&has_phone=1" &&
   F.query({ contact: "1" }) === "&has_phone=1" && F.query({ kind: "evil&x=1" }) === "" && !/has_contact/.test(MOD));
@@ -119,7 +119,7 @@ check("list head: search with the Filter button, the who dropdown and the channe
   ["ht-search", "ib-fbtn", "ib-whobtn", "ib-picker", "ib-krow", "ib-activef", "ib-pop ib-wm", "ib-pop ib-pk", "ib-pop ib-fm"].every((c) => CV.indexOf('class="' + c) > 0));
 check("KHÔNG còn hàng dropdown cũ (bot, tình trạng, loại, kênh, thẻ) và chip tài khoản",
   !/ht-f-bot|ht-f-status|ht-f-type|ht-f-channel|ht-f-tag|ht-f-contact|ht-fclear|ht-loc-tk|_tkLoc|_tagLoc/.test(CV) && !/function paintFilters/.test(CV));
-check("gửi tham số lọc lên server qua JeeviConvFilters.query", /JeeviConvFilters\.query\(filterState\(\)\)/.test(CV) &&
+check("gửi tham số lọc lên server qua JavisConvFilters.query", /JavisConvFilters\.query\(filterState\(\)\)/.test(CV) &&
   !/"&bot_id=" \+ encodeURIComponent\(_botLoc\)/.test(CV) && !/&account_id=/.test(CV));
 check("đọc facets, bot, who_counts từ server, dùng cho cả nhịp làm mới", /_facets = d\.facets \|\| null/.test(CV) &&
   /_botList = d\.bots \|\| \[\]/.test(CV) && /if \(d\.who_counts\) _whoCounts = d\.who_counts/.test(CV) &&
@@ -134,7 +134,7 @@ check("a who choice, a picker tick, a menu choice or a chip x saves the filters 
 check("ticking a channel ticks every nick or Page of it, not only the ones the search shows",
   /accList\(\)\.filter\(function \(a\) \{ return a\.channel === t\.dataset\.ch; \}\)/.test(CV));
 check("khôi phục bộ lọc đã lưu khi mở hòm thư; mở từ nơi khác thì bỏ mọi bộ lọc có thể giấu cuộc chat",
-  /JeeviConvFilters\.load\(\)|F\.load\(\)/.test(CV) &&
+  /JavisConvFilters\.load\(\)|F\.load\(\)/.test(CV) &&
   /_who = ""; _statusLoc = ""; _typeLoc = ""; _tagsAny = \[\]; _tagsNone = \[\]; _q = "";\s*_when = null; _lastBy = ""; _pinned = ""; _kind = ""; _phone = "";/.test(CV) &&
   /_kind = saved\.kind; _phone = saved\.phone;/.test(CV) && !/_contactLoc/.test(CV) &&
   /_accs = _cho\.account_key \? \[_cho\.account_key\] : \[\]/.test(CV));
@@ -145,7 +145,7 @@ check("Escape or a click outside closes a popover and gives focus back to its bu
   /ev\.key !== "Escape"/.test(CV) && /focusOpener\(from\)/.test(CV));
 check("trạng thái rỗng tính cả bộ lọc mới, and only the quick filter hiding everything offers 'Show all'",
   /var loc = !!\(_q \|\| _kenhLoc \|\| _botLoc \|\| _accs\.length \|\| _statusLoc \|\| _typeLoc \|\| _tagsAny\.length \|\| _tagsNone\.length \|\|\s+_when \|\| _lastBy \|\| _pinned \|\| _kind \|\| _phone\)/.test(CV) &&
-  /var menuLoc = window\.JeeviConvFilters\.activeCount\([^;]*\) > 0 \|\| !!\(_kind \|\| _phone\);/.test(CV) &&
+  /var menuLoc = window\.JavisConvFilters\.activeCount\([^;]*\) > 0 \|\| !!\(_kind \|\| _phone\);/.test(CV) &&
   /EMPTY_WHO\[_who\]/.test(CV) && /ib-see-all/.test(CV));
 check("index.html nạp module lọc và inbox-v5 TRƯỚC conversations.js, kèm CSS", HTML.indexOf("conversations-filters.js") > 0 &&
   HTML.indexOf("conversations-filters.js") < HTML.indexOf("/static/conversations.js") &&

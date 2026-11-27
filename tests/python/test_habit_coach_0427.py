@@ -65,7 +65,7 @@ check("the prompt asks for Vietnamese with bạn/mình", "Vietnamese" in p and "
 check("the prompt itself has no long dash", "—" not in p and "–" not in p)
 
 # ---- refresh, tick, check, GET ----
-brain = Path(tempfile.mkdtemp(prefix="jeevi-coach-"))
+brain = Path(tempfile.mkdtemp(prefix="javis-coach-"))
 
 
 def atomic_write(path, text):

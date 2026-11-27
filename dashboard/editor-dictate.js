@@ -52,7 +52,7 @@
   // o: host (where the button goes; placed before .ne-count when there is one), target() -> {kind: "wys"|"ta", el}
   // for the box in use now, onChange() after the words land (autosave, word count). Returns {button, stop, destroy}.
   function attach(o) {
-    var D = typeof window !== "undefined" && window.JeeviDictate;
+    var D = typeof window !== "undefined" && window.JavisDictate;
     var btn = document.createElement("button");
     btn.type = "button";
     btn.className = "ne-mic";
@@ -215,6 +215,6 @@
   }
 
   var api = { attach: attach, insertPlain: insertPlain, contextLines: contextLines };
-  if (typeof window !== "undefined") window.JeeviEditorDictate = api;
+  if (typeof window !== "undefined") window.JavisEditorDictate = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

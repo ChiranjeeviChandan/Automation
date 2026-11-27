@@ -12,7 +12,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-banmoi-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-banmoi-"))
 
 import httpx  # noqa: E402
 import main  # noqa: E402

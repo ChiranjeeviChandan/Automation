@@ -32,7 +32,7 @@ class DashboardServiceTests(unittest.TestCase):
         self.addCleanup(self.f.doCleanups)
         self.host = fixtures.H
         self.stack = self.f.stack
-        self.stack.enter_context(patch.dict(os.environ, {"JEEVI_STATE_DIR": str(self.f.state)}))
+        self.stack.enter_context(patch.dict(os.environ, {"JAVIS_STATE_DIR": str(self.f.state)}))
         self.stack.enter_context(patch.object(self.host.sessions, "_store", self.f.store))
         self.stack.enter_context(patch.object(sys.modules["workflow_runs"], "_STORE", self.f.workflow))
         self.codec = Fernet(Fernet.generate_key())
@@ -51,7 +51,7 @@ class DashboardServiceTests(unittest.TestCase):
         import improvement_claude
         self.binary = self.f.root / "inert-cli.exe"
         self.binary.write_bytes(b"Never execute this synthetic binary")
-        self.stack.enter_context(patch.dict(os.environ, {"JEEVI_CLAUDE_CLI": str(self.binary)}))
+        self.stack.enter_context(patch.dict(os.environ, {"JAVIS_CLAUDE_CLI": str(self.binary)}))
         self.stack.enter_context(patch.object(improvement_claude, "VERIFIED_NATIVE_RUNTIMES", {
             # The SDK version of this environment, not a fixed number: requirements.txt carries a range since
             # 2026-11-10 (the SDK updates itself inside its series), and `create_pin` matches the installed version.

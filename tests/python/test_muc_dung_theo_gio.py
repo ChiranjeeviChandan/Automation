@@ -17,12 +17,12 @@ import re
 import tempfile
 from datetime import timedelta
 
-_TMP = tempfile.mkdtemp(prefix="jeevi-tg-")
-os.environ["JEEVI_STATE_DIR"] = _TMP
-os.environ["JEEVI_CLAUDE_PROJECTS_DIR"] = os.path.join(_TMP, "claude-projects")
-os.environ["JEEVI_CODEX_SESSIONS_DIR"] = os.path.join(_TMP, "codex-sessions")
-os.makedirs(os.environ["JEEVI_CLAUDE_PROJECTS_DIR"], exist_ok=True)
-os.makedirs(os.environ["JEEVI_CODEX_SESSIONS_DIR"], exist_ok=True)
+_TMP = tempfile.mkdtemp(prefix="javis-tg-")
+os.environ["JAVIS_STATE_DIR"] = _TMP
+os.environ["JAVIS_CLAUDE_PROJECTS_DIR"] = os.path.join(_TMP, "claude-projects")
+os.environ["JAVIS_CODEX_SESSIONS_DIR"] = os.path.join(_TMP, "codex-sessions")
+os.makedirs(os.environ["JAVIS_CLAUDE_PROJECTS_DIR"], exist_ok=True)
+os.makedirs(os.environ["JAVIS_CODEX_SESSIONS_DIR"], exist_ok=True)
 
 import usage_index as ui  # noqa: E402
 from datetime import datetime  # noqa: E402

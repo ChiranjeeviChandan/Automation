@@ -21,7 +21,7 @@
    - `GoalRecord` có `agent_key` (đọc từ `goal_agents`);
    - `list_open` lọc theo `agent_key`;
    - `begin_action` nhận intent có `agent_key` cùng `agent_config_version`.
-2. **Tool `jeevi_goal`:**
+2. **Tool `javis_goal`:**
    - Danh tính lấy từ `turn_context.current()`: phải có `agent`, `session_id`, `message_id`.
    - Lời người dùng lấy từ sổ lượt đang chạy theo ĐÚNG khoá `(web:<phiên>, id tin)` của ngữ cảnh lượt, không đoán "lượt duy nhất". Đây là bản lời host đã dùng cho lượt (đã bóc khối ngữ cảnh giao diện, giữ câu gốc của lượt giọng nói).
    - Thiếu một trong các thứ trên, hay cổng agent chặn: từ chối trước mọi lần ghi kho.

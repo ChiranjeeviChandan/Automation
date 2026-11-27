@@ -29,7 +29,7 @@ A1 thu hẹp về phiên agent; giao từ chat thường tách sau A1. Xem revie
 | Mốc | Kết quả đã có | Giới hạn cần giữ |
 |---|---|---|
 | M1 | Engine thực thi có receipt, hạn mức, lỗi và usage | Không suy ra mọi engine có cùng khả năng |
-| M2 | Tự hình thành/cập nhật mục tiêu, lưu lời giao và revision | Hiện scope theo brain, agent chung jeevi; không phải agent riêng |
+| M2 | Tự hình thành/cập nhật mục tiêu, lưu lời giao và revision | Hiện scope theo brain, agent chung javis; không phải agent riêng |
 | M3 | Làm/kiểm/chờ/dừng, guard, bằng chứng, next_wake, restart | Chưa phải scheduler thích nghi học theo giá trị cho từng agent |
 | M4 | Thẻ, phản hồi cách hiểu/đầu ra, điều khiển, chống báo trùng | Công tắc theo brain; chưa có màn hình tiến độ riêng theo agent |
 | M5 | So phương pháp, giới hạn thử, áp dụng có điều kiện | Chưa tự đề xuất phép thử; chưa vòng học reaction; pilot thật chưa áp dụng ứng viên thắng |
@@ -41,8 +41,8 @@ Bàn giao sau pilot 3 đã bổ sung tiếp nhận Write thành công từ Claud
 | Nơi đọc ở snapshot | Quan sát | Tác động lên kế hoạch |
 |---|---|---|
 | `server/resonance.py: enabled_for` | Đọc `<brain>/Jeevi/resonance.json`; thiếu/hỏng thì tắt | Công tắc hiện chưa theo agent |
-| `system/plugins/jeevi-goal/plugin.py: jeevi_goal` | Dùng Principal agent/jeevi, gate theo brain; `_turn` dựa lượt web | Phải đổi danh tính và gate tool ở A1 |
-| `server/resonance_api.py: goal_request` | Form goal qua agent/jeevi trong brain | Phải chặn đường vòng HTTP, không chỉ đổi UI |
+| `system/plugins/javis-goal/plugin.py: javis_goal` | Dùng Principal agent/javis, gate theo brain; `_turn` dựa lượt web | Phải đổi danh tính và gate tool ở A1 |
+| `server/resonance_api.py: goal_request` | Form goal qua agent/javis trong brain | Phải chặn đường vòng HTTP, không chỉ đổi UI |
 | `server/resonance_store.py: _SCHEMA` | Goal có brain/owner/session; chưa có khóa agent thực thi riêng | Cần migration có chủ thể; không coi owner là agent_id |
 | `server/workflow_chat.py: persona_cua_phien` | Có phân giải session agent:<slug>/workflow:<slug> | Có điểm tích hợp danh tính, chưa tự là chính sách cấp quyền |
 | `server/resonance.py: next_wake, advance, tick` | Đã có lịch rẻ, backoff, chờ, lease; reaction bị bỏ qua khi đổi lịch | A2 tái dùng; A3 không nối điểm emoji trực tiếp vào nhịp |
@@ -86,4 +86,4 @@ Các file tài liệu ở checkout chính hiện là bản làm việc cục b�
 - [Hồ sơ pilot 5 tại commit bằng chứng](https://github.com/blogminhquy/javis-os/blob/450dd095/docs/dev/resonance-mvp-e2e-pilot-5.json)
 - Review nội dung độc lập (`exports/reviews/PR-579-pilot5-content-review.md`, ngoài git, chỉ có trên máy chủ dự án)
 - Review sau phát hành (`exports/reviews/Resonance-0860-post-release-review.md`, ngoài git, chỉ có trên máy chủ dự án)
-- Trang theo dõi mới (`exports/jeevi-resonance-tien-do.html`, ngoài git, chỉ có trên máy chủ dự án)
+- Trang theo dõi mới (`exports/javis-resonance-tien-do.html`, ngoài git, chỉ có trên máy chủ dự án)

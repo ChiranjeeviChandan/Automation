@@ -24,7 +24,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-anhquote-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-anhquote-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -116,7 +116,7 @@ check("payload link http (không https) bị bỏ",
 check("replyTo không phải dict", zc.anh_duoc_quote("conn-1", "g1", {"replyTo": "777"}) == "")
 
 # ---- 5. The bot's turn says the photo is the quoted one ----
-BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-brain-anhquote-"))
+BRAIN = Path(tempfile.mkdtemp(prefix="javis-brain-anhquote-"))
 cr._deps["brain_root"] = lambda b: BRAIN
 goc_fetch = image_vision.fetch_image
 

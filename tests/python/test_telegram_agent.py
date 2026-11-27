@@ -10,7 +10,7 @@ real owner bot functions and the real shell (`_tg_answer`), with only the model 
   2. A whitelisted chat that writes `@<agent> ...` gets a turn of THAT agent (its prompt, model,
      own session, run log, lesson lines stripped), and the reply names the agent.
   3. Unknown or ambiguous mention: the list is the answer, before any turn runs.
-  4. /agent <name> makes the agent answer the whole chat, `@jeevi` asks Jeevi once, /agent off goes
+  4. /agent <name> makes the agent answer the whole chat, `@javis` asks Jeevi once, /agent off goes
      back to Jeevi; /reset also resets the agent's session.
   5. A chat that is not on the whitelist (or an empty whitelist) never reaches an agent, and the
      customer-facing bot accounts never get the owner functions.
@@ -23,8 +23,8 @@ import tempfile
 from pathlib import Path
 from types import SimpleNamespace
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-tg-agent-")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-tg-agent-brains-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-tg-agent-")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-tg-agent-brains-")
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -84,7 +84,7 @@ class FakeClaude:
         FakeClaude.runs.append({"system_prompt": self.system_prompt, "model": self.model,
                                 "prompt": prompt, "engine": id(self)})
         yield {"type": "text", "content": "Done."}
-        yield {"type": "final", "content": "Done.\nJEEVI_LESSON: " + LESSON,
+        yield {"type": "final", "content": "Done.\nJAVIS_LESSON: " + LESSON,
                "session_id": "fake-1", "tokens_in": 1, "tokens_out": 1, "cost_usd": 0}
 
 
@@ -110,7 +110,7 @@ main.learn_feature.enqueue = _none
 
 
 def answer(text, chat=OWNER):
-    return asyncio.run(main._tg_owner_answer(text, {"chat_id": chat, "bot_username": "my_jeevi_bot"}))
+    return asyncio.run(main._tg_owner_answer(text, {"chat_id": chat, "bot_username": "my_javis_bot"}))
 
 
 def command(cmd, arg="", chat=OWNER):
@@ -136,15 +136,15 @@ check("mention: the longest name wins (Writer Pro over Writer)", kind == "agent"
 kind, hits, rest = main._tg_agent_mention("@writer, draft a post", ROWS)
 check("mention: the shorter name still works", kind == "agent" and hits[0]["slug"] == "writer"
       and rest == "draft a post", (kind, hits, rest))
-kind, hits, rest = main._tg_agent_mention("@my_jeevi_bot @Writer hi", ROWS, "my_jeevi_bot")
+kind, hits, rest = main._tg_agent_mention("@my_javis_bot @Writer hi", ROWS, "my_javis_bot")
 check("mention: the bot's own @username in front is skipped", kind == "agent"
       and hits[0]["slug"] == "writer" and rest == "hi", (kind, rest))
 kind, hits, _ = main._tg_agent_mention("@Twin hello", ROWS)
 check("mention: two agents with one name is ambiguous", kind == "ambiguous" and len(hits) == 2, (kind, hits))
 kind, _, _ = main._tg_agent_mention("@Nobody hello", ROWS)
 check("mention: no such agent is unknown", kind == "unknown", kind)
-kind, _, rest = main._tg_agent_mention("@jeevi what time is it", ROWS)
-check("mention: @jeevi is Jeevi itself", kind == "jeevi" and rest == "what time is it", (kind, rest))
+kind, _, rest = main._tg_agent_mention("@javis what time is it", ROWS)
+check("mention: @javis is Jeevi itself", kind == "javis" and rest == "what time is it", (kind, rest))
 kind, _, rest = main._tg_agent_mention("hello @Writer", ROWS)
 check("mention: only a LEADING mention counts", kind == "" and rest == "hello @Writer", (kind, rest))
 check("pick by name: exact only, no partial guess",
@@ -164,7 +164,7 @@ check("agent turn: runs on the agent's model", run.get("model") == "sonnet", run
 check("agent turn: the mention is stripped from what the agent receives",
       "@TEST" not in str(run.get("prompt")) and "đánh giá giúp bản đề xuất" in str(run.get("prompt")), run.get("prompt"))
 check("agent turn: the reply names the agent and has no lesson line",
-      isinstance(out, dict) and out["text"].startswith("🤝 TEST-Thẩm định viên") and "JEEVI_LESSON" not in out["text"],
+      isinstance(out, dict) and out["text"].startswith("🤝 TEST-Thẩm định viên") and "JAVIS_LESSON" not in out["text"],
       out)
 _runs_dir = main._brain_memory_dir(BRAIN) / "agents" / "test-tham-dinh-vien" / "runs"
 _runs = "".join(f.read_text(encoding="utf-8") for f in _runs_dir.glob("*.md")) if _runs_dir.is_dir() else ""
@@ -202,8 +202,8 @@ check("/agent <name>: picked", "TEST-Thẩm định viên" in res.get("reply", "
       and main._TG_AGENT_MAP.get(OWNER, {}).get("slug") == "test-tham-dinh-vien", res)
 answer("next message without a mention")
 check("/agent: a plain message now goes to the agent", "APPRAISER ROLE BODY" in FakeClaude.runs[-1]["system_prompt"])
-answer("@jeevi quick question")
-check("/agent: @jeevi still asks Jeevi once", "JEEVI MAIN PROMPT" in FakeClaude.runs[-1]["system_prompt"])
+answer("@javis quick question")
+check("/agent: @javis still asks Jeevi once", "JEEVI MAIN PROMPT" in FakeClaude.runs[-1]["system_prompt"])
 answer("@Writer one for the writer")
 check("/agent: a mention of another agent wins for that message",
       "WRITER ROLE BODY" in FakeClaude.runs[-1]["system_prompt"])

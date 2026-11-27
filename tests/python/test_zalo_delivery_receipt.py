@@ -9,7 +9,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zalo-receipt-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zalo-receipt-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

@@ -11,11 +11,11 @@ import json
 import os
 # 0.438.5: vòng tool mặc định gọi model dạng stream. File này thử logic vòng tool trên đường non-stream
 # (giả lập client.post / máy chủ trả JSON), đường đó vẫn là đường lui. Đường stream: test_api_stream_vong.py.
-os.environ["JEEVI_API_STREAM_TOOLS"] = "0"
+os.environ["JAVIS_API_STREAM_TOOLS"] = "0"
 import sys
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-fastapi-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-fastapi-"))
 import engine  # noqa: E402
 import fast_mode  # noqa: E402
 

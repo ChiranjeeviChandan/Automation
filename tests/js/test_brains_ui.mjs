@@ -78,12 +78,12 @@ const c3 = new Opt("path:D:\\Project\\Jeevi-OS\\brains\\My Bullet Journal", "�
 
 // localStorage khởi đầu (3 entry, có 1 trùng não thật)
 const store = {
-  "jeevi.brains": JSON.stringify([
+  "javis.brains": JSON.stringify([
     { name: "brain", path: "D:\\Project\\Jeevi-OS\\brain" },
     { name: "My Bullet Journal", path: "D:\\My Bullet Journal" },
     { name: "My Bullet Journal", path: "D:\\Project\\Jeevi-OS\\brains\\My Bullet Journal" },
   ]),
-  "jeevi.graphSource": "brain",
+  "javis.graphSource": "brain",
 };
 
 // ---- Globals ----
@@ -115,7 +115,7 @@ await new Promise((r) => setTimeout(r, 50));
 // ---- Assert ----
 const customVals = sel.querySelectorAll("option[data-custom]").map((o) => o.value);
 const brainNames = sel.querySelectorAll("option[data-brain]").map((o) => o.dataset.brainName);
-const stored = JSON.parse(store["jeevi.brains"]);
+const stored = JSON.parse(store["javis.brains"]);
 
 check("📁 'brain' (đã xoá) bị gỡ khỏi menu", !customVals.includes("path:D:\\Project\\Jeevi-OS\\brain"));
 check("📁 trùng não thật bị gỡ khỏi menu", !customVals.includes("path:D:\\Project\\Jeevi-OS\\brains\\My Bullet Journal"));
@@ -129,7 +129,7 @@ check("option default cập nhật nhãn kèm note", def.textContent.includes("B
 const sel2 = new Select();
 sel2.appendChild(new Opt("brain", "🧠 Brain Default"));
 const d1 = new Opt("path:D:\\mot\\folder", "📁 folder"); d1.dataset.custom = "1"; sel2.appendChild(d1);
-const store2 = { "jeevi.brains": JSON.stringify([{ name: "folder", path: "D:\\mot\\folder" }]), "jeevi.graphSource": "brain" };
+const store2 = { "javis.brains": JSON.stringify([{ name: "folder", path: "D:\\mot\\folder" }]), "javis.graphSource": "brain" };
 global.document.getElementById = (id) => id === "graphSource" ? sel2 : (btns[id] || (btns[id] = { addEventListener() {} }));
 global.localStorage = { getItem: (k) => (k in store2 ? store2[k] : null), setItem: (k, v) => { store2[k] = String(v); } };
 global.fetch = async (url) => {
@@ -139,7 +139,7 @@ global.fetch = async (url) => {
 };
 eval(SRC);
 await new Promise((r) => setTimeout(r, 50));
-const stored2 = JSON.parse(store2["jeevi.brains"]);
+const stored2 = JSON.parse(store2["javis.brains"]);
 check("fail-safe: endpoint 404 → GIỮ nguyên entry (không xoá nhầm)", stored2.length === 1 && sel2.querySelectorAll("option[data-custom]").length === 1);
 
 // ---- Test 3 (2026-11-09): make another brain the default. Someone looking at the old default keeps looking at it ----
@@ -155,7 +155,7 @@ const sel3 = new Select();
 sel3.appendChild(new Opt("brain", "Brain Default"));
 let changes3 = 0;
 sel3.dispatchEvent = () => { changes3 += 1; return true; };
-const store3 = { "jeevi.brains": "[]", "jeevi.graphSource": "brain" };
+const store3 = { "javis.brains": "[]", "javis.graphSource": "brain" };
 const posted = [];
 global.document.getElementById = (id) => id === "graphSource" ? sel3 : (btns[id] || (btns[id] = { addEventListener() {} }));
 global.localStorage = { getItem: (k) => (k in store3 ? store3[k] : null), setItem: (k, v) => { store3[k] = String(v); } };
@@ -174,14 +174,14 @@ eval(SRC);
 await new Promise((r) => setTimeout(r, 50));
 check("set default: the old default carries its folder path", sel3.querySelector('option[value="brain"]').dataset.brainPath === P_OLD);
 changes3 = 0;
-const r3 = await global.window.JeeviBrains.setDefault("path:" + P_SHOP);
+const r3 = await global.window.JavisBrains.setDefault("path:" + P_SHOP);
 check("set default: posts the chosen brain", r3.ok === true && posted[0] === "path:" + P_SHOP);
 check("set default: the 'brain' entry now carries Shop", sel3.querySelector('option[value="brain"]').dataset.brainName === "Shop");
 check("set default: the old default is listed by its path", sel3.options.some((o) => o.value === "path:" + P_OLD));
-check("set default: the screen stays on the old default", sel3.value === "path:" + P_OLD && store3["jeevi.graphSource"] === "path:" + P_OLD);
+check("set default: the screen stays on the old default", sel3.value === "path:" + P_OLD && store3["javis.graphSource"] === "path:" + P_OLD);
 check("set default: pages are told once", changes3 === 1);
 check("set default: refuses an entry that is not a listed brain",
-  (await global.window.JeeviBrains.setDefault("brain")).ok === false && posted.length === 1);
+  (await global.window.JavisBrains.setDefault("brain")).ok === false && posted.length === 1);
 
 console.log();
 if (fails.length) { console.log(`${fails.length} FAIL: ${fails.join(", ")}`); process.exit(1); }

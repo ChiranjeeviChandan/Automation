@@ -21,9 +21,9 @@
   // 2026-11-16: an owner message typed during a goal buys the goal one more round, never past this hard cap.
   var GOAL_TRAN = 10;
   var GOAL_THEM_TOI_DA = 5;   // owner additions a goal keeps (oldest drop first), same as the server block
-  var GOAL_RE = /<!--\s*JEEVI_GOAL:\s*([\s\S]*?)\s*-->/g;
+  var GOAL_RE = /<!--\s*JAVIS_GOAL:\s*([\s\S]*?)\s*-->/g;
   // Hidden line the server puts inside the /goal block of an automatic round (lenh_he_thong.GOAL_ROUND_TAG).
-  var ROUND_RE = /<!--\s*JEEVI_GOAL_ROUND:\s*(\{[\s\S]*?\})\s*-->/;
+  var ROUND_RE = /<!--\s*JAVIS_GOAL_ROUND:\s*(\{[\s\S]*?\})\s*-->/;
 
   // Chữ hiện ra lấy từ từ điển. Trong trình duyệt là window.t; dưới node (test) không có window
   // nên đọc thẳng vi.json. Tên hàm là tw chứ không phải t vì test_i18n quét mặt chữ các lời gọi tw để
@@ -41,11 +41,11 @@
 
   // ===================== HÀM THUẦN (test bằng node) =====================
 
-  // Bóc dòng ẩn JEEVI_GOAL khỏi câu trả lời. Dòng CUỐI thắng; dòng hỏng (JSON sai, thiếu `done`
+  // Bóc dòng ẩn JAVIS_GOAL khỏi câu trả lời. Dòng CUỐI thắng; dòng hỏng (JSON sai, thiếu `done`
   // kiểu boolean) coi như không có - bên gọi khi đó DỪNG chứ không đoán "chưa xong".
   function tachMucTieu(text) {
     var s = String(text == null ? "" : text);
-    if (s.indexOf("JEEVI_GOAL") < 0) return { clean: s, goal: null };
+    if (s.indexOf("JAVIS_GOAL") < 0) return { clean: s, goal: null };
     var goal = null;
     var clean = s.replace(GOAL_RE, function (_m, j) {
       goal = null;
@@ -220,10 +220,10 @@
     return dong.join("\n");
   }
 
-  // Bỏ mọi khối điều khiển <!-- JEEVI_...: ... --> khỏi tin của Jeevi trước khi xuất. Chúng vô
+  // Bỏ mọi khối điều khiển <!-- JAVIS_...: ... --> khỏi tin của Jeevi trước khi xuất. Chúng vô
   // hình trong khung chat nhưng sẽ hiện nguyên hình trong file markdown.
   function boKhoiDieuKhien(s) {
-    return String(s || "").replace(/<!--\s*JEEVI_[A-Z_]+:[\s\S]*?-->/g, "").replace(/\n{3,}/g, "\n\n").trim();
+    return String(s || "").replace(/<!--\s*JAVIS_[A-Z_]+:[\s\S]*?-->/g, "").replace(/\n{3,}/g, "\n\n").trim();
   }
 
   function dinhDangXuat(sess, gio, lamSachTinNguoi) {
@@ -243,7 +243,7 @@
   function tenFileXuat(title, ngay) {
     var slug = String(title || "").normalize("NFD").replace(/[̀-ͯ]/g, "")
       .replace(/[\u0111\u0110]/g, "d").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
-    return "jeevi-" + (slug || "hoi-thoai") + "-" + (ngay || "") + ".md";
+    return "javis-" + (slug || "hoi-thoai") + "-" + (ngay || "") + ".md";
   }
 
   // Khớp tên theo hai bậc: đúng nguyên tên thì thắng, không thì khớp một phần. Ra nhiều hơn một
@@ -263,7 +263,7 @@
 
   // ===================== PHẦN DOM / MẠNG (chỉ trình duyệt) =====================
 
-  function chatApi() { return (typeof window !== "undefined" && window.JeeviChatApi) || null; }
+  function chatApi() { return (typeof window !== "undefined" && window.JavisChatApi) || null; }
   function ghi(md) { var a = chatApi(); if (a) a.note(md); }
 
   async function layJson(url, opt) {
@@ -285,7 +285,7 @@
   }
 
   function lenhHelp() {
-    var ds = window.JeeviSlash ? window.JeeviSlash.buildMenu([], [], []) : [];
+    var ds = window.JavisSlash ? window.JavisSlash.buildMenu([], [], []) : [];
     ds = ds.filter(function (x) { return x.kind === "session" || x.kind === "system"; });
     var dong = [tw("lenh.help_title")];
     ds.forEach(function (x) { dong.push("- `/" + x.cmd + "` - " + x.desc); });
@@ -302,7 +302,7 @@
   }
 
   async function lenhModel(arg) {
-    var mb = window.JeeviModelBar;
+    var mb = window.JavisModelBar;
     if (!mb) return ghi(tw("lenh.err_net"));
     if (!arg) {
       // Bảng chọn nằm ở thanh model dưới khung chat; ẩn (điện thoại, đang thu gọn) thì nói model
@@ -337,7 +337,7 @@
     if (k.hit) {
       var v = giaTri(k.hit);
       sel.value = v;
-      try { localStorage.setItem("jeevi.graphSource", v); } catch (e) { /* chế độ riêng tư */ }
+      try { localStorage.setItem("javis.graphSource", v); } catch (e) { /* chế độ riêng tư */ }
       sel.dispatchEvent(new Event("change"));
       return ghi(tw("lenh.brain_set", { ten: k.hit.label || k.hit.name }));
     }
@@ -433,7 +433,7 @@
   // 2026-11-16 (owner): typing while the goal runs no longer pauses it. The message joins the goal: the running round
   // reads it at its next step (steer, goal mode), and every later round carries it in its block (g.them).
   function kho() {
-    if (typeof window !== "undefined" && window.JeeviGoals) return window.JeeviGoals;
+    if (typeof window !== "undefined" && window.JavisGoals) return window.JavisGoals;
     try { return require("./chat-goal.js"); } catch (e) { return null; }
   }
   var choId = null;   // mục tiêu vừa đặt trong chat mới, chờ id phiên của tin đầu
@@ -634,7 +634,7 @@
     var k = kho();
     var g = k && k.theoId(id);
     if (!g) return;
-    var s = (typeof window !== "undefined") && window.JeeviSessions;
+    var s = (typeof window !== "undefined") && window.JavisSessions;
     if (act === "del") {
       var cuaChatNay = g.sid === sidHienTai();
       ketThucMucTieu(g);
@@ -713,9 +713,9 @@
   };
 
   if (typeof window !== "undefined") {
-    window.JeeviLenh = api;
+    window.JavisLenh = api;
     // Mở lại chat có mục tiêu đang chờ thì nó chạy tiếp.
-    window.addEventListener("jeevi:sessions-changed", function () {
+    window.addEventListener("javis:sessions-changed", function () {
       var k = kho(), sid = sidHienTai();
       if (k && sid) thuTiep(k.theoSid(sid));
     });

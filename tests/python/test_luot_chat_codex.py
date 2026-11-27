@@ -27,7 +27,7 @@ import sys
 import tempfile
 from types import SimpleNamespace
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-codex-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-codex-"))
 
 from fastapi import WebSocketDisconnect  # noqa: E402
 
@@ -101,7 +101,7 @@ class _CodexGia:
 def _chay_mot_luot(monkeypatch, tmpdir):
     runtime = ChatRuntime()
     store = SessionStore(tmpdir / "conversations.db")
-    ws = _WSGia({"message": "Chào buổi chiều jeevi", "brain": "brain",
+    ws = _WSGia({"message": "Chào buổi chiều javis", "brain": "brain",
                  "session_id": "phien-codex"})
 
     monkeypatch.setattr(main, "_CHAT_RUNTIME", runtime)
@@ -204,7 +204,7 @@ if __name__ == "__main__":
                 setattr(obj, name, old)
 
     mp = _Patch()
-    tmp = pathlib.Path(tempfile.mkdtemp(prefix="jeevi-codex-run-"))
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="javis-codex-run-"))
     try:
         main_test(mp, tmp)
     finally:

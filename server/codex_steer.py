@@ -10,7 +10,7 @@ final answer, resume of a thread `codex exec` created, the profile's MCP entry p
 Only the main chat engine of a web or chat-channel turn takes this path (`CodexCLI.steer`, set by main.py) and only
 while that turn's steer inbox is open. Background work, workflows and loops keep `codex exec`. Anything that fails
 before the turn has started (the profile cannot be read, app-server does not answer, the thread cannot open) falls
-back to `codex exec`, i.e. exactly the old behaviour. JEEVI_CODEX_STEER=0 turns the whole path off.
+back to `codex exec`, i.e. exactly the old behaviour. JAVIS_CODEX_STEER=0 turns the whole path off.
 
 Differences from exec handled here, each found by trying it:
 - app-server ignores the root flags `-m`, `--sandbox`, `--ask-for-approval` and
@@ -44,7 +44,7 @@ import turn_plan
 import turn_lane
 import warm_pool
 
-ENV_SWITCH = "JEEVI_CODEX_STEER"
+ENV_SWITCH = "JAVIS_CODEX_STEER"
 POLL_S = 0.25            # how often a running turn looks for messages to pass on
 START_TIMEOUT_S = 120.0  # initialize + thread/start (a required MCP server may take its startup_timeout_sec)
 STEER_SETTLE_S = 2.0     # after turn/completed, wait this long for answers to steer requests still in flight
@@ -380,7 +380,7 @@ def _fingerprint(cli, args: List[str]) -> str:
     except OSError:
         binary = str(cli.cli_path)
     # The hub turn key changes with every lane, so it is left out: the slot keeps its own lane.
-    args = [a for a in args if not a.startswith("mcp_servers.jeevi.http_headers.X-Jeevi-Turn")]
+    args = [a for a in args if not a.startswith("mcp_servers.javis.http_headers.X-Jeevi-Turn")]
     import claude_cli as cc
     home = str(getattr(cli, "codex_home", None) or cc._codex_home())
     raw = json.dumps([binary, args, home, cli.cwd, cli.sandbox or "", cli.model or "", str(cli.session_id or ""),
@@ -532,7 +532,7 @@ async def run(cli, prompt: str) -> AsyncIterator[dict]:
         if not turn_id:
             deadline = time.monotonic() + START_TIMEOUT_S
             try:
-                await _call(rpc, "initialize", {"clientInfo": {"name": "jeevi", "version": "1"}}, deadline, seen)
+                await _call(rpc, "initialize", {"clientInfo": {"name": "javis", "version": "1"}}, deadline, seen)
                 rpc.send("initialized", {}, notify=True)
                 if cli.session_id:
                     res = await _call(rpc, "thread/resume", {**_thread_params(cli), "threadId": cli.session_id,
@@ -559,8 +559,8 @@ async def run(cli, prompt: str) -> AsyncIterator[dict]:
         yield {"type": "session", "session_id": thread_id, "warm": slot is not None,
                **({} if slot is not None else {"cold": why.get("cold")})}
 
-        IDLE = tran_watchdog("JEEVI_CLAUDE_IDLE_TIMEOUT", "0")
-        TOOL_IDLE = tran_watchdog("JEEVI_CLAUDE_TOOL_TIMEOUT", "0")
+        IDLE = tran_watchdog("JAVIS_CLAUDE_IDLE_TIMEOUT", "0")
+        TOOL_IDLE = tran_watchdog("JAVIS_CLAUDE_TOOL_TIMEOUT", "0")
         last = time.monotonic()
         busy = 0
         final_text = ""
@@ -797,7 +797,7 @@ def _recipe(cli, args: List[str], acct_home, thread_id: str):
         rpc.keep_reading = True
         try:
             deadline = time.monotonic() + START_TIMEOUT_S
-            await _call(rpc, "initialize", {"clientInfo": {"name": "jeevi", "version": "1"}}, deadline, [])
+            await _call(rpc, "initialize", {"clientInfo": {"name": "javis", "version": "1"}}, deadline, [])
             rpc.send("initialized", {}, notify=True)
             await _call(rpc, "thread/resume", params, deadline, [])
         except BaseException:

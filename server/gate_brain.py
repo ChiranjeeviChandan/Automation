@@ -10,7 +10,7 @@ secondary brain got personal notes from claude.ai written there. The owner appro
 - Every Gate tool that reads or writes a brain takes an optional `brain`: a brain's name (its label, or its folder) or
   its path. It is resolved ONLY against the registered brains (the folders of BRAINS_DIR), never as an arbitrary path,
   with names matched case- and accent-insensitively. An unknown name is refused with the list of valid names.
-- `jeevi_brains` lists the brains, which one is the default, and which one was used last.
+- `javis_brains` lists the brains, which one is the default, and which one was used last.
 - Without `brain`, the Gate uses the default brain the owner picked on the Connections page (settings key
   `gate_default_brain`, the brain's FOLDER name, which never changes on a rename). Empty means "Brain used last",
   exactly the behaviour before this module, so nothing changes for an owner who never picks one.
@@ -30,7 +30,7 @@ MAX_VALUE = 500
 # The `brain` argument as the Gate's tools/list shows it on every brain-bound tool.
 BRAIN_PARAM = {
     "type": "string",
-    "description": ("Optional. The brain (the owner's knowledge base) to use: a name or path from jeevi_brains. "
+    "description": ("Optional. The brain (the owner's knowledge base) to use: a name or path from javis_brains. "
                     "Leave out to use the default brain."),
 }
 
@@ -115,7 +115,7 @@ def resolve(value, brains: Optional[List[dict]] = None) -> Tuple[Optional[dict],
         hit = next((b for b in brains if b["path"] == want), None)
         if hit and not _refused(hit["path"]):
             return hit, ""
-        return None, (f'"{v}" is not the path of a Jeevi brain. Pass a name or path from jeevi_brains. '
+        return None, (f'"{v}" is not the path of a Jeevi brain. Pass a name or path from javis_brains. '
                       f"Valid brains: {names_list(brains)}.")
     hits = [b for b in brains if v in (b["name"], b["folder"])]
     if not hits:
@@ -125,7 +125,7 @@ def resolve(value, brains: Optional[List[dict]] = None) -> Tuple[Optional[dict],
     if len(hits) == 1 and not _refused(hits[0]["path"]):
         return hits[0], ""
     if len(hits) > 1:
-        return None, (f'"{v}" matches several brains ({names_list(hits)}). Pass the path from jeevi_brains instead.')
+        return None, (f'"{v}" matches several brains ({names_list(hits)}). Pass the path from javis_brains instead.')
     return None, f'No brain is called "{v}". Valid brains: {names_list(brains)}.'
 
 
@@ -214,12 +214,12 @@ def result_line(vault_root, how: str) -> str:
 
 def no_brain_hint() -> str:
     return ("(Jeevi Gate could not tell which brain to use: this Jeevi has more than one brain and none was named. "
-            "Call jeevi_brains, ask the owner which brain they mean, then pass it as brain. The owner can also pick a "
+            "Call javis_brains, ask the owner which brain they mean, then pass it as brain. The owner can also pick a "
             "default brain for Jeevi Gate on the Connections page.)")
 
 
 def listing(last_used_path: str = "") -> dict:
-    """What `jeevi_brains` returns."""
+    """What `javis_brains` returns."""
     brains = registered()
     fixed = default_brain(brains)
     last = _resolved(last_used_path) if last_used_path else ""
@@ -258,8 +258,8 @@ def card_state() -> dict:
             "default": folder, "default_missing": bool(folder) and not any(b["folder"] == folder for b in brains)}
 
 
-GATE_PACK = "jeevi.gate"
-GATE_PLUGIN = "jeevi-gate"
+GATE_PACK = "javis.gate"
+GATE_PLUGIN = "javis-gate"
 
 
 def gate_installed() -> Tuple[bool, str]:

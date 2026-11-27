@@ -20,9 +20,9 @@ import tempfile
 from contextlib import closing
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-review-")
-os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
-TEMP = Path(tempfile.mkdtemp(prefix="jeevi-review-w-"))
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-review-")
+os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
+TEMP = Path(tempfile.mkdtemp(prefix="javis-review-w-"))
 
 import agent_budget as AB  # noqa: E402
 import agent_ledger as ALG  # noqa: E402

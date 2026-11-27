@@ -54,7 +54,7 @@ check("adding a note or a lesson opens the same box",
   /async function addNote[\s\S]{0,120}editText\(/.test(SU) && /async function themBaiHoc[\s\S]{0,80}editText\(/.test(SU));
 check("the note box offers the kinds", /kinds: noteKinds\(\), kind: noteKindOf\(n\)/.test(SU));
 check("a description may be emptied (removes it)", /editAssetDescription[\s\S]{0,400}allowEmpty: true/.test(SU));
-check("the team panel's description uses the same box", /function describeDoc[\s\S]{0,700}JeeviTextEdit/.test(TM));
+check("the team panel's description uses the same box", /function describeDoc[\s\S]{0,700}JavisTextEdit/.test(TM));
 check("the box sits above the project drawer", /\.ted-wrap \{[^}]*z-index: 6000/.test(CSS) && /\.pd-wrap \{[^}]*z-index: 5000/.test(CSS));
 check("the box's text is 16px (no iPhone zoom) and a phone sheet follows the keyboard",
   /\.ted-in \{[^}]*font-size: 16px/.test(CSS) && /body\.kb-open \.ted-wrap/.test(CSS));

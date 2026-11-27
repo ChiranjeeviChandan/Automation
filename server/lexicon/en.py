@@ -51,9 +51,9 @@ DENY = (
         r"api|mcp|tool|tools|vault|obsidian|slack|notion|airtable|facebook|instagram|"
         r"tiktok|zalo|telegram|shopify|stripe|pos)\b"
     )),
-    # Đối xứng với `jeevi_asset` bản tiếng Việt: câu trỏ vào chính bộ não hoặc chính năng
+    # Đối xứng với `javis_asset` bản tiếng Việt: câu trỏ vào chính bộ não hoặc chính năng
     # lực của Jeevi. Đi tắt là trả về một lời từ chối trên cái brain đang có đủ thứ đó.
-    ("jeevi_asset", re.compile(
+    ("javis_asset", re.compile(
         r"\b(workflows?|skills?|agents?|plugins?|kanban|second brain|brain|wiki|"
         r"my notes|the notes|project data|my project|my data|our data)\b"
     )),
@@ -149,7 +149,7 @@ FALSE_ACTION = re.compile(
     r"\bi\s+" + _TRO_DONG_TU + ACTION_VERBS + r"\b"
     r"|\bi've\s+" + _TRO_DONG_TU + ACTION_VERBS + r"\b"
     r"|\bwe\s+" + _TRO_DONG_TU + ACTION_VERBS + r"\b"
-    r"|\bjeevi\s+" + _TRO_DONG_TU + ACTION_VERBS + r"\b"
+    r"|\bjavis\s+" + _TRO_DONG_TU + ACTION_VERBS + r"\b"
     r"|\bsuccessfully\s+" + ACTION_VERBS + r"\b"
     r"|\b(?:was|were|has been|have been)\s+(?:sent|deleted|removed|created|updated|"
     r"published|posted|booked|scheduled|uploaded|saved|cancelled|canceled)\b"

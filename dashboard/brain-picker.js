@@ -16,7 +16,7 @@
    2026-11-09, owner: the four buttons beside the picker (new, rename, delete, outside folder) move INTO the panel, "giống
    phần tạo cộng sự": each brain's row carries Export (.zip), Rename and Delete, done right on the row (no prompt or alert),
    and the panel ends with New brain, Upload a brain (.zip) and Open an outside folder. The work itself is in
-   brains-ui.js (window.JeeviBrains); export and upload talk to /brains/export/* and /brains/import/*
+   brains-ui.js (window.JavisBrains); export and upload talk to /brains/export/* and /brains/import/*
    (server/brain_export.py): packing and unpacking run in the background, the upload goes in 32MB pieces.
 
    Each row's counts read "1920 Node · 2480 Link" on ONE line (2026-11-09, owner: it used to break in two); the same
@@ -47,7 +47,7 @@
   var api = { moveItem: moveItem, orderFromOptions: orderFromOptions };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (!root || typeof document === "undefined") return;
-  root.JeeviBrainPicker = api;
+  root.JavisBrainPicker = api;
 
   var sel = document.getElementById("graphSource");
   if (!sel) return;
@@ -152,7 +152,7 @@
     new MutationObserver(function () { drawButton(); if (open) drawList(); })
       .observe(sel, { childList: true, subtree: true, characterData: true, attributes: true });
   } catch (e) {}
-  root.addEventListener("jeevi:i18n", drawButton);
+  root.addEventListener("javis:i18n", drawButton);
 
   // ---- the panel ----
   var open = false, reorder = false, query = "", work = null, saving = false;
@@ -512,24 +512,24 @@
     if (act === "import-cancel") { if (!imp.busy) { view = "list"; drawList(); } return; }
     if (act === "import-go") { uploadBrain(); return; }
     if (!edit) return;
-    if (act === "create") run(root.JeeviBrains && root.JeeviBrains.create(edit.text), function (r) {
+    if (act === "create") run(root.JavisBrains && root.JavisBrains.create(edit.text), function (r) {
       return t("bpick.created", { name: r.name || edit.text.trim() }, "Created {name}.");
     });
-    if (act === "save") run(root.JeeviBrains && root.JeeviBrains.rename(edit.value, edit.text), function (r) {
+    if (act === "save") run(root.JavisBrains && root.JavisBrains.rename(edit.value, edit.text), function (r) {
       return t("bpick.renamed", { name: r.label || edit.text.trim() }, "Renamed to {name}.");
     });
     if (act === "make-default") {
       var e1 = entryOf(edit.value), newName = e1 ? e1.label : "";
-      run(root.JeeviBrains && root.JeeviBrains.setDefault && root.JeeviBrains.setDefault(edit.value), function (r) {
+      run(root.JavisBrains && root.JavisBrains.setDefault && root.JavisBrains.setDefault(edit.value), function (r) {
         return t("bpick.default_done", { name: r.label || newName }, "{name} is now the default brain.");
       });
     }
     if (act === "really") {
       var e0 = entryOf(edit.value), name = e0 ? e0.label : "";
-      if (edit.kind === "forget") run(root.JeeviBrains && root.JeeviBrains.forget(edit.value), function () {
+      if (edit.kind === "forget") run(root.JavisBrains && root.JavisBrains.forget(edit.value), function () {
         return t("bpick.forgot", { name: name }, "Removed {name} from the list.");
       });
-      else run(root.JeeviBrains && root.JeeviBrains.remove(edit.value, edit.text), function () {
+      else run(root.JavisBrains && root.JavisBrains.remove(edit.value, edit.text), function () {
         return t("bpick.deleted", { name: name }, "Deleted {name} (kept in the trash for 30 days).");
       });
     }
@@ -722,7 +722,7 @@
       if (off.length) text += " " + t("bpick.imported_off", { what: off.join(", ") }, "{what} arrived switched off; turn them on where they live if you want them.");
       imp = { file: null, name: "", busy: false, msg: "", err: false };
       view = "list";
-      Promise.resolve(root.JeeviBrains && root.JeeviBrains.adopt ? root.JeeviBrains.adopt(d.path) : null)
+      Promise.resolve(root.JavisBrains && root.JavisBrains.adopt ? root.JavisBrains.adopt(d.path) : null)
         .then(function () { if (open) say(text); });
     }
   }
@@ -746,7 +746,7 @@
         saving = false;
         if (!res.ok) throw new Error((res.d && res.d.error) || "");
         reorder = false; work = null;
-        var reload = root.JeeviBrains && root.JeeviBrains.reload;
+        var reload = root.JavisBrains && root.JavisBrains.reload;
         return Promise.resolve(reload ? reload() : null).then(function () { if (open) drawList(); });
       })
       .catch(function (e) {

@@ -16,7 +16,7 @@ import tempfile
 import urllib.parse
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-metagraph-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-metagraph-"))
 
 _fails = []
 def check(n, c):
@@ -26,7 +26,7 @@ def check(n, c):
 
 # ---- 1. Connector: đã dọn sang kho ----
 # Khuôn connector `meta-ads-graph` rời `system/mcp-catalog.json` ở 0.55.36 và giờ sống trong gói
-# `jeevi.meta-ads-graph` của repo kho (blogminhquy/javis-store). Những assert về HÌNH DẠNG của nó
+# `javis.meta-ads-graph` của repo kho (blogminhquy/javis-store). Những assert về HÌNH DẠNG của nó
 # (provider, scope, fields, default_perm, phân loại tool, chữ cảnh báo) đi theo dữ liệu sang đó:
 # `tools/kiem-tra.py` của repo kho chạy đúng các phép kiểm ấy trên mọi Pull Request.
 #

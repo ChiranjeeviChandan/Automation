@@ -15,7 +15,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-smalltalk-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-smalltalk-"))
 from capability_registry import CapabilityRegistry  # noqa: E402
 from capability_resolver import DeterministicResolver  # noqa: E402
 from context_compiler import ContextCompiler  # noqa: E402
@@ -44,7 +44,7 @@ for text in ("ok", "ok làm đi", "ok cảm ơn", "chào em, doanh thu hôm nay 
 
 # ---- 2. It takes the fast path with the saving level OFF, on Claude Code ----
 def _stack(settings):
-    tmp = Path(tempfile.mkdtemp(prefix="jeevi-smalltalk-stack-"))
+    tmp = Path(tempfile.mkdtemp(prefix="javis-smalltalk-stack-"))
     brain = tmp / "brain"
     registry = CapabilityRegistry(tmp / "registry")
     registry.refresh_tools(brain, [], {})

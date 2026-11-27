@@ -68,7 +68,7 @@ Workflow chạy lần lượt từng lượt một, nên hai PR merge cách nhau
 Code đè lên nhau (hai PR sửa cùng chỗ) thì vẫn phải rebase như thường, nhưng `VERSION` và nhật ký
 không bao giờ là chỗ xung đột nữa.
 
-**Cài một lần (chủ repo):** tạo fine-grained token trên GitHub cho repo `jeevi-os`, quyền
+**Cài một lần (chủ repo):** tạo fine-grained token trên GitHub cho repo `javis-os`, quyền
 **Contents** và **Pull requests** là Read and write, lưu thành secret `RELEASE_TOKEN` của repo
 (Settings, Secrets and variables, Actions). Thiếu secret thì lượt Release đỏ kèm đúng câu hướng dẫn
 này, image vẫn được build như cũ, và các mảnh nằm chờ trên `main`: thêm secret xong bấm **Run
@@ -86,7 +86,7 @@ Chủ repo 15/11/2026: "rà soát lại những lần anh sửa thiết kế đ�
 đỡ phải nhắc". `docs/dev/design-style.md` gom mọi lần chủ đã sửa giao diện (chữ, điện thoại, màu, bố cục, nút, câu chữ,
 trang của gói Store, cách làm việc), có danh sách kiểm trước khi gửi và bảng những lần đổi ý.
 
-- Việc nào có giao diện (dashboard, trang HTML của gói trong `jeevi-store`, trang HTML làm cho chủ) thì đọc file đó
+- Việc nào có giao diện (dashboard, trang HTML của gói trong `javis-store`, trang HTML làm cho chủ) thì đọc file đó
   trước khi vẽ, và chạy mục 0 "Kiểm trước khi gửi" trước khi báo xong.
 - Màn mới hoặc thiết kế lại: làm bản HTML cho chủ duyệt trước khi code, trừ khi chủ bảo làm thẳng.
 - Chủ chốt thêm một luật thiết kế mới thì ghi vào file đó (đúng mục, kèm ngày và lời chủ), cùng PR với thay đổi.
@@ -138,8 +138,8 @@ chứ không để xổ hết ra bên ngoài". Luật cứng cho MỌI màn hìn
 - **Ngoài mặt chỉ để thứ cần nhìn và cần bấm:** tiêu đề, nhãn, trạng thái, số liệu, ô nhập, nút. Một dòng phụ ngắn
   (tới khoảng 100 ký tự, một câu) được đứng ngoài nếu thiếu nó người ta không biết bấm gì.
 - **Câu giải thích dài hơn thế** (vì sao, lưu ý, cách làm từng bước, rủi ro, khác nhau giữa hai lựa chọn) **nằm trong
-  nút (i)**: `JeeviInfo.btn(t("info.more"))` cạnh tiêu đề hoặc nhãn, `JeeviInfo.body(...)` ngay sau, hoặc
-  `JeeviInfo.pair(html, nhãn)` khi không có tiêu đề để đứng cạnh (`dashboard/info-tip.js`). HTML tĩnh dùng cùng hai lớp
+  nút (i)**: `JavisInfo.btn(t("info.more"))` cạnh tiêu đề hoặc nhãn, `JavisInfo.body(...)` ngay sau, hoặc
+  `JavisInfo.pair(html, nhãn)` khi không có tiêu đề để đứng cạnh (`dashboard/info-tip.js`). HTML tĩnh dùng cùng hai lớp
   `info-i` / `info-body`, mẫu ở đầu file đó. Bấm mới mở, trong một popup cạnh nút (điện thoại: bảng từ dưới lên), không xổ ra trong trang (chủ repo 29/10/2026). Khối `info-body` chỉ là nguồn chữ cho popup và luôn ẩn.
 - **Không gập:** lỗi và câu xác nhận hiện ra sau khi người dùng bấm (họ đang chờ đúng câu đó), placeholder, nội dung
   người dùng mở ra để đọc (nhật ký cập nhật, nội dung chat, ghi chú). Cảnh báo về tiền hay mất dữ liệu: để ngoài một câu
@@ -157,7 +157,7 @@ biết tiết kiệm không gian". Đầu mỗi trang đã có thanh tiêu đề
 
 - **Thân trang không vẽ lại tên trang**, kể cả khi kèm một câu khẩu hiệu ("Webhook: sự kiện bên ngoài gọi Jeevi làm
   việc" ngay dưới tiêu đề "Webhook" là sai). Mở trang là vào thẳng thứ cần nhìn: số liệu, danh sách, nút bấm.
-- Nút (i) từng đứng cạnh cái tiêu đề thừa thì dời sang cạnh nút hành động chính, hoặc dùng `JeeviInfo.pair(html, nhãn)`
+- Nút (i) từng đứng cạnh cái tiêu đề thừa thì dời sang cạnh nút hành động chính, hoặc dùng `JavisInfo.pair(html, nhãn)`
   với một nhãn nói đúng nội dung bên trong ("Cách lấy cookie").
 - Tiêu đề thẻ bên trong trang phải mang thông tin mới (một con số, một trạng thái), không nhắc lại tên trang hay tên tab.
 - Trang tự ẩn `.cview-head` (Nhiệm vụ, Hội thoại, Nhóm, Chat) thì được có tiêu đề riêng, vì không còn gì để lặp.
@@ -173,7 +173,7 @@ Nhóm và trang Hội thoại.
 - Đổi cách khung chat trông hoặc chạy (ô nhập, nút mic, nút gửi, đính kèm, Enter, trích dẫn, thẻ tin nhắn...) thì
   **trong cùng PR** phải áp cho mọi màn có khung chat tương tự, không đợi chủ nhắc.
 - Các màn hiện có: chat chính (`app.js`, `composer-dictate.js`), Nhóm (`teams.js`), Hội thoại/Chatbot
-  (`conversations.js`). Mic đọc chữ dùng chung `dictate.js`: tìm mọi chỗ gọi bằng `grep -n "JeeviDictate" dashboard/*.js`.
+  (`conversations.js`). Mic đọc chữ dùng chung `dictate.js`: tìm mọi chỗ gọi bằng `grep -n "JavisDictate" dashboard/*.js`.
   Có màn chat mới thì thêm tên vào danh sách này.
 - Tự nhảy số thứ tự khi xuống dòng (`chat-list.js`, từ 11/11/2026) chạy bằng MỘT bộ nghe chung, nhận ô chat qua danh
   sách `BOXES` trong file đó. Có ô chat mới thì thêm selector của nó vào `BOXES`, kèm một dòng kiểm trong
@@ -185,14 +185,14 @@ Nhóm và trang Hội thoại.
 
 Chủ repo chốt 08/11/2026: "nếu mà update tính năng mới thì cho vào trong plugin của Zalo luôn chứ đừng tạo một plugin
 mới". Lý do: mỗi tính năng Zalo từng đẻ thêm một plugin (gửi ảnh, nhóm, đọc ảnh, kết bạn), trang Plugin bị phân mảnh
-thành bốn mục cho một thứ chủ coi là một. Gói `jeevi.zalo` 2.0.0 (kho `jeevi-store`) đã gộp cả bốn thành MỘT plugin.
+thành bốn mục cho một thứ chủ coi là một. Gói `javis.zalo` 2.0.0 (kho `javis-store`) đã gộp cả bốn thành MỘT plugin.
 
-- Tool Zalo mới mà MCP của jeevi-zalo chưa có thì viết trong gói `jeevi.zalo` của `jeevi-store`, vào plugin
-  `packs/jeevi.zalo/plugins/zalo-extras/`: thêm hàm vào module đúng mảng (`send_media.py`, `group.py`,
+- Tool Zalo mới mà MCP của javis-zalo chưa có thì viết trong gói `javis.zalo` của `javis-store`, vào plugin
+  `packs/javis.zalo/plugins/zalo-extras/`: thêm hàm vào module đúng mảng (`send_media.py`, `group.py`,
   `read_images.py`, `friend.py`), hoặc một module mới cạnh đó rồi thêm tên vào `_PARTS` trong `plugin.py`. Thêm tên
   tool vào `tools` của `plugin.yaml`, nâng số bản của plugin và của gói cùng nhau.
 - **Không tạo thư mục plugin Zalo thứ hai**, trong gói đó hay trong `system/plugins/` của lõi.
-  `tests/jeevi.zalo/test_zalo_extras.py` của kho đỏ khi gói có thêm thư mục plugin, mất một tool hay một tool bị đổi
+  `tests/javis.zalo/test_zalo_extras.py` của kho đỏ khi gói có thêm thư mục plugin, mất một tool hay một tool bị đổi
   mức quyền.
 - Mỗi tool tự khai mức quyền khi đăng ký (`min_mode`): đọc là `readonly`, ghi vào brain là `safe`, gửi hay đổi gì trên
   Zalo là `full`.

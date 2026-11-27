@@ -1,7 +1,7 @@
 """Mascot own picture (2026-11-07): upload a picture for the pet and use it as the browser tab icon.
 
 Owner: "thêm chức năng có thể upload hình riêng của pet, và hình đó sẽ có thể đổi được favicon luôn để người ta phân
-biệt khi có nhiều jeevi". Runs the real save path and the real icon routes:
+biệt khi có nhiều javis". Runs the real save path and the real icon routes:
   - dashboard.pet.image keeps only a name the /avatars store holds; "" removes it; junk and paths never land.
   - /pet-icon, /favicon.ico and the served page carry the picture while `favicon` is on, the logo once it is off.
   - /pet-icon is public: the login screen shows the tab icon before any session.
@@ -12,10 +12,10 @@ import os
 import tempfile
 from pathlib import Path
 
-state = tempfile.mkdtemp(prefix="jeevi-pet-picture-")
-os.environ["JEEVI_STATE_DIR"] = state
+state = tempfile.mkdtemp(prefix="javis-pet-picture-")
+os.environ["JAVIS_STATE_DIR"] = state
 os.environ["BRAINS_DIR"] = str(Path(state) / "brains")
-os.environ["JEEVI_SESSIONS_DB"] = str(Path(state) / "sessions.db")
+os.environ["JAVIS_SESSIONS_DB"] = str(Path(state) / "sessions.db")
 
 import main  # noqa: E402
 import avatar_upload  # noqa: E402

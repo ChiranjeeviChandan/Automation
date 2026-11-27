@@ -38,7 +38,7 @@ def _one_line(s: str) -> str:
 
 
 def _shorten_path(s: str) -> str:
-    """Đường dẫn tuyệt đối dài (/root/.jeevi/brains/x/wiki/a.md) chỉ giữ 3 đoạn cuối."""
+    """Đường dẫn tuyệt đối dài (/root/.javis/brains/x/wiki/a.md) chỉ giữ 3 đoạn cuối."""
     if len(s) > 40 and (s.startswith("/") or (len(s) > 2 and s[1] == ":")) and " " not in s:
         parts = s.replace("\\", "/").rstrip("/").split("/")
         if len(parts) > 3:

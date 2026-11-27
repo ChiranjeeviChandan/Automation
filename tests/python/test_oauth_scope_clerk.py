@@ -19,7 +19,7 @@ import tempfile
 import urllib.parse
 from unittest.mock import AsyncMock, patch
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-oauth-scope-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-oauth-scope-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

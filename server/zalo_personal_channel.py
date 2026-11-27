@@ -1,4 +1,4 @@
-"""Adapter kênh Zalo CÁ NHÂN cho Hộp thư hội thoại: đọc tin mới từ MCP `jeevi-zalo` rồi
+"""Adapter kênh Zalo CÁ NHÂN cho Hộp thư hội thoại: đọc tin mới từ MCP `javis-zalo` rồi
 đổ vào kho `conversations`.
 
 Ở Việt Nam khách nhắn qua Zalo cá nhân nhiều hơn mọi kênh khác, và không phải ai bán hàng cũng
@@ -145,7 +145,7 @@ def tai_khoan() -> List[dict]:
             "theo_doi": bool(cfg.get(c["id"])),
             "lan_cuoi": tt.get("lan_cuoi") or 0, "loi": tt.get("loi") or "",
             "so_tin": int(tt.get("so_tin") or 0),
-            # True: jeevi-zalo tells Jeevi when a message arrives, so "last read" is not a heartbeat any more.
+            # True: javis-zalo tells Jeevi when a message arrives, so "last read" is not a heartbeat any more.
             "push": push_active(c["id"]),
         })
     return out
@@ -166,9 +166,9 @@ async def _goi(conn: dict, tool: str, args: dict) -> Any:
 # ============================================================
 # Chat labels (tags the owner set in the Zalo app), 0.281.0
 # ============================================================
-# Read with jeevi-zalo 1.6.0's `zalo_get_labels`. One call returns every label with its chats, so the whole map is
+# Read with javis-zalo 1.6.0's `zalo_get_labels`. One call returns every label with its chats, so the whole map is
 # kept per connection for `LABEL_TTL_S` and each incoming message only looks it up. A connection whose MCP has no such
-# tool (older jeevi-zalo) or that fails is asked again only after `LABEL_RETRY_S`: a bot must never wait on Zalo for
+# tool (older javis-zalo) or that fails is asked again only after `LABEL_RETRY_S`: a bot must never wait on Zalo for
 # every message just to learn there are no labels.
 LABEL_TTL_S = 60
 LABEL_RETRY_S = 600
@@ -336,7 +336,7 @@ def _loai_tin(msg: dict) -> str:
 # answers, so a link posted in a group went unseen even when it tagged the bot, and the inbox kept only the page's
 # description ("Try out Artifacts created by Claude users"), never the link itself.
 #
-# Where the parts are (jeevi-zalo `normalizeMessage`): `text` is the page's description (or the title, or the link,
+# Where the parts are (javis-zalo `normalizeMessage`): `text` is the page's description (or the title, or the link,
 # whichever comes first), `attachment.url` is the link and `attachment.description` is Zalo's `content.title`. An
 # older MCP may hand over the raw `content` object instead, in `content` or in `text`. A card that carries no http(s)
 # link (a shared contact uses the same message type) stays what it was.
@@ -386,7 +386,7 @@ def link_card_text(card: dict) -> str:
 def _link_anh(msg: dict) -> str:
     """Link of the photo in an image message (0.74.1), or "".
 
-    The MCP normalizes a photo as `attachment: {type, url: content.href, description: content.title}` (jeevi-zalo,
+    The MCP normalizes a photo as `attachment: {type, url: content.href, description: content.title}` (javis-zalo,
     `normalizeMessage` in src/mcp/message-normalize.js; same shape as zalo-agent-cli 1.6.2). Before 0.74.1 this was dropped here, so the inbox and the customer bot only ever got
     the caption and the bot answered "I can only see the caption". A bare photo also carries the link as its `text`."""
     att = msg.get("attachment") if isinstance(msg.get("attachment"), dict) else {}
@@ -398,9 +398,9 @@ def _link_anh(msg: dict) -> str:
 
 
 def _su_kien_vao_nhom(msg: dict) -> Optional[dict]:
-    """Someone joined the group (jeevi-zalo >= 1.1.0): `{time, added_by, added_by_me}` in seconds, else None.
+    """Someone joined the group (javis-zalo >= 1.1.0): `{time, added_by, added_by_me}` in seconds, else None.
 
-    jeevi-zalo puts each join in the live feed as a message of type `group.join` sent BY the newcomer, with
+    javis-zalo puts each join in the live feed as a message of type `group.join` sent BY the newcomer, with
     `event: {kind: "join", time (ms), addedBy, addedByMe}`. The type alone is enough; `event` adds detail."""
     ev = msg.get("event") if isinstance(msg.get("event"), dict) else {}
     if str(msg.get("type") or "").lower() != "group.join" and ev.get("kind") != "join":
@@ -410,9 +410,9 @@ def _su_kien_vao_nhom(msg: dict) -> Optional[dict]:
 
 
 def _su_kien_xin_vao(msg: dict) -> Optional[dict]:
-    """Someone asked to join a group that requires approval (jeevi-zalo >= 1.2.0): `{time, total_pending}`, else None.
+    """Someone asked to join a group that requires approval (javis-zalo >= 1.2.0): `{time, total_pending}`, else None.
 
-    jeevi-zalo puts each request in the live feed as a message of type `group.join_request` sent BY the applicant."""
+    javis-zalo puts each request in the live feed as a message of type `group.join_request` sent BY the applicant."""
     ev = msg.get("event") if isinstance(msg.get("event"), dict) else {}
     if str(msg.get("type") or "").lower() != "group.join_request" and ev.get("kind") != "join_request":
         return None
@@ -456,7 +456,7 @@ def _bao_xin_vao(conn: dict, theo_nhom: Dict[str, dict]) -> None:
 
 
 def _reaction_meta(conn: dict, msg: dict, thread: str, sender_id: str) -> dict:
-    """A reaction entry of the feed (jeevi-zalo >= 1.7.0, `type: "reaction"`) -> `metadata.reaction` (0.334.0).
+    """A reaction entry of the feed (javis-zalo >= 1.7.0, `type: "reaction"`) -> `metadata.reaction` (0.334.0).
 
     Looks up the message it was put on in the inbox, so the line the judge and the Agent read says WHAT was reacted
     to and whose it was: `target_side` "ours" (this account: the bot or the owner), "self" (the reactor's own), or
@@ -554,7 +554,7 @@ def chuan_hoa_tin(conn: dict, msg: dict, ten: Dict[str, dict]) -> Optional[dict]
                          **({"join_request": xin_vao} if xin_vao is not None else {}),
                          **({"attachment": normalize_attachment(msg)} if loai == "file" else {}),
                          **({"image_url": _link_anh(msg)} if loai == "image" and _link_anh(msg) else {}),
-                         # 0.433.0: the clip's link (jeevi-zalo `attachment.url`), so the bot can look at its frames.
+                         # 0.433.0: the clip's link (javis-zalo `attachment.url`), so the bot can look at its frames.
                          **({"video_url": _link_anh(msg)} if loai == "video" and _link_anh(msg) else {}),
                          # 0.435.0: a voice message's link, so the bot can hear it (`chatbot_runtime.nghe_cho_bot`).
                          **({"audio_url": _link_anh(msg)} if loai == "audio" and _link_anh(msg) else {})),
@@ -564,7 +564,7 @@ def chuan_hoa_tin(conn: dict, msg: dict, ten: Dict[str, dict]) -> Optional[dict]
 # ============================================================
 # Nhập tin cũ (0.174.0)
 # ============================================================
-# Chủ repo hỏi 16/10/2026: đăng nhập Zalo vào Jeevi lần đầu thì Hộp thư trống trơn, dù điện thoại có cả trăm cuộc chat. jeevi-zalo
+# Chủ repo hỏi 16/10/2026: đăng nhập Zalo vào Jeevi lần đầu thì Hộp thư trống trơn, dù điện thoại có cả trăm cuộc chat. javis-zalo
 # (từ 1.1.0) tự kéo tin cũ về mỗi lần kết nối, khoảng 2 tuần gần nhất theo cửa sổ phát lại của Zalo, rồi giữ trong kho lịch sử của
 # nó (`zalo_search_history`). Vòng đọc ở dưới không dùng kho đó: nó chỉ đọc bộ đệm tin MỚI (`zalo_get_messages`), đúng như quyết
 # định 3 ở đầu file. Nút "Nhập tin cũ" là lựa chọn riêng của chủ, không chạy tự động.
@@ -584,7 +584,7 @@ _DANG_NHAP: set = set()     # conn_id đang nhập: bấm hai lần liền khôn
 
 
 async def nhap_lich_su(conn_id: str, ngay: int = NHAP_NGAY) -> dict:
-    """Nhập tin cũ jeevi-zalo đã giữ (tối đa `ngay` ngày, `NHAP_TOI_DA` tin) vào Hộp thư. Cuộc chat đã có tin chỉ nhận các tin cũ
+    """Nhập tin cũ javis-zalo đã giữ (tối đa `ngay` ngày, `NHAP_TOI_DA` tin) vào Hộp thư. Cuộc chat đã có tin chỉ nhận các tin cũ
     hơn tin đầu tiên của nó, xếp lên trên.
 
     Trả {"ok", "so_tin", "so_cuoc_chat", "het_tran"} hoặc {"ok": False, "loi"}."""
@@ -611,8 +611,8 @@ async def nhap_lich_su(conn_id: str, ngay: int = NHAP_NGAY) -> dict:
             except Exception as e:
                 if not tin:
                     return {"ok": False, "loi": localefmt.chu(
-                        f"jeevi-zalo không trả được tin cũ: {str(e)[:200]}. Bản jeevi-zalo cần từ 1.1.0 trở lên.",
-                        f"jeevi-zalo could not return old messages: {str(e)[:200]}. jeevi-zalo 1.1.0 or newer is needed.")}
+                        f"javis-zalo không trả được tin cũ: {str(e)[:200]}. Bản javis-zalo cần từ 1.1.0 trở lên.",
+                        f"javis-zalo could not return old messages: {str(e)[:200]}. javis-zalo 1.1.0 or newer is needed.")}
                 break
             trang = (d.get("messages") if isinstance(d, dict) else None) or []
             tin.extend(m for m in trang if isinstance(m, dict))
@@ -658,13 +658,13 @@ async def nhap_lich_su(conn_id: str, ngay: int = NHAP_NGAY) -> dict:
 # Catching up from the history (private chats)
 # ============================================================
 # Field report 08/11/2026 (owner): a private chat stopped in the inbox at 09:28 while the phone went on until 09:53,
-# messages both ways. `zalo_get_history` had every one of them, so they reached jeevi-zalo but never its live buffer
-# (or never left it): the read loop above only sees that buffer. jeevi-zalo files each message in its history first,
+# messages both ways. `zalo_get_history` had every one of them, so they reached javis-zalo but never its live buffer
+# (or never left it): the read loop above only sees that buffer. javis-zalo files each message in its history first,
 # and also fills the history from Zalo's replay after each reconnect, while the live feed only gets the replayed
 # messages of an outage it noticed.
 #
 # Driven by a signal, not a schedule (owner, 08/11/2026: "only work where there is a signal, never on dead chats").
-# jeevi-zalo (>= 1.5.0) appends every message it files to `<HOME>/.zalo-agent-cli/history.jsonl`, one JSON line each,
+# javis-zalo (>= 1.5.0) appends every message it files to `<HOME>/.zalo-agent-cli/history.jsonl`, one JSON line each,
 # and nothing else touches that file. So after each read the loop only asks the OS for the file's size: unchanged (an
 # idle day) costs one stat call and nothing more, no MCP call, no query. When it grew, the new lines are read and their
 # private-chat messages wait in `history_pending`; once old enough, only their ids are looked up in the inbox and the
@@ -682,7 +682,7 @@ async def nhap_lich_su(conn_id: str, ngay: int = NHAP_NGAY) -> dict:
 #      when it lies inside a stored message of the account (field report #1734). So is an echo the live feed already
 #      recognised (`_echo_id_seen`) or one the bot just sent (`_own_echo`). Written as the owner's, such a part made
 #      the bot step aside for `nhuong_tay_phut` after every long answer.
-#   5. Stickers and short emoji stay out, as in the live feed (jeevi-zalo `ThreadFilter.shouldKeep`).
+#   5. Stickers and short emoji stay out, as in the live feed (javis-zalo `ThreadFilter.shouldKeep`).
 #   6. A message from before this server started reading the account is only written when the inbox already holds an
 #      older message of that chat (a hole in a chat it follows), so turning an account on never pulls hours of old
 #      chats in through this door ("Import old messages" does that). Nothing older than RECONCILE_WINDOW is written.
@@ -698,7 +698,7 @@ _EMOJI_ONLY = re.compile(r"^[\s\U0001F000-\U0001FAFF☀-➿️‍]*$")
 
 
 def history_path(conn: dict) -> str:
-    """jeevi-zalo's history file for this connection (its session HOME, else this user's home)."""
+    """javis-zalo's history file for this connection (its session HOME, else this user's home)."""
     import os
     home = str(((conn or {}).get("env") or {}).get("HOME") or "") or os.path.expanduser("~")
     return os.path.join(home, *HISTORY_FILE)
@@ -764,7 +764,7 @@ def _parse_lines(raw: bytes, names: dict, oldest_ms: int) -> List[dict]:
 
 
 def watch_history(conn: dict, now: Optional[float] = None) -> int:
-    """The signal: read what jeevi-zalo appended to its history file since the last look and queue its private-chat
+    """The signal: read what javis-zalo appended to its history file since the last look and queue its private-chat
     messages. Returns how many were queued. One stat call when nothing changed. Never raises."""
     import os
     now = time.time() if now is None else float(now)
@@ -773,7 +773,7 @@ def watch_history(conn: dict, now: Optional[float] = None) -> int:
     try:
         st = os.stat(path)
     except OSError:
-        return 0        # no file yet (nothing filed, or jeevi-zalo older than 1.5.0)
+        return 0        # no file yet (nothing filed, or javis-zalo older than 1.5.0)
     size, ident = st.st_size, (st.st_dev, st.st_ino)
     off = tt.get("history_off")
     if off is not None and ident == tt.get("history_id") and size == off:
@@ -782,7 +782,7 @@ def watch_history(conn: dict, now: Optional[float] = None) -> int:
     try:
         with open(path, "rb") as f:
             if off is None or ident != tt.get("history_id") or size < off:
-                # First look in this lifetime, or jeevi-zalo rewrote the file (compaction): only its tail matters, and
+                # First look in this lifetime, or javis-zalo rewrote the file (compaction): only its tail matters, and
                 # everything already in the inbox is filtered out later by id.
                 start = max(0, size - HISTORY_TAIL)
                 f.seek(start)
@@ -848,9 +848,9 @@ def catch_up(conn: dict, messages: List[dict], now: Optional[float] = None) -> i
                 if _own_already_stored(cid, ev) or echo:
                     continue
             # Issue #1775: an own message Jeevi sent with a Zalo tool is its work, not the owner typing.
-            sent_by_jeevi = ev["sender_type"] == "human" and zalo_sent_ledger.take(cid, ev)
+            sent_by_javis = ev["sender_type"] == "human" and zalo_sent_ledger.take(cid, ev)
             ev["metadata"] = dict(ev.get("metadata") or {}, recovered=True,
-                                  **(zalo_sent_ledger.MARK if sent_by_jeevi else {}))
+                                  **(zalo_sent_ledger.MARK if sent_by_javis else {}))
             r = conversations.ghi_su_kien(ev, late=True)
             if not (r.get("ok") and not r.get("trung")):
                 continue
@@ -858,7 +858,7 @@ def catch_up(conn: dict, messages: List[dict], now: Optional[float] = None) -> i
             if known is None:
                 known = set()
             known.add(ev["external_message_id"])
-            if ev["sender_type"] == "human" and not sent_by_jeevi:
+            if ev["sender_type"] == "human" and not sent_by_javis:
                 key = (cid, chat)
                 _TAY[key] = max(float(_TAY.get(key) or 0), at)
     if written:
@@ -1117,7 +1117,7 @@ async def doc_mot_lan(conn: dict) -> dict:
     return {"moi": moi, "trung": trung}
 
 
-# Lỗi chết của tiến trình jeevi-zalo (src/commands/mcp.js) mà người dùng tự xử được, dịch ra lời thường.
+# Lỗi chết của tiến trình javis-zalo (src/commands/mcp.js) mà người dùng tự xử được, dịch ra lời thường.
 _LOI_ZALO = (
     (re.compile(r"duplicate zalo web session", re.I),
      "Zalo đã ngắt phiên của Jeevi vì tài khoản này vừa được mở ở nơi khác: Zalo Web trên trình duyệt "
@@ -1173,7 +1173,7 @@ async def _vong() -> None:
                     # hạn thì để yên, khỏi tăng số lần gọi MCP của mọi tài khoản theo một cuộc chat.
                     if luc < float(tt.get("doc_toi") or 0):
                         continue
-                    # Live push (2026-11-10): an account whose jeevi-zalo pushes is read when a wake-up is waiting
+                    # Live push (2026-11-10): an account whose javis-zalo pushes is read when a wake-up is waiting
                     # and NOT otherwise. `take` comes before the read, so a wake-up that lands while the read runs
                     # is still pending afterwards.
                     woken = zalo_push.take(conn["id"])
@@ -1199,7 +1199,7 @@ async def _vong() -> None:
                     # Hạn sớm hơn một nhịp chút ít: vòng ngủ đúng một nhịp thì lần thức sau chắc chắn đã tới hạn.
                     # A wake-up that arrived during this read: read again on the next pass, no wait. The interval
                     # never goes past NHIP, so an account that pushed and then lost its process is looked at again
-                    # within one tick (`push_active` is false then, and the read restarts jeevi-zalo).
+                    # within one tick (`push_active` is false then, and the read restarts javis-zalo).
                     tt["doc_toi"] = 0 if zalo_push.pending(conn["id"]) else luc + min(NHIP, _nhip_cua(conn["id"])) * 0.9
             wait = _loop_wait(conns, bat_ids)
         except asyncio.CancelledError:
@@ -1215,7 +1215,7 @@ async def _vong() -> None:
 
 
 # ============================================================
-# Live push: read when jeevi-zalo says a message arrived (2026-11-10, see zalo_push.py)
+# Live push: read when javis-zalo says a message arrived (2026-11-10, see zalo_push.py)
 # ============================================================
 _WAKE: Optional[asyncio.Event] = None       # set by a wake-up, waited on by the loop between two passes
 _LOOP: Optional[asyncio.AbstractEventLoop] = None       # the event loop the read loop runs on (set in `start`)
@@ -1225,7 +1225,7 @@ def wake() -> None:
     """Make the read loop run a pass now. Safe from any thread and before the loop exists.
 
     With live push the loop does not tick while there is nothing to do, so everything that gives it something to do
-    calls this: a wake-up from jeevi-zalo, a jeevi-zalo process that exited, a turn put on hold, a bot that took or
+    calls this: a wake-up from javis-zalo, a javis-zalo process that exited, a turn put on hold, a bot that took or
     left its post, an account switched on, a connection saved on the Connections page."""
     ev, loop = _WAKE, _LOOP
     if ev is None or loop is None:
@@ -1244,7 +1244,7 @@ def wake() -> None:
 
 def _on_mcp_exit(key: Any) -> None:
     """A stdio MCP process ended (mcp_client.STDIO_EXIT_LISTENERS). When it is one of our accounts, read it now: the
-    read starts jeevi-zalo again and picks up what Zalo replays, instead of waiting for anything."""
+    read starts javis-zalo again and picks up what Zalo replays, instead of waiting for anything."""
     cid = str(key or "")
     if cid and (cid in _TT or cid in _BOTS):
         _TT.setdefault(cid, {})["doc_toi"] = 0
@@ -1254,9 +1254,9 @@ def _on_mcp_exit(key: Any) -> None:
 def _loop_wait(conns: List[dict], on_ids: set, now: Optional[float] = None) -> Optional[float]:
     """How long the loop may sleep after a pass; None = until `wake()`.
 
-    An account whose jeevi-zalo pushes needs no tick at all: a message, a dead process and a config change each wake
+    An account whose javis-zalo pushes needs no tick at all: a message, a dead process and a config change each wake
     the loop. It gets a short tick only WHILE a turn of its own is on hold (released by time, not by an event) or a
-    history check is queued. An account that does not push (older jeevi-zalo, process not started yet) keeps the
+    history check is queued. An account that does not push (older javis-zalo, process not started yet) keeps the
     timer it always had, and a failed account is retried when its rest ends."""
     now = time.time() if now is None else float(now)
     waits: List[float] = []
@@ -1280,8 +1280,8 @@ def _loop_wait(conns: List[dict], on_ids: set, now: Optional[float] = None) -> O
 
 
 def push_active(conn_id: str) -> bool:
-    """This account's jeevi-zalo pushes: a wake-up came from the MCP session that is alive right now. False for an
-    older jeevi-zalo, a process that died (the next pass reads, which restarts it), or with live push switched off."""
+    """This account's javis-zalo pushes: a wake-up came from the MCP session that is alive right now. False for an
+    older javis-zalo, a process that died (the next pass reads, which restarts it), or with live push switched off."""
     try:
         import mcp_client
         cid = str(conn_id or "")
@@ -1293,8 +1293,8 @@ def push_active(conn_id: str) -> bool:
 
 
 def on_push(conn_id: str, body: dict) -> dict:
-    """A wake-up from jeevi-zalo for one connection (POST /zalo/push, checked there). Marks the account as due and
-    wakes the loop. Returns {"ok", "known"}; an unknown or disabled connection is answered ok so jeevi-zalo stops
+    """A wake-up from javis-zalo for one connection (POST /zalo/push, checked there). Marks the account as due and
+    wakes the loop. Returns {"ok", "known"}; an unknown or disabled connection is answered ok so javis-zalo stops
     retrying, and nothing is recorded for it."""
     cid = str(conn_id or "").strip()
     conn = ket_noi_theo_id(cid) if cid else None
@@ -1324,7 +1324,7 @@ async def _sleep_or_wake(seconds: Optional[float]) -> None:
 
 async def _idle_turn(conn: dict, tt: dict, now: float) -> None:
     """One pass over a pushing account with no wake-up waiting: everything a read used to do on the side, without
-    calling jeevi-zalo. No wake-up since the last read means no message since then, which is what releasing a held
+    calling javis-zalo. No wake-up since the last read means no message since then, which is what releasing a held
     turn needs to know (a customer who stopped typing, an owner who did not answer by hand)."""
     cid = conn["id"]
     try:
@@ -1344,9 +1344,9 @@ async def _idle_turn(conn: dict, tt: dict, now: float) -> None:
 # ============================================================
 # Zalo keeps ONE live socket per account. When a second session of the same account is up (an `mcp start` an earlier
 # server lifetime left behind, Zalo Web of this nick in a browser, another Jeevi or Claude client), ours is evicted
-# right after every re-login and jeevi-zalo backs off up to five minutes. Reading still "works" (the buffer answers),
+# right after every re-login and javis-zalo backs off up to five minutes. Reading still "works" (the buffer answers),
 # so the bot card stayed green while the bot heard only the few seconds after each reconnect (field report
-# 22/10/2026, Jeevi Vũ: three hours of tags in two groups unanswered). jeevi-zalo prints each close as
+# 22/10/2026, Jeevi Vũ: three hours of tags in two groups unanswered). javis-zalo prints each close as
 # "Connection closed (code: N). Re-login in Ss... (reconnect #R, rapid #K)"; K counts closes that came before the
 # connection was stable, so K >= THRASH_RAPID means a rival.
 THRASH_RAPID = 3
@@ -1357,7 +1357,7 @@ _THRASH_SEEN: Dict[str, tuple] = {}      # conn_id -> (session pid, last reconne
 
 
 def thrash_of(lines: List[str]) -> Optional[tuple]:
-    """(reconnect number, rapid count) of the latest close line in a jeevi-zalo stderr tail, None when there is none."""
+    """(reconnect number, rapid count) of the latest close line in a javis-zalo stderr tail, None when there is none."""
     for line in reversed(lines or []):
         m = _THRASH_RE.search(str(line))
         if m:
@@ -1705,7 +1705,7 @@ def nhan_dien_goi(conn_id: str, ev: dict, ten_khac=()) -> tuple:
 
 
 def _link_trong_quote(rt: dict) -> str:
-    """A photo link the quote itself carries, or "". jeevi-zalo 1.4 gives `replyTo` only {senderId, senderName, text,
+    """A photo link the quote itself carries, or "". javis-zalo 1.4 gives `replyTo` only {senderId, senderName, text,
     msgId}; for a quoted photo Zalo may put the photo's serialized payload in `text` ({"href": ..., "thumb": ...}).
     Plain text is NOT read as a link: a quoted chat line that happens to hold a URL is not a photo."""
     for k in ("imageUrl", "image_url", "mediaUrl"):
@@ -1841,7 +1841,7 @@ def ghi_da_gui(conn_id: str, thread: str, text: str) -> None:
 def ghi_da_gui_anh(conn_id: str, thread: str, so: int = 1) -> None:
     """Bot is about to send `so` images: remember them so their echoes are not taken for the owner's hand.
 
-    Since jeevi-zalo keeps the account's own messages in the live feed (flag `isSelf`), an image the bot sends comes
+    Since javis-zalo keeps the account's own messages in the live feed (flag `isSelf`), an image the bot sends comes
     back as an image "from the owner". It has no text to match, so without this the inbox shows it twice and the bot
     believes the owner just stepped in and goes quiet in that chat for TAY_IM seconds."""
     khoa = (str(conn_id), str(thread))

@@ -110,8 +110,8 @@ def wire(*, ask: Callable[[str], Awaitable[str]], get_bot: Callable[[str], Optio
 
 
 def enabled() -> bool:
-    """On unless the operator sets JEEVI_CUSTOMER_PROFILE=0 (each update is one background model call)."""
-    return os.environ.get("JEEVI_CUSTOMER_PROFILE", "1").strip().lower() not in ("0", "false", "off", "no")
+    """On unless the operator sets JAVIS_CUSTOMER_PROFILE=0 (each update is one background model call)."""
+    return os.environ.get("JAVIS_CUSTOMER_PROFILE", "1").strip().lower() not in ("0", "false", "off", "no")
 
 
 def clean(text, limit: int) -> str:

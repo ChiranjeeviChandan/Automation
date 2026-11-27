@@ -5,14 +5,14 @@
   // Locale để định dạng số/ngày. Lấy từ i18n chứ KHÔNG khoá "vi-VN": người dùng đổi
   // ngôn ngữ giao diện thì ngày giờ phải đổi theo, nếu không thì nửa màn hình tiếng Anh
   // mà ngày vẫn dd/mm/yyyy kiểu Việt.
-  const LOC = () => (window.JeeviI18n && JeeviI18n.locale()) || "vi-VN";
+  const LOC = () => (window.JavisI18n && JavisI18n.locale()) || "vi-VN";
   const studio = document.getElementById("studio");
   const editor = document.getElementById("studioEditor");
   const brain = () => (window.currentBrainPath ? currentBrainPath() : "brain");
   const esc = (s) => (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   // 0.214.0: the (i) button and its hidden block (info-tip.js); without it the text is drawn open.
-  const infoBtn = () => (window.JeeviInfo ? window.JeeviInfo.btn(t("info.more")) : "");
-  const infoBody = (html) => (window.JeeviInfo ? window.JeeviInfo.body(html) : `<div class="info-body">${html}</div>`);
+  const infoBtn = () => (window.JavisInfo ? window.JavisInfo.btn(t("info.more")) : "");
+  const infoBody = (html) => (window.JavisInfo ? window.JavisInfo.body(html) : `<div class="info-body">${html}</div>`);
   const api = async (p, o) => {
     // Timeout 12s → loader hiện trạng thái rỗng thay vì kẹt "Đang tải..." mãi nếu server chậm/treo.
     const ctrl = new AbortController();
@@ -123,7 +123,7 @@
   }
 
   // Studio đã tách thành các trang sidebar riêng. openStudio = điều hướng rail (giữ tương thích
-  // cho nút header & dải số liệu .bstat ở đáy graph). Console gọi loader qua window.JeeviStudio.
+  // cho nút header & dải số liệu .bstat ở đáy graph). Console gọi loader qua window.JavisStudio.
   //
   // Hai trang "agents" và "workflows" ĐÃ BỎ, cả hai gộp vào trang Cộng sự (workspace). Nút cũ
   // vẫn truyền tên trang cũ (dải .bstat trong index.html, nút Studio trên thanh đầu), nên đổi
@@ -131,7 +131,7 @@
   // tại, rail không sáng mục nào và khung giữa trắng trơn.
   // 2026-11-23: this file loads with the lazy group "congviec", so window.openStudio and the Studio button, which
   // must work from the first second, moved to app.js together with this renaming of the old page names.
-  window.JeeviStudio = {
+  window.JavisStudio = {
     workflows: loadWorkflows, agents: loadAgents, skills: loadSkills,
     // Trang Cộng sự mượn chính hai trình sửa này (xem editAgent/editWorkflow) + nút Xuất.
     editAgent: editAgent, editWorkflow: editWorkflow, exportItem: exportItem, importItems: importItems,
@@ -275,7 +275,7 @@
 
   // (Hàm switchTab của Studio ba-tab cũ đã bỏ: Studio không còn là MỘT trang ba tab, mỗi phần
   // là một trang riêng của rail, nên nó chỉ còn là đoạn code chết trỏ vào ba panel không tồn
-  // tại. Đổi trang bây giờ đi qua openStudio/JeeviNav.)
+  // tại. Đổi trang bây giờ đi qua openStudio/JavisNav.)
 
   // ===== Workflows =====
   // Biến workflow đọc thành lời cho ô bước: thay "…" (cũ) vì "Nhận …, tạo project folder"
@@ -600,9 +600,9 @@
           render();
         };
         sl.appendChild(row);
-        if (window.JeeviAgentPicker) {
-          window.JeeviAgentPicker.enhance(row.querySelector(".st-agent"), { title: t("ap.title_step") });
-          window.JeeviAgentPicker.enhance(row.querySelector(".st-verify-agent"), { title: t("ap.title_verify") });
+        if (window.JavisAgentPicker) {
+          window.JavisAgentPicker.enhance(row.querySelector(".st-agent"), { title: t("ap.title_step") });
+          window.JavisAgentPicker.enhance(row.querySelector(".st-verify-agent"), { title: t("ap.title_verify") });
         }
       });
       box.querySelector("#addStep").onclick = () => { captureSteps(); steps.push({ agent: agentsCache[0].slug, task: "" }); openIdx = steps.length - 1; render(); };
@@ -757,11 +757,11 @@
         + (mProv && !provCua(mProv).configured ? " " + t("studio.saved_suffix") : "");
     const box = opts.host || document.getElementById("editorBox");
     if (opts.host && !box.isConnected) return;
-    let avatar = window.JeeviAvatar ? (a ? window.JeeviAvatar.of(a) : window.JeeviAvatar.random()) : null;
+    let avatar = window.JavisAvatar ? (a ? window.JavisAvatar.of(a) : window.JavisAvatar.random()) : null;
     box.classList.add("agent-editor");
     // 0.175.0: câu giải thích dài của Tài liệu và Model nằm sau nút i cạnh nhãn (info-tip.js); câu báo việc cần làm (chưa
     // lưu nên chưa gắn tài liệu được, chưa kết nối nhà cung cấp nào) vẫn hiện thẳng.
-    const JI = window.JeeviInfo;
+    const JI = window.JavisInfo;
     // 0.193.0: the assistant's own reasoning level (default medium) and, from a team, a button to message it privately.
     // Same English level names as the main chat's effort chip (eff.*, owner 22/10/2026).
     const REASONING = [["off", "eff.off"], ["low", "eff.low"], ["medium", "eff.medium"], ["high", "eff.high"],
@@ -827,7 +827,7 @@
     });
     // The picker reports its starting value once while it draws; only later changes are edits.
     let avatarSan = false;
-    if (window.JeeviAvatar) window.JeeviAvatar.picker(box.querySelector("#agAvatar"), avatar, v => { avatar = v; if (avatarSan) danhDau(); });
+    if (window.JavisAvatar) window.JavisAvatar.picker(box.querySelector("#agAvatar"), avatar, v => { avatar = v; if (avatarSan) danhDau(); });
     avatarSan = true;
     // TÀI LIỆU & LINK của trợ lý: mở ĐÚNG ngăn kéo mà project và cuộc trò chuyện đang dùng
     // (sessions-ui.js), không dựng bản thứ hai ở đây. Trợ lý chưa lưu thì chưa có slug để gắn
@@ -838,10 +838,10 @@
       // Ở trang Cộng sự (opts.host) thì mở ngăn có công tắc phạm vi, đứng sẵn ở "của trợ lý":
       // bấm từ Cài đặt trợ lý là ý muốn gắn cho trợ lý. Ở Studio thì cuộc đang mở không liên
       // quan gì tới trợ lý này, nên vẫn mở ngăn riêng của trợ lý như cũ.
-      if (opts.host && window.JeeviChatSide && window.JeeviChatSide.moTaiLieu)
-        window.JeeviChatSide.moTaiLieu(a.slug, a.name || a.slug, "agent");
-      else if (window.JeeviChatSide && window.JeeviChatSide.moKhungAgent)
-        window.JeeviChatSide.moKhungAgent(a.slug, a.name || a.slug);
+      if (opts.host && window.JavisChatSide && window.JavisChatSide.moTaiLieu)
+        window.JavisChatSide.moTaiLieu(a.slug, a.name || a.slug, "agent");
+      else if (window.JavisChatSide && window.JavisChatSide.moKhungAgent)
+        window.JavisChatSide.moKhungAgent(a.slug, a.name || a.slug);
     };
     box.querySelectorAll("label").forEach(label => { const input = label.nextElementSibling; if (input && /^(INPUT|SELECT|TEXTAREA)$/.test(input.tagName)) label.htmlFor = input.id; });
     // ----- Bảng chọn model: CÙNG thân với bảng dưới khung chat (model-list.js) -----
@@ -861,7 +861,7 @@
         searchId: "agModelSearch", extraTop: hangMacDinh,
       };
       const loc = mLoc;
-      mPop.innerHTML = await window.JeeviModelList.render(o);
+      mPop.innerHTML = await window.JavisModelList.render(o);
       // Tìm kiếm chạy trên MỌI nhà: nhà nào chưa tải thì model-list.js vẽ "đang tải" và trả
       // Promise trong o.cho; tải xong thì vẽ lại, nếu người dùng chưa gõ chữ khác.
       if (o.cho.length) Promise.all(o.cho).then(() => { if (!mPop.hidden && loc === mLoc) veModelPop(); });
@@ -936,7 +936,7 @@
     const nutChat = box.querySelector("#agChat");
     if (nutChat) nutChat.onclick = () => {
       moDong(false);
-      if (window.JeeviWorkspace && window.JeeviWorkspace.openCommand) window.JeeviWorkspace.openCommand("agent", a.slug);
+      if (window.JavisWorkspace && window.JavisWorkspace.openCommand) window.JavisWorkspace.openCommand("agent", a.slug);
     };
     box.querySelector("#saveAg").onclick = async () => {
       const name = box.querySelector("#agName").value.trim(); if (!name) return alert(t("studio.need_name"));
@@ -955,7 +955,7 @@
           prompt: box.querySelector("#agPrompt").value, skills: sk, model: mName, model_provider: mProv,
           reasoning: (box.querySelector("#agReasoning") || {}).value || "medium",
           ...(a && a.system ? {} : { chatgpt_voice: (box.querySelector("#agCallVoice") || {}).value || "" }),
-          slug: a ? a.slug : "", brain: brain(), ...(avatar ? window.JeeviAvatar.formFields(avatar) : {}) }) });
+          slug: a ? a.slug : "", brain: brain(), ...(avatar ? window.JavisAvatar.formFields(avatar) : {}) }) });
         if (!saved.ok) { datTrangThai(dirty ? "dirty" : ""); alert(loiLuu(saved.error)); return; }
         dirty = false;
         datTrangThai("saved");
@@ -1330,8 +1330,8 @@
     };
     // Phân trang bằng pager() dùng chung của console.js. Đổi nhóm, bộ lọc hay ô tìm thì nơi gọi
     // đặt page về 0; bật/tắt một skill thì KHÔNG, nên người đang ở trang 3 vẫn ở trang 3.
-    if (typeof window.JeeviPager === "function") {
-      window.JeeviPager(box, list, SK_MOI_TRANG, veTrang, "",
+    if (typeof window.JavisPager === "function") {
+      window.JavisPager(box, list, SK_MOI_TRANG, veTrang, "",
                         { page: _skState.page, onPage: (p) => { _skState.page = p; } });
     } else {
       box.innerHTML = ""; box.appendChild(veTrang(list));
@@ -1453,7 +1453,7 @@
   }
 
   // Lấy các gạch đầu dòng của mục "When to use" / "Dùng khi nào" trong SKILL.md (quy ước của
-  // jeevi-builder: ví dụ kích hoạt nằm trong thân, mô tả chỉ 150 ký tự).
+  // javis-builder: ví dụ kích hoạt nằm trong thân, mô tả chỉ 150 ký tự).
   function phanDungKhiNao(body) {
     const dong = String(body || "").split(/\r?\n/);
     const i = dong.findIndex(l => /^#{1,4}\s*(when to use|dùng khi nào|khi nào dùng|khi nào nên dùng)\b/i.test(l.trim()));
@@ -1502,11 +1502,11 @@
     const sw = box.querySelector(".sk3-sw");
     sw.onclick = () => { sw.disabled = true; toggleSkill(s, !on); };
     box.querySelector("#skDEdit").onclick = () => openSkillForm(s.slug);
-    if (on && !s.system && s.source !== ".agents" && window.JeeviImprovementCandidates) {
+    if (on && !s.system && s.source !== ".agents" && window.JavisImprovementCandidates) {
       const improve = document.createElement("button");
       improve.type = "button";
       improve.textContent = t("improve.title");
-      improve.onclick = () => window.JeeviImprovementCandidates.open({brain:brain(), slug:s.slug,
+      improve.onclick = () => window.JavisImprovementCandidates.open({brain:brain(), slug:s.slug,
         isCurrent:() => _skState.open === s.slug && _skState.skills.some(x => x.slug === s.slug && x.enabled !== false && !x.system)});
       box.querySelector(".sk3-d-act").append(improve);
     }

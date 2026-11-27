@@ -11,7 +11,7 @@ cancelled every running handoff. Pins:
   - the call's other tasks (the long-job heartbeat) still stop;
   - the voice background time limit stops a kept handoff and says so; stopping the background work says so too;
   - `_voice_after_call` posts through `_notify_owner` to `web:<sid>` with a job card, with no pronoun or long dash;
-  - a new call in the same chat does not queue behind a handoff left running (`_voice_ask_jeevi` shared circuit).
+  - a new call in the same chat does not queue behind a handoff left running (`_voice_ask_javis` shared circuit).
 """
 from _paths import ROOT, SERVER  # noqa: F401
 import ast
@@ -41,7 +41,7 @@ class HangUpRouteTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
         seen = {}
 
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_jeevi",
+            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_javis",
                               "args": {"request": "kiểm tra doanh thu tuần này"}})
             await h.until(lambda: len(h.asks) == 1, "the brain runs")
             await self._hang_up(h)
@@ -80,7 +80,7 @@ class HangUpRouteTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
 
     async def test_heartbeat_still_stops_at_hang_up(self):
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_jeevi", "args": {"request": "báo cáo dài"}})
+            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_javis", "args": {"request": "báo cáo dài"}})
             await h.until(lambda: prov.status_calls, "the long-job heartbeat speaks during the call")
             await self._hang_up(h)
             await asyncio.sleep(0.1)   # several heartbeat ticks
@@ -92,7 +92,7 @@ class HangUpRouteTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
 
     async def test_time_limit_stops_a_kept_handoff_and_says_so(self):
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_jeevi", "args": {"request": "quét kho"}})
+            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_javis", "args": {"request": "quét kho"}})
             await h.until(lambda: len(h.asks) == 1, "the brain runs")
             await self._hang_up(h)
             await h.until(lambda: h.after_call, "the time limit posts a line")
@@ -102,7 +102,7 @@ class HangUpRouteTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
 
     async def test_stopping_the_background_work_cancels_it_and_says_so(self):
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_jeevi", "args": {"request": "quét kho"}})
+            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_javis", "args": {"request": "quét kho"}})
             await h.until(lambda: len(h.asks) == 1, "the brain runs")
             await self._hang_up(h)
             h.kept[0].cancel()   # what huy_viec_nen_giong does for "stop the background work"
@@ -113,9 +113,9 @@ class HangUpRouteTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
 
     async def test_nothing_new_follow_up_posts_nothing(self):
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_jeevi", "args": {"request": "tra đơn hàng"}})
+            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_javis", "args": {"request": "tra đơn hàng"}})
             await h.until(lambda: len(h.asks) == 1, "the first job runs")
-            await prov.q.put({"type": "tool_call", "id": "c2", "name": "ask_jeevi",
+            await prov.q.put({"type": "tool_call", "id": "c2", "name": "ask_javis",
                               "args": {"request": "nhớ kèm cả đơn hôm qua"}})
             await h.until(lambda: len(h.asks) == 2, "the follow-up runs in parallel")
             await self._hang_up(h)
@@ -130,7 +130,7 @@ class HangUpRouteTests(LiveRouteMixin, unittest.IsolatedAsyncioTestCase):
 
     async def test_answer_given_during_the_call_is_not_posted_again(self):
         async def script(prov, h):
-            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_jeevi", "args": {"request": "tra đơn"}})
+            await prov.q.put({"type": "tool_call", "id": "c1", "name": "ask_javis", "args": {"request": "tra đơn"}})
             await h.until(lambda: len(h.asks) == 1, "the brain runs")
             h.release(0)
             await h.until(lambda: prov.results, "the answer reaches the model during the call")
@@ -215,7 +215,7 @@ class SharedCircuitTests(unittest.IsolatedAsyncioTestCase):
             return {"text": request + " ok"}
 
         runs = {}
-        ask = _compile("_voice_ask_jeevi", _VOICE_SHARED_RUNS=runs, uuid=uuid, os=__import__("os"), _TG_SESS={},
+        ask = _compile("_voice_ask_javis", _VOICE_SHARED_RUNS=runs, uuid=uuid, os=__import__("os"), _TG_SESS={},
                        _voice_agent=lambda s, b: None, _tg_session=lambda k: {}, _agent_sess_key=lambda k, a: k,
                        _brain_root=lambda b: "/nonexistent-brain", _tg_answer=tg_answer,
                        channel_context=types.SimpleNamespace(strip_control_blocks=lambda t: t))

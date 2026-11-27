@@ -12,7 +12,7 @@
    - #1213 (the error showed on opens that were only slow): it waits while fetch-gop.js is retrying reads (its reconnect
      band is on screen), the Jeevi Core POST is cut after CORE_SESSION_WAIT_MS instead of hanging for good, and app.js
      does not hand a load stuck in flight to the Retry that follows;
-   - freshness.js: the first page opened on a new version drops the batch lists ("jeevi.batch.*") the previous
+   - freshness.js: the first page opened on a new version drops the batch lists ("javis.batch.*") the previous
      version recorded, which Ctrl+Shift+R does not clear, and nothing else. */
 const fs = require("fs");
 const path = require("path");
@@ -52,7 +52,7 @@ async function openGuard() {
       coTinChuaDoc: () => false, daDoc() {}, ganCongHuong() {}, t: (k) => k, fd: (o) => o,
       api: async (u) => (u.indexOf("/sessions?") === 0 ? { sessions: [{ id: "s1" }] } : {}),
       veLoi(msg) { const tag = "<err:" + msg + ">"; ident.innerHTML += tag; errEls.push(tag); },
-      window: { JeeviSessions: { _cur: null, open: openSession, current() { return this._cur; }, new() {} } },
+      window: { JavisSessions: { _cur: null, open: openSession, current() { return this._cur; }, new() {} } },
     };
     Object.assign(ctx, (extra && extra.ctx) || {});
     Object.assign(ctx.window, (extra && extra.window) || {});
@@ -87,7 +87,7 @@ async function openGuard() {
 
   // #1213: no error while reads are being retried; it shows once the retries are over.
   let retrying = true;
-  t = run(() => new Promise(() => {}), { window: { JeeviFetchGop: { retrying: () => retrying } } });
+  t = run(() => new Promise(() => {}), { window: { JavisFetchGop: { retrying: () => retrying } } });
   t.ctx.moPhien({ slug: "viet-email" }, false);
   await wait(150);
   check("#1213: while fetch-gop.js retries, the slow-open error waits", !t.ident.innerHTML.includes("ws.err_session_slow"),
@@ -102,12 +102,12 @@ async function openGuard() {
   t = run(() => new Promise(() => {}), { ctx: {
     AbortController,
     api: (u, opt) => {
-      if (u !== "/jeevi-core/session") return Promise.resolve({});
+      if (u !== "/javis-core/session") return Promise.resolve({});
       sawSignal = !!(opt && opt.signal);
       return new Promise((ok, no) => { if (opt && opt.signal) opt.signal.addEventListener("abort", () => no(new Error("aborted"))); });
     },
   } });
-  const ended = t.ctx.moPhien({ slug: "jeevi-core", system: true }, false);
+  const ended = t.ctx.moPhien({ slug: "javis-core", system: true }, false);
   const res = await Promise.race([ended, wait(400).then(() => "hung")]);
   check("#1213: the Jeevi Core POST carries a time limit", sawSignal);
   check("#1213: a Jeevi Core POST that hangs ends the open with the error", res === false
@@ -151,7 +151,7 @@ function freshPage(version, store) {
   };
   const doc = {
     readyState: "loading", hidden: false,
-    getElementById: (id) => (id === "jeevi-fresh" ? { textContent: JSON.stringify({ version, assets: {} }) } : null),
+    getElementById: (id) => (id === "javis-fresh" ? { textContent: JSON.stringify({ version, assets: {} }) } : null),
     addEventListener() {},
   };
   const win = {
@@ -166,17 +166,17 @@ function freshPage(version, store) {
 }
 
 function versionCaches() {
-  const store = { "jeevi.batch.chat": "[\"/x\"]", "jeevi.batch.boot": "[]", "jeevi_last_page": "workspace", "jeevi.theme": "dark" };
+  const store = { "javis.batch.chat": "[\"/x\"]", "javis.batch.boot": "[]", "javis_last_page": "workspace", "javis.theme": "dark" };
   freshPage("0.507.2", store);
   check("first ever page: nothing is dropped, the version is noted",
-    store["jeevi.batch.chat"] && store["jeevi-fresh-version"] === "0.507.2", store);
+    store["javis.batch.chat"] && store["javis-fresh-version"] === "0.507.2", store);
   freshPage("0.507.2", store);
-  check("same version again: the batch lists stay", !!store["jeevi.batch.chat"] && !!store["jeevi.batch.boot"]);
+  check("same version again: the batch lists stay", !!store["javis.batch.chat"] && !!store["javis.batch.boot"]);
   freshPage("0.508.1", store);
   check("a new version drops every batch list of the old one",
-    !("jeevi.batch.chat" in store) && !("jeevi.batch.boot" in store) && store["jeevi-fresh-version"] === "0.508.1", store);
+    !("javis.batch.chat" in store) && !("javis.batch.boot" in store) && store["javis-fresh-version"] === "0.508.1", store);
   check("and nothing else: the owner's own choices stay",
-    store["jeevi_last_page"] === "workspace" && store["jeevi.theme"] === "dark");
+    store["javis_last_page"] === "workspace" && store["javis.theme"] === "dark");
 
   const idx = read("dashboard/index.html");
   check("freshness.js runs before fetch-gop.js reads the lists",

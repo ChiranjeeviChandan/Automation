@@ -56,12 +56,12 @@ check("drawing the Teams page again gives it back before rendering",
   teamsBranch.indexOf("_returnNoteEditor();") >= 0 && teamsBranch.indexOf("_returnNoteEditor();") < leaveAt);
 
 // ---- 3. another team closes the docked file ----
-check("console.js exposes closeNote", /window\.JeeviCloseNote = closeNote;/.test(CON));
+check("console.js exposes closeNote", /window\.JavisCloseNote = closeNote;/.test(CON));
 const openTeam = between(TM, "function openTeam(id, taskId)", 400);
 check("CANARY: opening a team closes a file docked in the chat column", /closeDockedFile\(\);/.test(openTeam));
 const closeDocked = between(TM, "function closeDockedFile()", 400);
 check("only a file docked in THIS page is closed (a file open elsewhere stays)", /S\.el\.contains\(ed\)/.test(closeDocked));
-check("closing goes through JeeviCloseNote (writes unsaved text)", /window\.JeeviCloseNote\(\)/.test(closeDocked));
+check("closing goes through JavisCloseNote (writes unsaved text)", /window\.JavisCloseNote\(\)/.test(closeDocked));
 
 // ---- 4. no frame: the popup, never an open out of sight ----
 const canDock = between(CON, "function _neCanDock()", 700);
@@ -72,9 +72,9 @@ check("a page that hosts the editor needs its [data-ne-host] frame",
   /\(cls\.contains\("on-chat"\) \|\| cls\.contains\("on-teams"\)\) && !!document\.querySelector\("\[data-ne-host\]"\)/.test(canDock));
 const openVault = between(CON, "function openVaultPath(fullPath)", 1800);
 check("CANARY: openVaultPath docks only where the editor can be seen",
-  /!isNarrow\(\) && _neCanDock\(\) && typeof window\.JeeviOpenNote === "function"/.test(openVault));
+  /!isNarrow\(\) && _neCanDock\(\) && typeof window\.JavisOpenNote === "function"/.test(openVault));
 check("otherwise the popup editor opens the file",
-  openVault.indexOf("_neCanDock()") < openVault.indexOf("window.JeeviEditFile(clean)"));
+  openVault.indexOf("_neCanDock()") < openVault.indexOf("window.JavisEditFile(clean)"));
 
 // ---- openVaultPath run for real: no frame -> popup, frame -> docked ----
 const vm = require("vm");
@@ -85,7 +85,7 @@ const exts = ["VT_IMG_EXTS", "VT_TEXT_EXTS"].map((n) => (new RegExp("\\n  const 
 function openOn(dockable) {
   const opened = [];
   const ctx = {
-    window: { JeeviOpenNote: (p) => opened.push("docked:" + p), JeeviEditFile: (p) => opened.push("popup:" + p) },
+    window: { JavisOpenNote: (p) => opened.push("docked:" + p), JavisEditFile: (p) => opened.push("popup:" + p) },
     _goFileUri: (p) => p, isNarrow: () => false, _vtRaw: (p) => p, _neCanDock: () => dockable,
     openFilesAt: (p) => opened.push("files:" + p),
   };

@@ -13,17 +13,17 @@ thừa hưởng nguyên vẹn, không phải chép lại.
 
 Ba loại engine, khác nhau ở CÔNG CỤ có được - đây là chỗ phải cẩn thận:
 - anthropic-cli: Claude Code. Tool file native + Bash + MCP, chặn theo allowlist per-call.
-- openai-oauth: Codex CLI, cũng là agent thật (đọc/ghi file + MCP qua profile jeevi).
+- openai-oauth: Codex CLI, cũng là agent thật (đọc/ghi file + MCP qua profile javis).
   Sandbox của Codex ánh xạ theo mode: suggest -> read-only, auto -> workspace-write,
   full -> toàn quyền. KHÔNG có allowlist per-call như Claude nên chỉ chặn ở tầng sandbox.
 - grok-cli: Grok Build CLI chạy bằng gói SuperGrok / X Premium+. Cũng agent thật (tool file +
   MCP hub qua .grok/config.toml trong brain). Mức quyền xuống thẳng cờ chặn của CLI:
   suggest -> chặn Write/Edit/Bash, auto -> chặn Bash, full -> không chặn ở tầng CLI.
 - api (openrouter/openai/gemini/anthropic-api): KHÔNG có tool native. Bù lại hub cấp
-  jeevi_read_file / jeevi_list_dir / jeevi_write_file / jeevi_use_skill, tìm và đọc web
-  (jeevi_web_search / jeevi_web_fetch) + tool MCP, và jeevi_write_file tự chặn khi mode là
-  suggest (mcp_hub._builtin_tools). Từ 05/11/2026 có thêm TERMINAL THẬT (jeevi_terminal,
-  jeevi_process) trong brain, nhưng chỉ khi việc chạy ở mức `full` VÀ engine Claude mà nó thay
+  javis_read_file / javis_list_dir / javis_write_file / javis_use_skill, tìm và đọc web
+  (javis_web_search / javis_web_fetch) + tool MCP, và javis_write_file tự chặn khi mode là
+  suggest (mcp_hub._builtin_tools). Từ 05/11/2026 có thêm TERMINAL THẬT (javis_terminal,
+  javis_process) trong brain, nhưng chỉ khi việc chạy ở mức `full` VÀ engine Claude mà nó thay
   thế cũng được chạy Bash (`cli_cho_bash`). Nghĩa là cùng một việc, đổi bộ não sang API key
   thì được đúng những gì Claude Code được: loop bị cô lập, việc mức auto/suggest vẫn không có
   lệnh máy; việc Toàn quyền (dựng video bằng ffmpeg chẳng hạn) thì có.
@@ -75,7 +75,7 @@ _KEY_FIELD = {
 }
 
 # mode của Jeevi -> sandbox của Codex CLI. Bản đồ thật nằm ở `claude_cli.codex_sandbox_cho_mode`
-# (nó còn đọc cờ JEEVI_CODEX_SANDBOX); giữ dict này để mã cũ đọc tên mức vẫn chạy.
+# (nó còn đọc cờ JAVIS_CODEX_SANDBOX); giữ dict này để mã cũ đọc tên mức vẫn chạy.
 _CODEX_SANDBOX = {"suggest": "read-only", "auto": "workspace-write", "full": None}
 
 # ── Final "mất đăng nhập" phải bị coi là engine CHẾT, không phải kết quả ──────────────────
@@ -128,11 +128,11 @@ def final_loi_dang_nhap(text: str) -> bool:
 # ghi Google Sheet + gửi Telegram bị chặt ngang lúc đang ghi dở, result rỗng (báo 18/08).
 # Trần này là LƯỚI ĐỠ chống fork treo vô hạn, không phải công cụ quản chi phí - fork đơ
 # thật thì watchdog idle-timeout của engine bắt sớm hơn nhiều, nên đặt trần theo việc nền
-# DÀI NHẤT hợp lệ chứ không theo việc trung bình. Chỉnh qua env JEEVI_BG_MAX_WALL_S
+# DÀI NHẤT hợp lệ chứ không theo việc trung bình. Chỉnh qua env JAVIS_BG_MAX_WALL_S
 # (giây; giá trị rác hoặc <= 0 thì về mặc định).
 #
 # 2026-11-07 the owner removed every model time cap ("bỏ hết các trần của các model"): the default is now 0 = no
-# cap. A positive JEEVI_BG_MAX_WALL_S still sets one. Kanban runs keep their lease by heartbeat, not by this number,
+# cap. A positive JAVIS_BG_MAX_WALL_S still sets one. Kanban runs keep their lease by heartbeat, not by this number,
 # so a long run is never reclaimed while its worker lives; the Stop button on the Tasks page still ends it.
 BG_MAX_WALL_S_DEFAULT = 0
 
@@ -140,7 +140,7 @@ BG_MAX_WALL_S_DEFAULT = 0
 def bg_max_wall_s() -> int:
     """The wall-clock cap for one background run, in seconds; 0 = no cap. Engines read 0 as no cap (`if max_wall_s`)."""
     try:
-        v = int(float(os.getenv("JEEVI_BG_MAX_WALL_S", "") or 0))
+        v = int(float(os.getenv("JAVIS_BG_MAX_WALL_S", "") or 0))
         if v > 0:
             return v
     except (TypeError, ValueError):
@@ -201,7 +201,7 @@ async def pick_openrouter_free(key: str = "") -> str:
 # on the MID pick. See model_routing.background_spec.
 LIGHT_TAGS = ("next-prompt", "learn", "reply-policy", "habit-coach", "web-watch-summary", "incident-triage",
               "agent-judge", "auto-learning", "curator",
-              # jeevi_scout with effort="quick" (scout.py). A "careful" scout carries the tag "scout" and runs MID.
+              # javis_scout with effort="quick" (scout.py). A "careful" scout carries the tag "scout" and runs MID.
               "scout-quick")
 
 
@@ -459,7 +459,7 @@ class _ApiAuxEngine:
         self.account_id = account_id or ""
         self.system_prompt = system_prompt
         self.vault_root = vault_root
-        self.jeevi_mode = mode
+        self.javis_mode = mode
         self.tag = tag
         self.reasoning = reasoning
         self.session_id = None      # engine API không có phiên nối tiếp - giữ cho đủ hợp đồng
@@ -512,11 +512,11 @@ class _ApiAuxEngine:
             try:
                 if ctx is not None:
                     tools, route = await mcp_hub.discover_all(
-                        self.jeevi_mode or "full", vault_root=self.vault_root,
+                        self.javis_mode or "full", vault_root=self.vault_root,
                         workspace_root=list(ctx.workspace_roots), coding_ctx_cua_phien=ctx)
-                    co_terminal = "jeevi_terminal" in route
+                    co_terminal = "javis_terminal" in route
                 else:
-                    tools, route = await mcp_hub.discover_all(self.jeevi_mode or "full",
+                    tools, route = await mcp_hub.discover_all(self.javis_mode or "full",
                                                               vault_root=self.vault_root)
             except Exception as e:
                 print(f"[aux discover] {e}", file=sys.stderr)
@@ -531,8 +531,8 @@ class _ApiAuxEngine:
         # ("phiên này bị chặn quyền"), khiến chủ đi sửa mức quyền trong khi mức quyền không hề
         # sai. Nói rõ THIẾU GÌ và VÌ SAO thì câu báo về mới dẫn đúng tới việc cần làm.
         if co_terminal:
-            _may = ("terminal thật (jeevi_terminal, chạy nền bằng background=true rồi xem bằng "
-                    "jeevi_process) với thư mục làm việc là brain, nên chạy được ffmpeg, python, "
+            _may = ("terminal thật (javis_terminal, chạy nền bằng background=true rồi xem bằng "
+                    "javis_process) với thư mục làm việc là brain, nên chạy được ffmpeg, python, "
                     "script dựng video... như trên máy chủ; ")
             _thieu = "Bạn KHÔNG có: "
         else:
@@ -542,8 +542,8 @@ class _ApiAuxEngine:
         sysprompt += (
             "\n\n[Sự thật hệ thống - năng lực của phiên này] Bạn đang chạy bằng engine API "
             f"'{self.provider}', KHÔNG phải Claude Code. Bạn có: {_may}tìm và đọc web "
-            "(jeevi_web_search, jeevi_web_fetch; chưa thấy trong danh sách thì tìm bằng "
-            "jeevi_search_tools rồi gọi qua jeevi_run_tool), các tool qua MCP Hub của Jeevi "
+            "(javis_web_search, javis_web_fetch; chưa thấy trong danh sách thì tìm bằng "
+            "javis_search_tools rồi gọi qua javis_run_tool), các tool qua MCP Hub của Jeevi "
             "(gồm tool đọc/ghi file trong vault và mọi MCP người dùng đã đấu vào Jeevi). "
             f"{_thieu}các "
             "connector gắn thẳng vào TÀI KHOẢN Claude - Gmail, Google Drive, Google Calendar "
@@ -1053,12 +1053,12 @@ def cli_cho_bash(cli) -> bool:
 
 
 def _build_api(spec, claude_cli_obj, mode, tag):
-    _mode = mode or getattr(claude_cli_obj, "jeevi_mode", None) or "full"
+    _mode = mode or getattr(claude_cli_obj, "javis_mode", None) or "full"
     return _ApiAuxEngine(
         provider=spec["provider"],
         model=spec.get("model") or "",
         system_prompt=getattr(claude_cli_obj, "system_prompt", None),
-        vault_root=getattr(claude_cli_obj, "jeevi_vault", None),
+        vault_root=getattr(claude_cli_obj, "javis_vault", None),
         mode=_mode,
         tag=tag or getattr(claude_cli_obj, "tag", "aux"),
         terminal=_mode == "full" and cli_cho_bash(claude_cli_obj),
@@ -1072,34 +1072,34 @@ def _build_codex(spec, claude_cli_obj, mode, tag, codex_profile=None):
                   model=spec.get("model") or None,
                   instructions=getattr(claude_cli_obj, "system_prompt", None))
     # Codex không có allowlist per-call như Claude → chặn ở tầng sandbox của chính nó.
-    # `codex_sandbox_cho_mode` còn đọc cờ JEEVI_CODEX_SANDBOX: trong Docker, bubblewrap không
+    # `codex_sandbox_cho_mode` còn đọc cờ JAVIS_CODEX_SANDBOX: trong Docker, bubblewrap không
     # chạy nổi nên rào đó không phải "chặt hơn" mà là "chết hẳn", và cờ là đường thoát.
-    cc.sandbox = codex_sandbox_cho_mode(mode or getattr(claude_cli_obj, "jeevi_mode", None) or "full")
-    cc.vault_root = getattr(claude_cli_obj, "jeevi_vault", None)   # ảnh Codex vẽ về đúng brain
+    cc.sandbox = codex_sandbox_cho_mode(mode or getattr(claude_cli_obj, "javis_mode", None) or "full")
+    cc.vault_root = getattr(claude_cli_obj, "javis_vault", None)   # ảnh Codex vẽ về đúng brain
     if codex_profile:
         try:
-            cc.profile = codex_profile()   # profile jeevi = thấy MCP của Jeevi (POS, connector...)
+            cc.profile = codex_profile()   # profile javis = thấy MCP của Jeevi (POS, connector...)
         except Exception as e:
             print(f"[aux codex profile] {e}", file=sys.stderr)
     # The turn key (X-Jeevi-Turn) rides on every query, as on a chat turn (main._apply_codex_hub). Without it a reminder
-    # or Kanban job on Codex reached the hub as "nobody", so jeevi_team op=dispatch refused it with "lượt không có danh
-    # tính" and the team never woke up. Only when the profile's `jeevi` entry IS the hub (hub on): an override under
-    # mcp_servers.jeevi with no hub entry would be a broken half-entry. No bound turn -> no key, nothing sent.
+    # or Kanban job on Codex reached the hub as "nobody", so javis_team op=dispatch refused it with "lượt không có danh
+    # tính" and the team never woke up. Only when the profile's `javis` entry IS the hub (hub on): an override under
+    # mcp_servers.javis with no hub entry would be a broken half-entry. No bound turn -> no key, nothing sent.
     try:
         cc.hub_turn = bool(cc.profile) and bool(cfgmod.read_settings().get("mcp", {}).get("hub", True))
     except Exception as e:  # noqa: BLE001 - no key means "nobody", never a broken job
         print(f"[aux codex turn] {e}", file=sys.stderr)
-    # Brain and level ride as `-c mcp_servers.jeevi.http_headers.*` overrides, which only make sense when the profile's
-    # `jeevi` entry IS the hub. With the hub off (or no profile) there is no `jeevi` entry, and a header override alone
+    # Brain and level ride as `-c mcp_servers.javis.http_headers.*` overrides, which only make sense when the profile's
+    # `javis` entry IS the hub. With the hub off (or no profile) there is no `javis` entry, and a header override alone
     # creates a half entry without `url`: Codex then refuses to load its config ("invalid transport in
-    # mcp_servers.jeevi") and the background job never starts. Same rule as `hub_turn` above.
+    # mcp_servers.javis") and the background job never starts. Same rule as `hub_turn` above.
     try:
         import mcp_hub
         if cc.hub_turn:
-            mcp_hub.dat_codex_vault(cc.extra_config, getattr(claude_cli_obj, "jeevi_vault", None))
+            mcp_hub.dat_codex_vault(cc.extra_config, getattr(claude_cli_obj, "javis_vault", None))
             # The job's own level, not the profile's `full` (see mcp_hub.dat_codex_mode).
             mcp_hub.dat_codex_mode(cc.extra_config,
-                                   mode or getattr(claude_cli_obj, "jeevi_mode", None) or "full")
+                                   mode or getattr(claude_cli_obj, "javis_mode", None) or "full")
     except Exception as e:
         print(f"[aux codex vault] {e}", file=sys.stderr)
     # Việc nền theo lịch: hub bắt buộc, không app ChatGPT - xem mcp_hub.CODEX_REQUIRED_KEY. Chat
@@ -1189,13 +1189,13 @@ def _build_grok(spec, claude_cli_obj, mode, tag):
     Jeevi mà không một câu lỗi nào - đúng thứ đã xảy ra với `agy` mấy bản liền.
     """
     import grok_cli as _g
-    muc = mode or getattr(claude_cli_obj, "jeevi_mode", None) or "full"
+    muc = mode or getattr(claude_cli_obj, "javis_mode", None) or "full"
     gc = _g.GrokCLI(cwd=getattr(claude_cli_obj, "cwd", None),
                     tag=tag or getattr(claude_cli_obj, "tag", "aux"),
                     model=spec.get("model") or None,
                     instructions=getattr(claude_cli_obj, "system_prompt", None))
     gc.mode = muc
-    vault = getattr(claude_cli_obj, "jeevi_vault", None) or getattr(claude_cli_obj, "cwd", None)
+    vault = getattr(claude_cli_obj, "javis_vault", None) or getattr(claude_cli_obj, "cwd", None)
     if vault:
         try:
             import mcp_hub
@@ -1225,13 +1225,13 @@ def _build_antigravity(spec, claude_cli_obj, mode, tag):
       chứ không viết tay.
     """
     import antigravity_cli as _a
-    muc = mode or getattr(claude_cli_obj, "jeevi_mode", None) or "full"
+    muc = mode or getattr(claude_cli_obj, "javis_mode", None) or "full"
     ac = _a.AntigravityCLI(cwd=getattr(claude_cli_obj, "cwd", None),
                            tag=tag or getattr(claude_cli_obj, "tag", "aux"),
                            model=spec.get("model") or None,
                            instructions=getattr(claude_cli_obj, "system_prompt", None))
     ac.mode = muc
-    vault = getattr(claude_cli_obj, "jeevi_vault", None) or getattr(claude_cli_obj, "cwd", None)
+    vault = getattr(claude_cli_obj, "javis_vault", None) or getattr(claude_cli_obj, "cwd", None)
     if vault:
         try:
             import mcp_hub
@@ -1394,11 +1394,11 @@ def _links_for_step(step: dict, cli, mode, tag, codex_profile, settings, claude_
                     else model_routing.usable_accounts(m, prov, field))
             mk = lambda key="", acc="": _ApiAuxEngine(   # noqa: E731
                 provider=prov, model=sp["model"], system_prompt=getattr(cli, "system_prompt", None),
-                vault_root=getattr(cli, "jeevi_vault", None),
-                mode=mode or getattr(cli, "jeevi_mode", None) or "full",
+                vault_root=getattr(cli, "javis_vault", None),
+                mode=mode or getattr(cli, "javis_mode", None) or "full",
                 tag=tag or getattr(cli, "tag", "aux"), reasoning=level if level in model_routing.LEVELS else "off",
                 api_key=key, account_id=acc,
-                terminal=(mode or getattr(cli, "jeevi_mode", None) or "full") == "full" and cli_cho_bash(cli))
+                terminal=(mode or getattr(cli, "javis_mode", None) or "full") == "full" and cli_cho_bash(cli))
             if len(accs) > 1:
                 return [mk(a["key"], a["id"]) for a in accs]
             if accs:

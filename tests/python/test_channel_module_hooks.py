@@ -5,7 +5,7 @@
 No network. A pack channel `demo` (written into a temp state dir, consented in the ledger) exercises, through the
 real routes: `prepare_token` (rewrite + refuse, before verify), verify `meta` + `code` passthrough, `PUBLIC_META`,
 `clean_settings` on a channel that is not generated-key, `webhook_info`, and in chatbot_runtime the
-`webhook_active` / `jeevi_bot_id` / `_defer_delivery` contract.
+`webhook_active` / `javis_bot_id` / `_defer_delivery` contract.
 """
 from _paths import ROOT, SERVER, DASHBOARD  # noqa: E402,F401
 import json
@@ -13,8 +13,8 @@ import os
 import tempfile
 from pathlib import Path
 
-STATE = tempfile.mkdtemp(prefix="jeevi-chan-hooks-")
-os.environ["JEEVI_STATE_DIR"] = STATE
+STATE = tempfile.mkdtemp(prefix="javis-chan-hooks-")
+os.environ["JAVIS_STATE_DIR"] = STATE
 
 import main  # noqa: E402
 import packs  # noqa: E402
@@ -71,8 +71,8 @@ async def webhook_info(base, params):
 
 d = Path(STATE) / "packs" / "demo-pack"
 (d / "channels").mkdir(parents=True)
-(d / "jeevi-pack.yaml").write_text(
-    "format: jeevi-pack\nspec: 1\nid: demo-pack\nversion: 1.0.0\nname: {vi: D, en: D}\ndescription: {vi: D}\n"
+(d / "javis-pack.yaml").write_text(
+    "format: javis-pack\nspec: 1\nid: demo-pack\nversion: 1.0.0\nname: {vi: D, en: D}\ndescription: {vi: D}\n"
     "compat: {app: \">=0.1.0\"}\nprovides:\n  channels: [channels/demo.py]\n", encoding="utf-8")
 (d / "channels" / "demo.py").write_text(DEMO, encoding="utf-8")
 packs.LEDGER.write_text(json.dumps({"demo-pack": {"enabled": True, "code_digest": _digest_thu_muc(d)}}))
@@ -123,7 +123,7 @@ class Hook:
 check("webhook transport with no task counts as running", chatbot_runtime._trang_thai_poller(Hook()).get("state") == "running",
       chatbot_runtime._trang_thai_poller(Hook()))
 src = (SERVER / "chatbot_runtime.py").read_text(encoding="utf-8")
-check("runtime hands the Jeevi bot id as jeevi_bot_id (never bot_id)", "tb.jeevi_bot_id = bot_id" in src and "tb.bot_id = bot_id" not in src)
+check("runtime hands the Jeevi bot id as javis_bot_id (never bot_id)", "tb.javis_bot_id = bot_id" in src and "tb.bot_id = bot_id" not in src)
 check("runtime skips its own receipt when the transport defers it", '(meta or {}).get("_defer_delivery")' in src)
 check("no channel-specific branch left for zernio in the core", "zernio" not in src.lower()
       and "zernio" not in (SERVER / "routes" / "channels.py").read_text(encoding="utf-8").lower())

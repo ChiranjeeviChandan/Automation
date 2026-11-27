@@ -58,7 +58,7 @@ check("page: a press goes to the oldest waiting message, in the middle, flashing
 check("page: a message is read once half of it is on screen, watched with IntersectionObserver",
   src.includes("new IO(onAtSeen, { root: box") && src.includes("en.intersectionRatio < 0.5 && !tall"));
 check("page: what was read is kept per team on this device, never throwing without storage",
-  src.includes('var AT_SEEN_KEY = "jeevi.teams.atSeen";') && /function markAtSeen[^]*?try \{[^]*?localStorage\.setItem\(AT_SEEN_KEY/.test(src));
+  src.includes('var AT_SEEN_KEY = "javis.teams.atSeen";') && /function markAtSeen[^]*?try \{[^]*?localStorage\.setItem\(AT_SEEN_KEY/.test(src));
 check("CSS: round, sticky at the TOP right, takes no room in the list, hidden until shown, 44px on a phone, red count",
   /\.tm-at-jump \{ position: sticky; top: 10px; align-self: flex-end; margin: 10px 12px -50px 0;[^}]*display: none;[^}]*border-radius: 50%;/.test(css)
   && css.includes(".tm-at-jump.show { display: inline-flex; }")

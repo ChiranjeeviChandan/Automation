@@ -160,7 +160,7 @@ python tools/team_adaptive_restore_pre.py --to 0.154.0 --state-dir /duong/dan/st
 python tools/team_adaptive_restore_pre.py --to 0.154.0 --state-dir /duong/dan/state --yes    # khôi phục thật
 ```
 
-Không có `--state-dir` thì lấy `JEEVI_STATE_DIR`. Trên VPS thì dừng container trước, chạy công cụ trên thư mục state, rồi
+Không có `--state-dir` thì lấy `JAVIS_STATE_DIR`. Trên VPS thì dừng container trước, chạy công cụ trên thư mục state, rồi
 mới chạy bản cũ.
 
 - Về snapshot `.pre-0.154.0`: `team.sqlite3`, `conversations.db`, `resonance.sqlite3`. Đã lên 0.156.0 thì

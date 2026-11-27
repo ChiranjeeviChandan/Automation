@@ -20,7 +20,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-gitsetup-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-gitsetup-"))
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")

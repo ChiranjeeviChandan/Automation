@@ -125,7 +125,7 @@ def _nho_efforts(items) -> None:
 _THANG = ("minimal", "low", "medium", "high", "xhigh", "max")
 
 
-def muc_cho(model: str, muc_jeevi: str) -> str:
+def muc_cho(model: str, muc_javis: str) -> str:
     """Mức của Jeevi -> mức effort của Codex, lấy từ THANG CỦA CHÍNH MODEL ĐÓ. "" = đừng truyền.
 
     Không có bảng dịch chép tay, và đó là chủ ý: Codex đổi thang theo từng model và từng đợt
@@ -138,15 +138,15 @@ def muc_cho(model: str, muc_jeevi: str) -> str:
     tiến, vì tiến là tiêu nhiều tiền hơn mức người dùng chọn.
     """
     thang = [m for m in _THANG if m in efforts_for(model)]
-    if not thang or not muc_jeevi or muc_jeevi == "off":
+    if not thang or not muc_javis or muc_javis == "off":
         return ""
-    if muc_jeevi == "ultra":
+    if muc_javis == "ultra":
         return thang[-1]
-    if muc_jeevi in thang:
-        return muc_jeevi
-    if muc_jeevi not in _THANG:
+    if muc_javis in thang:
+        return muc_javis
+    if muc_javis not in _THANG:
         return ""
-    i = _THANG.index(muc_jeevi)
+    i = _THANG.index(muc_javis)
     thap_hon = [m for m in thang if _THANG.index(m) < i]
     return thap_hon[-1] if thap_hon else thang[0]
 
@@ -251,13 +251,13 @@ def list_models(timeout: float = 20.0, cli_path: Optional[str] = None,
             creationflags=_no_window(),
             env=codex_env(codex_home),
         )
-        threading.Thread(target=reader, name="jeevi-codex-models", daemon=True).start()
+        threading.Thread(target=reader, name="javis-codex-models", daemon=True).start()
         send({
             "method": "initialize",
             "id": 0,
             "params": {
                 "clientInfo": {
-                    "name": "jeevi_os",
+                    "name": "javis_os",
                     "title": "Jeevi OS",
                     "version": "1.0",
                 }

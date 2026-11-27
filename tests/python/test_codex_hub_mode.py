@@ -14,8 +14,8 @@ import tempfile
 from pathlib import Path
 from types import SimpleNamespace
 
-_TMP = Path(tempfile.mkdtemp(prefix="jeevi-codex-mode-"))
-os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+_TMP = Path(tempfile.mkdtemp(prefix="javis-codex-mode-"))
+os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
 (_TMP / "state").mkdir(parents=True, exist_ok=True)
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -26,10 +26,10 @@ import aux_engine  # noqa: E402
 import config as cfgmod  # noqa: E402
 import mcp_hub  # noqa: E402
 
-# The overrides only exist when the profile's `jeevi` entry is the hub (hub on, profile written): without it they
+# The overrides only exist when the profile's `javis` entry is the hub (hub on, profile written): without it they
 # would be a half entry Codex refuses to load (see aux_engine._build_codex).
 cfgmod.read_settings = lambda: {"mcp": {"hub": True}}
-HUB_PROFILE = lambda: "jeevi-test"  # noqa: E731
+HUB_PROFILE = lambda: "javis-test"  # noqa: E731
 
 _fails = []
 
@@ -44,16 +44,16 @@ def _mode_overrides(cfg):
     return [x for x in cfg if str(x).startswith(mcp_hub.CODEX_MODE_KEY + "=")]
 
 
-base = SimpleNamespace(cwd=str(_TMP), tag="dispatch:t1", system_prompt="", jeevi_vault=str(_TMP),
-                       jeevi_mode="full")
+base = SimpleNamespace(cwd=str(_TMP), tag="dispatch:t1", system_prompt="", javis_vault=str(_TMP),
+                       javis_mode="full")
 for mode, want in (("suggest", '"suggest"'), ("auto", '"auto"'), ("full", '"full"')):
     cc = aux_engine._build_codex({"provider": "codex", "model": ""}, base, mode, "dispatch:t1", HUB_PROFILE)
     ov = _mode_overrides(cc.extra_config)
     check(f"CANARY: a {mode} job pins X-Jeevi-Mode={mode}", ov == [f"{mcp_hub.CODEX_MODE_KEY}={want}"], ov)
 
-cc = aux_engine._build_codex({"provider": "codex"}, SimpleNamespace(**{**vars(base), "jeevi_mode": "auto"}),
+cc = aux_engine._build_codex({"provider": "codex"}, SimpleNamespace(**{**vars(base), "javis_mode": "auto"}),
                              None, "reminder", HUB_PROFILE)
-check("no explicit mode: the engine's own jeevi_mode is used",
+check("no explicit mode: the engine's own javis_mode is used",
       _mode_overrides(cc.extra_config) == [f'{mcp_hub.CODEX_MODE_KEY}="auto"'], cc.extra_config)
 
 cfg = []

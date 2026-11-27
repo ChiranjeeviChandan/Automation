@@ -24,7 +24,7 @@ import tempfile
 from pathlib import Path
 from urllib.parse import quote
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-fileuri-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-fileuri-")
 
 import main  # noqa: E402
 import channel_context  # noqa: E402
@@ -41,12 +41,12 @@ def check(name, cond, them=""):
 
 MAIN = (ROOT / "server" / "main.py").read_text(encoding="utf-8")
 TEN = "30 Ngày Làm Chủ Antigravity (CES Global).md"
-brain = Path(tempfile.mkdtemp(prefix="jeevi-brain-")).resolve()
+brain = Path(tempfile.mkdtemp(prefix="javis-brain-")).resolve()
 (brain / "wiki").mkdir()
 (brain / "wiki" / TEN).write_text("x", encoding="utf-8")
 (brain / "attachments").mkdir()
 (brain / "attachments" / "so do.png").write_bytes(b"\x89PNG")
-ngoai = Path(tempfile.mkdtemp(prefix="jeevi-ngoai-")).resolve()
+ngoai = Path(tempfile.mkdtemp(prefix="javis-ngoai-")).resolve()
 (ngoai / "lac.md").write_text("z", encoding="utf-8")
 # A real file URI also preserves the Windows drive instead of treating it as a host.
 ENC = (brain / "wiki" / TEN).as_uri().removeprefix("file://")

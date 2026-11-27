@@ -8,11 +8,11 @@ temporary brains and locks:
 
 1. `brain` on the Gate tools, matched by name (case and accents ignored, label or folder) or by path, and only among
    the registered brains: an unknown name or an outside path is refused with the valid names.
-2. `jeevi_brains` lists the brains, the default and the brain used last.
+2. `javis_brains` lists the brains, the default and the brain used last.
 3. Every brain-bound result names its brain; brain-free tools carry no brain argument.
 4. Without `brain`: the owner's default brain for the Gate; none picked (or picked and deleted): the brain used last,
    exactly as before.
-5. Notes (`jeevi_chat_note`) and transcripts follow the same rules; `jeevi_chat_send` refuses a chat of another brain.
+5. Notes (`javis_chat_note`) and transcripts follow the same rules; `javis_chat_send` refuses a chat of another brain.
 6. The Gate's `initialize` instructions tell the client to ask which brain before writing.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
@@ -31,8 +31,8 @@ for name in ("Brain Default", "Cá Nhân", "Work", "Side"):
     (_BRAINS / name / "Jeevi").mkdir(parents=True, exist_ok=True)
 _OUTSIDE = _TMP / "outside"
 _OUTSIDE.mkdir()
-os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
-os.environ["JEEVI_SESSIONS_DB"] = str(_TMP / "conversations.db")
+os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
+os.environ["JAVIS_SESSIONS_DB"] = str(_TMP / "conversations.db")
 os.environ["BRAINS_DIR"] = str(_BRAINS)
 (_TMP / "state").mkdir(parents=True, exist_ok=True)
 
@@ -93,83 +93,83 @@ def written(brain_path, rel):
 
 
 async def main_flow():
-    # ── tools/list: jeevi_brains, and `brain` only where a brain is touched ──
+    # ── tools/list: javis_brains, and `brain` only where a brain is touched ──
     data = await rpc("tools/list")
     tools = {t["name"]: t for t in (data.get("result") or {}).get("tools") or []}
-    check("jeevi_brains is listed at the Gate", "jeevi_brains" in tools)
+    check("javis_brains is listed at the Gate", "javis_brains" in tools)
     props = lambda n: ((tools.get(n) or {}).get("inputSchema") or {}).get("properties") or {}  # noqa: E731
-    check("jeevi_write_file shows the optional brain argument", "brain" in props("jeevi_write_file"))
-    check("jeevi_read_file and jeevi_list_dir show it too",
-          "brain" in props("jeevi_read_file") and "brain" in props("jeevi_list_dir"))
-    check("brain stays optional", "brain" not in ((tools.get("jeevi_write_file") or {}).get("inputSchema") or {})
+    check("javis_write_file shows the optional brain argument", "brain" in props("javis_write_file"))
+    check("javis_read_file and javis_list_dir show it too",
+          "brain" in props("javis_read_file") and "brain" in props("javis_list_dir"))
+    check("brain stays optional", "brain" not in ((tools.get("javis_write_file") or {}).get("inputSchema") or {})
           .get("required", []))
-    if "jeevi_run_tool" in tools:
-        check("the lazy jeevi_run_tool shows brain (Jeevi tools hide behind it)", "brain" in props("jeevi_run_tool"))
-        check("jeevi_search_tools does not (searching touches no brain)",
-              "jeevi_search_tools" in tools and "brain" not in props("jeevi_search_tools"))
+    if "javis_run_tool" in tools:
+        check("the lazy javis_run_tool shows brain (Jeevi tools hide behind it)", "brain" in props("javis_run_tool"))
+        check("javis_search_tools does not (searching touches no brain)",
+              "javis_search_tools" in tools and "brain" not in props("javis_search_tools"))
     conn_spec = {"fn": "pos__orders", "schema": {"type": "object", "properties": {"day": {"type": "string"}}}}
     check("a connection tool gets no brain argument (connections are shared by every brain)",
           mcp_hub._gate_brain_spec(conn_spec, {"conn": {"id": "c1"}, "call": None}) is conn_spec)
-    check("jeevi_connections gets none either",
-          "brain" not in mcp_hub._gate_brain_spec({"fn": "jeevi_connections", "schema": {"type": "object"}},
+    check("javis_connections gets none either",
+          "brain" not in mcp_hub._gate_brain_spec({"fn": "javis_connections", "schema": {"type": "object"}},
                                                   {"call": None})["schema"].get("properties", {}))
     check("the Gate's chat tools take brain where it matters",
-          all("brain" in props(n) for n in ("jeevi_chat_note", "jeevi_chat_send", "jeevi_chat_find")))
+          all("brain" in props(n) for n in ("javis_chat_note", "javis_chat_send", "javis_chat_find")))
     data = await rpc("tools/list")
     check("the cached spec is not changed for Jeevi's own engines",
           all("brain" not in ((t.get("schema") or {}).get("properties") or {})
-              for t in (await mcp_hub.discover_all("full", vault_root=WORK))[0] if t["fn"] == "jeevi_write_file"))
+              for t in (await mcp_hub.discover_all("full", vault_root=WORK))[0] if t["fn"] == "javis_write_file"))
 
     # ── 4. no default picked: the brain used last, exactly as before ──
-    txt, err = await call("jeevi_write_file", {"path": "notes/a.md", "content": "A"})
+    txt, err = await call("javis_write_file", {"path": "notes/a.md", "content": "A"})
     check("no default and no brain: writes into the brain used last", not err and written(WORK, "notes/a.md"), txt)
     check("the result names that brain and why", '"Work"' in txt and "used last" in txt, txt)
     check("the Vietnamese X-Jeevi-Vault header note is not shown at the Gate", "X-Jeevi-Vault" not in txt, txt)
 
     # ── 1. by name, case and accents ignored ──
-    txt, err = await call("jeevi_write_file", {"path": "notes/b.md", "content": "B", "brain": "ca NHAN"})
+    txt, err = await call("javis_write_file", {"path": "notes/b.md", "content": "B", "brain": "ca NHAN"})
     check("brain by name without accents writes into that brain", not err and written(PERSONAL, "notes/b.md"), txt)
     check("and not into the brain used last", not written(WORK, "notes/b.md"))
     check("the write result names the brain it wrote to", '"Cá Nhân"' in txt and "named in this call" in txt, txt)
-    txt, err = await call("jeevi_write_file", {"path": "notes/c.md", "content": "C", "brain": "cong viec phu"})
+    txt, err = await call("javis_write_file", {"path": "notes/c.md", "content": "C", "brain": "cong viec phu"})
     check("a renamed brain matches by its label", not err and written(SIDE, "notes/c.md"), txt)
-    txt, err = await call("jeevi_write_file", {"path": "notes/d.md", "content": "D", "brain": "side"})
+    txt, err = await call("javis_write_file", {"path": "notes/d.md", "content": "D", "brain": "side"})
     check("and by its folder", not err and written(SIDE, "notes/d.md"), txt)
 
     # ── 1. by path ──
-    txt, err = await call("jeevi_write_file", {"path": "notes/e.md", "content": "E", "brain": PERSONAL})
+    txt, err = await call("javis_write_file", {"path": "notes/e.md", "content": "E", "brain": PERSONAL})
     check("brain by path writes into that brain", not err and written(PERSONAL, "notes/e.md"), txt)
 
     # ── 1. refused ──
-    txt, err = await call("jeevi_write_file", {"path": "x.md", "content": "X", "brain": "Nope"})
+    txt, err = await call("javis_write_file", {"path": "x.md", "content": "X", "brain": "Nope"})
     check("an unknown brain is refused", err and txt.startswith("ERROR:"), txt)
     check("the error lists the valid names",
           all(n in txt for n in ('"Brain Default"', '"Cá Nhân"', '"Work"', '"Công Việc Phụ"')), txt)
     check("nothing was written anywhere", not any(written(b, "x.md") for b in (WORK, PERSONAL, DEFAULT, SIDE)))
-    txt, err = await call("jeevi_write_file", {"path": "x.md", "content": "X", "brain": str(_OUTSIDE)})
+    txt, err = await call("javis_write_file", {"path": "x.md", "content": "X", "brain": str(_OUTSIDE)})
     check("an existing folder that is not a brain is refused", err and "not the path of a Jeevi brain" in txt, txt)
     check("and nothing is written there", not (_OUTSIDE / "x.md").exists())
-    txt, err = await call("jeevi_write_file", {"path": "x.md", "content": "X", "brain": str(_BRAINS)})
+    txt, err = await call("javis_write_file", {"path": "x.md", "content": "X", "brain": str(_BRAINS)})
     check("BRAINS_DIR itself is not a brain", err and not (_BRAINS / "x.md").exists(), txt)
-    txt, err = await call("jeevi_write_file", {"path": "../Work/escape.md", "content": "X", "brain": "Cá Nhân"})
+    txt, err = await call("javis_write_file", {"path": "../Work/escape.md", "content": "X", "brain": "Cá Nhân"})
     check("path traversal is still refused inside the chosen brain",
           err and not written(WORK, "escape.md") and not (_BRAINS / "escape.md").exists(), txt)
 
     # ── reads follow the same brain ──
-    txt, err = await call("jeevi_read_file", {"path": "notes/b.md", "brain": "Cá Nhân"})
-    check("jeevi_read_file reads from the named brain", not err and txt.startswith("B"), txt)
-    txt, err = await call("jeevi_list_dir", {"path": "notes", "brain": "Cá Nhân"})
-    check("jeevi_list_dir lists the named brain", not err and "b.md" in txt and "a.md" not in txt, txt)
+    txt, err = await call("javis_read_file", {"path": "notes/b.md", "brain": "Cá Nhân"})
+    check("javis_read_file reads from the named brain", not err and txt.startswith("B"), txt)
+    txt, err = await call("javis_list_dir", {"path": "notes", "brain": "Cá Nhân"})
+    check("javis_list_dir lists the named brain", not err and "b.md" in txt and "a.md" not in txt, txt)
 
     # ── permission level unchanged: read-only Gate still cannot write, whatever brain ──
-    txt, err = await call("jeevi_write_file", {"path": "ro.md", "content": "X", "brain": "Cá Nhân"}, mode="suggest")
+    txt, err = await call("javis_write_file", {"path": "ro.md", "content": "X", "brain": "Cá Nhân"}, mode="suggest")
     check("a read-only Gate door still cannot write", not written(PERSONAL, "ro.md"), txt)
 
-    # ── 2. jeevi_brains ──
-    txt, err = await call("jeevi_brains", {})
+    # ── 2. javis_brains ──
+    txt, err = await call("javis_brains", {})
     lst = json.loads(txt) if not err else {}
     names = [b["name"] for b in lst.get("brains") or []]
-    check("jeevi_brains lists every brain by name", sorted(names) == sorted(
+    check("javis_brains lists every brain by name", sorted(names) == sorted(
         ["Brain Default", "Cá Nhân", "Work", "Công Việc Phụ"]), names)
     check("each brain comes with its path", all(b.get("path") for b in lst.get("brains") or []))
     check("the renamed brain also shows its folder",
@@ -177,22 +177,22 @@ async def main_flow():
     check("no default picked: says so, and marks the brain used last",
           lst.get("default") is None and any(b.get("last_used") and b["name"] == "Work" for b in lst["brains"]), lst)
     check("several brains: the hint says to ask before writing", "ask which brain" in (lst.get("hint") or ""))
-    data = await rpc("tools/call", {"name": "jeevi_brains", "arguments": {}}, mode="suggest")
-    check("jeevi_brains is read-only: it works at the read-only level",
+    data = await rpc("tools/call", {"name": "javis_brains", "arguments": {}}, mode="suggest")
+    check("javis_brains is read-only: it works at the read-only level",
           not (data.get("result") or {}).get("isError"))
 
     # ── 4. the owner's default brain for the Gate ──
     ok, _ = gate_brain.set_default("Cá Nhân")
     check("the default is saved", ok and gate_brain.configured_folder() == "Cá Nhân")
-    txt, err = await call("jeevi_write_file", {"path": "notes/f.md", "content": "F"})
+    txt, err = await call("javis_write_file", {"path": "notes/f.md", "content": "F"})
     check("no brain named: the owner's default brain, not the brain used last",
           not err and written(PERSONAL, "notes/f.md") and not written(WORK, "notes/f.md"), txt)
     check("the result says it is the Gate's default brain", "default brain for Jeevi Gate" in txt, txt)
-    txt, err = await call("jeevi_write_file", {"path": "notes/g.md", "content": "G", "brain": "work"})
+    txt, err = await call("javis_write_file", {"path": "notes/g.md", "content": "G", "brain": "work"})
     check("a brain named in the call beats the default", not err and written(WORK, "notes/g.md"), txt)
-    txt, err = await call("jeevi_brains", {})
+    txt, err = await call("javis_brains", {})
     lst = json.loads(txt)
-    check("jeevi_brains shows the default",
+    check("javis_brains shows the default",
           lst.get("default") == "Cá Nhân" and any(b.get("default") and b["name"] == "Cá Nhân" for b in lst["brains"]))
     ok, msg = gate_brain.set_default("Missing")
     check("an unknown folder cannot be saved as the default", not ok and msg and
@@ -201,37 +201,37 @@ async def main_flow():
     # ── 5. notes ──
     CB._HOST["runtime"] = lambda: _RT
     CB._HOST["luu"] = _save
-    txt, err = await call("jeevi_chat_note", {"title": "Plan", "asked": "remember this"})
+    txt, err = await call("javis_chat_note", {"title": "Plan", "asked": "remember this"})
     note = json.loads(txt) if not err else {}
     row = store.get_session(note.get("id") or "") or {}
     check("a note without brain opens in the Gate's default brain",
           gate_brain.same_brain(row.get("brain"), PERSONAL), (txt, row.get("brain")))
     check("the note result names its brain", note.get("brain") == "Cá Nhân", note)
-    txt, err = await call("jeevi_chat_note", {"title": "Plan", "asked": "again", "brain": "Work"})
+    txt, err = await call("javis_chat_note", {"title": "Plan", "asked": "again", "brain": "Work"})
     note2 = json.loads(txt) if not err else {}
     row2 = store.get_session(note2.get("id") or "") or {}
     check("the same title noted into another brain opens a conversation in that brain",
           note2.get("id") != note.get("id") and gate_brain.same_brain(row2.get("brain"), WORK), (txt, row2))
-    txt, err = await call("jeevi_chat_note", {"title": "Plan", "asked": "third"})
+    txt, err = await call("javis_chat_note", {"title": "Plan", "asked": "third"})
     check("and the default brain keeps its own conversation", not err and json.loads(txt).get("id") == note.get("id"),
           txt)
-    txt, err = await call("jeevi_chat_note", {"asked": "x", "id": recent, "brain": "Cá Nhân"})
+    txt, err = await call("javis_chat_note", {"asked": "x", "id": recent, "brain": "Cá Nhân"})
     check("a note into a chat of another brain is refused", err and "is in the brain" in txt, txt)
-    txt, err = await call("jeevi_chat_note", {"title": "T", "asked": "x", "brain": "nope"})
+    txt, err = await call("javis_chat_note", {"title": "T", "asked": "x", "brain": "nope"})
     check("a note with an unknown brain is refused", err and "Valid brains" in txt, txt)
 
     # ── 5. send: the conversation fixes the brain ──
     CB._HOST["chay"] = _no_run
-    txt, err = await call("jeevi_chat_send", {"id": recent, "message": "do it", "brain": "Cá Nhân", "wait_seconds": 0})
-    check("jeevi_chat_send refuses a chat of another brain", err and '"Work"' in txt and '"Cá Nhân"' in txt, txt)
+    txt, err = await call("javis_chat_send", {"id": recent, "message": "do it", "brain": "Cá Nhân", "wait_seconds": 0})
+    check("javis_chat_send refuses a chat of another brain", err and '"Work"' in txt and '"Cá Nhân"' in txt, txt)
     check("and nothing ran", not _RAN)
 
     # ── find: each row names its brain, and the brain filter works ──
-    txt, err = await call("jeevi_chat_find", {"query": "", "brain": "Work"})
+    txt, err = await call("javis_chat_find", {"query": "", "brain": "Work"})
     found = json.loads(txt).get("results") if not err else []
-    check("jeevi_chat_find filters by brain",
+    check("javis_chat_find filters by brain",
           found and all(r.get("brain") == "Work" for r in found) and any(r["id"] == recent for r in found), found)
-    txt, err = await call("jeevi_chat_find", {"query": ""})
+    txt, err = await call("javis_chat_find", {"query": ""})
     found = json.loads(txt).get("results") if not err else []
     check("every result names its brain", found and all(r.get("brain") for r in found), found)
 
@@ -239,7 +239,7 @@ async def main_flow():
     gate_brain.set_default("Side")
     shutil.rmtree(SIDE)
     store.append_message(recent, "user", "touch Work again")
-    txt, err = await call("jeevi_write_file", {"path": "notes/h.md", "content": "H"})
+    txt, err = await call("javis_write_file", {"path": "notes/h.md", "content": "H"})
     check("a deleted default brain falls back to the brain used last", not err and written(WORK, "notes/h.md"), txt)
     gate_brain.set_default("")
     check("clearing the default goes back to 'Brain used last'", gate_brain.configured_folder() == "")
@@ -247,7 +247,7 @@ async def main_flow():
     # ── 6. instructions ──
     data = await rpc("initialize", {"protocolVersion": "2025-06-18"})
     ins = (data.get("result") or {}).get("instructions") or ""
-    check("initialize tells the client about brains and jeevi_brains", "jeevi_brains" in ins and "brain" in ins)
+    check("initialize tells the client about brains and javis_brains", "javis_brains" in ins and "brain" in ins)
     check("and to ask which brain before writing when there are several",
           "more than one brain" in ins and "ask the owner which brain" in ins, ins)
 
@@ -275,14 +275,14 @@ async def _no_run(ws):
 
 asyncio.run(main_flow())
 
-# ── the lazy jeevi_run_tool: an inner brain of a Jeevi tool is lifted, a connection tool's is left alone ──
-args, wanted = mcp_hub._gate_take_brain("jeevi_run_tool", {"name": "jeevi_task", "args": {"op": "list", "brain": "Work"}},
+# ── the lazy javis_run_tool: an inner brain of a Jeevi tool is lifted, a connection tool's is left alone ──
+args, wanted = mcp_hub._gate_take_brain("javis_run_tool", {"name": "javis_task", "args": {"op": "list", "brain": "Work"}},
                                         None, True)
-check("jeevi_run_tool: the brain inside the args of a Jeevi tool picks the brain",
+check("javis_run_tool: the brain inside the args of a Jeevi tool picks the brain",
       wanted == "Work" and "brain" not in args["args"], (args, wanted))
-args, wanted = mcp_hub._gate_take_brain("jeevi_run_tool", {"name": "pos__orders", "args": {"brain": "x"}}, None, True)
-check("jeevi_run_tool: a connection tool's own args are left alone", wanted == "" and args["args"] == {"brain": "x"})
-args, wanted = mcp_hub._gate_take_brain("jeevi_web_search", {"query": "q", "brain": "Work"}, None, False)
+args, wanted = mcp_hub._gate_take_brain("javis_run_tool", {"name": "pos__orders", "args": {"brain": "x"}}, None, True)
+check("javis_run_tool: a connection tool's own args are left alone", wanted == "" and args["args"] == {"brain": "x"})
+args, wanted = mcp_hub._gate_take_brain("javis_web_search", {"query": "q", "brain": "Work"}, None, False)
 check("a brain-free tool drops the argument without picking a brain", wanted == "" and "brain" not in args)
 spec = {"fn": "x", "schema": {"type": "object", "properties": {"brain": {"type": "string"}}}}
 args, wanted = mcp_hub._gate_take_brain("x", {"brain": "own"}, spec, True)

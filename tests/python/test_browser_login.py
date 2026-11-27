@@ -1,7 +1,7 @@
 """Signed-in browser (2026-11-21, server/browser_login.py).
 
 A sign-in from the Cookies page goes into the browser the Playwright connection drives, so Jeevi can click and
-fill forms signed in (`jeevi_login` op=browser). These tests keep what makes that safe and what keeps it working:
+fill forms signed in (`javis_login` op=browser). These tests keep what makes that safe and what keeps it working:
 
 - only a sign-in whose own "act" switch is on goes in, and rows stored before this feature start with it off;
 - the stored copy never overwrites a session the browser renewed, and the renewed one is saved back encrypted;
@@ -365,8 +365,8 @@ def test_merge_keeps_the_browsers_values_and_the_vaults_extras():
 
 
 def _plugin():
-    p = ROOT / "system" / "plugins" / "jeevi-login" / "plugin.py"
-    spec = importlib.util.spec_from_file_location("jeevi_login_plugin_browser", p)
+    p = ROOT / "system" / "plugins" / "javis-login" / "plugin.py"
+    spec = importlib.util.spec_from_file_location("javis_login_plugin_browser", p)
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
@@ -397,7 +397,7 @@ def test_acting_needs_the_full_level_while_reading_does_not():
     ctx = Ctx()
     _plugin().register(ctx)
     tool = dict(ctx.tools[0], op_key="op")
-    assert tool["name"] == "jeevi_login" and "browser" in tool["schema"]["properties"]["op"]["enum"]
+    assert tool["name"] == "javis_login" and "browser" in tool["schema"]["properties"]["op"]["enum"]
     assert plugins_host._required_mode(tool, {"op": "browser"}) == "full"
     assert plugins_host._required_mode(tool, {"op": "fetch"}) == "readonly"
     assert plugins_host._required_mode(tool, {"op": "list"}) == "readonly"

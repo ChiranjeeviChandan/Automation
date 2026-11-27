@@ -30,7 +30,7 @@ function node() {
 }
 
 const win = {
-  JeeviPet: null, matchMedia: () => ({ matches: false, addEventListener() {} }),
+  JavisPet: null, matchMedia: () => ({ matches: false, addEventListener() {} }),
   addEventListener() {}, dispatchEvent() {}, innerWidth: 1280, innerHeight: 800,
 };
 const iconLinks = [];
@@ -40,7 +40,7 @@ const head = {
   appendChild: (l) => { l.parentNode = { removeChild: (x) => iconLinks.splice(iconLinks.indexOf(x), 1) }; iconLinks.push(l); },
 };
 const doc = {
-  documentElement: { dataset: { jeeviTheme: "dark" }, getAttribute: () => "dark", classList: { contains: () => false } },
+  documentElement: { dataset: { javisTheme: "dark" }, getAttribute: () => "dark", classList: { contains: () => false } },
   addEventListener() {}, querySelectorAll: () => [], querySelector: () => node(), head,
   getElementById: () => node(), createElement: () => node(), createElementNS: () => node(), body: node(),
 };
@@ -50,7 +50,7 @@ new Function("window", "document", "localStorage", "navigator", "matchMedia",
   fs.readFileSync(path.join(ROOT, "dashboard", "pet.js"), "utf8"))(
   win, doc, { getItem: () => null, setItem() {} }, { userAgent: "node" }, win.matchMedia,
   () => 0, () => {}, () => ({ getPropertyValue: () => "" }), () => new Promise(() => {}));
-const P = win.JeeviPet;
+const P = win.JavisPet;
 check("pet.js loads", !!P);
 
 const NAME = "0123456789abcdef0123.webp";

@@ -18,7 +18,7 @@ import json
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-vbrain-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-vbrain-"))
 
 import voice_brain as vb  # noqa: E402
 
@@ -32,13 +32,13 @@ def check(name, cond):
 
 
 # ---- 1. marker ----
-f, a = vb.parse_marker("Để mình xem.\nJEEVI_ASK_MAIN: doanh thu hôm nay bao nhiêu\n")
+f, a = vb.parse_marker("Để mình xem.\nJAVIS_ASK_MAIN: doanh thu hôm nay bao nhiêu\n")
 check("marker: câu chờ + yêu cầu", f == "Để mình xem." and a == "doanh thu hôm nay bao nhiêu")
 f, a = vb.parse_marker("Hai cộng hai bằng bốn.")
 check("không marker: yêu cầu None, chữ giữ nguyên", a is None and f == "Hai cộng hai bằng bốn.")
-f, a = vb.parse_marker("JEEVI_ASK_MAIN: mở Chrome")
+f, a = vb.parse_marker("JAVIS_ASK_MAIN: mở Chrome")
 check("marker không câu chờ: filler rỗng", f == "" and a == "mở Chrome")
-f, a = vb.parse_marker("  JEEVI_ASK_MAIN:   có khoảng trắng  \nchữ thừa sau")
+f, a = vb.parse_marker("  JAVIS_ASK_MAIN:   có khoảng trắng  \nchữ thừa sau")
 check("marker có khoảng trắng: vẫn bắt, cắt gọn", a == "có khoảng trắng")
 
 # ---- 2. build_messages ----
@@ -334,7 +334,7 @@ async def main():
 
     # ---- 5. dây nối main.py ----
     src5 = (SERVER / "main.py").read_text(encoding="utf-8")
-    check("main: gặp JEEVI_ASK_MAIN thì kết thúc lượt giọng ngay và giao việc nền, không await run_turn",
+    check("main: gặp JAVIS_ASK_MAIN thì kết thúc lượt giọng ngay và giao việc nền, không await run_turn",
           "asyncio.create_task(_voice_bg_task(ask, conv_sid, brain, call_lang=_call_lang))" in src5
           and '"background": ask' in src5
           and "await run_turn(conv_sid, user_message, brain, turn_tag, runtime_trace)\n\n        async def _voice_bg_task" not in src5)
@@ -343,7 +343,7 @@ async def main():
     # nói qua `phien_kho` (xem test_viec_nen_giong_dung_khung_chat).
     check("main: việc nền có khoá phiên riêng để chạy song song, xong thì push_to_chat",
           'f"voice:{conv_sid}:{uuid.uuid4().hex[:8]}"' in src5
-          and "_voice_ask_jeevi(request, conv_sid, brain, key=khoa_mach, call_lang=call_lang)" in src5
+          and "_voice_ask_javis(request, conv_sid, brain, key=khoa_mach, call_lang=call_lang)" in src5
           and "await push_to_chat(conv_sid, out" in src5
           and 'meta={"chat_id": key, "call_lang": call_lang}' in src5)
     check("main: câu gửi bộ não giọng ghép pending_note", "voice_brain.pending_note(conv_sid)" in src5)
@@ -380,59 +380,59 @@ check("split: final đẩy nốt phần đuôi thành MỘT mẩu", _ss("Câu m�
 long = "a" * 100 + ", " + "b" * 150
 ch, pos = _ss(long)
 check("split: đoạn dở dài quá SPEAK_MAX thì cắt sau dấu phẩy", ch == ["a" * 100 + ", "] and pos == 102)
-check("split: dòng bắt đầu bằng đầu marker thì giữ lại", _ss("Để mình xem.\nJEEVI_ASK") == (["Để mình xem.\n"], len("Để mình xem.\n")))
+check("split: dòng bắt đầu bằng đầu marker thì giữ lại", _ss("Để mình xem.\nJAVIS_ASK") == (["Để mình xem.\n"], len("Để mình xem.\n")))
 check("split: dòng marker bị bỏ cả khi final",
-      _ss("Để mình xem.\nJEEVI_ASK_MAIN: doanh thu tháng này", final=True) == (["Để mình xem.\n"], len("Để mình xem.\nJEEVI_ASK_MAIN: doanh thu tháng này")))
+      _ss("Để mình xem.\nJAVIS_ASK_MAIN: doanh thu tháng này", final=True) == (["Để mình xem.\n"], len("Để mình xem.\nJAVIS_ASK_MAIN: doanh thu tháng này")))
 check("split: dòng marker giữa chừng bị bỏ, dòng sau vẫn phát",
-      _ss("Để mình xem.\nJEEVI_ASK_MAIN: x\nXong rồi.\n") == (["Để mình xem.\n", "Xong rồi.\n"], len("Để mình xem.\nJEEVI_ASK_MAIN: x\nXong rồi.\n")))
+      _ss("Để mình xem.\nJAVIS_ASK_MAIN: x\nXong rồi.\n") == (["Để mình xem.\n", "Xong rồi.\n"], len("Để mình xem.\nJAVIS_ASK_MAIN: x\nXong rồi.\n")))
 check("split: gọi nối tiếp từ vị trí cũ", _ss("Câu một. Câu hai.", start=len("Câu một.")) == ([" Câu hai."], len("Câu một. Câu hai.")))
 
 # ---- parse_ui: đường tắt giao diện, không đánh thức bộ não chính (0.57.5) ----
 check("ui: mở trang -> (câu nói, action, target)",
-      vb.parse_ui("Mở ngay.\nJEEVI_UI: open_page models") == ("Mở ngay.", ("open_page", "models")))
+      vb.parse_ui("Mở ngay.\nJAVIS_UI: open_page models") == ("Mở ngay.", ("open_page", "models")))
 check("ui: bung nhóm thanh bên",
-      vb.parse_ui("Bung mục Năng lực nhé.\nJEEVI_UI: open_group nang_luc") == ("Bung mục Năng lực nhé.", ("open_group", "nang_luc")))
-check("ui: không có câu nói kèm thì câu nói rỗng", vb.parse_ui("JEEVI_UI: sidebar close") == ("", ("sidebar", "close")))
+      vb.parse_ui("Bung mục Năng lực nhé.\nJAVIS_UI: open_group nang_luc") == ("Bung mục Năng lực nhé.", ("open_group", "nang_luc")))
+check("ui: không có câu nói kèm thì câu nói rỗng", vb.parse_ui("JAVIS_UI: sidebar close") == ("", ("sidebar", "close")))
 check("ui: action model tự bịa thì BỎ QUA, không nuốt câu và không chạy gì",
-      vb.parse_ui("JEEVI_UI: rm -rf /") == ("JEEVI_UI: rm -rf /", None))
+      vb.parse_ui("JAVIS_UI: rm -rf /") == ("JAVIS_UI: rm -rf /", None))
 check("ui: câu thường không dính", vb.parse_ui("Doanh thu hôm nay bao nhiêu?") == ("Doanh thu hôm nay bao nhiêu?", None))
-check("ui: dòng JEEVI_UI không bao giờ ra loa",
-      _ss("Mở ngay.\nJEEVI_UI: open_page models", final=True)[0] == ["Mở ngay.\n"])
+check("ui: dòng JAVIS_UI không bao giờ ra loa",
+      _ss("Mở ngay.\nJAVIS_UI: open_page models", final=True)[0] == ["Mở ngay.\n"])
 check("ui: đang stream dở chữ đầu trùng marker thì giữ lại, chưa phát",
-      _ss("Mở ngay.\nJEEVI_U") == (["Mở ngay.\n"], len("Mở ngay.\n")))
-check("prompt bộ não giọng có dạy khuôn JEEVI_UI", vb.UI_MARKER in vb.SYSTEM_PROMPT
+      _ss("Mở ngay.\nJAVIS_U") == (["Mở ngay.\n"], len("Mở ngay.\n")))
+check("prompt bộ não giọng có dạy khuôn JAVIS_UI", vb.UI_MARKER in vb.SYSTEM_PROMPT
       and "open_group" in vb.SYSTEM_PROMPT)
 # Model giọng là model NHỎ: nó chỉ viết đúng id khi prompt nói rõ id nào ứng với nhãn tiếng
 # Việt người dùng đọc lên ("mở trang công cụ" -> plugins).
 check("prompt kèm nhãn tiếng Việt của trang", "plugins (công cụ)" in vb.SYSTEM_PROMPT
       and "skills (kỹ năng)" in vb.SYSTEM_PROMPT and "workspace (cộng sự, trợ lý, quy trình)" in vb.SYSTEM_PROMPT)
 
-# ---- 7. Dòng JEEVI_NGHE: câu người dùng đã diễn giải (0.59.25) ----
+# ---- 7. Dòng JAVIS_NGHE: câu người dùng đã diễn giải (0.59.25) ----
 # Vì sao: bong bóng người dùng hiện chữ thô của máy nghe ("David"), Jeevi lại trả lời như đã
 # hiểu "Jeevi"; chủ dự án không biết đã diễn giải hay chưa. Bộ não giọng viết dòng đầu
-# JEEVI_NGHE, server bóc ra thay tin người dùng, không bao giờ đọc ra loa.
-check("prompt bộ não giọng dạy dòng JEEVI_NGHE ở dòng đầu", vb.NGHE_MARKER in vb.SYSTEM_PROMPT)
-r, n = vb.parse_nghe("JEEVI_NGHE: Jeevi ơi mở lịch\nỪ, để xem ngay.\nJEEVI_ASK_MAIN: mở lịch")
+# JAVIS_NGHE, server bóc ra thay tin người dùng, không bao giờ đọc ra loa.
+check("prompt bộ não giọng dạy dòng JAVIS_NGHE ở dòng đầu", vb.NGHE_MARKER in vb.SYSTEM_PROMPT)
+r, n = vb.parse_nghe("JAVIS_NGHE: Jeevi ơi mở lịch\nỪ, để xem ngay.\nJAVIS_ASK_MAIN: mở lịch")
 check("parse_nghe: bóc dòng đầu, giữ phần còn lại nguyên vẹn",
-      n == "Jeevi ơi mở lịch" and r == "Ừ, để xem ngay.\nJEEVI_ASK_MAIN: mở lịch")
-r, n = vb.parse_nghe("Ừ.\n  JEEVI_NGHE:   hey Jeevi  ")
+      n == "Jeevi ơi mở lịch" and r == "Ừ, để xem ngay.\nJAVIS_ASK_MAIN: mở lịch")
+r, n = vb.parse_nghe("Ừ.\n  JAVIS_NGHE:   hey Jeevi  ")
 check("parse_nghe: marker không ở dòng đầu vẫn bắt, cắt khoảng trắng", n == "hey Jeevi" and r == "Ừ.\n")
 check("parse_nghe: không marker -> y nguyên, None", vb.parse_nghe("Hai cộng hai bằng bốn.") == ("Hai cộng hai bằng bốn.", None))
-check("parse_nghe: marker rỗng coi như không có", vb.parse_nghe("JEEVI_NGHE:\nỪ")[1] is None)
+check("parse_nghe: marker rỗng coi như không có", vb.parse_nghe("JAVIS_NGHE:\nỪ")[1] is None)
 check("tach_nghe_dau: chỉ xét dòng đầu đã khép",
-      vb.tach_nghe_dau("JEEVI_NGHE: Jeevi ơi\nỪ") == ("Ừ", "Jeevi ơi")
-      and vb.tach_nghe_dau("Ừ.\nJEEVI_NGHE: x") == ("Ừ.\nJEEVI_NGHE: x", None)
-      and vb.tach_nghe_dau("JEEVI_NGHE: chưa khép") == ("JEEVI_NGHE: chưa khép", None))
-check("split_speakable: dòng JEEVI_NGHE đang dở thì giữ lại, không đọc",
-      vb.split_speakable("JEEVI_NGHE: Jeevi ơi mở lịch.", 0, False) == ([], 0))
-check("split_speakable: final thì bỏ hẳn dòng JEEVI_NGHE",
-      vb.split_speakable("JEEVI_NGHE: Jeevi ơi mở lịch.", 0, True)[0] == [])
-check("split_speakable: dòng JEEVI_NGHE đã khép bị bỏ, câu sau vẫn đọc",
-      vb.split_speakable("JEEVI_NGHE: Jeevi ơi.\nỪ, để xem.\n", 0, False)[0] == ["Ừ, để xem.\n"])
+      vb.tach_nghe_dau("JAVIS_NGHE: Jeevi ơi\nỪ") == ("Ừ", "Jeevi ơi")
+      and vb.tach_nghe_dau("Ừ.\nJAVIS_NGHE: x") == ("Ừ.\nJAVIS_NGHE: x", None)
+      and vb.tach_nghe_dau("JAVIS_NGHE: chưa khép") == ("JAVIS_NGHE: chưa khép", None))
+check("split_speakable: dòng JAVIS_NGHE đang dở thì giữ lại, không đọc",
+      vb.split_speakable("JAVIS_NGHE: Jeevi ơi mở lịch.", 0, False) == ([], 0))
+check("split_speakable: final thì bỏ hẳn dòng JAVIS_NGHE",
+      vb.split_speakable("JAVIS_NGHE: Jeevi ơi mở lịch.", 0, True)[0] == [])
+check("split_speakable: dòng JAVIS_NGHE đã khép bị bỏ, câu sau vẫn đọc",
+      vb.split_speakable("JAVIS_NGHE: Jeevi ơi.\nỪ, để xem.\n", 0, False)[0] == ["Ừ, để xem.\n"])
 
 from pathlib import Path as _P  # noqa: E402
 from sessions import SessionStore  # noqa: E402
-_st = SessionStore(_P(os.environ["JEEVI_STATE_DIR"]) / "nghe.db")
+_st = SessionStore(_P(os.environ["JAVIS_STATE_DIR"]) / "nghe.db")
 _sid = _st.create_session(brain="b", engine="e", model="m")
 _st.append_message(_sid, "user", "hey David mở lịch")
 check("replace_last_message: thay tin người dùng cuối",
@@ -443,7 +443,7 @@ check("replace_last_message: tin cuối sai vai thì không đụng",
       _st.replace_last_message(_sid, "user", "x") is False and _st.get_messages(_sid)[-1]["content"] == "Rồi.")
 
 _src_main = (SERVER / "main.py").read_text(encoding="utf-8", errors="replace")
-check("main: làn nhanh bóc JEEVI_NGHE giữa lúc stream và ở lưới sau",
+check("main: làn nhanh bóc JAVIS_NGHE giữa lúc stream và ở lưới sau",
       "voice_brain.tach_nghe_dau(text)" in _src_main and "voice_brain.parse_nghe(text)" in _src_main)
 # Storage/UI correction and destructive rewrites are executed by test_voice_turn_integrity.py.
 _src_app = (ROOT / "dashboard" / "app.js").read_text(encoding="utf-8", errors="replace")

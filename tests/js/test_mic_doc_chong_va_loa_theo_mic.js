@@ -44,11 +44,11 @@ check("phần final được GÁN LẠI qua _ghepChuyenBien, không nối thêm"
 // Chạy thật hàm ghép bằng cách nhấc nó ra khỏi class.
 const ghepSrc = (voice.match(/_ghepChuyenBien\(finalNay\) \{[\s\S]*?\n  \}/) || [""])[0];
 check("tìm được _ghepChuyenBien", !!ghepSrc);
-// _ghepChuyenBien gọi JeeviVoice.ghepSua (0.64.72: bản SỬA của câu đã chốt) nên nhấc kèm.
+// _ghepChuyenBien gọi JavisVoice.ghepSua (0.64.72: bản SỬA của câu đã chốt) nên nhấc kèm.
 const suaSrc = (voice.match(/static ghepSua\(daCo, manh\) \{[\s\S]*?\n  \}/) || [""])[0];
 check("tìm được ghepSua", !!suaSrc);
 const ghep = new Function("committed", "finalNay",
-  "const JeeviVoice = class { " + suaSrc + " };" +
+  "const JavisVoice = class { " + suaSrc + " };" +
   "const self = { _committed: committed, " + ghepSrc.replace(/^_ghepChuyenBien/, "_ghepChuyenBien") + " }; return self._ghepChuyenBien(finalNay);");
 check("Android giao final DÀI HƠN final trước thì lấy bản dài, không nối",
   ghep("Ok có", "Ok có vẻ") === "Ok có vẻ", ghep("Ok có", "Ok có vẻ"));
@@ -73,14 +73,14 @@ check("enqueueSpeak bỏ đoạn y hệt đoạn vừa xếp", /if \(clean === t
 check("stopSpeaking xoá dấu vết đoạn cuối để lượt sau đọc lại được", /this\._lastQueued = "";/.test(voice));
 
 // ---- 4. Loa đi theo mic ----
-check("quick-settings phơi window.JeeviTts.set đi qua applyState", /window\.JeeviTts = \{ set: applyState/.test(qs));
-check("bấm mic: loa bật/tắt theo handsFree", /window\.JeeviTts\.set\(handsFree\)/.test(app));
+check("quick-settings phơi window.JavisTts.set đi qua applyState", /window\.JavisTts = \{ set: applyState/.test(qs));
+check("bấm mic: loa bật/tắt theo handsFree", /window\.JavisTts\.set\(handsFree\)/.test(app));
 // 0.65.18: phím Space không còn mở mic (bấm mic là gọi), nên không còn đường "giữ Space bật loa".
 check("Space không còn mở mic", !/e\.code === "Space"/.test(app));
-check("Esc (thoát rảnh tay): tắt loa", /window\.JeeviTts\.set\(false\)/.test(app));
+check("Esc (thoát rảnh tay): tắt loa", /window\.JavisTts\.set\(false\)/.test(app));
 // Thả Space là hết một câu, không phải tắt nghe - tắt loa ở đó là câu trả lời bị câm.
 const keyup = (app.match(/addEventListener\("keyup"[\s\S]*?\}\);/) || [""])[0];
-check("CANARY: thả Space KHÔNG tắt loa", !/JeeviTts/.test(keyup));
+check("CANARY: thả Space KHÔNG tắt loa", !/JavisTts/.test(keyup));
 // Không đẻ thêm đường gửi tin (chốt của test_mic_khong_tu_gui).
 // 5 từ 0.55.63: chỗ thứ 5 là sendMessage gọi lại chính nó sau khi file đính kèm tải xong
 // (test_mic_khong_tu_gui canh kỹ chỗ đó), không phải một đường gửi tin mới.

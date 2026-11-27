@@ -1,4 +1,4 @@
-"""A reply holding a link goes out on personal Zalo as a link card (jeevi-zalo 1.13.0 `zalo_send_link`).
+"""A reply holding a link goes out on personal Zalo as a link card (javis-zalo 1.13.0 `zalo_send_link`).
 
     python tests/run.py zalo_link_card      (no network)
 
@@ -19,7 +19,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zalo-link-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zalo-link-")
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")

@@ -108,8 +108,8 @@ có brain, có vòng đời, có nhóm.
 Đi theo đúng khuôn `mcp_store` đang dùng cho các kết nối MCP - cùng bài toán, cùng lời giải:
 
 ```
-<JEEVI_STATE_DIR>/chatbots.json      ← danh sách bot (KHÔNG có token)
-<JEEVI_STATE_DIR>/secrets            ← token, mã hoá, qua secrets_store
+<JAVIS_STATE_DIR>/chatbots.json      ← danh sách bot (KHÔNG có token)
+<JAVIS_STATE_DIR>/secrets            ← token, mã hoá, qua secrets_store
 ```
 
 Một bản ghi bot:

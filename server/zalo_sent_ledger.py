@@ -6,7 +6,7 @@ message was filed as the owner typing by hand: the Stats tab of the Chatbot page
 chat turns and reports to staff as manual replies (82 "manual" against 52 A.I. on an account nobody types on), and the
 bot on duty stepped aside in that chat as if the owner had stepped in (`nhuong_tay_phut`).
 
-The send is noted here just BEFORE it goes out, since jeevi-zalo can push the echo before the tool call returns: by the
+The send is noted here just BEFORE it goes out, since javis-zalo can push the echo before the tool call returns: by the
 hub for a connection tool (`mcp_hub._guard`) and by the plugin host for a pack tool (`plugins_host._make_call`). A send
 that failed is forgotten again. The read loop (`zalo_personal_channel`) asks `take` before treating one of the
 account's own messages as the owner's: a match is written to the inbox marked `MARK` (counted as A.I. by
@@ -32,7 +32,7 @@ MIN_INSIDE = 12         # a sent text found INSIDE a longer echo ("@Lan " added 
 LINK_BLIND = 120        # a link card that comes back as a non-text message without its link (as LINK_ECHO_BLIND)
 # What the inbox row of such a message carries. The same mark `routes.conversations.owner_reply` puts on a message an
 # engine sent with `inbox_reply`, so one rule in the stats covers both.
-MARK = {"tu_jeevi": True, "via": "tool"}
+MARK = {"tu_javis": True, "via": "tool"}
 
 _NOT_A_MESSAGE = ("zalo_send_typing",)      # "typing..." puts nothing in the chat
 _THREAD_KEYS = ("threadId", "thread_id", "threadID", "thread", "chatId", "chat_id", "groupId", "group_id")
@@ -97,7 +97,7 @@ def _parsed(result: Any) -> Any:
 
 
 def failed(result: Any) -> bool:
-    """True when the tool says nothing went out: an error, or jeevi-zalo's `success: false`."""
+    """True when the tool says nothing went out: an error, or javis-zalo's `success: false`."""
     if isinstance(result, str) and result.lstrip().startswith("ERROR:"):
         return True
     data = _parsed(result)

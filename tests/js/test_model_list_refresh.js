@@ -1,4 +1,4 @@
-/* JeeviModelList.refresh: ask the server again even when a list is in hand.
+/* JavisModelList.refresh: ask the server again even when a list is in hand.
 
        node tests/js/test_model_list_refresh.js
 
@@ -36,7 +36,7 @@ const sandbox = {
 sandbox.globalThis = sandbox;
 vm.createContext(sandbox);
 vm.runInContext(fs.readFileSync(path.join(ROOT, "dashboard", "model-list.js"), "utf8"), sandbox);
-const ML = sandbox.window.JeeviModelList;
+const ML = sandbox.window.JavisModelList;
 const PID = "openai-oauth";
 
 (async () => {

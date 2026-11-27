@@ -25,7 +25,7 @@
 - Học từ reaction và phản hồi: để A3.
 - Adapter nguồn sự kiện ngoài (MCP, webhook, theo dõi file tức thời).
 - Quyền thay file người dùng đã sửa, và bản đề xuất tự sinh khi có xung đột (mục 5).
-- Liên kết lịch `jeevi_schedule` với mục tiêu, và chặn lịch trùng (mục 9).
+- Liên kết lịch `javis_schedule` với mục tiêu, và chặn lịch trùng (mục 9).
 - Hạn mức theo trợ lý hay theo ngày (mục 14, câu 3).
 - Đường giao việc từ chat thường sang trợ lý.
 
@@ -379,20 +379,20 @@ CREATE TABLE IF NOT EXISTS source_observations(
 
 ## 9. Một bên quản lịch: thu hẹp cam kết
 
-Review chỉ ra rằng chặn `jeevi_schedule` theo cờ toàn lượt (`goal_touched`) vừa chặn nhầm nhắc việc độc lập, vừa bỏ sót lịch trùng tạo ở lượt khác. A2 **bỏ** chặn đó.
+Review chỉ ra rằng chặn `javis_schedule` theo cờ toàn lượt (`goal_touched`) vừa chặn nhầm nhắc việc độc lập, vừa bỏ sót lịch trùng tạo ở lượt khác. A2 **bỏ** chặn đó.
 
 **A2 bảo đảm:**
 - Lịch theo đuổi một mục tiêu chỉ nằm ở `wakeups` của Resonance.
 - Mỗi mục tiêu chỉ có một hẹn giờ `work` và một hẹn giờ `observe` đang chờ.
 - Hai scheduler không cùng nhận một lịch.
-- Hẹn giờ cho mục tiêu đi qua `jeevi_goal` (`user_schedule`).
+- Hẹn giờ cho mục tiêu đi qua `javis_goal` (`user_schedule`).
 
 **A2 không bảo đảm:** người dùng hay model tạo thêm loop hay nhắc hẹn riêng cho cùng việc.
 - Chưa có liên kết lịch với mục tiêu do host kiểm, và không dùng model để đoán hai yêu cầu có cùng nghĩa không.
 - `_RESONANCE_GOAL_HINT` thêm một câu gợi ý (không ràng buộc): "việc đã thành mục tiêu thì Jeevi tự giữ lịch; chỉ tạo nhắc hẹn khi đó là việc khác".
 - Nhắc hẹn và loop độc lập dùng như cũ, ở mọi thứ tự.
 
-Liên kết rõ từ lịch tới mục tiêu (trường `goal_id` do host kiểm trong `jeevi_schedule`) là hạng mục sau, nằm ngoài phạm vi.
+Liên kết rõ từ lịch tới mục tiêu (trường `goal_id` do host kiểm trong `javis_schedule`) là hạng mục sau, nằm ngoài phạm vi.
 
 ## 10. API và giao diện
 

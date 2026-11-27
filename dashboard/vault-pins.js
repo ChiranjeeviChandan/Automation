@@ -139,7 +139,7 @@
       .catch(function () { cache[brain] = before; return false; });
   }
 
-  window.JeeviVaultPins = {
+  window.JavisVaultPins = {
     clean: clean, toBrain: toBrain, toTree: toTree, has: has, toggled: toggled, splitRoot: splitRoot, chain: chain,
     openPlan: openPlan, load: load, current: current, save: save,
   };

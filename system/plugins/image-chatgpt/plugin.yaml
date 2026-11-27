@@ -8,6 +8,6 @@ author: Jeevi (bundled)
 enabled: true
 min_mode: safe
 tools:
-  - jeevi_generate_image
-  - jeevi_describe_image
+  - javis_generate_image
+  - javis_describe_image
 hooks: []

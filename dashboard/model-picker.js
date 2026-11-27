@@ -73,8 +73,8 @@
     return n ? n[0].toUpperCase() + n.slice(1) : n;
   }
   const $ = (id) => document.getElementById(id);
-  const curSid = () => { try { return (window.JeeviSessions && window.JeeviSessions.current()) || null; } catch (e) { return null; } };
-  const curBrain = () => { try { return (window.JeeviSessions && window.JeeviSessions.brain()) || ""; } catch (e) { return ""; } };
+  const curSid = () => { try { return (window.JavisSessions && window.JavisSessions.current()) || null; } catch (e) { return null; } };
+  const curBrain = () => { try { return (window.JavisSessions && window.JavisSessions.brain()) || ""; } catch (e) { return ""; } };
   // Model ĐANG HIỆU LỰC cho khung chat trước mặt: ghim của phiên thắng mặc định chung.
   const effective = () => sessionPin || pendingPin || state.main;
   // What the composer SHOWS (owner, 05/11/2026: "khung chat bị chuyển thì phải chuyển luôn model ở khung đang chat"): the
@@ -112,9 +112,9 @@
 
   // 0.461.0: a Jeevi Core chat's pin is Jeevi Core's pin, also shown and set as the Model of its card on the Partners
   // page (the agent editor). The chip tells the page through one event.
-  const CORE_EVENT = "jeevi:core-model";
+  const CORE_EVENT = "javis:core-model";
   function coreChanged() {
-    if (!(agentEff && agentEff.slug === "jeevi-core")) return;
+    if (!(agentEff && agentEff.slug === "javis-core")) return;
     try { window.dispatchEvent(new CustomEvent(CORE_EVENT, { detail: { from: "chat" } })); } catch (e) {}
   }
 
@@ -243,7 +243,7 @@
       mt.textContent = fb ? chipLabel({ provider: fb.provider, model: fb.model }, runP) : chipLabel(eff, p);
       mt.title = fb ? fallbackTitle(fb, state.providers.find((x) => x.id === fb.selected_provider), runP)
         : (p ? p.label + " · " + (eff.model || defText(eff.provider)) + "\n" : "") + (sessionPin
-        ? window.t(agentEff && agentEff.slug === "jeevi-core" ? "mpick.core_pin_title" : "mpick.pin_title")
+        ? window.t(agentEff && agentEff.slug === "javis-core" ? "mpick.core_pin_title" : "mpick.pin_title")
         : pinBroken
           ? window.t(pinLimited ? "mpick.pin_limited_title" : "mpick.pin_broken_title")
           : window.t("mpick.follow_default"));
@@ -272,8 +272,8 @@
     if (eb) {
       // A locked Antigravity model runs at the level in its name, so the chip shows that level.
       const effM = shown();
-      const own = window.JeeviEffortSlider && window.JeeviEffortSlider.isLocked(effM.provider, effM.model)
-        ? window.JeeviEffortSlider.lockedLevel(effM.model) : "";
+      const own = window.JavisEffortSlider && window.JavisEffortSlider.isLocked(effM.provider, effM.model)
+        ? window.JavisEffortSlider.lockedLevel(effM.model) : "";
       const lvl = shownEffort();
       eb.textContent = window.t(EFF_KEY[own || (EFFORT.find((e) => e[0] === lvl) || EFFORT[0])[0]]);
       const effB = $("effBtn");
@@ -299,7 +299,7 @@
     const fi = $("effFast");
     if (fi) fi.hidden = !on;
     if (effSlider && effSlider.refreshFast) effSlider.refreshFast();
-    try { if (window.JeeviPlanLimit) window.JeeviPlanLimit.setProvider(eff.provider, eff.model); } catch (e) {}
+    try { if (window.JavisPlanLimit) window.JavisPlanLimit.setProvider(eff.provider, eff.model); } catch (e) {}
   }
   // FAST_STATE_BEGIN
   // Tooltip line for the last Fast mode state a brain reported (server: fast_mode.states()).
@@ -346,12 +346,12 @@
       noWait: true,
       connectedOnly: true,   // 0.350.0: providers not connected are not listed in the chat picker
     };
-    let html = await window.JeeviModelList.render(o);
+    let html = await window.JavisModelList.render(o);
     if (luot !== luotVe || pop.hidden) return;
     // An assistant's chat with its own model: one row to go back to following the main chat's model (0.285.0).
     if (agentEff && (sessionPin || pinBroken)) {
       html = '<button type="button" class="mb-follow">' + (typeof ic === "function" ? ic("rotate-cw") : "") + " " +
-        window.t(agentEff.slug === "jeevi-core" ? "mpick.follow_main" : "mpick.follow_agent") + "</button>" + html;
+        window.t(agentEff.slug === "javis-core" ? "mpick.follow_main" : "mpick.follow_agent") + "</button>" + html;
     }
     // Ô tìm đang được gõ thì giữ con trỏ ở đó sau khi vẽ lại. Mới MỞ bảng thì chỉ tự focus
     // trên máy có bàn phím thật: trên điện thoại focus là bật bàn phím ảo che nửa bảng, người
@@ -415,15 +415,15 @@
   // Draws the slider into #effPop. Shared by the popover of a computer and the sheet of a phone.
   function effMount() {
     const pop = $("effPop"), btn = $("effBtn");
-    if (!pop || !window.JeeviEffortSlider) return false;
+    if (!pop || !window.JavisEffortSlider) return false;
     if (effSlider) { effSlider.destroy(); effSlider = null; }
     const eff = shown();
     pop.hidden = false;
     pop.style.left = "";
-    const locked = window.JeeviEffortSlider.isLocked(eff.provider, eff.model);
+    const locked = window.JavisEffortSlider.isLocked(eff.provider, eff.model);
     if (btn) btn.setAttribute("aria-expanded", "true");
     const fn = fastNote(eff.provider, eff.model);
-    effSlider = window.JeeviEffortSlider.mount(pop, {
+    effSlider = window.JavisEffortSlider.mount(pop, {
       value: shownEffort(),
       fast: {
         supported: fn.supported, on: state.fast, title: fastTitle,
@@ -431,7 +431,7 @@
         onToggle: async (on) => { state.fast = on; renderFast(); await saveModel({ fast: state.fast }); },
       },
       locked: locked,
-      lockedValue: locked ? window.JeeviEffortSlider.lockedLevel(eff.model) : "",
+      lockedValue: locked ? window.JavisEffortSlider.lockedLevel(eff.model) : "",
       onChange: saveEffort,
     });
     return true;
@@ -503,7 +503,7 @@
         if (cur) pop.scrollTop = Math.max(0, cur.offsetTop - pop.offsetTop - (pop.clientHeight - cur.offsetHeight) / 2);
       }).catch(() => {});
     } else if (part === "eff") effMount();
-    else { try { if (window.JeeviPlanLimit && window.JeeviPlanLimit.showInSheet) window.JeeviPlanLimit.showInSheet(); } catch (e) {} }
+    else { try { if (window.JavisPlanLimit && window.JavisPlanLimit.showInSheet) window.JavisPlanLimit.showInSheet(); } catch (e) {} }
     const chip = $(SHEET_CHIPS[["model", "eff", "limit"].indexOf(part)]);
     if (chip) chip.setAttribute("aria-expanded", "true");
     const x = $("cpSheetClose");
@@ -605,8 +605,8 @@
   else document.addEventListener("DOMContentLoaded", watchPops);
   // POP_ANCHOR_END
 
-  function closeLimit() { try { if (window.JeeviPlanLimit) window.JeeviPlanLimit.close(); } catch (e) {} }
-  function closePlus() { try { if (window.JeeviComposerMenu) window.JeeviComposerMenu.close(); } catch (e) {} }
+  function closeLimit() { try { if (window.JavisPlanLimit) window.JavisPlanLimit.close(); } catch (e) {} }
+  function closePlus() { try { if (window.JavisComposerMenu) window.JavisComposerMenu.close(); } catch (e) {} }
 
   // Chọn một model: ghi mặc định chung (chat mới sau này theo cái vừa chọn) + GHIM cho phiên
   // đang mở (phiên này giữ đúng model kể cả khi mặc định chung bị đổi ở chỗ khác). Dùng chung
@@ -632,7 +632,7 @@
     }
     await loadState(); await refreshRoute(); renderBar();   // the route too: picking a card lifts its out-of-quota mark
     // ...and the usage ring's red mark with it (server: _clear_pin_limit), so the ring reads the meters again now.
-    try { if (window.JeeviPlanLimit) window.JeeviPlanLimit.refresh(); } catch (e) {}
+    try { if (window.JavisPlanLimit) window.JavisPlanLimit.refresh(); } catch (e) {}
     // The new model may lock or unlock the slider.
     if (sheetIsOpen() && sheetPart === "eff") effMount();
     else if (effIsOpen()) { effClose(); effOpen(); }
@@ -647,7 +647,7 @@
     const nhaOk = state.providers.filter((p) => p.configured);
     const dem = await Promise.all(nhaOk.map(async (p) => {
       let ids = [];
-      try { ids = (window.JeeviModelList ? await window.JeeviModelList.models(p.id) : p.models) || []; }
+      try { ids = (window.JavisModelList ? await window.JavisModelList.models(p.id) : p.models) || []; }
       catch (e) { ids = p.models || []; }
       return { p, ids: ids.map((m) => (typeof m === "string" ? m : (m && (m.id || m.name)) || "")).filter(Boolean) };
     }));
@@ -721,12 +721,12 @@
   window.initModelBar = async function () {
     await loadState(); await loadSessionPin(); renderBar();
     // Tải sẵn danh sách của nhà đang dùng lúc rảnh, để lần bấm chip đầu tiên mở ra có ngay.
-    try { const pid = state.main.provider; if (pid && window.JeeviModelList) window.JeeviModelList.models(pid); } catch (e) {}
+    try { const pid = state.main.provider; if (pid && window.JavisModelList) window.JavisModelList.models(pid); } catch (e) {}
   };
 
   // Phiên mới mint id xong (app.js gọi ngay lúc gửi tin đầu): model đã chọn khi khung
   // còn trống đi theo phiên vừa sinh, không bị phiên khác đổi mặc định chung đè mất.
-  window.JeeviModelBar = {
+  window.JavisModelBar = {
     claimPending: function (sid) {
       if (!sid || !(pendingPin || pendingEff)) return;
       if (pendingPin) {
@@ -771,7 +771,7 @@
       // A Jeevi Core chat has no stamp of its own: it runs on Jeevi Core's pin, or on the main model while there is none
       // (server `_chat_provider_for_session`). Showing the main model as pinned here made an unpinned Core chat look
       // pinned, and then "change" when the main model changed (owner, 04/11/2026).
-      if (agentEff && agentEff.slug === "jeevi-core" && pinSid === sid) return;
+      if (agentEff && agentEff.slug === "javis-core" && pinSid === sid) return;
       if (pendingPin) return;   // claimPending pins the model picked before the first message
       sessionPin = { provider: state.main.provider, model: state.main.model };
       pinBroken = false; pinSid = sid;
@@ -780,18 +780,18 @@
   };
 
   // Đổi phiên (mở phiên cũ, chat mới, xoá phiên) → hỏi lại ghim của phiên rồi vẽ lại.
-  window.addEventListener("jeevi:sessions-changed", async () => { await loadSessionPin(); renderBar(); });
+  window.addEventListener("javis:sessions-changed", async () => { await loadSessionPin(); renderBar(); });
   // The Models page turned Fast mode on or off from a card's Effort sheet: the composer's bolt follows at once.
-  window.addEventListener("jeevi:fast-changed", (e) => { state.fast = !!(e.detail && e.detail.on); renderFast(); });
+  window.addEventListener("javis:fast-changed", (e) => { state.fast = !!(e.detail && e.detail.on); renderFast(); });
   // The Core card pinned or unpinned Jeevi Core: an open Core chat redraws its chip.
   window.addEventListener(CORE_EVENT, async (e) => {
-    if ((e.detail || {}).from === "chat" || !(agentEff && agentEff.slug === "jeevi-core")) return;
+    if ((e.detail || {}).from === "chat" || !(agentEff && agentEff.slug === "javis-core")) return;
     await loadSessionPin(); renderBar();
   });
 
   // Từ điển về (fetch bất đồng bộ, thường SAU khi chip model đã vẽ) hoặc người dùng đổi
   // ngôn ngữ giao diện: vẽ lại chip, và vẽ lại cả bảng chọn nếu nó đang mở.
-  window.addEventListener("jeevi:i18n", () => {
+  window.addEventListener("javis:i18n", () => {
     renderBar();
     if (isOpen()) renderPop();
   });

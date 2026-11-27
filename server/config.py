@@ -12,10 +12,10 @@ import hashlib
 import secrets
 from pathlib import Path
 
-# Mọi state Jeevi tự ghi (settings, auth sessions, loop config) nằm ở JEEVI_STATE_DIR.
+# Mọi state Jeevi tự ghi (settings, auth sessions, loop config) nằm ở JAVIS_STATE_DIR.
 # Mặc định = server/ (không đổi trên máy cũ). Docker/VPS đặt = /data/state (volume ghi được,
 # vì code tree /app là read-only trong container).
-STATE_DIR = Path(os.getenv("JEEVI_STATE_DIR", str(Path(__file__).parent)))
+STATE_DIR = Path(os.getenv("JAVIS_STATE_DIR", str(Path(__file__).parent)))
 try:
     STATE_DIR.mkdir(parents=True, exist_ok=True)
 except Exception:
@@ -132,7 +132,7 @@ _DEFAULT = {
         "claude_oauth_token": "",
         "claude_oauth_token_at": 0,
         # Daily `claude update` (claude_update.py). The switch sits on the Claude Code card of the
-        # Models page; env JEEVI_CLAUDE_AUTO_UPDATE=0 still forces it off over this value.
+        # Models page; env JAVIS_CLAUDE_AUTO_UPDATE=0 still forces it off over this value.
         "claude_auto_update": True,
         "openrouter_key": "",
         "anthropic_api_key": "",               # provider Anthropic API (P2)
@@ -210,7 +210,7 @@ _DEFAULT = {
             "openrouter": ["openai/gpt-4o-mini", "anthropic/claude-3.5-sonnet", "google/gemini-2.0-flash-001", "deepseek/deepseek-chat"],
         },
     },
-    # Ảnh sinh bằng jeevi_generate_image.
+    # Ảnh sinh bằng javis_generate_image.
     # strip_c2pa: gỡ Content Credentials (C2PA) - dấu nguồn gốc do nhà cung cấp ảnh nhúng sẵn
     # để nói "ảnh này do AI tạo". MẶC ĐỊNH TẮT: giữ nguyên dấu là hành vi an toàn, và bản fork
     # nào cũng bắt đầu ở trạng thái này. Bật lên là quyết định CÓ Ý THỨC của chủ workspace,
@@ -279,16 +279,16 @@ _DEFAULT = {
     },
     # MCP do Jeevi quản lý (registry connection ở mcp_servers.json). strict=True → CHỈ dùng
     # kết nối của Jeevi (--strict-mcp-config), bỏ qua config MCP sẵn có của máy.
-    # hub=True (mặc định): mọi engine đấu qua MCP HUB (1 entry "jeevi" - đa tài khoản, quyền,
+    # hub=True (mặc định): mọi engine đấu qua MCP HUB (1 entry "javis" - đa tài khoản, quyền,
     # audit tại hub). Đặt false để về chế độ cũ (per-server) nếu gặp sự cố.
     # lazy_tools: chống phình context khi đấu nhiều connector. "auto" = tự bật khi số tool
     # MCP vượt lazy_threshold (mặc định); True/False = ép bật/tắt. Khi bật, hub chỉ phơi
-    # 2 meta-tool jeevi_search_tools/jeevi_run_tool thay cho hàng trăm schema -> model tự
+    # 2 meta-tool javis_search_tools/javis_run_tool thay cho hàng trăm schema -> model tự
     # tìm tool theo NGỮ CẢNH rồi mới nạp. lazy_top_k = số tool search trả về mỗi lần.
-    # ambient_hint: kèm connector đấu vào TÀI KHOẢN Claude (Drive/Gmail...) vào jeevi_connections
+    # ambient_hint: kèm connector đấu vào TÀI KHOẢN Claude (Drive/Gmail...) vào javis_connections
     # + lazy search cho engine Claude, để model biết chúng tồn tại (gọi qua tool native mcp__*).
     # lazy_char_budget: trần KÝ TỰ schema tool được phơi thẳng trước khi ép bật lazy. Đếm số
-    # tool không nói lên chi phí (một jeevi_use_skill nhúng cả danh sách skill có thể nặng hơn
+    # tool không nói lên chi phí (một javis_use_skill nhúng cả danh sách skill có thể nặng hơn
     # mười tool gọn), nên 'auto' xét cả hai: đông tool HOẶC schema nặng.
     "mcp": {"strict": False, "hub": True, "lazy_tools": "auto", "lazy_threshold": 40,
             "lazy_top_k": 8, "lazy_char_budget": 6000, "ambient_hint": True},
@@ -1479,25 +1479,25 @@ def auth_enabled(cfg=None):
 
 def require_login():
     """Có BẮT BUỘC đăng nhập để dùng Jeevi không (kể cả khi CHƯA đặt mật khẩu → ép setup).
-    - JEEVI_REQUIRE_LOGIN=1/0 ép bật/tắt tường minh.
+    - JAVIS_REQUIRE_LOGIN=1/0 ép bật/tắt tường minh.
     - Built-in remote access (Cloudflare Tunnel, remote_tunnel.py) is on → True.
-    - Mặc định: BẬT khi server nghe public (JEEVI_HOST=0.0.0.0, vd Docker/Hostinger/VPS) -
+    - Mặc định: BẬT khi server nghe public (JAVIS_HOST=0.0.0.0, vd Docker/Hostinger/VPS) -
       vì Claude chạy full quyền, không được để hở ai cũng vào được."""
     # The built-in Cloudflare Tunnel (remote_tunnel.py) puts a localhost-only Jeevi on the Internet, which the bind
-    # address below cannot see. It wins over an explicit JEEVI_REQUIRE_LOGIN=0 for the same reason.
+    # address below cannot see. It wins over an explicit JAVIS_REQUIRE_LOGIN=0 for the same reason.
     try:
         if (read_settings().get("remote_tunnel") or {}).get("enabled"):
             return True
     except Exception:
         pass
-    v = os.getenv("JEEVI_REQUIRE_LOGIN", "").strip().lower()
+    v = os.getenv("JAVIS_REQUIRE_LOGIN", "").strip().lower()
     if v in ("1", "true", "yes", "on"):
         return True
     if v in ("0", "false", "no", "off"):
         return False
     # FAIL-CLOSED: bind KHÔNG phải loopback (0.0.0.0, ::, IP LAN…) → coi là public → bắt buộc login.
-    # Chỉ tắt khi nghe thuần localhost. (Localhost + tunnel: đặt JEEVI_REQUIRE_LOGIN=1.)
-    host = os.getenv("JEEVI_HOST", "127.0.0.1").strip().lower()
+    # Chỉ tắt khi nghe thuần localhost. (Localhost + tunnel: đặt JAVIS_REQUIRE_LOGIN=1.)
+    host = os.getenv("JAVIS_HOST", "127.0.0.1").strip().lower()
     return host not in ("127.0.0.1", "localhost", "::1")
 
 
@@ -1558,7 +1558,7 @@ def kept_totp(cfg=None) -> dict:
     """`{"totp": ...}` to carry into a NEW `auth` object, or `{}` when there is nothing to keep.
 
     Turning off login (0.224.0) keeps the 2FA block, so whoever creates the account again (setup
-    page, JEEVI_ADMIN_PASSWORD at boot) must not replace `auth` wholesale and drop it."""
+    page, JAVIS_ADMIN_PASSWORD at boot) must not replace `auth` wholesale and drop it."""
     t = ((cfg or read_settings()).get("auth") or {}).get("totp")
     return {"totp": t} if isinstance(t, dict) and t.get("enabled") else {}
 
@@ -1915,7 +1915,7 @@ TOKEN_PREFIX = "jvs_"
 TOKEN_SCOPE_CHAT = ("/chat", "/version", "/health", "/sessions")
 # Scope `sync` (20/11/2026): only saves Claude Code / Codex transcripts (POST /chat/external, see chat_bridge
 # `log_transcript`). Jeevi Gate mints one when the owner turns Jeevi Sync on from an outside AI, so connecting Gate is
-# all the setup there is. It can do what jeevi_chat_note already does and nothing else: no chat turn, no reading.
+# all the setup there is. It can do what javis_chat_note already does and nothing else: no chat turn, no reading.
 TOKEN_SCOPE_SYNC = ("/chat/external",)
 TOKEN_SCOPES = ("full", "chat", "sync")
 
@@ -2059,7 +2059,7 @@ def clear_setup_token():
 
 
 def provision_admin_from_env():
-    """Apply JEEVI_ADMIN_PASSWORD (+ optional JEEVI_ADMIN_USER) at boot.
+    """Apply JAVIS_ADMIN_PASSWORD (+ optional JAVIS_ADMIN_USER) at boot.
 
     - No admin yet: create it, which also closes /auth/setup (safest for a public deploy).
     - Admin exists and the env value CHANGED since it was last applied: reset to it, keep 2FA,
@@ -2078,11 +2078,11 @@ def provision_admin_from_env():
     an owner who had set their own password in the dashboard was locked out with "Wrong username
     or password" and their username turned into "admin" (many reports 2026-10-11).
     """
-    raw = os.getenv("JEEVI_ADMIN_PASSWORD", "")
+    raw = os.getenv("JAVIS_ADMIN_PASSWORD", "")
     pw = clean_password(raw)
     if not pw:
         return ""
-    user = (os.getenv("JEEVI_ADMIN_USER", "admin").strip() or "admin")
+    user = (os.getenv("JAVIS_ADMIN_USER", "admin").strip() or "admin")
     cfg = read_settings()
     a = dict(cfg.get("auth") or {})
     m_salt = secrets.token_hex(16)
@@ -2131,13 +2131,13 @@ def provision_admin_from_env():
 
 
 def restore_admin_from_env() -> str:
-    """No account right now but JEEVI_ADMIN_PASSWORD is set: put the account back at once, 2FA kept.
+    """No account right now but JAVIS_ADMIN_PASSWORD is set: put the account back at once, 2FA kept.
 
     Boot does this already (provision_admin_from_env); this covers a password that vanished while Jeevi runs, so the
     window in which the account form is the only thing on the page is the time to the next page load, not to the
     next restart. Only for a password that went missing: after the owner turned login off on purpose (owner_known is
     False then) the account comes back at the next boot, as it always did. Returns "created" or ""."""
-    if not clean_password(os.getenv("JEEVI_ADMIN_PASSWORD", "")):
+    if not clean_password(os.getenv("JAVIS_ADMIN_PASSWORD", "")):
         return ""
     with _SETTINGS_LOCK:
         if auth_enabled() or not owner_known():
@@ -2147,17 +2147,17 @@ def restore_admin_from_env() -> str:
         clear_sessions()
         try:
             import security_log
-            security_log.record("env_account_created", user=os.getenv("JEEVI_ADMIN_USER", "admin").strip() or "admin",
-                                detail="account was missing; restored from environment", source="JEEVI_ADMIN_PASSWORD")
+            security_log.record("env_account_created", user=os.getenv("JAVIS_ADMIN_USER", "admin").strip() or "admin",
+                                detail="account was missing; restored from environment", source="JAVIS_ADMIN_PASSWORD")
         except Exception:  # noqa: BLE001
             pass
-        print("[auth] The account was missing from settings.json; restored from JEEVI_ADMIN_PASSWORD (2FA kept).",
+        print("[auth] The account was missing from settings.json; restored from JAVIS_ADMIN_PASSWORD (2FA kept).",
               file=__import__('sys').stderr)
     return done
 
 
 def reset_2fa_from_env():
-    """JEEVI_RESET_2FA=<any value> at boot turns 2FA off ONCE (owner incident 2026-11-09).
+    """JAVIS_RESET_2FA=<any value> at boot turns 2FA off ONCE (owner incident 2026-11-09).
 
     The owner was locked out by a 2FA that someone else had set up, and the only way back was a Python one-liner in a
     root terminal. With this variable, the same reset is: add it in the Environment box, redeploy, sign in, remove it.
@@ -2165,7 +2165,7 @@ def reset_2fa_from_env():
     owner sets up next. To use it again, set a new value (today's date, for instance). "0", "false", "no", "off" and
     empty do nothing. Every other session is ended and the event is logged.
     Returns "reset", or "" when nothing was done."""
-    raw = str(os.getenv("JEEVI_RESET_2FA", "") or "").strip()
+    raw = str(os.getenv("JAVIS_RESET_2FA", "") or "").strip()
     if not raw or raw.lower() in ("0", "false", "no", "off"):
         return ""
     cfg = read_settings()

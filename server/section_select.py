@@ -4,7 +4,7 @@ Owner, 18/11/2026: worried that cutting what a model gets "mà không có cơ ch
 khi nạp" would hurt answers. So the choice is made here, by Jeevi, before anything is loaded, and every doubt resolves
 to loading everything, exactly as before:
 
-0. Only skills built as a menu of alternatives, where one request needs one part (jeevi-builder: agent OR loop OR
+0. Only skills built as a menu of alternatives, where one request needs one part (javis-builder: agent OR loop OR
    plugin...). A skill that is one procedure needs all of its parts for a general request: tried on seo-audit, a plain
    "audit my SEO" picked "On-Page" and left out crawlability, indexation and speed. So a skill is split only when it is
    on `MENU_SKILLS`, carries `sections: select` in its frontmatter, or is listed by the owner in settings
@@ -16,7 +16,7 @@ to loading everything, exactly as before:
    every other top-level section (the frame around the menu: when to use, steps, safety). A skill with no such
    structure has its rule sections found by heading words in 19 languages ("Quy trình", "Rules", "Reglas", "Regeln",
    "Правила", "ルール", "规则"...).
-2b. A part that says another part's thing must exist first brings that part along: jeevi-builder's Workflow says
+2b. A part that says another part's thing must exist first brings that part along: javis-builder's Workflow says
    "Nếu workflow tham chiếu agent chưa tồn tại -> TẠO agent đó trước", so a workflow request loads the Agent template
    too. Found in the real-model A/B: without it the model wrote the new agents from memory, with `description:` where
    the template has `role:`.
@@ -27,7 +27,7 @@ to loading everything, exactly as before:
    then on; a skill that needed two or more extra parts (or the whole) in two turns is loaded whole from then on. The
    record resets when the skill text changes.
 6. It starts on a share of chat sessions only (10% by default, `context_runtime.skill_sections.allocation_basis_points`
-   in settings.json; JEEVI_SKILL_SECTIONS=0|1 turns it off or on for every session), only in the owner's own turns,
+   in settings.json; JAVIS_SKILL_SECTIONS=0|1 turns it off or on for every session), only in the owner's own turns,
    never for a customer-facing bot or a background job, and the Off saving level turns it off.
 
 The savings go to the tool result meter (shape "sections"), so the Usage page counts them.
@@ -49,7 +49,7 @@ from pathlib import Path
 SKILL_MIN_CHARS = 12_000
 # Skills built as a menu of alternatives (point 0 of the module docstring). Checked request by request in
 # tests/python/test_section_select.py before a name goes here.
-MENU_SKILLS = frozenset({"jeevi-builder"})
+MENU_SKILLS = frozenset({"javis-builder"})
 MIN_SCORE = 1.5          # below this nothing matches well enough: load everything
 KEEP_RATIO = 0.6         # sections scoring at least this share of the best one are loaded too
 MAX_SHARE = 0.85         # a selection this close to the whole text is not worth it
@@ -60,13 +60,13 @@ OPEN_LOAD_TTL_S = 1800   # a fetch counts toward the selective load it follows w
 LEARN_MAX_KEYS = 500
 
 # The request of the turn being served (set by the API engines' tool loops from the last user message).
-QUESTION: contextvars.ContextVar = contextvars.ContextVar("jeevi_turn_question", default="")
+QUESTION: contextvars.ContextVar = contextvars.ContextVar("javis_turn_question", default="")
 
 _FENCE_RE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
 _HEADING_RE = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 
 # ───────────────────────── language-neutral text handling ─────────────────────────
-# Owner, 18/11/2026: "chúng ta làm jeevi cho toàn thế giới dùng chứ không chỉ tiếng việt ... cần phải có bộ khung để bất
+# Owner, 18/11/2026: "chúng ta làm javis cho toàn thế giới dùng chứ không chỉ tiếng việt ... cần phải có bộ khung để bất
 # kỳ ngôn ngữ nào dùng trải nghiệm cũng tốt ngang nhau". So nothing below depends on one language:
 #   - words are cut by Unicode category, in any script; scripts written without spaces (Chinese, Japanese, Thai, Lao,
 #     Khmer, Myanmar) are cut into overlapping pairs of characters, as search engines index them;
@@ -77,7 +77,7 @@ _HEADING_RE = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 #   - the shared frame of a menu skill is found from its structure (point 2), and the rule-heading and "make it first"
 #     word tables below are data, one row per language, folded the same way as the text they are matched against;
 #   - a request in another language than the skill reaches it through the model, which passes `task` in the skill's
-#     language (jeevi_use_skill's description asks for that). With neither a matching task nor a matching request,
+#     language (javis_use_skill's description asks for that). With neither a matching task nor a matching request,
 #     the skill loads whole: a language the tables miss loses some of the saving, never quality.
 _ACCENTS_RE = re.compile("[\u0300-\u036f]")   # combining accents of Latin, Greek and Cyrillic letters
 _NO_SPACE = (
@@ -138,7 +138,7 @@ _HEAD_NOTES_RE = re.compile(r"`[^`]*`|\([^)]*\)|\[[^\]]*\]|\S*[=/]\S*")
 
 def head_words(title: str) -> list[str]:
     """The words that name what a part is about: its heading without code, paths, settings and notes in brackets
-    ("Plugin -> tool `jeevi_plugin` op=write (never hand over a zip)" -> plugin, tool). Markdown is the same in every
+    ("Plugin -> tool `javis_plugin` op=write (never hand over a zip)" -> plugin, tool). Markdown is the same in every
     language, so this is too."""
     return words(_HEAD_NOTES_RE.sub(" ", str(title or "")))
 
@@ -441,7 +441,7 @@ def session_key() -> str:
 
 def assigned(key: str) -> bool:
     """Whether this chat session gets selective loading (the canary share, the switches)."""
-    env = _flag(os.getenv("JEEVI_SKILL_SECTIONS", ""))
+    env = _flag(os.getenv("JAVIS_SKILL_SECTIONS", ""))
     if env is False:
         return False
     try:
@@ -497,7 +497,7 @@ def _store_path() -> Path:
         from config import STATE_DIR
         return Path(STATE_DIR) / "section_learning.json"
     except Exception:  # noqa: BLE001
-        return Path(os.getenv("JEEVI_STATE_DIR") or ".") / "section_learning.json"
+        return Path(os.getenv("JAVIS_STATE_DIR") or ".") / "section_learning.json"
 
 
 def _load_store() -> dict:
@@ -579,7 +579,7 @@ def _meter(tool: str, sel: Selection) -> None:
 
 
 def for_skill(name: str, text: str, task: str = "", question: str | None = None, session: str | None = None,
-              tool: str = "jeevi_use_skill") -> str | None:
+              tool: str = "javis_use_skill") -> str | None:
     """The selected parts of a skill with a header and the list of what was left out, or None to load it whole."""
     session = session_key() if session is None else session
     if not opted_in(name, text) or not assigned(session):
@@ -596,6 +596,6 @@ def for_skill(name: str, text: str, task: str = "", question: str | None = None,
             f"are listed at the end.]\n\n")
     tail = ("\n\n[Other parts of this skill, not loaded: "
             + "; ".join(f'"{t}"' for t, _a, _b in sel.left_out)
-            + f'. If the task needs one, call jeevi_use_skill(name="{name}", section="<title>"), or full=true for '
+            + f'. If the task needs one, call javis_use_skill(name="{name}", section="<title>"), or full=true for '
               "the whole skill.]")
     return head + sel.text + tail

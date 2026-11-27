@@ -19,7 +19,7 @@ import os
 import sys
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-tgghim-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-tgghim-"))
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

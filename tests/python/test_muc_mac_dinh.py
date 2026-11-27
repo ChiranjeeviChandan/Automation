@@ -24,7 +24,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-macdinh-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-macdinh-")
 
 import config as cfg  # noqa: E402
 import main  # noqa: E402

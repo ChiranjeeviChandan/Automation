@@ -52,5 +52,5 @@
 
   var api = { create: create };
   if (typeof module === "object" && module.exports) module.exports = api;
-  else root.JeeviScreenAwake = create();
+  else root.JavisScreenAwake = create();
 })(typeof window !== "undefined" ? window : globalThis);

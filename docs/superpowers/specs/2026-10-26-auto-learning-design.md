@@ -32,7 +32,7 @@ and workflows, not only skills. Users install nothing extra.
 ## Design (builder's calls, made by Claude)
 
 1. **Episodes** (`server/auto_learning.py`, SQLite in the state folder, per brain).
-   - Skill uses are noted per chat session from the hub's `jeevi_use_skill` handler (all engines) and from Claude
+   - Skill uses are noted per chat session from the hub's `javis_use_skill` handler (all engines) and from Claude
      Code's native `Skill` tool or a read of `skills/<slug>/SKILL.md`.
    - `_persist_turn` closes the turn. Each skill used becomes an episode (kind skill). An `agent:<slug>` session
      becomes an episode of kind agent. The same call stores the new user message as the follow-up of the
@@ -74,7 +74,7 @@ and workflows, not only skills. Users install nothing extra.
 
 - Telegram, Zalo and CLI owner turns carry no session id in the turn context, so skills loaded there are not recorded,
   and agent turns there are not `agent:` sessions.
-- Codex reading SKILL.md through shell commands is not seen; Codex loads through `jeevi_use_skill` are.
+- Codex reading SKILL.md through shell commands is not seen; Codex loads through `javis_use_skill` are.
 - Workflows installed by store packs are not protected the way pack skills are.
 - Kanban jobs, team chats and `nodes[]` workflows are out of scope.
 - The host side of agent apply/undo (real `AgentProcedures`) is exercised only through fakes in tests.

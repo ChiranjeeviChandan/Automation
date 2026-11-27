@@ -70,7 +70,7 @@ const settle = () => new Promise((r) => setImmediate(() => setImmediate(r)));
 const linked = () => /jv-flocal/.test(mdToHtml("`" + DECK + "`"));
 
 (async function () {
-  let pg = page("jeevi.example.com", { available: true });
+  let pg = page("javis.example.com", { available: true });
   check("on a domain: no link, and the server is not asked", !linked() && pg.asked.length === 0);
   pg = page("192.168.1.20", { available: true });
   check("on a LAN address: no link", !linked() && pg.asked.length === 0);

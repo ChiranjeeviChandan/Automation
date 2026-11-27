@@ -4,7 +4,7 @@
    hợp lý cho trải nghiệm". The splash (#bootSplash) is plain HTML at the top of <body>, so it is on screen from the very
    first paint, before any script runs. This file takes it away once the app is really usable:
 
-   - console.js calls JeeviBoot.pageStarted() right after it opened the first page;
+   - console.js calls JavisBoot.pageStarted() right after it opened the first page;
    - from then on the splash waits until no "Loading..." line (.pg-loading) is visible anywhere on the page: the page has
      its own data, not only its frame;
    - that wait is capped at DATA_MAX_MS (2026-11-12). A machine whose lists take long used to sit behind the splash for
@@ -20,7 +20,7 @@
    is checked every CHECK_MS and the splash goes after QUIET_MS without a loader (was 120 ms checks, two in a row), and
    the fade takes FADE_MS (was 250 ms; console.css carries the same number).
 
-   When the server started less than JUST_STARTED_S ago (an update, a restart: `up` in the jeevi-fresh block), a second
+   When the server started less than JUST_STARTED_S ago (an update, a restart: `up` in the javis-fresh block), a second
    line says the first open takes a little longer: the server is still warming up. Pure helpers are exported for tests. */
 (function () {
   "use strict";
@@ -83,7 +83,7 @@
   // Have the words arrived? Without the dictionary every label drawn by a script is a bare key (`page.chat.label`).
   // Unknown (no i18n module) counts as arrived; the wait is capped by DATA_MAX_MS like the wait for the lists.
   function wordsReady(w) {
-    try { return !(w && w.JeeviI18n && typeof w.JeeviI18n.ready === "function") || !!w.JeeviI18n.ready(); }
+    try { return !(w && w.JavisI18n && typeof w.JavisI18n.ready === "function") || !!w.JavisI18n.ready(); }
     catch (e) { return true; }
   }
 
@@ -119,12 +119,12 @@
     timer = setInterval(check, CHECK_MS);
   };
   api.hide = hide;
-  window.JeeviBoot = api;
+  window.JavisBoot = api;
 
   if (!done) {
     setTimeout(hide, MAX_MS);
     try {
-      var fresh = JSON.parse((document.getElementById("jeevi-fresh") || {}).textContent || "{}");
+      var fresh = JSON.parse((document.getElementById("javis-fresh") || {}).textContent || "{}");
       if (justStarted(fresh)) {
         var sub = document.getElementById("bootSub");
         if (sub) sub.hidden = false;

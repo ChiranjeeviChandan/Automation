@@ -23,7 +23,7 @@ function harness() {
   };
   const window = {
     addEventListener: (name, fn) => { (events[name] ||= []).push(fn); },
-    JeeviSessions: { brain: () => window.activeBrain, current: () => "" },
+    JavisSessions: { brain: () => window.activeBrain, current: () => "" },
     activeBrain: "/b",
     t: key => key,
   };
@@ -84,8 +84,8 @@ async function main() {
 
   h.api.select("b");
   const drawsBeforeReply = h.bar.draws;
-  h.emit("jeevi:sessions-changed", { reason: "reply" });
-  h.emit("jeevi:sessions-changed", { reason: "reply" });
+  h.emit("javis:sessions-changed", { reason: "reply" });
+  h.emit("javis:sessions-changed", { reason: "reply" });
   h.flush();
   h.flush();
   assert.equal(h.requests.length, 1, "Reply bursts fetch all project counts once");
@@ -96,7 +96,7 @@ async function main() {
   assert.equal(h.menuDots[0].dot.hidden, false, "An open picker updates when another project receives a reply");
   assert.equal(h.menuDots[1].dot.hidden, true, "The selected project's menu row stays quiet");
 
-  h.emit("jeevi:session-read", { session_id: "outside-the-current-list" });
+  h.emit("javis:session-read", { session_id: "outside-the-current-list" });
   h.flush();
   assert.equal(h.requests.length, 2, "Reading in another tab refreshes projects even for an unloaded chat");
   h.respond([{ id: "a", name: "A", unread_count: 0 }, { id: "b", name: "B", unread_count: 1 }]);
@@ -130,13 +130,13 @@ async function main() {
   assert.equal(h.barDot.hidden, true);
 
   // 2026-11-20 (owner): chats still running, and the chat open on screen, are skipped by the folder counts.
-  h.window.JeeviRunning = new Set(["run1", "run2"]);
+  h.window.JavisRunning = new Set(["run1", "run2"]);
   h.api.refreshProjects();
   h.flush();
   assert.match(h.requests[h.requests.length - 1], /&skip=run1%2Crun2$/, "Running chats are left out of folder counts");
   h.respond([{ id: "a", name: "A", unread_count: 0 }, { id: "b", name: "B", unread_count: 0 }], 0, 0);
   await new Promise(setImmediate);
-  h.window.JeeviRunning = new Set();
+  h.window.JavisRunning = new Set();
   h.api.refreshProjects();
   h.flush();
   assert.doesNotMatch(h.requests[h.requests.length - 1], /skip=/, "Nothing running: no skip list");

@@ -29,7 +29,7 @@ Never blocked:
   share link pasted into a chat still shows its card;
 - ordinary HTTP clients (curl, python-requests, httpx, the claude CLI): the Jeevi CLI and scripts use them.
 
-`JEEVI_BLOCK_BOTS=0` turns the 403 off, an escape hatch for an integration whose User-Agent happens to match. The noindex
+`JAVIS_BLOCK_BOTS=0` turns the 403 off, an escape hatch for an integration whose User-Agent happens to match. The noindex
 header and robots.txt stay: on a private dashboard they cost nothing.
 """
 from __future__ import annotations
@@ -116,9 +116,9 @@ _BLOCK_BODY = b"Jeevi OS is private. Automated access is not allowed.\n"
 
 
 def block_enabled() -> bool:
-    """The 403 layer is on unless JEEVI_BLOCK_BOTS says off. Read per request so a test or a restart-free env change
+    """The 403 layer is on unless JAVIS_BLOCK_BOTS says off. Read per request so a test or a restart-free env change
     takes effect."""
-    return (os.getenv("JEEVI_BLOCK_BOTS", "") or "").strip().lower() not in _OFF
+    return (os.getenv("JAVIS_BLOCK_BOTS", "") or "").strip().lower() not in _OFF
 
 
 def classify(user_agent: str, signature_agent: str = "") -> str:

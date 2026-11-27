@@ -94,5 +94,5 @@
 
   var api = { create: create, clock: clock };
   if (typeof module === "object" && module.exports) module.exports = api;
-  else root.JeeviCallBar = api;
+  else root.JavisCallBar = api;
 })(typeof window !== "undefined" ? window : globalThis);

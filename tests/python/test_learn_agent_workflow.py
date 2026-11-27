@@ -71,7 +71,7 @@ def test_cap_mac_dinh_tat(tmp_path):
     assert caps["agent"] is False and caps["workflow"] is False
 
 
-# ---- ghi thật: đúng thư mục PHẲNG + đúng frontmatter mẫu jeevi-builder ----
+# ---- ghi thật: đúng thư mục PHẲNG + đúng frontmatter mẫu javis-builder ----
 
 def test_ghi_agent_va_workflow(tmp_path):
     feature = _feature(tmp_path)
@@ -82,7 +82,7 @@ def test_ghi_agent_va_workflow(tmp_path):
 
     fm, body = _fm(tmp_path / "agents" / "viet-email.md")
     assert fm["type"] == "agent" and fm["slug"] == "viet-email"
-    assert fm["name"] == "Viết email chăm khách" and fm["origin"] == "jeevi-learned"
+    assert fm["name"] == "Viết email chăm khách" and fm["origin"] == "javis-learned"
     assert fm["skills"] == [] and "chuyên viên email" in body
 
     fm, _ = _fm(tmp_path / "workflows" / "nghien-cuu-viet-bai.md")
@@ -165,7 +165,7 @@ def test_dry_run_chi_liet_ke(tmp_path):
 
 # ---- fallback thư mục CŨ Jeevi/agents: chưa migrate thì ghi vào đó, và dedup thấy nó ----
 
-def test_fallback_jeevi_agents_khi_chua_co_phang(tmp_path):
+def test_fallback_javis_agents_khi_chua_co_phang(tmp_path):
     feature = _feature(tmp_path)
     cfg = feature.read_config()
     _write(tmp_path / "Jeevi" / "agents" / "cu.md", "---\ntype: agent\n---\nx")

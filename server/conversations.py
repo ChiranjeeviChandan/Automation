@@ -1576,7 +1576,7 @@ def set_message_pin(conversation_id: int, message_id: int, action: str) -> tuple
 #
 # The owner keeps ONE list of tags (name + a colour from a small fixed palette) and puts them on CONVERSATIONS, so a
 # customer's private chat and a group they write in are tagged separately. Kept apart from `customers.tags_json`, the
-# free-text tags the CRM store pack (jeevi.crm) writes on a CUSTOMER: neither touches the other.
+# free-text tags the CRM store pack (javis.crm) writes on a CUSTOMER: neither touches the other.
 # ============================================================
 TAG_COLORS = ("gray", "red", "orange", "yellow", "green", "teal", "blue", "purple", "pink")
 MAX_INBOX_TAGS = 60
@@ -2007,19 +2007,19 @@ def _trung_vi(xs: list) -> Optional[float]:
 
 
 # Issue #1775 (82 "manual replies" on a Zalo account nobody types on): a `human` row Jeevi itself sent is machine work.
-# Such a row carries `metadata.tu_jeevi` with a `via` naming the machine path: "tool" when an engine sent it with
-# `inbox_reply` (routes.conversations.owner_reply) or with a Zalo tool (zalo_sent_ledger.MARK). `tu_jeevi` WITHOUT a
+# Such a row carries `metadata.tu_javis` with a `via` naming the machine path: "tool" when an engine sent it with
+# `inbox_reply` (routes.conversations.owner_reply) or with a Zalo tool (zalo_sent_ledger.MARK). `tu_javis` WITHOUT a
 # `via` is the owner pressing Send in the inbox (perhaps on a bot draft): a person, so it stays a manual reply. A new
 # machine path that writes `human` rows adds its `via` here.
-JEEVI_SENT_VIA = ("tool",)
-# The sender as the Stats tab counts it: "jeevi" for such a row, else the stored sender. The LIKE test keeps the JSON
+JAVIS_SENT_VIA = ("tool",)
+# The sender as the Stats tab counts it: "javis" for such a row, else the stored sender. The LIKE test keeps the JSON
 # functions off every other row (the Stats query can see hundreds of thousands), and `json_valid` keeps an odd stored
 # value from failing the whole query.
 _STATS_SENDER = (
     "CASE WHEN m.sender_type='human' AND m.metadata_json LIKE '%\"via\"%' THEN"
-    " (CASE WHEN json_valid(m.metadata_json) AND json_extract(m.metadata_json, '$.tu_jeevi')=1"
-    " AND json_extract(m.metadata_json, '$.via') IN (" + ",".join("'%s'" % v for v in JEEVI_SENT_VIA) + ")"
-    " THEN 'jeevi' ELSE 'human' END)"
+    " (CASE WHEN json_valid(m.metadata_json) AND json_extract(m.metadata_json, '$.tu_javis')=1"
+    " AND json_extract(m.metadata_json, '$.via') IN (" + ",".join("'%s'" % v for v in JAVIS_SENT_VIA) + ")"
+    " THEN 'javis' ELSE 'human' END)"
     " ELSE m.sender_type END")
 
 
@@ -2074,8 +2074,8 @@ def insights(since: float, until: float, account: str = "") -> dict:
     ai_rest = 0
     for cid, who, ts, channel, bot_id, acc_id in rows:
         ts = float(ts or 0)
-        sent_by_jeevi = who == "jeevi"
-        if sent_by_jeevi:
+        sent_by_javis = who == "javis"
+        if sent_by_javis:
             who = "ai"          # machine work (see _STATS_SENDER), though not the answer of the chat's bot
         if cid != cur:
             cur, start = cid, None
@@ -2099,7 +2099,7 @@ def insights(since: float, until: float, account: str = "") -> dict:
                 start = ts
         else:
             if who == "ai":
-                if bot_id and not sent_by_jeevi:
+                if bot_id and not sent_by_javis:
                     by_bot[bot_id] = by_bot.get(bot_id, 0) + 1
                 if gio >= NGHI_TU or gio < NGHI_DEN:
                     ai_rest += 1
@@ -2183,7 +2183,7 @@ _NEN_ANH = re.compile(r"^(?:https?://\S+|\[(?:chat\.)?(?:photo|image)[^\]]*\]|\[
 def chu_thich_anh(text: str) -> str:
     """Chú thích thật của một tin ảnh, hoặc "" nếu tin ảnh trơn.
 
-    MCP của jeevi-zalo chuẩn hoá tin không phải chữ bằng `extractMessageText` (src/utils/extract-message-text.js; bản 1.6.2 cũ là
+    MCP của javis-zalo chuẩn hoá tin không phải chữ bằng `extractMessageText` (src/utils/extract-message-text.js; bản 1.6.2 cũ là
     `content.title || content.href || "[<msgType>]"`). Với ảnh hai bản ra cùng kết quả vì ảnh có `description` rỗng: ảnh CÓ chú thích
     thì `text` là chú thích; ảnh trơn thì `text` là đường dẫn ảnh, hoặc "[chat.photo]". Jeevi
     cũng tự thay chữ trống bằng "[Zalo cá nhân: khách gửi image]". Cả ba loại "nền" đó không phải lời của người gửi nên trả rỗng."""
@@ -2208,7 +2208,7 @@ def loai_tin_tu_chu(text: str) -> str:
 # ============================================================
 # CRM: khách hàng xuyên kênh (0.60.1)
 #
-# Tầng đọc/ghi mà gói "Quản lý khách hàng" ở Kho cài đặt (jeevi.crm) cắm vào. Gói
+# Tầng đọc/ghi mà gói "Quản lý khách hàng" ở Kho cài đặt (javis.crm) cắm vào. Gói
 # gọi ĐÚNG các hàm này chứ không tự viết SQL: schema là của kho, kho đổi thì hàm đổi theo, còn
 # SQL chép trong gói sẽ gãy im lặng ở bản sau. Hai hàm ghi (tag, ghi chú) chỉ chạm bảng
 # customers; không hàm nào gửi tin hay gọi ra ngoài.

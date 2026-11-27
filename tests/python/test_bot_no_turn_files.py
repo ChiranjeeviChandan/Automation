@@ -25,8 +25,8 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-noturnfiles-")
-os.environ["JEEVI_REPLY_POLICY_SHADOW"] = "1"
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-noturnfiles-")
+os.environ["JAVIS_REPLY_POLICY_SHADOW"] = "1"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

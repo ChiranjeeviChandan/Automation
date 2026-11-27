@@ -28,7 +28,7 @@ Phạm vi đã chốt với chủ dự án:
 - `GET /health` (~1436): trả 200 khi server sống (kèm trạng thái Claude CLI).
 - Frontend `dashboard/console.js`: `ovLoadVersion()` (~1379) + handler nút cập nhật
   (~1411) poll `/version` tới khi đổi phiên bản rồi reload; trang changelog (~336).
-- Autostart Windows (HKCU Run key) + `start-jeevi.vbs` (kill bản cũ + chạy nền
+- Autostart Windows (HKCU Run key) + `start-javis.vbs` (kill bản cũ + chạy nền
   `.venv\Scripts\python.exe server\main.py`).
 - CI `.github/workflows/docker-publish.yml`: push main -> build + đẩy GHCR tag
   `:latest` và `:<git-sha>`.
@@ -126,8 +126,8 @@ Script updater (Windows ps1 và native update.sh) làm chung một chuỗi:
    phục, ghi `stashed=true` để UI báo. Pull lỗi -> result=pull_failed, relaunch bản CŨ
    (code chưa đổi), dừng.
 3. installing: `pip install -r requirements.txt` vào .venv (Windows: đây là bước đang thiếu).
-4. restarting: dừng bản đang chạy rồi bật bản mới (Windows dùng stop-jeevi.bat +
-   start-jeevi.vbs; native dùng systemctl restart jeevi nếu có).
+4. restarting: dừng bản đang chạy rồi bật bản mới (Windows dùng stop-javis.bat +
+   start-javis.vbs; native dùng systemctl restart javis nếu có).
 5. health_check: poll `http://127.0.0.1:<port>/health` tới ~90s. Thành công =
    /health trả 200 VÀ `/version.current == target`. Nếu /health không lên trong 90s -> lỗi.
 6. Kết luận:

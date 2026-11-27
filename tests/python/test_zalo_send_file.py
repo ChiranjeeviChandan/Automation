@@ -14,7 +14,7 @@ What is checked here:
      removes the subfolder afterwards, success or not.
   3. Every failure comes back as a sentence a person understands: older MCP without the tool, Zalo did not confirm, the MCP
      call itself timed out (marked so callers never resend), connection gone, odd result.
-  4. The three pins of jeevi-zalo agree, and the catalog lists the new tool as dangerous (it sends).
+  4. The three pins of javis-zalo agree, and the catalog lists the new tool as dangerous (it sends).
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
 import asyncio
@@ -47,7 +47,7 @@ check("images and GIFs keep the CLI path (their URL comes back over HTTP)",
       not any(Z.needs_live_confirm(p) for p in ["a.jpg", "b.JPEG", "c.png", "d.webp", "e.gif"]))
 check("CANARY: xlsx, pdf, docx, zip, mp4, bmp and no extension need the live connection",
       all(Z.needs_live_confirm(p) for p in ["Danh sach.xlsx", "r.pdf", "d.docx", "z.zip", "v.mp4", "x.bmp", "noext"]))
-check("outbox is ~/.zalo-agent-cli/outbox of the session (same as OUTBOX_DIR in jeevi-zalo)",
+check("outbox is ~/.zalo-agent-cli/outbox of the session (same as OUTBOX_DIR in javis-zalo)",
       Z.outbox_dir("/data/zalo/home").as_posix() == "/data/zalo/home/.zalo-agent-cli/outbox", Z.outbox_dir("/data/zalo/home"))
 
 # ============================================================
@@ -118,8 +118,8 @@ check("CANARY: outbox cleaned up after a failure too", list(outbox.iterdir()) ==
 
 reply["raise"] = RuntimeError("MCP error -32602: Tool zalo_send_file not found")
 ok, data, err = send([SRC / "Danh sach.xlsx"])
-check("older jeevi-zalo without the tool: says to update Jeevi and restart the connection, no QR",
-      ok is False and "bản jeevi-zalo cũ" in err and "Cập nhật Jeevi" in err, err)
+check("older javis-zalo without the tool: says to update Jeevi and restart the connection, no QR",
+      ok is False and "bản javis-zalo cũ" in err and "Cập nhật Jeevi" in err, err)
 
 reply["raise"] = TimeoutError("tool không phản hồi sau 120s")
 ok, data, err = send([SRC / "Danh sach.xlsx"])
@@ -167,12 +167,12 @@ zalo = find_zalo(cat)
 # 0.346.0: v1.8.0 (group note-list, note-edit keeps the pin: the Store tools zalo_list_notes / zalo_edit_note).
 # 0.414.0: v1.9.0 (zalo_send_typing for "đang soạn tin", styles on zalo_send_message).
 # v1.9.1: replayed messages reach the live feed after a short drop; one bad message no longer drops its frame.
-# v1.10.0: live push, jeevi-zalo wakes Jeevi when a message arrives (zalo_push.py), no read on a timer.
+# v1.10.0: live push, javis-zalo wakes Jeevi when a message arrives (zalo_push.py), no read on a timer.
 # v1.11.0: zalo_send_message takes replyToMsgId (quote-reply to one earlier text message).
 # v1.12.0: a group joined after start-up gets its name (zalo_list_threads), not a bare id in the inbox.
 # v1.13.0: zalo_send_link, a link goes out as a card with the page's title and thumbnail.
 # v1.14.0: the history keeps a link card's link (attachment), the live feed reports mentions.
-check("CANARY: the three jeevi-zalo pins agree and are v1.4.0 or later (the first with zalo_send_file)",
+check("CANARY: the three javis-zalo pins agree and are v1.4.0 or later (the first with zalo_send_file)",
       Z.CLI_PACKAGE == zalo_login._CLI_PACKAGE and Z.CLI_PACKAGE in zalo["args"] and Z.CLI_PACKAGE.endswith("/v1.14.0"),
       (Z.CLI_PACKAGE, zalo_login._CLI_PACKAGE, zalo["args"]))
 check("the previous pins are listed as old commands, so existing connections move to the new one",

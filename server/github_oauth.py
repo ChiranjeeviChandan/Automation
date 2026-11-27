@@ -7,7 +7,7 @@ github.com/login/device and presses Authorize, and Jeevi polls until GitHub hand
 a VPS with no browser.
 
 Why a GitHub App and not an OAuth App: the person picks which repos Jeevi can see by installing the app on them
-(github.com/apps/jeevi-os/installations/new), and the token only carries the app's fine-grained permissions.
+(github.com/apps/javis-os/installations/new), and the token only carries the app's fine-grained permissions.
 Since 2026-11-23 the app asks for read and write on nearly every repository permission (Actions, Checks, Commit
 statuses, Contents, Pull requests, Workflows, Issues, Secrets, Webhooks, Deployments, Pages, Packages and the rest;
 Projects is admin; Codespaces metadata, Repository license policy and Metadata are read, GitHub's ceiling for them).
@@ -21,7 +21,7 @@ it. If GitHub still sends `expires_in` and a `refresh_token` (the setting was fl
 `refresh()` tries to renew; when that fails the connection reads as signed out and the card asks to sign in again.
 
 Pending sign-ins live in memory: a code expires in 15 minutes and a restart simply means pressing the button again.
-Endpoints are configurable (`JEEVI_GITHUB_WEB`) so tests run against a local fake. Stdlib plus httpx, no FastAPI.
+Endpoints are configurable (`JAVIS_GITHUB_WEB`) so tests run against a local fake. Stdlib plus httpx, no FastAPI.
 """
 from __future__ import annotations
 
@@ -37,9 +37,9 @@ import localefmt
 # Public identifiers of the "Jeevi OS" GitHub App (owner, 2026-11-01). A client id is not a secret: the device flow is
 # built for apps that cannot keep one. Forks that register their own app override both through the environment.
 CLIENT_ID = "Iv23limeL0BsyXptmTz2"
-APP_SLUG = "jeevi-os"
+APP_SLUG = "javis-os"
 DEVICE_GRANT = "urn:ietf:params:oauth:grant-type:device_code"
-UA = "jeevi-os"
+UA = "javis-os"
 _lock = threading.Lock()
 _pending: Dict[str, Any] = {}
 
@@ -53,15 +53,15 @@ def _c(vi: str, en: str) -> str:
 
 
 def client_id() -> str:
-    return (os.environ.get("JEEVI_GITHUB_CLIENT_ID") or CLIENT_ID).strip()
+    return (os.environ.get("JAVIS_GITHUB_CLIENT_ID") or CLIENT_ID).strip()
 
 
 def app_slug() -> str:
-    return (os.environ.get("JEEVI_GITHUB_APP_SLUG") or APP_SLUG).strip()
+    return (os.environ.get("JAVIS_GITHUB_APP_SLUG") or APP_SLUG).strip()
 
 
 def _web() -> str:
-    return (os.environ.get("JEEVI_GITHUB_WEB") or "https://github.com").rstrip("/")
+    return (os.environ.get("JAVIS_GITHUB_WEB") or "https://github.com").rstrip("/")
 
 
 def install_url() -> str:

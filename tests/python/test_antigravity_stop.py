@@ -33,7 +33,7 @@ def processes(tmp_path):
         proc.wait(timeout=5)
     deadline = time.monotonic() + 3
     while time.monotonic() < deadline and any(
-        t.name.startswith("jeevi-agy-") and "stop-test" in t.name
+        t.name.startswith("javis-agy-") and "stop-test" in t.name
         for t in threading.enumerate()
     ):
         time.sleep(0.02)
@@ -269,7 +269,7 @@ def test_watchdog_leaves_room_for_agys_own_print_timeout():
 def test_no_turn_cap_by_default_for_full_and_auto(monkeypatch):
     """Owner 2026-11-07: heavy agy tool work kept stopping at the old 15-minute default. Unset = no cap."""
     import antigravity_cli
-    monkeypatch.delenv("JEEVI_AGY_TIMEOUT", raising=False)
+    monkeypatch.delenv("JAVIS_AGY_TIMEOUT", raising=False)
     monkeypatch.setattr(antigravity_cli, "co_co", lambda *names: "--print-timeout" in names)
     cli = antigravity_cli.AntigravityCLI(cwd=".")
     cli.cli_path = "agy"
@@ -288,11 +288,11 @@ def test_env_cap_still_applies(monkeypatch):
     import antigravity_cli
     monkeypatch.setattr(antigravity_cli, "co_co", lambda *names: "--print-timeout" in names)
     for raw, want in (("1800", 1800.0), ("0", 0.0), ("", 0.0), ("abc", 0.0), ("-5", 0.0)):
-        monkeypatch.setenv("JEEVI_AGY_TIMEOUT", raw)
+        monkeypatch.setenv("JAVIS_AGY_TIMEOUT", raw)
         cli = antigravity_cli.AntigravityCLI(cwd=".")
         cli.mode = "full"
         assert cli.turn_cap() == want, raw
-    monkeypatch.setenv("JEEVI_AGY_TIMEOUT", "1800")
+    monkeypatch.setenv("JAVIS_AGY_TIMEOUT", "1800")
     cli = antigravity_cli.AntigravityCLI(cwd=".")
     cli.cli_path, cli.mode = "agy", "suggest"
     assert "1800s" in cli._build_args("hi")

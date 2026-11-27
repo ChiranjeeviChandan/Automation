@@ -3,7 +3,7 @@
 A loop, reminder or Kanban job at the "auto" level runs Claude Code with a tool whitelist: Read, Write, Edit, Glob,
 Grep, LS plus the hub. The whitelist checks tool NAMES. Write and Edit are Claude Code's own tools, they take any path
 on the machine, and the hub's rule for files that run or configure code (`mcp_hub._ghi_vung_bao_ve`, 2026-11-05) only
-covers the hub's `jeevi_write_file`. So text an auto job read (a web page, an email, a customer message) could make it
+covers the hub's `javis_write_file`. So text an auto job read (a web page, an email, a customer message) could make it
 write `<brain>/Jeevi/loops/x.md` with `mode: full`, or `<brain>/plugins/x/plugin.py`, and climb to Full access or to
 Python inside the server.
 
@@ -19,7 +19,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-_MARK = "_jeevi_write_scope_hook"
+_MARK = "_javis_write_scope_hook"
 _WRITE_TOOLS = frozenset({"Write", "Edit", "MultiEdit", "NotebookEdit"})
 _PATH_KEYS = ("file_path", "notebook_path", "path")
 
@@ -30,7 +30,7 @@ def restricted(engine) -> bool:
         return False
     if getattr(engine, "team_gate", None):
         return False
-    mode = str(getattr(engine, "jeevi_mode", None) or "").strip().lower()
+    mode = str(getattr(engine, "javis_mode", None) or "").strip().lower()
     if not mode:
         return True          # a whitelist with no level attached: the safe background lane, never Full access
     if mode == "gated":
@@ -44,7 +44,7 @@ def restricted(engine) -> bool:
 
 def roots_of(engine) -> list:
     out = []
-    for raw in (getattr(engine, "jeevi_vault", None), getattr(engine, "cwd", None)):
+    for raw in (getattr(engine, "javis_vault", None), getattr(engine, "cwd", None)):
         if not raw:
             continue
         try:

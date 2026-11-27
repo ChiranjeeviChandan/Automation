@@ -19,9 +19,9 @@ import tempfile
 from pathlib import Path
 from types import SimpleNamespace
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zalo-admin-")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-zalo-admin-brains-")
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"       # TestClient host (see test_workflow_runs_api.py)
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zalo-admin-")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-zalo-admin-brains-")
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"       # TestClient host (see test_workflow_runs_api.py)
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -30,7 +30,7 @@ except Exception:
 
 import main  # noqa: E402
 import chatbot_runtime  # noqa: E402
-import jeevi_core  # noqa: E402
+import javis_core  # noqa: E402
 from routes import channels as channels_routes  # noqa: E402
 
 _fails = []
@@ -168,7 +168,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 
 cl = TestClient(main.app)
 bkey = main._brain_key(BRAIN)
-web_core = store.create_session(brain=bkey, engine="cli", title="core web", channel=jeevi_core.CHANNEL)
+web_core = store.create_session(brain=bkey, engine="cli", title="core web", channel=javis_core.CHANNEL)
 web_writer = store.create_session(brain=bkey, engine="cli", title="writer web", channel="agent:writer")
 zalo("@Writer second post")
 zalo("plain again")
@@ -182,7 +182,7 @@ def listed(channel, **extra):
     return {x["id"] for x in r}
 
 
-core_hist = listed(jeevi_core.CHANNEL, bots=1)
+core_hist = listed(javis_core.CHANNEL, bots=1)
 check("Jeevi Core's history holds the plain admin chats (Zalo, Telegram) and its own web chat",
       {web_core, z_plain, tg_plain} <= core_hist and z_agent not in core_hist, core_hist)
 w_hist = listed("agent:writer", bots=1)

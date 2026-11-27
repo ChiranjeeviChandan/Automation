@@ -25,10 +25,10 @@
   function isoOf(d) { return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
   function hmOf(d) { return pad2(d.getHours()) + ":" + pad2(d.getMinutes()); }
   function addDays(iso, n) { var d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return isoOf(d); }
-  function LOC() { return (typeof window !== "undefined" && window.JeeviI18n && window.JeeviI18n.locale && window.JeeviI18n.locale()) || "vi-VN"; }
+  function LOC() { return (typeof window !== "undefined" && window.JavisI18n && window.JavisI18n.locale && window.JavisI18n.locale()) || "vi-VN"; }
 
   // ---------- model: merge the sources into items, recurring jobs and failures (pure) ----------
-  var CORE = "jeevi-core";   // Jeevi Core's slug in GET /agents (server/jeevi_core.py SLUG)
+  var CORE = "javis-core";   // Jeevi Core's slug in GET /agents (server/javis_core.py SLUG)
   var FIN = { done: 1, cancel: 1 };
 
   function agentOf(card) {
@@ -215,7 +215,7 @@
   }
   // How a Jeevi job is scheduled on the server from the repeat picker (pure): a cron where cron can say it,
   // otherwise a fixed step (repeat_min) from a start time. rule = {unit: min|hour|day|week|month|year, n, days}.
-  function jeeviSchedule(rule, date, time) {
+  function javisSchedule(rule, date, time) {
     var hm = String(time || "08:00").split(":"), h = Number(hm[0]) || 0, m = Number(hm[1]) || 0;
     var at = (date || isoOf(new Date())) + "T" + pad2(h) + ":" + pad2(m);
     if (!rule) return { at: at };
@@ -325,7 +325,7 @@
     var start = function (t) { return t.date || (t.created_at ? isoOf(new Date(t.created_at * 1000)) : today); };
     ((store && store.tasks) || []).forEach(function (t) {
       var base = { src: "mine", ref: t.id, title: t.title, desc: t.notes || "", who: "me", proj: tagsOf(t)[0] || "", tags: tagsOf(t), time: t.time || "",
-        kind: t.kind || "task", fromJeevi: !!t.from_jeevi, raw: t, end: t.end || "" };
+        kind: t.kind || "task", fromJavis: !!t.from_javis, raw: t, end: t.end || "" };
       if (t.kind === "appt") {
         // Appointments are not ticked: they turn "past" on their own once their time is over.
         // A time skipped on purpose ("Skip this time") is not shown; the next one is.
@@ -496,7 +496,7 @@
       hN: H.length, hDue: hDue, hDone: hDone };
   }
 
-  var model_ = { pulseCalc: pulseCalc, starsOn: starsOn, isTaskItem: isTaskItem, apptState: apptState, habitCalc: habitCalc, habitStats: habitStats, habitLines: habitLines, usualTime: usualTime, model: model, mineModel: mineModel, occursOn: occursOn, nextOcc: nextOcc, prevOcc: prevOcc, repHuman: repHuman, inList: inList, tagsOf: tagsOf, subOrder: subOrder, linksIn: linksIn, byTime: byTime, byTimeline: byTimeline, cronFor: cronFor, jeeviSchedule: jeeviSchedule, kanbanState: kanbanState, addDays: addDays };
+  var model_ = { pulseCalc: pulseCalc, starsOn: starsOn, isTaskItem: isTaskItem, apptState: apptState, habitCalc: habitCalc, habitStats: habitStats, habitLines: habitLines, usualTime: usualTime, model: model, mineModel: mineModel, occursOn: occursOn, nextOcc: nextOcc, prevOcc: prevOcc, repHuman: repHuman, inList: inList, tagsOf: tagsOf, subOrder: subOrder, linksIn: linksIn, byTime: byTime, byTimeline: byTimeline, cronFor: cronFor, javisSchedule: javisSchedule, kanbanState: kanbanState, addDays: addDays };
   if (typeof module !== "undefined" && module.exports) { module.exports = model_; return; }
 
   // ---------- page ----------
@@ -508,7 +508,7 @@
     ["habit", "flame", "nv.l.habit", "c-habit"], ["done", "circle-check", "nv.l.done", "c-done"]];
   var COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#14b8a6", "#3b82f6", "#8b5cf6", "#ec4899", "#64748b"];
   var PAGE = 6;
-  var LS = "jeevi.nv.";
+  var LS = "javis.nv.";
   function lsGet(k, d) { try { var v = localStorage.getItem(LS + k); return v == null ? d : v; } catch (e) { return d; } }
   function lsSet(k, v) { try { localStorage.setItem(LS + k, v); } catch (e) { /* private mode */ } }
 
@@ -605,7 +605,7 @@
     var busy = S.ai && (S.ai.items.some(function (i) { return i.st === "run"; }) || S.ai.recurring.some(function (r) { return r.running; }));
     S.poll = setTimeout(async function () {
       if (!S || !document.body.contains(S.root)) return;
-      if (document.hidden || S.sheet || S.layer || S.sel || (window.JeeviTaskStats && window.JeeviTaskStats.isEditing())) { schedulePoll(); return; }
+      if (document.hidden || S.sheet || S.layer || S.sel || (window.JavisTaskStats && window.JavisTaskStats.isEditing())) { schedulePoll(); return; }
       await load(); if (!S) return; render(); schedulePoll();
     }, busy ? 5000 : 30000);
   }
@@ -659,8 +659,8 @@
     var bt = botOf(slug), px = size || 18;
     if (bt) return '<span class="nv-av nv-botav" style="width:' + px + "px;height:" + px + 'px">' + ic(bt.icon || "headset") + "</span>";
     var a = (S.agents || []).find(function (x) { return x.slug === slug; }) || { slug: slug };
-    if (window.JeeviAvatar && window.JeeviAvatar.html) {
-      try { return window.JeeviAvatar.html(a, size || 18, "idle"); } catch (e) { /* fall through */ }
+    if (window.JavisAvatar && window.JavisAvatar.html) {
+      try { return window.JavisAvatar.html(a, size || 18, "idle"); } catch (e) { /* fall through */ }
     }
     return '<span class="nv-av" style="width:' + (size || 18) + "px;height:" + (size || 18) + 'px"></span>';
   }
@@ -703,7 +703,7 @@
     if (it.rep) parts.push(ic("repeat") + esc(it.rep));
     else if (it.mode === "remind") parts.push(ic("bell") + esc(tw("nv.mode.remind")));
     if (it.src === "mine") {
-      if (it.fromJeevi) parts.push(avatar(CORE, 14) + esc(tw("nv.from_jeevi")));
+      if (it.fromJavis) parts.push(avatar(CORE, 14) + esc(tw("nv.from_javis")));
     } else parts.push(avatar(it.who, 14) + esc(agentName(it.who)));
     if (it.took) parts.push(esc(tw("nv.took", { n: Math.max(1, Math.round(it.took / 60)) })));
     // "Moved n times" sits with the tags on one line (owner, 2026-11-04: chips in one compact row).
@@ -956,7 +956,7 @@
       return h + (R.length ? R.map(function (r) { return repRow(r); }).join("") : empty);
     }
     if (v === "habit") return h + habitView();
-    if (v === "stats") return h + (window.JeeviTaskStats ? window.JeeviTaskStats.html(statsCtx()) : "");
+    if (v === "stats") return h + (window.JavisTaskStats ? window.JavisTaskStats.html(statsCtx()) : "");
     if (v === "err") return h + failsHtml();
     if (v === "log") return h + logHtml();
     if (v === "today") {
@@ -1270,13 +1270,13 @@
     var t = it.raw, rep = !!t.repeat, occ = it.occ || null, done = it.sc ? it.doneToday : it.st === "done";
     var h = '<div class="nv-dhead nv-mhead">' + (habitOn(t) ? habitCk(t, "big") : it.sc ? (done ? '<span class="nv-ck on big" data-act="uncheck" data-id="' + esc(it.id) + '" role="checkbox" aria-checked="true" tabindex="0" aria-label="' + esc(tw("nv.a.uncheck")) + '">' + ic("check") + "</span>" : '<span class="nv-ck big" data-act="check" data-id="' + esc(it.id) + '" role="checkbox" aria-checked="false" tabindex="0" aria-label="' + esc(tw("nv.a.check", { t: it.title })) + '"></span>') : ck(it).replace('class="nv-ck', 'class="nv-ck big'))
       + '<textarea class="nv-titleed" data-mtitle="' + esc(t.id) + '" rows="1" aria-label="' + esc(tw("nv.f.what")) + '">' + esc(t.title) + "</textarea></div>" + tagRow(t, t.id);
-    if (t.from_jeevi) h += '<div class="nv-from">' + avatar(CORE, 16) + esc(tw("nv.from_jeevi_long")) + "</div>";
+    if (t.from_javis) h += '<div class="nv-from">' + avatar(CORE, 16) + esc(tw("nv.from_javis_long")) + "</div>";
     h += '<div class="nv-sec2">'
       + '<button type="button" class="nv-kv nv-kvb" data-act="pick-date" data-id="' + esc(it.id) + '"><span>' + ic("clock") + esc(tw("nv.k.when")) + "</span><span>" + esc(whenIso(occ && rep ? occ : t.date, t.time)) + "</span></button>"
       + '<button type="button" class="nv-kv nv-kvb" data-act="pick-rep" data-id="' + esc(it.id) + '"><span>' + ic("repeat") + esc(tw("nv.k.repeat")) + "</span><span>" + esc(rep ? repHuman(t.repeat) : tw("nv.f.rep_none")) + "</span></button>"
       + (rep && t.kind !== "appt" ? '<div class="nv-kv"><span>' + ic("flame", "c-habit") + esc(tw("nv.h.is_habit")) + '</span><button type="button" class="nv-sw" role="switch" aria-checked="' + habitOn(t) + '" aria-label="' + esc(tw("nv.h.is_habit")) + '" data-act="htog" data-id="m:' + esc(t.id) + '"><span></span></button></div>' : "") + "</div>";
     var acts = (done ? "" : '<button type="button" class="nv-btn pri" data-act="check" data-id="' + esc(it.id) + '">' + ic("check") + esc(tw("nv.a.done")) + "</button>")
-      + '<button type="button" class="nv-btn" data-act="tojeevi" data-id="' + esc(it.id) + '">' + avatar(CORE, 16) + esc(tw("nv.a.tojeevi")) + "</button>";
+      + '<button type="button" class="nv-btn" data-act="tojavis" data-id="' + esc(it.id) + '">' + avatar(CORE, 16) + esc(tw("nv.a.tojavis")) + "</button>";
     h += subsHtml(t);
     h += '<div class="nv-sec2"><div class="nv-acts">' + acts + "</div></div>";
     h += '<div class="nv-sec2"><textarea class="nv-ta" data-mnotes="' + esc(t.id) + '" placeholder="' + esc(tw("nv.notes_ph")) + '" aria-label="' + esc(tw("nv.notes_ph")) + '">' + esc(t.notes || "") + "</textarea>" + noteLinks(t) + "</div>";
@@ -1357,7 +1357,7 @@
     if (src === "mine") {
       if (it.id.indexOf("mo:") === 0 || it.id.indexOf("md:") === 0) return [["open", "pencil", "nv.a.edit"]];
       out.push(["edit", "pencil", "nv.a.edit"]);
-      if (!it.appt) out.push(["tojeevi", "bot", "nv.a.tojeevi"]);
+      if (!it.appt) out.push(["tojavis", "bot", "nv.a.tojavis"]);
       if ((S.brains || []).length > 1) { out.push(["move", "arrow-right-left", "nv.a.move"]); out.push(["copy", "copy", "nv.a.copy"]); }
       out.push(["del", "trash-2", "nv.a.del"]);
       return out;
@@ -1373,7 +1373,7 @@
   }
   function menuButtons(it) {
     // The drawer of my task already has "Give to Jeevi" next to Done.
-    return menuDefs(it).filter(function (m) { return !(it.src === "mine" && m[0] === "tojeevi"); }).map(function (m) { return '<button type="button" class="nv-btn sm' + (m[0] === "del" ? " ghost danger" : "") + '" data-act="m-' + m[0] + '" data-id="' + esc(it.id) + '">' + ic(m[1]) + esc(tw(m[2])) + "</button>"; }).join("");
+    return menuDefs(it).filter(function (m) { return !(it.src === "mine" && m[0] === "tojavis"); }).map(function (m) { return '<button type="button" class="nv-btn sm' + (m[0] === "del" ? " ghost danger" : "") + '" data-act="m-' + m[0] + '" data-id="' + esc(it.id) + '">' + ic(m[1]) + esc(tw(m[2])) + "</button>"; }).join("");
   }
 
   // ---------- sheets: menu, brains, project, date picker, repeat picker ----------
@@ -1481,7 +1481,7 @@
   }
   // Repeat picker: "Every [n] [unit]", weekday circles for weeks. Minutes and hours only for Jeevi jobs.
   function repPickerHtml(sh) {
-    var r = sh.r, units = sh.jeevi ? ["min", "hour", "day", "week", "month", "year"] : ["day", "week", "month", "year"];
+    var r = sh.r, units = sh.javis ? ["min", "hour", "day", "week", "month", "year"] : ["day", "week", "month", "year"];
     var h = '<div class="nv-rp"><span>' + esc(tw("nv.rp.every")) + '</span><input type="number" class="nv-inp nv-rpn" min="1" max="365" value="' + (r.n || 1) + '" data-rp="n" aria-label="' + esc(tw("nv.rp.n")) + '"><select class="nv-inp" data-rp="unit" aria-label="' + esc(tw("nv.rp.unit")) + '">'
       + units.map(function (u) { return '<option value="' + u + '"' + (r.unit === u ? " selected" : "") + ">" + esc(tw(RP_KEYS[u])) + "</option>"; }).join("") + "</select></div>";
     if (r.unit === "week") {
@@ -1568,7 +1568,7 @@
     var cells = "", nDone = 0, nIce = 0, anyJ = false;
     for (var i = 0; i < lead; i++) cells += '<span class="sd e"></span>';
     for (var n = 1; n <= nDays; n++) {
-      var d = first.slice(0, 8) + pad2(n), st = k.days[d], wd = (lead + n - 1) % 7, jv = k.by[d] && k.by[d].by === "jeevi";
+      var d = first.slice(0, 8) + pad2(n), st = k.days[d], wd = (lead + n - 1) % 7, jv = k.by[d] && k.by[d].by === "javis";
       if (st === "f") { nDone++; if (jv) anyJ = true; }
       if (st === "i") nIce++;
       var cls = "sd";
@@ -1602,7 +1602,7 @@
       + msg + '<div class="nv-stk-tiles"><div><b>' + nDone + "</b><span>" + esc(tw("nv.h.t_done")) + "</span></div><div><b>" + nIce + "</b><span>" + esc(tw("nv.h.frozen")) + "</span></div><div><b>" + k.best + "</b><span>" + esc(tw("nv.h.longest")) + "</span></div></div>"
       + '<div class="nv-stk-mh"><b>' + esc(base.toLocaleDateString(LOC(), { month: "long", year: "numeric" })) + '</b><span><button type="button" class="nv-x" data-act="hmon" data-v="-1" aria-label="' + esc(tw("nv.dp.prev")) + '"' + (canPrev ? "" : " disabled") + ">" + ic("chevron-left") + '</button><button type="button" class="nv-x" data-act="hmon" data-v="1" aria-label="' + esc(tw("nv.dp.next")) + '"' + (canNext ? "" : " disabled") + ">" + ic("chevron-right") + "</button></span></div>"
       + '<div class="nv-stk-cal">' + [1, 2, 3, 4, 5, 6, 0].map(function (w) { return '<span class="wh">' + esc(tw(WD_KEYS[w])) + "</span>"; }).join("") + cells + "</div>"
-      + (anyJ ? '<div class="nv-stk-leg"><i class="jv"></i>' + esc(tw("nv.h.by_jeevi")) + "</div>" : "")
+      + (anyJ ? '<div class="nv-stk-leg"><i class="jv"></i>' + esc(tw("nv.h.by_javis")) + "</div>" : "")
       + '<div class="nv-stk-rem">' + remind + "</div></div>";
   }
   // When "Jeevi reminds on its own" nudges today: an hour after the usual time (or the set time), earlier while frozen.
@@ -1626,7 +1626,7 @@
   // 0.426.0: a job queued right away keeps the old board's "review the result when done" box, its explanation behind (i).
   function jobOpts(f) {
     if (f.edit || f.date || f.rule || f.mode !== "do") return "";
-    var J = window.JeeviInfo, more = tw("info.more");
+    var J = window.JavisInfo, more = tw("info.more");
     return '<div class="nv-fld nv-opts"><div class="nv-apr"><label class="nv-prep"><input type="checkbox" data-act="fset" data-k="appr" data-v="' + (f.appr ? "" : "1") + '"' + (f.appr ? " checked" : "") + "><span>" + esc(tw("kanban.need_approve")) + "</span></label>"
       + (J ? J.btn(more) : "") + "</div>" + (J ? J.body(esc(tw("kanban.need_approve_info"))) : "") + "</div>";
   }
@@ -1665,7 +1665,7 @@
     }
     return head
       + '<label class="nv-fld"><span>' + esc(tw("nv.f.what")) + '</span><textarea class="nv-ta" id="nvW" required placeholder="' + esc(me ? tw("nv.f.what_ph_me") : tw("nv.f.what_ph")) + '">' + esc(f.text || "") + "</textarea></label>"
-      + (f.edit ? "" : '<div class="nv-fld"><span>' + esc(tw("nv.f.who")) + "</span>" + seg("who", [["me", "nv.me", ic("circle-user")], ["ai", "nv.jeevi", jmini()]]) + "</div>")
+      + (f.edit ? "" : '<div class="nv-fld"><span>' + esc(tw("nv.f.who")) + "</span>" + seg("who", [["me", "nv.me", ic("circle-user")], ["ai", "nv.javis", jmini()]]) + "</div>")
       + (me || f.script ? "" : '<div class="nv-fld"><span>' + esc(tw("nv.k.how")) + "</span>" + seg("mode", [["do", "nv.mode.do"], ["remind", "nv.mode.remind"]]) + "</div>")
       + '<div class="nv-row2"><div class="nv-fld"><span>' + esc(tw("nv.k.when")) + '</span><button type="button" class="nv-pick" data-act="pick-date" data-id="new">' + ic("clock") + '<span class="nv-lbl">' + esc(f.date ? whenIso(f.date, f.time) : me ? tw("nv.d.none") : tw("nv.f.asap")) + "</span>" + ic("chevron-right") + "</button></div>"
       + '<div class="nv-fld"><span>' + esc(tw("nv.k.repeat")) + '</span><button type="button" class="nv-pick" data-act="pick-rep" data-id="new"' + (f.edit && f.cronLocked ? " disabled" : "") + ">" + ic("repeat") + '<span class="nv-lbl">' + esc(repTxt) + "</span>" + ic("chevron-right") + "</button></div></div>"
@@ -1742,7 +1742,7 @@
   }
   async function createReminder(txt, mode, date, time, rule, opts) {
     var body = Object.assign({ brain: brain(), text: txt, label: txt.slice(0, 80), mode: mode === "remind" ? "notify" : "task", muc_quyen: "full", created_by: "dashboard" },
-      opts || {}, jeeviSchedule(rule, date || today(), time || "08:00"));
+      opts || {}, javisSchedule(rule, date || today(), time || "08:00"));
     var r = await postJSON("/reminders", body);
     if (r && r.ok === false && r.can_force) {
       if (!window.confirm(r.error + "\n\n" + tw("nv.f.force"))) return null;
@@ -1754,9 +1754,9 @@
 
   // ---------- pickers state ----------
   function pickTarget(id) {
-    if (id === "new") return { date: S.form.date, time: S.form.time, rule: S.form.rule, jeevi: S.form.who !== "me" };
+    if (id === "new") return { date: S.form.date, time: S.form.time, rule: S.form.rule, javis: S.form.who !== "me" };
     var it = find(id), t = it && it.raw;
-    return { date: (it.occ && t.repeat ? it.occ : t.date) || null, time: t.time || "", rule: t.repeat || null, jeevi: false, task: t };
+    return { date: (it.occ && t.repeat ? it.occ : t.date) || null, time: t.time || "", rule: t.repeat || null, javis: false, task: t };
   }
   async function applyPick(id, patch) {
     if (id === "new") { Object.assign(S.form, patch); S.sheet = null; renderLayer(); return; }
@@ -1879,8 +1879,8 @@
         if (it.src === "loop") return act(postForm("/loops/move", { slug: it.ref, from_brain: b, to_brain: to }), tw("nv.ok.moved"));
         return;
       }
-      case "tojeevi": case "m-tojeevi": return giveToJeevi(it);
-      case "m-tome": return takeFromJeevi(it);
+      case "tojavis": case "m-tojavis": return giveToJavis(it);
+      case "m-tome": return takeFromJavis(it);
       case "grant":
         if (!window.confirm(tw("kanban.confirm_grant"))) return;
         return act(postForm("/kanban/task/grant", { brain: b, id: it.ref }), tw("nv.ok.granted"));
@@ -1889,7 +1889,7 @@
       case "accok": return act(postForm("/kanban/task/acceptance", { brain: b, id: it.ref, decision: "accept" }), tw("nv.ok.accok"));
       case "resolve": return act(postJSON("/incidents/resolve", { id: id }), tw("nv.ok.resolved"));
       case "here": return act(postForm("/schedules/this-machine", { runs: el.dataset.v }), el.dataset.v === "1" ? tw("nv.here.start_ok") : tw("nv.here.stop_ok"));
-      case "gochan": if (window.JeeviNav && window.JeeviNav.go) window.JeeviNav.go("channels"); return;
+      case "gochan": if (window.JavisNav && window.JavisNav.go) window.JavisNav.go("channels"); return;
       case "orch": return act(postForm("/kanban/orchestration", { brain: b, mode: el.dataset.v }), el.dataset.v === "off" ? tw("nv.orch.off_ok") : tw("nv.orch.on_ok"));
       case "overall": {
         var L = S.me.items.filter(function (i) { return i.over && i.id.indexOf("m:") === 0; });
@@ -2028,7 +2028,7 @@
       }
       case "pick-rep": {
         var tg2 = pickTarget(id), wd = new Date((tg2.date || today()) + "T12:00:00").getDay();
-        S.sheet = { kind: "rep", id: id, jeevi: tg2.jeevi, r: tg2.rule ? JSON.parse(JSON.stringify(tg2.rule)) : { unit: "day", n: 1, days: [wd] } }; return renderLayer();
+        S.sheet = { kind: "rep", id: id, javis: tg2.javis, r: tg2.rule ? JSON.parse(JSON.stringify(tg2.rule)) : { unit: "day", n: 1, days: [wd] } }; return renderLayer();
       }
       case "dp-set": S.sheet.d.date = el.dataset.v || null; if (!S.sheet.d.date) S.sheet.d.time = ""; if (S.sheet.d.date) S.sheet.d.vm = S.sheet.d.date.slice(0, 7); return renderLayer();
       case "dp-mon": { var x = new Date(S.sheet.d.vm + "-15T12:00:00"); x.setMonth(x.getMonth() + Number(el.dataset.v)); S.sheet.d.vm = isoOf(x).slice(0, 7); return renderLayer(); }
@@ -2046,23 +2046,23 @@
     return postJSON("/watch/action", { id: r.ref, action: on ? "resume" : "pause", brain: b });
   }
   // "Give to Jeevi": a dated task becomes a reminder that does the job, an undated one a Kanban job; mine goes away.
-  async function giveToJeevi(it) {
+  async function giveToJavis(it) {
     var t = it.raw; S.sheet = null; S.sel = null;
     var r = t.date || t.repeat ? await createReminder(t.title + (t.notes ? "\n" + t.notes : ""), "do", t.date, t.time, t.repeat)
       : await postForm("/kanban/task", { brain: brain(), title: t.title.slice(0, 120), intent: t.title + (t.notes ? "\n" + t.notes : ""), priority: 2 });
     if (!r || r.ok === false) { if (r) toast(r.error || tw("nv.err.generic")); return; }
     var del = await mine({ __url: "/my-tasks/delete", id: t.id, handoff: true });
     await load(); render();
-    toast(tw("nv.ok.tojeevi"), function () {
+    toast(tw("nv.ok.tojavis"), function () {
       var cancel = t.date || t.repeat ? postForm("/reminders/delete", { brain: brain(), id: r.id }) : postForm("/kanban/task/delete", { brain: brain(), id: r.id });
       Promise.all([cancel, mine({ __url: "/my-tasks/restore", task: del.task })]).then(load).then(render);
     });
   }
   // "Do it myself": the Jeevi job becomes my task (same title and date), the Jeevi job is cancelled after the undo window.
-  async function takeFromJeevi(it) {
+  async function takeFromJavis(it) {
     S.sheet = null; S.sel = null;
     var raw = it.raw || {}, ts = it.src === "reminder" ? stamp(raw.due_at) : { date: it.date, time: it.time };
-    var r = await mine({ __url: "/my-tasks", title: it.desc && it.desc.length < 300 ? it.desc : it.title, date: ts.date || null, time: ts.time || "", from_jeevi: true });
+    var r = await mine({ __url: "/my-tasks", title: it.desc && it.desc.length < 300 ? it.desc : it.title, date: ts.date || null, time: ts.time || "", from_javis: true });
     if (!r || r.ok === false) { toast((r && r.error) || tw("nv.err.generic")); return; }
     var b = brain();
     later(it.id, tw("nv.ok.tome"), function () {
@@ -2283,7 +2283,7 @@
   }
   // ---- sounds (owner, 2026-11-06: "nút tích nghe thật đã tai, nút phá băng cũng vậy") ----
   // The synth lives in ui-sound.js with the on/off switch beside the light/dark one; nothing plays when it is off.
-  function sfx(kind) { try { if (window.JeeviSound) window.JeeviSound.play(kind); } catch (e) { /* no sound is fine */ } }
+  function sfx(kind) { try { if (window.JavisSound) window.JavisSound.play(kind); } catch (e) { /* no sound is fine */ } }
   // ---- effects (all of them skipped with reduced motion) ----
   function calm() { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; }
   function buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) { /* desktop */ } }
@@ -2391,9 +2391,9 @@
       if (act_ === "fset") { keepFormText(); S.form[a.dataset.k] = a.dataset.v;
         if (a.dataset.k === "kind" && a.dataset.v === "appt") { S.form.who = "me"; if (!S.form.date) S.form.date = today(); if (!S.form.time) S.form.time = fromMin(Math.ceil((toMin(hmOf(new Date())) + 30) / 30) * 30); } if (a.dataset.k === "who" && a.dataset.v === "me" && S.form.rule && (S.form.rule.unit === "min" || S.form.rule.unit === "hour")) S.form.rule = null; renderLayer(); return; }
       if (act_ === "new") { openForm(null); return; }
-      if (act_ === "st-range") { if (window.JeeviTaskStats) window.JeeviTaskStats.openRange(a, statsCtx()); return; }
-      if (act_ === "st-mins") { if (window.JeeviTaskStats) window.JeeviTaskStats.toggleMinutes(statsCtx()); return; }
-      if (act_ === "st-give") { var gi = find(id); if (gi) { giveToJeevi(gi).then(function () { if (window.JeeviTaskStats) window.JeeviTaskStats.refresh(); render(); }); } return; }
+      if (act_ === "st-range") { if (window.JavisTaskStats) window.JavisTaskStats.openRange(a, statsCtx()); return; }
+      if (act_ === "st-mins") { if (window.JavisTaskStats) window.JavisTaskStats.toggleMinutes(statsCtx()); return; }
+      if (act_ === "st-give") { var gi = find(id); if (gi) { giveToJavis(gi).then(function () { if (window.JavisTaskStats) window.JavisTaskStats.refresh(); render(); }); } return; }
       if (act_ === "pick-date" || act_ === "pick-rep") { if (id === "new") keepFormText(); }
       doAct(act_, id, a);
       return;
@@ -2442,7 +2442,7 @@
       await act(mine({ __url: "/my-tasks", title: qt, date: qd, tags: qv.indexOf("proj:") === 0 ? [qv.slice(5)] : [] }), tw("nv.f.added"));
       buzz(10); popStar(tw("nv.pu.sp_first"), "excited"); return;
     }
-    if (f.dataset.stmins && window.JeeviTaskStats) return window.JeeviTaskStats.saveMinutes(f, statsCtx());
+    if (f.dataset.stmins && window.JavisTaskStats) return window.JavisTaskStats.saveMinutes(f, statsCtx());
     if (f.dataset.pform) {
       var name = S.root.querySelector("#nvPName").value.trim(); if (!name) return;
       var sh = S.sheet; S.sheet = null;
@@ -2580,5 +2580,5 @@
     return true;
   }
 
-  window.JeeviTasks = { mount: mount, unmount: unmount, show: show, ready: function () { return !!(S && S.ai); }, openItem: openItem, morning: function (force) { return morning(force); }, _model: model_ };
+  window.JavisTasks = { mount: mount, unmount: unmount, show: show, ready: function () { return !!(S && S.ai); }, openItem: openItem, morning: function (force) { return morning(force); }, _model: model_ };
 })();

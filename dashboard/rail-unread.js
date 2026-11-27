@@ -11,7 +11,7 @@
   var busy = false;
 
   function brain() {
-    try { return (window.JeeviSessions && window.JeeviSessions.brain()) || "brain"; } catch (e) { return "brain"; }
+    try { return (window.JavisSessions && window.JavisSessions.brain()) || "brain"; } catch (e) { return "brain"; }
   }
   function nav() {
     try { return (window.Alpine && window.Alpine.store && window.Alpine.store("nav")) || null; } catch (e) { return null; }
@@ -28,7 +28,7 @@
     var b = encodeURIComponent(brain());
     // Chats still running or open on screen are not unread yet (sessions-ui.js unreadSkipQuery, owner 2026-11-20).
     var skip = "";
-    try { skip = (window.JeeviChatSide && window.JeeviChatSide.unreadSkipQuery && window.JeeviChatSide.unreadSkipQuery()) || ""; }
+    try { skip = (window.JavisChatSide && window.JavisChatSide.unreadSkipQuery && window.JavisChatSide.unreadSkipQuery()) || ""; }
     catch (e) { skip = ""; }
     Promise.all([getJson("/sessions/unread-summary?brain=" + b + skip), getJson("/teams/unread?brain=" + b)]).then(function (res) {
       busy = false;
@@ -48,15 +48,15 @@
     timer = setTimeout(refresh, ms == null ? 600 : ms);
   }
 
-  ["jeevi:session-read", "jeevi:agent-read", "jeevi:team-event", "jeevi:chat-activity"].forEach(function (name) {
+  ["javis:session-read", "javis:agent-read", "javis:team-event", "javis:chat-activity"].forEach(function (name) {
     window.addEventListener(name, function () { soon(); });
   });
   // A chat turn that ends can leave an unread answer the counts skipped while it ran: count again when the set of
-  // running chats changes (jeevi:chat-turn also fires on every step, so compare the set, not the event).
+  // running chats changes (javis:chat-turn also fires on every step, so compare the set, not the event).
   var lastRunning = "";
-  window.addEventListener("jeevi:chat-turn", function () {
+  window.addEventListener("javis:chat-turn", function () {
     var now = "";
-    try { now = window.JeeviRunning ? Array.from(window.JeeviRunning).sort().join(",") : ""; } catch (e) { now = ""; }
+    try { now = window.JavisRunning ? Array.from(window.JavisRunning).sort().join(",") : ""; } catch (e) { now = ""; }
     if (now !== lastRunning) { lastRunning = now; soon(); }
   });
   document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") soon(200); });
@@ -65,5 +65,5 @@
   setInterval(function () { if (document.visibilityState === "visible") refresh(); }, 60000);
   soon(1500);
 
-  window.JeeviRailUnread = { refresh: refresh };
+  window.JavisRailUnread = { refresh: refresh };
 })();

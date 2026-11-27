@@ -32,7 +32,7 @@ import os
 import re
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-formrong-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-formrong-"))
 
 from fastapi import FastAPI, Form   # noqa: E402
 from fastapi.testclient import TestClient   # noqa: E402

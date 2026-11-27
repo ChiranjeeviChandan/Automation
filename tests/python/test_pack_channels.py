@@ -18,8 +18,8 @@ import os
 import tempfile
 from pathlib import Path
 
-STATE = tempfile.mkdtemp(prefix="jeevi-pack-channels-")
-os.environ["JEEVI_STATE_DIR"] = STATE
+STATE = tempfile.mkdtemp(prefix="javis-pack-channels-")
+os.environ["JAVIS_STATE_DIR"] = STATE
 
 import packs  # noqa: E402
 import channels  # noqa: E402
@@ -47,8 +47,8 @@ def channel_src(cid: str, extra: str = "") -> str:
 def write_pack(pid: str, files: dict, provides: list, consent=True, enabled=True):
     d = Path(STATE) / "packs" / pid
     d.mkdir(parents=True, exist_ok=True)
-    (d / "jeevi-pack.yaml").write_text(
-        f"format: jeevi-pack\nspec: 1\nid: {pid}\nversion: 1.0.0\n"
+    (d / "javis-pack.yaml").write_text(
+        f"format: javis-pack\nspec: 1\nid: {pid}\nversion: 1.0.0\n"
         f'name: {{vi: "{pid}", en: "{pid}"}}\ndescription: {{vi: "Thử"}}\n'
         f"compat: {{app: \">=0.1.0\"}}\nprovides:\n  channels: [{', '.join(provides)}]\n", encoding="utf-8")
     for rel, src in files.items():

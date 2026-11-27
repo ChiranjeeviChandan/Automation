@@ -31,8 +31,8 @@ import improvement_store as IM
 
 SURFACES = ("dm", "team", "kanban", "workflow")
 MIN_CHARS, MAX_CHARS = 10, 2000
-# Any host marker token (JEEVI_RULE, JEEVI_LESSON, JEEVI_ASK...) or an HTML comment that could hide one.
-_MARKERS = re.compile(r"JEEVI_[A-Z]|<!--|-->", re.IGNORECASE)
+# Any host marker token (JAVIS_RULE, JAVIS_LESSON, JAVIS_ASK...) or an HTML comment that could hide one.
+_MARKERS = re.compile(r"JAVIS_[A-Z]|<!--|-->", re.IGNORECASE)
 # A line that tries to set a protected field, with or without a bullet or list number.
 _SETTINGS = re.compile(r"^\s*(?:[-*+]|\d+[.)])?\s*(model|model_provider|provider|reasoning|effort|skills|"
                        r"permissions?|quyền|mức quyền|enabled)\s*[:=]", re.IGNORECASE | re.MULTILINE)

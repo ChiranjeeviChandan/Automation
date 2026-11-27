@@ -63,13 +63,13 @@ def lenh_cai() -> str:
 
 
 def find_antigravity_cli() -> Optional[str]:
-    """Tìm binary `agy`. Cửa thoát JEEVI_AGY_BIN cho máy cài chỗ lạ.
+    """Tìm binary `agy`. Cửa thoát JAVIS_AGY_BIN cho máy cài chỗ lạ.
 
     Trình cài chính chủ thả vào `~/.local/bin/agy`, mà thư mục đó KHÔNG chắc nằm trong PATH của
     tiến trình Jeevi - dịch vụ systemd và app trên macOS đều được cấp một PATH rất ngắn. Nên
     phải soi tay chỗ đó thay vì tin mỗi `which`.
     """
-    envp = (os.environ.get("JEEVI_AGY_BIN") or "").strip()
+    envp = (os.environ.get("JAVIS_AGY_BIN") or "").strip()
     if envp:
         try:
             if Path(envp).exists():
@@ -275,13 +275,13 @@ SUGGEST_MODE_CAP = 900.0
 
 
 def turn_cap_seconds() -> float:
-    """The time cap for one `agy` turn from JEEVI_AGY_TIMEOUT, in seconds; 0 means no cap (the default).
+    """The time cap for one `agy` turn from JAVIS_AGY_TIMEOUT, in seconds; 0 means no cap (the default).
 
     Owner, 2026-11-07: heavy tool work kept hitting the old 15-minute default and stopping half way. Claude Code
     and Codex have no wall-clock cap either; the Stop button still ends a turn at any moment.
     """
     try:
-        return max(0.0, float(os.environ.get("JEEVI_AGY_TIMEOUT") or 0))
+        return max(0.0, float(os.environ.get("JAVIS_AGY_TIMEOUT") or 0))
     except ValueError:
         return 0.0
 
@@ -345,14 +345,14 @@ def _cau_bao_het_gio(loi: str, giay: float) -> str:
         "Jeevi đặt cho một lượt, không phải lỗi của Google hay cấu hình của bạn. Các bước đã chạy xong "
         "vẫn giữ kết quả.\n\n"
         "Nhắn \"làm tiếp\" để làm nốt phần còn lại, hoặc giao việc dài như vậy thành việc nền ở trang "
-        "Việc. Trần này đến từ biến môi trường JEEVI_AGY_TIMEOUT (tính bằng giây): xoá biến đó hoặc đặt "
+        "Việc. Trần này đến từ biến môi trường JAVIS_AGY_TIMEOUT (tính bằng giây): xoá biến đó hoặc đặt "
         "bằng 0 để bỏ trần.\n\n"
         "_Nguyên văn:_ " + (loi or "")[:400],
         en_luot + ", so Antigravity CLI stopped it. That is the time "
         "cap Jeevi sets for one turn, not a Google error or your configuration. Steps that finished keep "
         "their results.\n\n"
         "Send \"continue\" to finish the rest, or give a job this long to the background queue on the "
-        "Work page. The cap comes from the environment variable JEEVI_AGY_TIMEOUT (in seconds): remove it "
+        "Work page. The cap comes from the environment variable JAVIS_AGY_TIMEOUT (in seconds): remove it "
         "or set it to 0 for no cap.\n\n"
         "_Raw message:_ " + (loi or "")[:400])
 
@@ -443,7 +443,7 @@ def _tep_nho_duong() -> Path:
         import config
         base = Path(config.STATE_DIR)
     except Exception:
-        base = Path(os.environ.get("JEEVI_STATE_DIR") or Path(__file__).parent)
+        base = Path(os.environ.get("JAVIS_STATE_DIR") or Path(__file__).parent)
     return base / _NHO_DUONG
 
 
@@ -535,9 +535,9 @@ def duong_prompt_dai(cli: Optional[str] = None) -> str:
     không công thức nào ăn mới xuống đường file.
 
     Nhớ ra đĩa theo vân tay binary. Bất đối xứng có chủ ý: kết quả dương tính nhớ mãi, âm tính
-    chỉ nhớ 24 giờ. Cửa thoát: JEEVI_AGY_PROMPT_DAI=stdin|file|argv.
+    chỉ nhớ 24 giờ. Cửa thoát: JAVIS_AGY_PROMPT_DAI=stdin|file|argv.
     """
-    ep = (os.environ.get("JEEVI_AGY_PROMPT_DAI") or "").strip().lower()
+    ep = (os.environ.get("JAVIS_AGY_PROMPT_DAI") or "").strip().lower()
     if ep in ("file", "argv"):
         return ep
     nho = _doc_nho_duong()
@@ -577,7 +577,7 @@ def nho_duong(cli: Optional[str], duong: str, vi_sao: str = ""):
                     "ts": time.time()})
 
 
-_THU_MUC_NGU_CANH = ".jeevi-agy"
+_THU_MUC_NGU_CANH = ".javis-agy"
 _HAN_NGU_CANH = 3600.0      # file mồ côi quá một giờ thì dọn
 
 
@@ -611,7 +611,7 @@ def _viet_file_ngu_canh(cwd: str, noi_dung: str) -> tuple[str, str]:
 
     STATE_DIR cũng chữa luôn ca cwd không ghi được: đường fast path gọi engine này với
     `cwd = os.getcwd()`, tức `/app` trong Docker - thư mục của root trong khi tiến trình chạy
-    bằng user `jeevi`.
+    bằng user `javis`.
 
     Đổi lại phải cho `agy` quyền đọc thư mục đó bằng `--add-dir`, việc của người gọi.
     """
@@ -619,7 +619,7 @@ def _viet_file_ngu_canh(cwd: str, noi_dung: str) -> tuple[str, str]:
         import config
         goc = Path(config.STATE_DIR)
     except Exception:
-        goc = Path(os.environ.get("JEEVI_STATE_DIR") or Path(__file__).parent)
+        goc = Path(os.environ.get("JAVIS_STATE_DIR") or Path(__file__).parent)
     thu_muc = goc / _THU_MUC_NGU_CANH
     thu_muc.mkdir(parents=True, exist_ok=True)
     _don_ngu_canh_cu(thu_muc)
@@ -765,13 +765,13 @@ _CANH_BAO_DOC_HONG = (
     "\n\n_(Lưu ý của Jeevi: `agy` có thử mở file ngữ cảnh nhưng KHÔNG đọc được (thường là do mức "
     "quyền hoặc sandbox chặn), nên lượt vừa rồi trả lời mà chưa có system prompt và bộ nhớ của "
     "Jeevi. `agy` từ bản 1.1.1 nhận prompt qua stdin và Jeevi tự đo lại đường đó mỗi ngày; muốn "
-    "ép ngay thì đặt biến môi trường JEEVI_AGY_PROMPT_DAI=stdin.)_"
+    "ép ngay thì đặt biến môi trường JAVIS_AGY_PROMPT_DAI=stdin.)_"
 )
 _CANH_BAO_DOC_HONG_EN = (
     "\n\n_(Note from Jeevi: `agy` tried to open the context file but could NOT read it (usually blocked by "
     "the permission level or sandbox), so the last answer was given without Jeevi's system prompt and "
     "memory. `agy` 1.1.1 and later takes the prompt over stdin, and Jeevi re-measures that route daily; "
-    "to force it now, set the environment variable JEEVI_AGY_PROMPT_DAI=stdin.)_"
+    "to force it now, set the environment variable JAVIS_AGY_PROMPT_DAI=stdin.)_"
 )
 
 
@@ -973,7 +973,7 @@ _AUTH_TTL = 60.0
 _OFF_KEY = "antigravity_off"
 
 
-def jeevi_off() -> bool:
+def javis_off() -> bool:
     """The owner switched this card off in Jeevi. Read from settings (cached by mtime, so cheap on every call)."""
     try:
         import config as cfgmod
@@ -983,7 +983,7 @@ def jeevi_off() -> bool:
 
 
 def _off_status() -> dict:
-    return {"connected": False, "method": "", "email": "", "jeevi_off": True,
+    return {"connected": False, "method": "", "email": "", "javis_off": True,
             "error": localefmt.chu("Đã ngắt khỏi Jeevi. Bấm Kết nối lại để dùng tiếp.",
                                    "Disconnected from Jeevi. Tap Connect again to use it.")}
 
@@ -1039,7 +1039,7 @@ def auth_status(bo_qua_cache: bool = False) -> dict:
     if not cli:
         return {"connected": False, "method": "", "email": "",
                 "error": _chua_cai()}
-    if jeevi_off():
+    if javis_off():
         return _off_status()
     now = time.time()
     if not bo_qua_cache and _AUTH_CACHE["val"] and now - _AUTH_CACHE["ts"] < _AUTH_TTL:
@@ -1114,7 +1114,7 @@ def auth_status_nen() -> dict:
     if not cli:
         return {"connected": False, "method": "", "email": "",
                 "error": _chua_cai()}
-    if jeevi_off():
+    if javis_off():
         return _off_status()
     now = time.time()
     cu = _AUTH_CACHE["val"]
@@ -1215,7 +1215,7 @@ def login_huong_dan() -> dict:
 # chạy `agy` cùng lúc thì brain sau ghi đè header `X-Jeevi-Vault` của brain trước. Bên Codex chỗ
 # này chữa bằng override argv (`mcp_hub.codex_vault_override`); ở đây chưa đo được `agy` có cờ
 # tương đương nên `_build_args` hỏi `co_co("--mcp-config")` rồi mới truyền - có thì hết race,
-# không có thì vẫn chạy như cũ. Ai không muốn Jeevi đụng HOME thì đặt JEEVI_AGY_MCP_HOME=0.
+# không có thì vẫn chạy như cũ. Ai không muốn Jeevi đụng HOME thì đặt JAVIS_AGY_MCP_HOME=0.
 
 # Hai đường ĐOÁN của các bản trước. Không còn ghi vào nữa, nhưng phải DỌN: chúng chứa hub token
 # và nằm trong brain, mà brain thì có đường sao lưu git đẩy lên remote của người dùng.
@@ -1233,12 +1233,12 @@ def hub_entry(url: str, headers: Optional[dict] = None) -> dict:
     KHÔNG có `httpUrl`/`trust`/`timeout`: cả ba là của Gemini CLI, và chính `httpUrl` là thứ đã
     làm bộ não này chạy suốt mấy bản mà không có lấy một tool nào của Jeevi.
 
-    Cửa thoát `JEEVI_AGY_MCP_KEY=serverUrl|url` cho ai gặp một bản `agy` khó tính từ chối entry
+    Cửa thoát `JAVIS_AGY_MCP_KEY=serverUrl|url` cho ai gặp một bản `agy` khó tính từ chối entry
     có khoá lạ. Đây là chỗ KHÔNG đo được trên máy dựng bản này (mạng bị chặn không tải nổi
     binary), nên phải có một cái lẫy thay vì bắt người dùng chờ bản sau - file cấu hình bị Jeevi
     ghi đè mỗi lượt chat, sửa tay không giữ được.
     """
-    khoa = (os.environ.get("JEEVI_AGY_MCP_KEY") or "").strip()
+    khoa = (os.environ.get("JAVIS_AGY_MCP_KEY") or "").strip()
     if khoa == "serverUrl":
         e: dict = {"serverUrl": url}
     elif khoa == "url":
@@ -1253,9 +1253,9 @@ def hub_entry(url: str, headers: Optional[dict] = None) -> dict:
 
 def _duong_mcp_home() -> list[Path]:
     """Cấu hình MCP tầng HOME mà `agy` thật sự nạp. Rỗng nếu người dùng tắt bằng env."""
-    if (os.environ.get("JEEVI_AGY_MCP_HOME") or "").strip() in ("0", "false", "no"):
+    if (os.environ.get("JAVIS_AGY_MCP_HOME") or "").strip() in ("0", "false", "no"):
         return []
-    rieng = (os.environ.get("JEEVI_AGY_MCP_CONFIG") or "").strip()
+    rieng = (os.environ.get("JAVIS_AGY_MCP_CONFIG") or "").strip()
     if rieng:
         return [Path(rieng).expanduser()]
     h = _home_dir()
@@ -1275,7 +1275,7 @@ def duong_mcp(vault_root=None) -> list[Path]:
 
 
 def _ghi_mot_mcp(p: Path, hub: Optional[dict], xoa_khi_rong: bool = False) -> bool:
-    """Đặt/gỡ entry `jeevi` trong MỘT file mcp_config, giữ nguyên phần của người dùng."""
+    """Đặt/gỡ entry `javis` trong MỘT file mcp_config, giữ nguyên phần của người dùng."""
     cu: dict = {}
     if p.exists():
         try:
@@ -1288,9 +1288,9 @@ def _ghi_mot_mcp(p: Path, hub: Optional[dict], xoa_khi_rong: bool = False) -> bo
     if not isinstance(servers, dict):
         servers = {}
     if hub:
-        servers["jeevi"] = hub
+        servers["javis"] = hub
     else:
-        servers.pop("jeevi", None)
+        servers.pop("javis", None)
     if servers:
         cu["mcpServers"] = servers
     else:
@@ -1314,9 +1314,9 @@ def _ghi_mot_mcp(p: Path, hub: Optional[dict], xoa_khi_rong: bool = False) -> bo
 
 
 def ghi_mcp_settings(vault_root, hub: Optional[dict]) -> Optional[str]:
-    """Đấu hub của Jeevi vào `agy`: ghi entry `jeevi` vào cấu hình HOME + workspace.
+    """Đấu hub của Jeevi vào `agy`: ghi entry `javis` vào cấu hình HOME + workspace.
 
-    `hub=None` (hub tắt) → GỠ entry `jeevi` khỏi mọi chỗ, giữ nguyên MCP người dùng tự thêm.
+    `hub=None` (hub tắt) → GỠ entry `javis` khỏi mọi chỗ, giữ nguyên MCP người dùng tự thêm.
     Trả về đường dẫn file ĐẦU TIÊN ghi được (file HOME - chỗ `agy` thật sự nạp), None nếu không
     ghi được chỗ nào. Lý do chọn từng đường dẫn: xem khối chú thích dài ngay trên.
     """
@@ -1362,15 +1362,15 @@ def trang_thai_mcp(vault_root=None) -> dict:
             doc = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
         except Exception:
             doc = {}
-        e = ((doc or {}).get("mcpServers") or {}).get("jeevi") or {}
-        # Nhận cả hai tên khoá: JEEVI_AGY_MCP_KEY=url thì entry chỉ có `url`, soi mỗi
+        e = ((doc or {}).get("mcpServers") or {}).get("javis") or {}
+        # Nhận cả hai tên khoá: JAVIS_AGY_MCP_KEY=url thì entry chỉ có `url`, soi mỗi
         # `serverUrl` là báo "chưa đấu" cho một cấu hình hoàn toàn đúng.
         dia_chi = str(e.get("serverUrl") or e.get("url") or "")
-        ds.append({"path": str(p), "co_jeevi": bool(dia_chi), "url": dia_chi})
+        ds.append({"path": str(p), "co_javis": bool(dia_chi), "url": dia_chi})
         co = bool(dia_chi)
         if not co:
             thieu.append(str(p))
-    return {"ok": any(d["co_jeevi"] for d in ds), "files": ds, "thieu": thieu}
+    return {"ok": any(d["co_javis"] for d in ds), "files": ds, "thieu": thieu}
 
 
 # ---------------------------------------------------------------------------
@@ -1461,7 +1461,7 @@ class AntigravityCLI:
         """The cap this turn really runs under, in seconds; 0 = none.
 
         full/auto pass --dangerously-skip-permissions, so agy never stops to ask and an uncapped turn ends on its own,
-        on Stop, or on a server restart. suggest keeps SUGGEST_MODE_CAP unless JEEVI_AGY_TIMEOUT sets one.
+        on Stop, or on a server restart. suggest keeps SUGGEST_MODE_CAP unless JAVIS_AGY_TIMEOUT sets one.
         """
         if self.timeout and self.timeout > 0:
             return float(self.timeout)
@@ -1562,7 +1562,7 @@ class AntigravityCLI:
         Tách hàm riêng vì nó ĐỒNG BỘ và có thể chậm (lần đầu phải chạy `agy --help`, trần 20
         giây), nên `query()` đẩy nó sang worker thay vì gọi thẳng trong event loop.
         """
-        ep = (os.environ.get("JEEVI_AGY_PROMPT_DAI") or "").strip().lower()
+        ep = (os.environ.get("JAVIS_AGY_PROMPT_DAI") or "").strip().lower()
         if ep in ("stdin", "file", "argv"):
             return duong_prompt_dai(self.cli_path) if ep == "stdin" else ep
         # Đo bằng _do_dai_argv chứ KHÔNG bằng len(): trần của hệ điều hành tính theo byte
@@ -1844,7 +1844,7 @@ class AntigravityCLI:
                     agy_gone.set()
 
                 threading.Thread(target=watch_exit, daemon=True,
-                                 name=f"jeevi-agy-exit-{self.tag}").start()
+                                 name=f"javis-agy-exit-{self.tag}").start()
 
                 def watch_stop():
                     # Keep cleanup independent of the cancelled asyncio task, including
@@ -1857,7 +1857,7 @@ class AntigravityCLI:
                         _kill_tree(proc)
 
                 threading.Thread(target=watch_stop, daemon=True,
-                                 name=f"jeevi-agy-watch-{self.tag}").start()
+                                 name=f"javis-agy-watch-{self.tag}").start()
                 try:   # lệnh chạy ngầm agy bỏ lại sẽ được theo dõi sau lượt (tien_trinh_nen)
                     import tien_trinh_nen
                     tien_trinh_nen.ghi_nhom(self.tag, proc.pid)
@@ -1882,7 +1882,7 @@ class AntigravityCLI:
                         pass
 
                 luong_loi = threading.Thread(target=_doc_loi, daemon=True,
-                                             name=f"jeevi-agy-err-{self.tag}")
+                                             name=f"javis-agy-err-{self.tag}")
                 luong_loi.start()
                 for line in iter(proc.stdout.readline, ""):
                     line = line.strip()
@@ -1906,10 +1906,10 @@ class AntigravityCLI:
                 publish({"_exit": -1, "_err": localefmt.chu(
                         f"Antigravity CLI chạy quá {int(cap)}s nên bị "
                         f"cắt. Nếu việc thật sự dài thì nâng biến môi trường "
-                        f"JEEVI_AGY_TIMEOUT.",
+                        f"JAVIS_AGY_TIMEOUT.",
                         f"Antigravity CLI ran over {int(cap)}s and was cut off. "
                         f"If the job really is long, raise the environment variable "
-                        f"JEEVI_AGY_TIMEOUT.")})
+                        f"JAVIS_AGY_TIMEOUT.")})
             except OSError as e:
                 # E2BIG = prompt vượt trần dòng lệnh của hệ điều hành. Phép đo ở `_chon_duong`
                 # có thể vẫn hụt (biến môi trường to chiếm chỗ trong ARG_MAX chung, hoặc bản
@@ -1935,7 +1935,7 @@ class AntigravityCLI:
                 # Dọn file ngữ cảnh ở ĐÂY chứ không ở vòng đọc sự kiện: luồng này luôn chạy hết,
                 # kể cả khi người dùng đóng tab giữa chừng và không ai đọc nốt hàng đợi nữa.
                 # Để sót là rác tích dần trong brain của người dùng.
-                if tep_ngu_canh and not os.environ.get("JEEVI_AGY_GIU_NGU_CANH"):
+                if tep_ngu_canh and not os.environ.get("JAVIS_AGY_GIU_NGU_CANH"):
                     try:
                         os.unlink(tep_ngu_canh)
                     except Exception:
@@ -1945,7 +1945,7 @@ class AntigravityCLI:
                 reader_finished.set()
                 publish(HET)
 
-        threading.Thread(target=doc_luong, name=f"jeevi-agy-{self.tag}", daemon=True).start()
+        threading.Thread(target=doc_luong, name=f"javis-agy-{self.tag}", daemon=True).start()
 
         cac_manh: list[str] = []
         cac_loi: list[str] = []
@@ -2219,7 +2219,7 @@ class AntigravityCLI:
 
 
 _MCP_CALL = "call_mcp_tool"
-_HUB_RUN_TOOL = "jeevi_run_tool"
+_HUB_RUN_TOOL = "javis_run_tool"
 
 
 def unwrap_mcp_call(name: str, params: dict) -> tuple[str, dict]:
@@ -2227,11 +2227,11 @@ def unwrap_mcp_call(name: str, params: dict) -> tuple[str, dict]:
 
     agy reaches every MCP tool through one native tool (measured on agy 1.5.15):
 
-        {"ServerName": "jeevi", "ToolName": "jeevi_run_tool",
-         "Arguments": {"name": "jeevi_workflow", "args": {"op": "runs"}},
-         "toolAction": "Calling jeevi_workflow", "toolSummary": "List workflow runs"}
+        {"ServerName": "javis", "ToolName": "javis_run_tool",
+         "Arguments": {"name": "javis_workflow", "args": {"op": "runs"}},
+         "toolAction": "Calling javis_workflow", "toolSummary": "List workflow runs"}
 
-    and Jeevi's hub wraps once more behind `jeevi_run_tool` (the lazy tool tier). Shown as is, the
+    and Jeevi's hub wraps once more behind `javis_run_tool` (the lazy tool tier). Shown as is, the
     chat read "call_mcp_tool" for every hub call and nothing else. The model's own `toolSummary`
     rides along so the step label stays readable. Anything else comes back untouched.
     """

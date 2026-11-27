@@ -15,7 +15,7 @@ This module is the one place that decides what leaves the hub, for every engine:
      their key names are written a single time (a table), ALL of them are shown that way. Otherwise
      it is replaced by a view: the envelope (totals, paging markers), the field names, as many
      WHOLE records as fit, and a reference. Nothing is cut in the middle of a record, and
-     `jeevi_query` reads the rest.
+     `javis_query` reads the rest.
   5. Large text that is not JSON gets whole first and last lines plus the same reference.
 
 Every step fails open: anything unexpected returns the original text, and the caller behaves as it
@@ -41,13 +41,13 @@ _PREFIX_MAX = 240                # "HTTP 200 OK\n---\n" style headers some serve
 _FIELD_NAMES_MAX = 120
 _FIELD_NAMES_CHARS = 1500
 _ENVELOPE_CHARS = 1200
-QUERY_TOOL = "jeevi_query"
+QUERY_TOOL = "javis_query"
 
 # Who reads the result of the tool call running in this context:
 #   ""       an internal caller (a workflow runner, a dashboard widget): untouched, as before
 #   "model"  a model's tool loop: shaped
-#   "raw"    jeevi_query reading whole pages for itself, inside a model's turn: untouched
-_audience = contextvars.ContextVar("jeevi_tool_result_audience", default="")
+#   "raw"    javis_query reading whole pages for itself, inside a model's turn: untouched
+_audience = contextvars.ContextVar("javis_tool_result_audience", default="")
 _settings_cache = {"ts": 0.0, "on": True, "inline": INLINE_MAX_DEFAULT, "budget": PREVIEW_BUDGET_DEFAULT}
 
 
@@ -63,7 +63,7 @@ def for_model():
 
 @contextmanager
 def raw_results():
-    """Inside this block the hub returns results untouched (jeevi_query reads whole pages itself)."""
+    """Inside this block the hub returns results untouched (javis_query reads whole pages itself)."""
     token = _audience.set("raw")
     try:
         yield
@@ -119,7 +119,7 @@ def settings(force: bool = False) -> dict:
     """{'on', 'inline', 'budget'}, re-read at most every few seconds.
 
     `mcp.result_shaping`: "auto" (default) | true | false. Auto is on unless the owner chose the Off
-    saving level themselves ("Full mode: send everything"). JEEVI_TOOL_RESULT_SHAPING=0|1 wins."""
+    saving level themselves ("Full mode: send everything"). JAVIS_TOOL_RESULT_SHAPING=0|1 wins."""
     now = time.time()
     if not force and now - _settings_cache["ts"] < 5:
         return _settings_cache
@@ -139,11 +139,11 @@ def settings(force: bool = False) -> dict:
             on = not (str(choice.get("source") or "") == "user" and str(choice.get("level") or "") == "off")
     except Exception:  # noqa: BLE001 - unreadable settings: keep the default
         pass
-    env = _env_flag("JEEVI_TOOL_RESULT_SHAPING")
+    env = _env_flag("JAVIS_TOOL_RESULT_SHAPING")
     if env is not None:
         on = env
-    inline = _env_int("JEEVI_TOOL_RESULT_INLINE_CHARS", INLINE_MAX_DEFAULT, 2000, 200_000)
-    budget = min(_env_int("JEEVI_TOOL_RESULT_PREVIEW_CHARS", PREVIEW_BUDGET_DEFAULT, 1500, 100_000), inline - 500)
+    inline = _env_int("JAVIS_TOOL_RESULT_INLINE_CHARS", INLINE_MAX_DEFAULT, 2000, 200_000)
+    budget = min(_env_int("JAVIS_TOOL_RESULT_PREVIEW_CHARS", PREVIEW_BUDGET_DEFAULT, 1500, 100_000), inline - 500)
     _settings_cache.update(ts=now, on=on, inline=inline, budget=budget)
     return _settings_cache
 
@@ -420,7 +420,7 @@ def build_table(lean: Any, ref: str, raw_chars: int, limit: int, prefix: str = "
     if prefix.strip():
         head["text_before_result"] = prefix.strip()[:_PREFIX_MAX]
     body = _swap_at(lean, pointer, {"columns": columns, "rows": rows})
-    doc = {"jeevi_stored_result": head, "result": body}
+    doc = {"javis_stored_result": head, "result": body}
     text = _dumps(doc)
     return text if len(text) <= limit else None
 
@@ -449,7 +449,7 @@ def build_preview(parsed: Parsed, data: Any, ref: str, raw_chars: int, budget: i
             head["fields"] = names
             if more:
                 head["fields_not_listed"] = more
-        doc = {"jeevi_stored_result": head}
+        doc = {"javis_stored_result": head}
         env = _envelope(lean, pointer)
         if env:
             doc["envelope"] = env
@@ -511,12 +511,12 @@ def build_preview(parsed: Parsed, data: Any, ref: str, raw_chars: int, budget: i
     # No dominant record list: show the shape of the whole document.
     lean = lean_copy(data)
     for depth, text_max in ((3, 200), (2, 160), (1, 100), (0, 60)):
-        doc = {"jeevi_stored_result": dict(head, shown_as="outline"), "document": outline(lean, 0, depth, text_max)}
+        doc = {"javis_stored_result": dict(head, shown_as="outline"), "document": outline(lean, 0, depth, text_max)}
         text = _dumps(doc)
         if len(text) <= budget:
             return text
     keys = list(lean)[:100] if isinstance(lean, dict) else f"<list, {len(lean)} items>"
-    return _dumps({"jeevi_stored_result": dict(head, shown_as="keys"), "document": keys})
+    return _dumps({"javis_stored_result": dict(head, shown_as="keys"), "document": keys})
 
 
 SOFT_LINE_CHARS = 1200
@@ -525,7 +525,7 @@ SOFT_LINE_CHARS = 1200
 def soft_lines(text: str, width: int = SOFT_LINE_CHARS) -> list:
     """Lines of `text`, with any line longer than `width` split at a space near the limit.
 
-    The preview and jeevi_query both number lines this way, so a result that is one enormous line (minified
+    The preview and javis_query both number lines this way, so a result that is one enormous line (minified
     HTML, a JSON-less export) can still be read from start to end by line number."""
     out = []
     for line in text.splitlines():
@@ -541,7 +541,7 @@ def soft_lines(text: str, width: int = SOFT_LINE_CHARS) -> list:
 def build_text_preview(text: str, ref: str, budget: int) -> str:
     """Whole first and last lines of a large non-JSON result, plus the reference."""
     lines = soft_lines(text)
-    header = (f"[jeevi_stored_result ref={ref} original_chars={len(text)} lines={len(lines)}] Partial view. "
+    header = (f"[javis_stored_result ref={ref} original_chars={len(text)} lines={len(lines)}] Partial view. "
               f"The FULL text is stored. Read more with {QUERY_TOOL}(ref=\"{ref}\", search=\"words\") or "
               f"{QUERY_TOOL}(ref=\"{ref}\", offset=LINE, limit=N). Do not call the source tool again for the "
               "same data.")
@@ -580,7 +580,7 @@ def _has_error(data: Any) -> bool:
 def shape(result: Any, *, tool: str = "", conn_id: str = "", scope: str = "", can_read_back: bool = True) -> Shaped:
     """What the hub hands to the model for one tool result. Never raises.
 
-    can_read_back=False (the caller has no jeevi_query in its tool list): the result is compacted
+    can_read_back=False (the caller has no javis_query in its tool list): the result is compacted
     but never replaced by a view, because a reference nobody can follow is a dead end."""
     text = result if isinstance(result, str) else str(result)
     raw_chars = len(text)

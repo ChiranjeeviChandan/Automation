@@ -15,8 +15,8 @@ from pathlib import Path
 from unittest.mock import patch
 
 SCRATCH = Path(tempfile.mkdtemp(prefix="main-rendering-"))
-for key, relative in {"JEEVI_STATE_DIR": "state", "BRAINS_DIR": "brains", "OBSIDIAN_VAULT_PATH": "vault",
-                      "BRAIN_PATH": "brain", "SOURCES_PATH": "sources", "JEEVI_SESSIONS_DB": "sessions.sqlite3"}.items():
+for key, relative in {"JAVIS_STATE_DIR": "state", "BRAINS_DIR": "brains", "OBSIDIAN_VAULT_PATH": "vault",
+                      "BRAIN_PATH": "brain", "SOURCES_PATH": "sources", "JAVIS_SESSIONS_DB": "sessions.sqlite3"}.items():
     os.environ[key] = str(SCRATCH / relative)
 
 import main
@@ -150,7 +150,7 @@ def build_system_prompt(brain: str = "brain", include_memory: bool = True,
             base += _session_block(session_id)
         except Exception:
             pass
-        base += _jeevi_core_block(session_id)
+        base += _javis_core_block(session_id)
     # Đường dẫn lớp Agentic của vault đang làm việc (để Jeevi tạo agent/workflow/loop qua chat)
     root = _brain_root(brain)
     system_sync.ensure_synced(root)   # brain nào cũng có đủ năng lực hệ thống (1 lần/process, rẻ)
@@ -190,19 +190,19 @@ def build_system_prompt(brain: str = "brain", include_memory: bool = True,
         "the system prompt) at the ABSOLUTE PATH above. The Agents, Workflows and Recurring pages pick up "
         "the new file by themselves."
     )
-    # Resonance (M2): chỉ brain đã bật mới có dòng này và mới thấy tool jeevi_goal. CLAUDE.md đã hết ngân sách
+    # Resonance (M2): chỉ brain đã bật mới có dòng này và mới thấy tool javis_goal. CLAUDE.md đã hết ngân sách
     # ký tự, và brain chưa bật thì không được dài thêm chữ nào.
     # Đường tìm tool khác nhau theo engine. Khi engine Claude dựng được server plugin in-process
-    # "jeevi-plugins", hub bị báo bỏ nhóm plugin (X-Jeevi-No-Plugins), nên jeevi_search_tools của hub không
-    # trả về jeevi_goal; tool đến model qua namespace mcp__jeevi-plugins__. Claude Code có hoãn nạp nó sau
-    # ToolSearch hay không thì chưa xác minh (lần chạy 1 cho thấy jeevi_task từng bị hoãn như vậy), nên dòng
-    # dưới chỉ nói "chưa nạp thì tìm". Dòng cũ chỉ nêu jeevi_search_tools (pilot lần 2, 07/10/2026).
-    # Ranh giới bốn loại việc chỉ nằm ở dòng này và mô tả jeevi_goal: cả hai chỉ có trong lượt của agent đã bật.
-    # Mô tả jeevi_task giữ nguyên để brain tắt tính năng không nhận chỉ dẫn mới (review PR #579, P2).
+    # "javis-plugins", hub bị báo bỏ nhóm plugin (X-Jeevi-No-Plugins), nên javis_search_tools của hub không
+    # trả về javis_goal; tool đến model qua namespace mcp__javis-plugins__. Claude Code có hoãn nạp nó sau
+    # ToolSearch hay không thì chưa xác minh (lần chạy 1 cho thấy javis_task từng bị hoãn như vậy), nên dòng
+    # dưới chỉ nói "chưa nạp thì tìm". Dòng cũ chỉ nêu javis_search_tools (pilot lần 2, 07/10/2026).
+    # Ranh giới bốn loại việc chỉ nằm ở dòng này và mô tả javis_goal: cả hai chỉ có trong lượt của agent đã bật.
+    # Mô tả javis_task giữ nguyên để brain tắt tính năng không nhận chỉ dẫn mới (review PR #579, P2).
     # A1: theo agent của LƯỢT (ngữ cảnh lượt do host gắn), không theo công tắc brain cũ; chat thường không có dòng này.
     if _resonance_turn_enabled(root):
         base += "\n- " + _RESONANCE_GOAL_HINT
-    # Quét cây skill MỘT lần cho cả hai khối dưới. Trước đây _jeevi_capability_summary
+    # Quét cây skill MỘT lần cho cả hai khối dưới. Trước đây _javis_capability_summary
     # gọi list_skills còn _skill_router_block gọi list_enabled_meta (vốn chỉ là list_skills
     # lọc lại), nên cả cây skill bị đi và parse YAML HAI lần mỗi lượt chat - đo được 18ms
     # mỗi lần trên brain 30 skill. Lỗi thì để None và mỗi khối tự quét như cũ.
@@ -215,7 +215,7 @@ def build_system_prompt(brain: str = "brain", include_memory: bool = True,
     except Exception:
         _skills = None
     try:
-        base += _jeevi_capability_summary(brain, _skills)   # chỉ mục năng lực LIVE (mọi engine biết Jeevi có gì)
+        base += _javis_capability_summary(brain, _skills)   # chỉ mục năng lực LIVE (mọi engine biết Jeevi có gì)
     except Exception:
         pass
     try:
@@ -225,7 +225,7 @@ def build_system_prompt(brain: str = "brain", include_memory: bool = True,
         pass
     # Đồng hồ. Cùng một dòng với capsule của đường tiết kiệm (context_compiler.dong_ho), để
     # bật hay tắt tiết kiệm thì Jeevi vẫn biết bây giờ mấy giờ y như nhau. Model không có
-    # đồng hồ, và tool `jeevi_now` thì không phải đường nào cũng phát tool.
+    # đồng hồ, và tool `javis_now` thì không phải đường nào cũng phát tool.
     # Khối NGÔN NGỮ + đồng hồ đi CÙNG NHAU và đi CUỐI, sát chỗ model bắt đầu trả lời.
     # Ngôn ngữ đặt ở cuối vì luật càng gần chỗ sinh chữ thì model càng ít trôi; đồng hồ
     # đi kèm vì tên thứ trong tuần cũng phải theo ngôn ngữ đó.
@@ -245,7 +245,7 @@ def build_system_prompt(brain: str = "brain", include_memory: bool = True,
         pass
     return base
 
-def _jeevi_capability_summary(brain: str, skills=None) -> str:
+def _javis_capability_summary(brain: str, skills=None) -> str:
     """Bản LIVE gọn (capped) chèn vào system prompt: để engine nào cũng biết Jeevi có gì.
     Skill nhiều -> chỉ đếm + nhóm (chi tiết ở Jeevi/index.md), tránh phình context.
     skills: cây skill đã quét sẵn, xem _gather_capabilities."""
@@ -278,7 +278,7 @@ def _jeevi_capability_summary(brain: str, skills=None) -> str:
 
 def _skill_router_block(brain: str, root: str, skills=None) -> str:
     """ROUTER SKILL đa-engine (chèn vào system prompt của MỌI engine). Liệt kê skill đang BẬT kèm
-    mô tả (trigger) + chỉ rõ 2 cách nạp: tool jeevi_use_skill (engine API có tool) HOẶC mở thẳng
+    mô tả (trigger) + chỉ rõ 2 cách nạp: tool javis_use_skill (engine API có tool) HOẶC mở thẳng
     file SKILL.md bằng công cụ đọc file (Claude/Codex - dùng ĐƯỜNG DẪN TUYỆT ĐỐI vì cwd có thể là
     /app). Đây là thứ giúp skill chạy trên cả ChatGPT/Codex, không phụ thuộc cơ chế native của Claude.
     Cắt theo CẢ số mục lẫn ngân sách ký tự (skill_router.cat_theo_ngan_sach), và xếp theo mức
@@ -298,15 +298,15 @@ def _skill_router_block(brain: str, root: str, skills=None) -> str:
         desc = (s.get("description") or "").replace("\n", " ")[:skill_router.SKILL_DESC_MAX]
         lines.append(f"- {s['slug']} ({s['name']}): {desc}")
     if con_lai > 0:
-        # Nói rõ CÁCH LẤY chứ không chỉ nói còn bao nhiêu: `jeevi_use_skill` nạp được theo
+        # Nói rõ CÁCH LẤY chứ không chỉ nói còn bao nhiêu: `javis_use_skill` nạp được theo
         # slug kể cả skill không nằm trong danh sách trên, nên một skill bị cắt vẫn dùng được
         # nếu model biết tên. Câu cũ chỉ trỏ sang một file mà model không đọc.
         lines.append(f"…(+{con_lai} more skills not listed here - the full list is in "
-                     f"`Jeevi/index.md`, and `jeevi_use_skill(name=<slug>)` loads one directly "
+                     f"`Jeevi/index.md`, and `javis_use_skill(name=<slug>)` loads one directly "
                      f"when you know its name)")
     lines.append(
         "HOW TO USE: when the user's request MATCHES the description of a skill above, LOAD that skill "
-        "and FOLLOW it - call tool `jeevi_use_skill(name=<slug>)` if the engine has it; otherwise open "
+        "and FOLLOW it - call tool `javis_use_skill(name=<slug>)` if the engine has it; otherwise open "
         f"`{sk_dir}/<slug>/SKILL.md` with a file-reading tool and follow its instructions. "
         "Load one only on a real match, never indiscriminately."
     )
@@ -334,7 +334,7 @@ class MainRenderingTests(unittest.TestCase):
         self.caps = {"agents": [{"name": "Editor"}], "skills": copy.deepcopy(self.skills),
                      "workflows": [{"name": "Review", "status": "active"}],
                      "loops": [{"name": "Daily", "enabled": False}],
-                     "plugins": [{"name": "Clock", "loaded": True, "tools": ["jeevi_now"]}]}
+                     "plugins": [{"name": "Clock", "loaded": True, "tools": ["javis_now"]}]}
 
     def fixture(self, *, caps=None, resonance=False, usage=None):
         stack = ExitStack()
@@ -348,7 +348,7 @@ class MainRenderingTests(unittest.TestCase):
                    "_dong_lan_chay_gan_nhat": lambda brain: "Latest run: Review.",
                    "_project_block": lambda project_id: "\n<PROJECT RULES>",
                    "_session_block": lambda session_id: "\n<SESSION ASSET REFERENCES>",
-                   "_jeevi_core_block": lambda session_id: "\n<CORE ROLE>"}
+                   "_javis_core_block": lambda session_id: "\n<CORE ROLE>"}
         for name, value in aliases.items():
             stack.enter_context(patch.object(main, name, value))
         stack.enter_context(patch.object(main.system_sync, "ensure_synced", lambda root: None))
@@ -473,7 +473,7 @@ class MainRenderingTests(unittest.TestCase):
                 "workflows": [{"name": f"Workflow-{i}", "status": "active" if i % 2 else "draft"} for i in range(25)],
                 "loops": [{"name": f"Loop-{i}", "enabled": bool(i % 2)} for i in range(24)],
                 "plugins": [{"name": f"Plugin-{i}", "loaded": i % 2 == 0, "tools": [f"tool-{i}"]} for i in range(30)]}
-        old = self.legacy_namespace()["_jeevi_capability_summary"]
+        old = self.legacy_namespace()["_javis_capability_summary"]
         with patch.object(main, "_gather_capabilities", return_value=caps):
             old.__globals__["_gather_capabilities"] = main._gather_capabilities
             expected = old(str(self.brain))

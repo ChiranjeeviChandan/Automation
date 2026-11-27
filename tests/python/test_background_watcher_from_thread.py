@@ -2,7 +2,7 @@
 
     python tests/run.py background_watcher_from_thread
 
-An API engine's `jeevi_terminal background=true` reaches `coding_terminal.chay_nen` through
+An API engine's `javis_terminal background=true` reaches `coding_terminal.chay_nen` through
 `asyncio.to_thread` in the hub. `tien_trinh_nen.theo_doi_nhom` then registered the job but could
 not start the watcher (no running loop in that thread), so the job stayed "running" forever and
 the chat was never told it finished, until the next server restart. This test runs that exact
@@ -17,8 +17,8 @@ import threading
 import time
 from pathlib import Path
 
-_TMP = tempfile.mkdtemp(prefix="jeevi-bgwatch-")
-os.environ["JEEVI_STATE_DIR"] = _TMP
+_TMP = tempfile.mkdtemp(prefix="javis-bgwatch-")
+os.environ["JAVIS_STATE_DIR"] = _TMP
 
 import coding_terminal as ct  # noqa: E402
 import tien_trinh_nen as T  # noqa: E402

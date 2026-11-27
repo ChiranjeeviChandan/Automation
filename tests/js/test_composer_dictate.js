@@ -33,7 +33,7 @@ check("CSS: while dictating the bar shows and +, the row under the card and both
 check("CSS: while dictating the text and the dictation bar each take a whole line",
   css.includes(".hud-voice.dictating > .voice-input { grid-column: 1 / -1; }")
   && css.includes(".hud-voice.dictating .cp-right { grid-column: 1 / -1; grid-row: 3; }"));
-check("app.js shares its passing note for mic errors", /window\.JeeviNoteFlash = ghiChuThoang;/.test(app));
+check("app.js shares its passing note for mic errors", /window\.JavisNoteFlash = ghiChuThoang;/.test(app));
 ["bar.mic", "dict.btn", "dict.stop", "dict.cancel", "dict.busy", "dict.in_call", "dict.unsupported", "dict.denied", "dict.failed"]
   .forEach(k => check("key " + k + " in vi and en", !!(vi[k] && en[k])));
 check("the voice chat tooltip says it is a live conversation", /Đàm thoại/.test(vi["bar.mic"]) && /Voice chat/.test(en["bar.mic"]));

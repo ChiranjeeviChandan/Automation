@@ -18,17 +18,17 @@ RULES THAT KEEP THE OLD BEHAVIOUR
   `type="module"`). JSON data blocks and `defer` scripts do not break it: they do not run where they stand.
 - Files keep their order. Moving a script later in the page only means more of the page exists when it runs.
 - Error isolation, which separate files gave for free: the bundle counts each file it finishes
-  (`window.__jeeviBundle[id] = n`) and a small inline script right after it loads, one by one in order, every file the
+  (`window.__javisBundle[id] = n`) and a small inline script right after it loads, one by one in order, every file the
   bundle did not finish: after a file that threw, the ones after it; after a syntax error, a missing bundle or a network
   failure, all of them. So one broken file still costs only itself, as before.
 - The first statement of the bundle is that counter, so a file's leading "use strict" can never turn the whole bundle
   strict.
 - Line numbers: the minifier keeps every file's line count, and the bundle starts with a table of where each file
-  begins (`window.__jeeviBundleMap`); loi-may-khach.js uses it to report errors against the original file and line.
-- freshness.js checks what the browser runs against the server: bundled files are replaced in `jeevi-fresh` by the
+  begins (`window.__javisBundleMap`); loi-may-khach.js uses it to report errors against the original file and line.
+- freshness.js checks what the browser runs against the server: bundled files are replaced in `javis-fresh` by the
   bundle itself (`_bundle/<id>.js`), fetched from cache under the same URL the page used.
 
-Switch off with JEEVI_BUNDLE=0 (the page then loads every file separately, exactly as before).
+Switch off with JAVIS_BUNDLE=0 (the page then loads every file separately, exactly as before).
 """
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ _lock = threading.Lock()
 
 
 def enabled() -> bool:
-    return os.environ.get("JEEVI_BUNDLE", "1").strip().lower() not in ("0", "false", "no", "off")
+    return os.environ.get("JAVIS_BUNDLE", "1").strip().lower() not in ("0", "false", "no", "off")
 
 
 def _is_data_block(attrs: str) -> bool:
@@ -113,10 +113,10 @@ def build(files: List[Tuple[str, bytes]]) -> Tuple[bytes, str, str, List[list]]:
         table.append([line, rel])
         body = data if data.endswith(b"\n") else data + b"\n"
         parts.append(body)
-        parts.append(f';window.__jeeviBundle["{ident}"]={i + 1};\n'.encode())
+        parts.append(f';window.__javisBundle["{ident}"]={i + 1};\n'.encode())
         line += _line_count(data) + 1
-    head = ('window.__jeeviBundle=window.__jeeviBundle||{};window.__jeeviBundle["%s"]=0;'
-            'window.__jeeviBundleMap=window.__jeeviBundleMap||{};window.__jeeviBundleMap["%s"]=%s;\n'
+    head = ('window.__javisBundle=window.__javisBundle||{};window.__javisBundle["%s"]=0;'
+            'window.__javisBundleMap=window.__javisBundleMap||{};window.__javisBundleMap["%s"]=%s;\n'
             % (ident, ident, json.dumps(table, ensure_ascii=False, separators=(",", ":")))).encode()
     data = head + b"".join(parts)
     crc = format(zlib.crc32(data) & 0xFFFFFFFF, "08x")
@@ -125,16 +125,16 @@ def build(files: List[Tuple[str, bytes]]) -> Tuple[bytes, str, str, List[list]]:
 
 def _fallback(ident: str, urls: List[str]) -> str:
     """Inline script after the bundle tag: load, in order, every file the bundle did not finish (see module doc)."""
-    return ('<script>(function(i,L){var d=(window.__jeeviBundle||{})[i];if(d===L.length)return;'
+    return ('<script>(function(i,L){var d=(window.__javisBundle||{})[i];if(d===L.length)return;'
             'for(var k=(typeof d==="number"?d+1:0);k<L.length;k++)'
             'document.write(\'<script src="\'+L[k]+\'"><\\/script>\');})(%s,%s);</script>'
             % (json.dumps(ident), json.dumps(urls)))
 
 
 def apply(html: str, dashboard_dir: Path) -> Tuple[str, Dict[str, str]]:
-    """(page with each run replaced by one bundle tag, {bundled rel: None, bundle rel: crc}) for jeevi-fresh.
+    """(page with each run replaced by one bundle tag, {bundled rel: None, bundle rel: crc}) for javis-fresh.
 
-    The second value tells root() how to fix the `jeevi-fresh` asset list: bundled files drop out (value None) and the
+    The second value tells root() how to fix the `javis-fresh` asset list: bundled files drop out (value None) and the
     bundle comes in. Any problem (a file missing, a read error) leaves that run as separate tags."""
     if not enabled():
         return html, {}

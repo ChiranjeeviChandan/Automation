@@ -320,7 +320,7 @@ def cai(pack_id: str, thu_muc_goi: Path, brain_root: str) -> dict:
     pack's agent, uninstalled (their edited copy is kept, by design), then installed again. Before, the
     install skipped the item without a word, so the agent never came back and the Store still said
     "installed". Now: an identical copy is adopted as the pack's again, and a different one stays the
-    user's while the pack's copy goes in under a free name (`jeevi-vu-2`), reported in `doi_ten`."""
+    user's while the pack's copy goes in under a free name (`javis-vu-2`), reported in `doi_ten`."""
     root = Path(brain_root)
     muc_cu = doc_so_brain(pack_id, root)
     moi = {}

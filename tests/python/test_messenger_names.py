@@ -20,7 +20,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-messenger-names-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-messenger-names-")
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")

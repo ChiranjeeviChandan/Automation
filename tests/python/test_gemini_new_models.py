@@ -18,8 +18,8 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_API_STREAM_TOOLS"] = "0"   # the tool loop on its non-stream path: one POST per round
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-gemini-new-"))
+os.environ["JAVIS_API_STREAM_TOOLS"] = "0"   # the tool loop on its non-stream path: one POST per round
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-gemini-new-"))
 import engine  # noqa: E402
 import usage_parsers  # noqa: E402
 

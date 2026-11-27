@@ -36,7 +36,7 @@ const REFUSED = { ok: false, need_password: true,
 new Function("window", "document", "fetch",
   fs.readFileSync(path.join(ROOT, "dashboard", "packs.js"), "utf8"))(
   win, doc, () => Promise.resolve({ json: () => Promise.resolve(REFUSED) }));
-const P = win.JeeviPacks || {};
+const P = win.JavisPacks || {};
 
 check("packs.js exposes render and showNeedPassword",
   typeof P.render === "function" && typeof P.showNeedPassword === "function");
@@ -60,7 +60,7 @@ check("packs.js exposes render and showNeedPassword",
   new Function("window", "document", "fetch",
     fs.readFileSync(path.join(ROOT, "dashboard", "packs.js"), "utf8"))(
     P2win, doc, () => Promise.resolve({ json: () => Promise.resolve({ ok: false, error: "Sign in to Jeevi to manage packs." }) }));
-  await P2win.JeeviPacks.render(el2);
+  await P2win.JavisPacks.render(el2);
   check("with a password set, no Set-a-password button", !msg2.children.some(c => c.tag === "button"));
 
   // The companion-pack offer after a Zalo QR sign-in says a password is missing instead of "not found".
@@ -69,7 +69,7 @@ check("packs.js exposes render and showNeedPassword",
     fs.readFileSync(path.join(ROOT, "dashboard", "packs.js"), "utf8"))(
     P3win, doc, () => Promise.resolve({ json: () => Promise.resolve({ ok: false, need_password: true, error: "x" }) }));
   check("installing a companion pack without a password reports need_password",
-    (await P3win.JeeviPacks.caiGoiKho("jeevi.zalo")) === "need_password");
+    (await P3win.JavisPacks.caiGoiKho("javis.zalo")) === "need_password");
 
   console.log();
   if (fails.length) { console.log("FAIL - test_store_need_password: " + fails.join(", ")); process.exit(1); }

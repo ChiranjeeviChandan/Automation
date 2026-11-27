@@ -17,8 +17,8 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-_TMP = Path(tempfile.mkdtemp(prefix="jeevi-team-acc-"))
-os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+_TMP = Path(tempfile.mkdtemp(prefix="javis-team-acc-"))
+os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
 _FAKE_HOME = _TMP / "home"
 (_FAKE_HOME / ".claude").mkdir(parents=True, exist_ok=True)
 os.environ["HOME"] = str(_FAKE_HOME)

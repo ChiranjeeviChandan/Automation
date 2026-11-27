@@ -128,12 +128,12 @@ while True:
             tool(sid, "call_1", "run_command", {"CommandLine": line, "toolSummary": "Check the repo"},
                  "Command exited with code 0.\nOutput: ok")
         if "MCPACP" in text:      # how agy acp names an MCP tool: mcp_<server>_<tool>
-            tool(sid, "call_4", "mcp_jeevi_jeevi_run_tool",
-                 {"name": "jeevi_connections", "args": {"op": "list"}, "toolSummary": "List connections"}, "")
+            tool(sid, "call_4", "mcp_javis_javis_run_tool",
+                 {"name": "javis_connections", "args": {"op": "list"}, "toolSummary": "List connections"}, "")
         if "MCPCALL" in text:
             tool(sid, "call_2", "call_mcp_tool",
-                 {"ServerName": "jeevi", "ToolName": "jeevi_run_tool",
-                  "Arguments": {"name": "jeevi_connections", "args": {"op": "list"}},
+                 {"ServerName": "javis", "ToolName": "javis_run_tool",
+                  "Arguments": {"name": "javis_connections", "args": {"op": "list"}},
                   "toolSummary": "List connections"}, "3 connections")
         if "ASKPERM" in text:
             r = ask("session/request_permission", {"sessionId": sid, "toolCall": {"toolCallId": "call_3"},

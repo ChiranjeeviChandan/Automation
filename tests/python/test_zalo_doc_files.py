@@ -17,7 +17,7 @@ import time
 import zipfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zalo-docs-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zalo-docs-")
 
 import chatbot_runtime  # noqa: E402
 import chatbot_store  # noqa: E402

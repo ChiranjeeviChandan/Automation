@@ -15,7 +15,7 @@ from pathlib import Path
 _TMP = Path(tempfile.mkdtemp(prefix="gate-brain-card-"))
 for name in ("Brain Default", "Cá Nhân"):
     (_TMP / "brains" / name).mkdir(parents=True, exist_ok=True)
-os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
 os.environ["BRAINS_DIR"] = str(_TMP / "brains")
 (_TMP / "state").mkdir(parents=True, exist_ok=True)
 
@@ -68,13 +68,13 @@ check("a saved brain that was deleted is reported, so the card can say so",
 check("and the Gate falls back to the brain used last", gate_brain.default_brain() is None)
 
 # The Jeevi Gate package installed: the card shows, with the package's page.
-fake = _TMP / "packs" / "jeevi.gate" / "plugins" / "jeevi-gate"
+fake = _TMP / "packs" / "javis.gate" / "plugins" / "javis-gate"
 fake.mkdir(parents=True)
-packs.plugin_dirs = lambda: [("jeevi.gate", fake)]
-plugins_host.describe = lambda *a, **k: [{"slug": "jeevi-gate", "page": "/ext/jeevi-gate/"}]
+packs.plugin_dirs = lambda: [("javis.gate", fake)]
+plugins_host.describe = lambda *a, **k: [{"slug": "javis-gate", "page": "/ext/javis-gate/"}]
 d = c.get("/gate/brains").json()
 check("with the Jeevi Gate package the card shows", d.get("installed") is True, d)
-check("with a link to the package's page", d.get("page") == "/ext/jeevi-gate/", d)
+check("with a link to the package's page", d.get("page") == "/ext/javis-gate/", d)
 
 print(("FAILED: " + str(len(fails))) if fails else "all ok")
 sys.exit(1 if fails else 0)

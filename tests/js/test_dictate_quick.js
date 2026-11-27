@@ -71,7 +71,7 @@ function reset(nav) { runs = []; mics = []; recorders = []; fixes = []; setNav(n
   reset(IPHONE); ear = "upload";
   let D = fresh();
   await D.warm();
-  check("the ear answer is stored for the next page load", store["jeevi.dictate.ear"] === "upload");
+  check("the ear answer is stored for the next page load", store["javis.dictate.ear"] === "upload");
   reset(IPHONE);
   D = fresh();   // a reload: nothing asked yet on this page
   check("a reloaded page knows the ear before asking", D.ear() === "upload");
@@ -90,7 +90,7 @@ function reset(nav) { runs = []; mics = []; recorders = []; fixes = []; setNav(n
     && texts[texts.length - 1][1] === true && states[states.length - 1] === "idle");
 
   // 3. The browser's own words (no ear, on a computer): the full rewrite, not quick.
-  reset(PC); ear = ""; store["jeevi.dictate.ear"] = "";
+  reset(PC); ear = ""; store["javis.dictate.ear"] = "";
   D = fresh();
   await D.warm();
   d = D.create({ onState: () => {}, onText: () => {} });
@@ -100,7 +100,7 @@ function reset(nav) { runs = []; mics = []; recorders = []; fixes = []; setNav(n
   check("browser words: the rewrite is asked without quick", fixes.length === 1 && fixes[0].quick === false);
 
   // 4. The recognizer's own events reach onHeard (a phone with no ear has no mic stream to measure).
-  reset(IPHONE); ear = ""; store["jeevi.dictate.ear"] = "";
+  reset(IPHONE); ear = ""; store["javis.dictate.ear"] = "";
   D = fresh();
   await D.warm();
   const heard = [];

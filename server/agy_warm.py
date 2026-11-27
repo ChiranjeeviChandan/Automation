@@ -24,7 +24,7 @@ How agy behaves in this mode (measured again on 1.5.15, Windows, 2026-11-24):
 
 Only the owner's dashboard chat comes here (main sets `cli.stream_turns`, and `cli.warm_key` for warm_pool).
 Anything that fails before the message is sent (no init, a refused flag, an exit at start-up) raises Fallback and
-the turn runs the one-shot way, exactly as before. JEEVI_AGY_RESUME=0 turns the whole path off.
+the turn runs the one-shot way, exactly as before. JAVIS_AGY_RESUME=0 turns the whole path off.
 
 A turn that may have left a command running hands its process back the one-shot way (stdin closed, process group
 recorded) so tien_trinh_nen still adopts what it left behind: the rule codex_steer follows for Codex.
@@ -45,7 +45,7 @@ from typing import AsyncIterator, Optional
 
 import warm_pool
 
-ENV_SWITCH = "JEEVI_AGY_RESUME"
+ENV_SWITCH = "JAVIS_AGY_RESUME"
 KIND = "agy"
 # init normally comes 2-3 s after start; a slow sign-in check or a cold disk can take longer. Past this the turn
 # runs one-shot instead.
@@ -85,8 +85,8 @@ class Lines:
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._queue: Optional[asyncio.Queue] = None
         self.stderr: collections.deque = collections.deque(maxlen=40)
-        threading.Thread(target=self._read_out, daemon=True, name="jeevi-agy-warm-out").start()
-        threading.Thread(target=self._read_err, daemon=True, name="jeevi-agy-warm-err").start()
+        threading.Thread(target=self._read_out, daemon=True, name="javis-agy-warm-out").start()
+        threading.Thread(target=self._read_err, daemon=True, name="javis-agy-warm-err").start()
 
     def _read_out(self) -> None:
         try:
@@ -176,7 +176,7 @@ def hand_back(proc) -> threading.Event:
             import antigravity_cli
             antigravity_cli.end_engine_only({"proc": proc})
         gone.set()
-    threading.Thread(target=_reap, daemon=True, name="jeevi-agy-warm-reap").start()
+    threading.Thread(target=_reap, daemon=True, name="javis-agy-warm-reap").start()
     return gone
 
 
@@ -262,7 +262,7 @@ def _stop(proc) -> None:
     if proc.poll() is not None:
         return
     import claude_cli
-    threading.Thread(target=claude_cli._kill_tree, args=(proc,), daemon=True, name="jeevi-agy-warm-stop").start()
+    threading.Thread(target=claude_cli._kill_tree, args=(proc,), daemon=True, name="javis-agy-warm-stop").start()
 
 
 def _recipe(cli, argv: list, env, conversation_id: str):

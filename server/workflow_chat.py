@@ -24,7 +24,7 @@ import re
 import unicodedata
 from typing import Any, Awaitable, Callable, Dict, Optional, Tuple
 
-import jeevi_core
+import javis_core
 import localefmt
 
 TRAN_KET_QUA_TRUOC = 8000
@@ -34,7 +34,7 @@ _LOAI = ("agent", "workflow")
 def persona_cua_phien(row: Optional[dict]) -> Optional[Tuple[str, str]]:
     ch = str((row or {}).get("channel") or "")
     # Jeevi Core (0.185.0) is not a persona: its chat is a normal Jeevi turn plus a role block.
-    if jeevi_core.is_core_channel(ch):
+    if javis_core.is_core_channel(ch):
         return None
     for loai in _LOAI:
         tien_to = loai + ":"

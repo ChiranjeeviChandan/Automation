@@ -6,26 +6,26 @@
 #
 # CÁCH DÙNG - mỗi bản một THƯ MỤC RIÊNG:
 #
-#   mkdir -p ~/jeevi-shop && cd ~/jeevi-shop
+#   mkdir -p ~/javis-shop && cd ~/javis-shop
 #   curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml
 #   curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.multi.yml
 #   cat > .env <<'EOF'
-#   JEEVI_NAME=jeevi-shop
-#   JEEVI_HOST_PORT=7777
-#   JEEVI_BIND=127.0.0.1
+#   JAVIS_NAME=javis-shop
+#   JAVIS_HOST_PORT=7777
+#   JAVIS_BIND=127.0.0.1
 #   DOMAIN_NAME=shop.tencuaban.com
-#   JEEVI_ADMIN_USER=admin
-#   JEEVI_ADMIN_PASSWORD=mat-khau-manh-rieng-cho-ban-nay
+#   JAVIS_ADMIN_USER=admin
+#   JAVIS_ADMIN_PASSWORD=mat-khau-manh-rieng-cho-ban-nay
 #   EOF
 #   chmod 600 .env
-#   docker compose -f docker-compose.yml -f docker-compose.multi.yml run --rm jeevi claude auth login --claudeai
+#   docker compose -f docker-compose.yml -f docker-compose.multi.yml run --rm javis claude auth login --claudeai
 #   docker compose -f docker-compose.yml -f docker-compose.multi.yml up -d
 #
 # Bản thứ hai làm y hệt ở thư mục khác, đổi CẢ BA giá trị trong .env:
-#   JEEVI_NAME=jeevi-ca-nhan   JEEVI_HOST_PORT=7778   DOMAIN_NAME=canhan.tencuaban.com
+#   JAVIS_NAME=javis-ca-nhan   JAVIS_HOST_PORT=7778   DOMAIN_NAME=canhan.tencuaban.com
 #
-# BA GIÁ TRỊ ĐÓ PHẢI KHÁC NHAU GIỮA CÁC BẢN. Trùng JEEVI_NAME thì Docker báo tên container đã
-# dùng; trùng JEEVI_HOST_PORT thì báo cổng đã bị chiếm; trùng DOMAIN_NAME thì hai bản giành nhau
+# BA GIÁ TRỊ ĐÓ PHẢI KHÁC NHAU GIỮA CÁC BẢN. Trùng JAVIS_NAME thì Docker báo tên container đã
+# dùng; trùng JAVIS_HOST_PORT thì báo cổng đã bị chiếm; trùng DOMAIN_NAME thì hai bản giành nhau
 # một tên miền và proxy chỉ lái được về một bản.
 #
 # MỖI BẢN LÀ MỘT JEEVI ĐỘC LẬP HOÀN TOÀN: thư mục khác nhau -> tên project khác nhau -> volume
@@ -37,19 +37,19 @@
 # nên tên miền chuyển sang khai ở .env - giống hệt cách bản Hostinger đang làm.
 # ============================================================================
 services:
-  jeevi:
+  javis:
     # CỐ Ý KHÔNG khai `ports` ở đây: compose NỐI CHỒNG danh sách ports giữa các file -f chứ không
     # thay thế, nên khai lại là ra hai binding cùng một cổng và Docker báo "port is already
-    # allocated". Việc thu cổng về loopback làm bằng JEEVI_BIND=127.0.0.1 trong .env (xem đầu file).
+    # allocated". Việc thu cổng về loopback làm bằng JAVIS_BIND=127.0.0.1 trong .env (xem đầu file).
     networks:
       - default        # phải liệt kê lại: khai networks ở service là THAY danh sách, không cộng thêm
-      - jeevi-web
+      - javis-web
     labels:
       # Proxy dùng chung đọc đúng hai nhãn này rồi tự dựng site + xin chứng chỉ.
       caddy: ${DOMAIN_NAME:?DOMAIN_NAME chưa đặt - thêm DOMAIN_NAME=ten-mien-cua-ban vào .env}
       caddy.reverse_proxy: "{{upstreams 7777}}"
 
 networks:
-  jeevi-web:
+  javis-web:
     external: true
-    name: jeevi-web
+    name: javis-web

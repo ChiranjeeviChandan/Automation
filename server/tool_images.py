@@ -8,7 +8,7 @@ so the owner never saw the screenshot they asked for (owner's report, 2026-11-16
 During a model's tool call the hub says which brain the call belongs to (`saving_to`, set in
 `mcp_hub._shaped_call`). Inside that scope an image block is written under `<attachments>/tool-images/` of that
 brain and replaced by one line: the relative path and the `![...](path)` that the chat renders inline, the same
-convention `jeevi_generate_image` uses. Everywhere else (an internal caller, no brain, unknown or broken data) the
+convention `javis_generate_image` uses. Everywhere else (an internal caller, no brain, unknown or broken data) the
 block is left exactly as before.
 """
 from __future__ import annotations
@@ -27,7 +27,7 @@ SUBDIR = "tool-images"
 MAX_BYTES = 25 * 1024 * 1024        # a full-page screenshot is a few MB; anything bigger is not a preview
 
 # (vault root, tool name) of the model's tool call running in this context; empty outside one.
-_scope = contextvars.ContextVar("jeevi_tool_image_scope", default=("", ""))
+_scope = contextvars.ContextVar("javis_tool_image_scope", default=("", ""))
 
 # The bytes decide the type, not the declared mimeType. SVG is left out on purpose: it can carry script.
 _SIGNATURES = (

@@ -7,7 +7,7 @@
 
    Mấy chỗ dễ làm sai mà file này khoá lại:
 
-   1. Bấm một mẩu thư phải mở ĐÚNG hội thoại cũ (`JeeviSessions.open`), không phải mở hội
+   1. Bấm một mẩu thư phải mở ĐÚNG hội thoại cũ (`JavisSessions.open`), không phải mở hội
       thoại mới - toàn bộ ngữ cảnh nằm ở hội thoại cũ, hỏi tiếp ở chỗ khác là kể lại từ đầu.
    2. Đã-đọc của thư riêng nằm ở SERVER (`/inbox/read`), không phải localStorage như tin
       chung: điện thoại và máy tính phải đếm giống nhau.
@@ -49,10 +49,10 @@ check("chấm đỏ trên chuông đếm CẢ HAI tầng",
   /var tong = unread\.length \+ state\.thuChuaDoc/.test(noti));
 
 // ---- 2. Bấm thư = quay về hội thoại cũ ----
-check("CANARY: mở thư gọi JeeviSessions.open (quay về hội thoại đã hỏi)",
-  /window\.JeeviSessions\.open\(item\.session_id\)/.test(noti));
+check("CANARY: mở thư gọi JavisSessions.open (quay về hội thoại đã hỏi)",
+  /window\.JavisSessions\.open\(item\.session_id\)/.test(noti));
 check("CANARY: KHÔNG mở hội thoại mới khi đọc thư",
-  noti.indexOf("JeeviSessions.new()") === -1);
+  noti.indexOf("JavisSessions.new()") === -1);
 check("0.191.0: thư không gắn hội thoại thì mở trong Jeevi Core (chép sang đó một lần, kèm nguồn)",
   /if \(!item\.session_id\) \{ closePanel\(\); hoiCore\("inbox", item\.id\); return; \}/.test(noti));
 
@@ -62,7 +62,7 @@ check("CANARY: đọc tất cả ở tab thư riêng đi qua API, không chỉ t
   /docThu\(\{ all: true \}\)/.test(noti));
 check("mở một hội thoại thì thư của nó tự đánh dấu đã đọc (chống đếm hai lần)",
   /docThu\(\{ session_id: sid \}\)/.test(noti)
-  && /window\.JeeviInbox\.docPhien\(id\)/.test(app));
+  && /window\.JavisInbox\.docPhien\(id\)/.test(app));
 check("server có đủ ba lối đánh dấu (một mẩu / cả hội thoại / tất cả)",
   main.indexOf("inbox.doc_het()") !== -1 && main.indexOf("inbox.doc_theo_phien(") !== -1
   && main.indexOf("inbox.danh_dau_doc(") !== -1);
@@ -70,7 +70,7 @@ check("server có đủ ba lối đánh dấu (một mẩu / cả hội thoại 
 // ---- 4. Chấm đỏ cập nhật sống qua WebSocket ----
 check("app.js xử lý sự kiện 'inbox' từ WebSocket", /data\.type === "inbox"/.test(app));
 check("thư của hội thoại ĐANG mở thì đánh dấu đọc luôn, còn lại chỉ làm tươi chuông",
-  /sid === savedSessionId\) window\.JeeviInbox\.docPhien\(sid\)/.test(app));
+  /sid === savedSessionId\) window\.JavisInbox\.docPhien\(sid\)/.test(app));
 
 // ---- 5. Thông báo đẩy: không tự ý xin quyền ----
 check("CANARY: chỉ xin quyền TRONG hàm bat() (do người dùng bấm), không gọi lúc tải trang",
@@ -101,7 +101,7 @@ check("nêu ĐÍCH DANH dịch vụ đẩy đang hỏng",
   /window\.t\("push\.err_dv_khong_nhan", \{ dv: mot\.dich_vu \}\)/.test(push)
   && /\{dv\}/.test(VI["push.err_dv_khong_nhan"] || "")
   && /không nhận được/.test(VI["push.err_dv_khong_nhan"] || ""));
-check("ô công tắc nói số thiết bị đang nhận", /JeeviPush\.thietBi\(\)/.test(noti));
+check("ô công tắc nói số thiết bị đang nhận", /JavisPush\.thietBi\(\)/.test(noti));
 check("server trả danh sách thiết bị kèm lỗi lần gửi gần nhất",
   main.indexOf('"loi_lan_cuoi"') !== -1 && main.indexOf('"devices": chi_tiet') !== -1);
 
@@ -140,9 +140,9 @@ check("server ghi KÊNH của hội thoại vào mẩu thư",
 check("client nhận ra thư của cộng sự qua kênh",
   /\^\(agent\|workflow\):\(\.\+\)\$/.test(noti));
 check("thư của cộng sự mở bằng trang Cộng sự, kèm ĐÚNG mã hội thoại",
-  /JeeviWorkspace\.openCommand\(cs\.loai, cs\.slug, item\.session_id\)/.test(noti));
-check("CANARY: thư thường vẫn mở bằng JeeviSessions.open như cũ",
-  /JeeviSessions\.open\(item\.session_id\)/.test(noti));
+  /JavisWorkspace\.openCommand\(cs\.loai, cs\.slug, item\.session_id\)/.test(noti));
+check("CANARY: thư thường vẫn mở bằng JavisSessions.open như cũ",
+  /JavisSessions\.open\(item\.session_id\)/.test(noti));
 check("openCommand nhận mã hội thoại và chuyển tiếp xuống moPhien",
   /function openCommand\(kind, slug, sid\)/.test(ws)
   && /moPhien\(item, false, cmd\.sid\)/.test(ws));
@@ -160,8 +160,8 @@ check("moPhien mở ĐÚNG hội thoại được chỉ định, không lấy cu
   const ctx = {
     docThu: () => ({ then: () => {} }), render() {}, closePanel() {},
     window: {
-      JeeviWorkspace: { openCommand: (loai, slug, sid) => goi.push(["ws", loai, slug, sid]) },
-      JeeviSessions: { open: (sid) => goi.push(["chat", sid]) },
+      JavisWorkspace: { openCommand: (loai, slug, sid) => goi.push(["ws", loai, slug, sid]) },
+      JavisSessions: { open: (sid) => goi.push(["chat", sid]) },
     },
   };
   ctx.Alpine = { store: () => ({ active: "kanban", go: (p) => goi.push(["nav", p]) }) };
@@ -183,7 +183,7 @@ check("moPhien mở ĐÚNG hội thoại được chỉ định, không lấy cu
     goi.some((x) => x[0] === "chat" && x[1] === "s-cu"), goi);
 
   goi.length = 0;
-  ctx.window.JeeviWorkspace = null;
+  ctx.window.JavisWorkspace = null;
   ctx.moThu({ id: "4", session_id: "s-cs2", channel: "agent:ke-toan" });
   check("CANARY: chưa nạp module Cộng sự thì lui về khung chat chứ không nuốt cú bấm",
     goi.some((x) => x[0] === "chat" && x[1] === "s-cs2"), goi);

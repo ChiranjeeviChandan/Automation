@@ -14,7 +14,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-zvoice-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-zvoice-"))
 
 import zalo_attachments  # noqa: E402
 import zalo_voice_history as zv  # noqa: E402
@@ -45,7 +45,7 @@ async def fake_hear(data, name):
 
 zalo_attachments.fetch_file = fake_fetch
 zv.HEAR = fake_hear
-zv.CACHE_FILE = Path(os.environ["JEEVI_STATE_DIR"]) / "zv.json"
+zv.CACHE_FILE = Path(os.environ["JAVIS_STATE_DIR"]) / "zv.json"
 
 
 def voice(i, host="voice-aac-dl.zdn.vn"):

@@ -105,7 +105,7 @@ def companion_packs(catalog: dict, connector_ids) -> list:
     """Connected services whose extra tools live in a store pack (catalog field `companion_pack`).
 
     0.73.0 moved the three Zalo plugins (send images, tag people, read group images) out of the app into
-    the store pack `jeevi.zalo`, so people who never use Zalo no longer carry them. The Zalo connection
+    the store pack `javis.zalo`, so people who never use Zalo no longer carry them. The Zalo connection
     stays in the app (QR sign-in cannot be declared by a pack). Jeevi never installs a pack on its own, so
     a machine that already used Zalo would silently lose those tools: this list lets the Connect page say
     so and open the pack's consent screen. `state` is installed | disabled | missing."""
@@ -309,7 +309,7 @@ def soi(du_lieu: bytes, ten_tep: str = "") -> dict:
     manifest = next((kho / t for t in packs.MANIFEST_TEN if (kho / t).is_file()), None)
     if manifest is None:
         shutil.rmtree(kho, ignore_errors=True)
-        return {"ok": False, "stage": "validate", "error": localefmt.chu("trong gói không có jeevi-pack.yaml", "the pack has no jeevi-pack.yaml")}
+        return {"ok": False, "stage": "validate", "error": localefmt.chu("trong gói không có javis-pack.yaml", "the pack has no javis-pack.yaml")}
     if manifest.stat().st_size > MAX_MANIFEST:
         shutil.rmtree(kho, ignore_errors=True)
         return {"ok": False, "stage": "validate", "error": localefmt.chu("manifest quá lớn", "manifest too large")}
@@ -351,8 +351,8 @@ def soi(du_lieu: bytes, ten_tep: str = "") -> dict:
     py = sorted(str(p.relative_to(tam)).replace("\\", "/") for p in tam.rglob("*.py"))
 
     # Plugin trong gói: liệt kê để hiện lên màn hình xác nhận, và TỪ CHỐI nếu trùng tên một
-    # plugin đi kèm app. Chặn ở đây chứ không lúc nạp, vì một gói lặng lẽ thay `jeevi_task`
-    # hay `jeevi_schedule` dưới một màn hình chỉ nói "gói này chạy mã" là đúng kiểu bất ngờ
+    # plugin đi kèm app. Chặn ở đây chứ không lúc nạp, vì một gói lặng lẽ thay `javis_task`
+    # hay `javis_schedule` dưới một màn hình chỉ nói "gói này chạy mã" là đúng kiểu bất ngờ
     # không nên có - người dùng phải thấy lý do TRƯỚC khi có gì rơi xuống đĩa.
     plugin_slugs = []
     goc_pl = tam / "plugins"
@@ -478,7 +478,7 @@ def cai(staging_id: str, consent_sha256: str, *, enable: bool = False,
         "version": (ban or {}).get("version", ""),
         # Gói cũ đang bật thì bản thay nó cũng bật: cập nhật không được lặng lẽ tắt thứ đang chạy.
         # NHƯNG chỉ khi đúng là bản của kho chính thức (vá bảo mật 2026-11-05): `replaces` do chính
-        # gói tự khai, nên một gói lạ khai `replaces: ["jeevi.zalo"]` từng được bật luôn dù chủ để
+        # gói tự khai, nên một gói lạ khai `replaces: ["javis.zalo"]` từng được bật luôn dù chủ để
         # công tắc tắt, và chạy plugin.py trong máy chủ với dữ liệu Zalo của gói cũ.
         "enabled": _bat_sau_cai(enable, thay, pid, sha),
         "tier": (ban or {}).get("tier", "data"),

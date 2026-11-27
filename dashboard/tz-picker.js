@@ -8,10 +8,10 @@
  * the admin account exists, so it cannot rely on an authenticated call. The server still checks every name it is handed
  * against its own tz database before saving, so a name the browser knows and the server does not is refused, not stored.
  *
- *   JeeviTz.detect()               the browser's own timezone, current IANA spelling, e.g. "Asia/Ho_Chi_Minh" ("" when unknown)
- *   JeeviTz.offsetLabel(name)      "UTC+07:00"
- *   JeeviTz.options(selected)      <option> HTML: a short "suggested" group (selected, browser, a few common ones) then all
- *   JeeviTz.nowIn(name)            "21:34" in that timezone, for a "time there now" confirmation line
+ *   JavisTz.detect()               the browser's own timezone, current IANA spelling, e.g. "Asia/Ho_Chi_Minh" ("" when unknown)
+ *   JavisTz.offsetLabel(name)      "UTC+07:00"
+ *   JavisTz.options(selected)      <option> HTML: a short "suggested" group (selected, browser, a few common ones) then all
+ *   JavisTz.nowIn(name)            "21:34" in that timezone, for a "time there now" confirmation line
  */
 (function () {
   // Used only when the browser cannot list timezones (old Safari). Enough to cover the people Jeevi serves today.
@@ -120,5 +120,5 @@
     } catch (e) { return ""; }
   }
 
-  window.JeeviTz = { detect: detect, offsetLabel: offsetLabel, offsetMinutes: offsetMinutes, options: options, nowIn: nowIn };
+  window.JavisTz = { detect: detect, offsetLabel: offsetLabel, offsetMinutes: offsetMinutes, options: options, nowIn: nowIn };
 })();

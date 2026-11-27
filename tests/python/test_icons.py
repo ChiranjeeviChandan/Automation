@@ -219,7 +219,7 @@ def _ham_nhan_html(text):
 
     Gọi hàm đó kèm chuỗi icon là icon hiện thành chữ, mà chỗ gán lại nằm ở file
     khác hoặc cách đó vài trăm dòng nên đọc code rất khó thấy. Hai đường lọt thật:
-    showActivity() (textContent) và appendJeeviMessage() (markdownToHtml).
+    showActivity() (textContent) và appendJavisMessage() (markdownToHtml).
     """
     ra = {}
     for mau in HAM_KHAI:

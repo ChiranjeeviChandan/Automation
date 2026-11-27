@@ -3,8 +3,8 @@
 Owner, 31/10/2026: the Tasks page listed every job under Jeevi Core, while most were made by the owner's Zalo assistant
 bot. Expected:
   - a dedicated bot's turn carries `bot_id` in turn_context (a string, so a hook cannot edit it for the next reader);
-  - jeevi_schedule stamps the bot on a reminder (bot_id in POST /reminders) and on a loop (bot_id: in frontmatter),
-    jeevi_task stamps a Kanban job created_by "bot:<id>"; the owner's own turns stamp nothing;
+  - javis_schedule stamps the bot on a reminder (bot_id in POST /reminders) and on a loop (bot_id: in frontmatter),
+    javis_task stamps a Kanban job created_by "bot:<id>"; the owner's own turns stamp nothing;
   - reminders keep and show bot_id; loops keep it across a save; repeat hints still see bot jobs;
   - older jobs are guessed from the bot's turn log: created during exactly one bot turn (same chat when the job names
     one), a loop by the chat it reports to on the day it was saved; two bots at once or no turn = Jeevi Core; a guess
@@ -62,9 +62,9 @@ cur = turn_context.current()
 cur["bot_id"] = "bot_evil"
 check("the bot of the turn is readable, and a reader cannot edit it", turn_context.current()["bot_id"] == "bot_vu")
 
-# ---- jeevi_schedule ----
-sched = load_plugin("jeevi-schedule")
-check("jeevi_schedule reads the bot of the turn", sched._turn_bot() == "bot_vu")
+# ---- javis_schedule ----
+sched = load_plugin("javis-schedule")
+check("javis_schedule reads the bot of the turn", sched._turn_bot() == "bot_vu")
 sent = {}
 
 
@@ -74,7 +74,7 @@ async def fake_post(payload, brain_name=""):
 
 
 sched._post_reminder = fake_post
-vault = Path(tempfile.mkdtemp(prefix="jeevi-botjobs-"))
+vault = Path(tempfile.mkdtemp(prefix="javis-botjobs-"))
 asyncio.run(sched._do_create(str(vault), {"name": "Báo cáo", "prompt": "Gửi báo cáo", "schedule": "0 7 * * *"}))
 check("a reminder made in a bot turn carries bot_id", sent.get("bot_id") == "bot_vu", sent)
 asyncio.run(sched._do_create(str(vault), {"name": "Soi đơn", "prompt": "Soi đơn mới", "schedule": "2 tiếng",
@@ -82,8 +82,8 @@ asyncio.run(sched._do_create(str(vault), {"name": "Soi đơn", "prompt": "Soi đ
 lp_text = (vault / "Jeevi" / "loops" / "soi-don.md").read_text(encoding="utf-8")
 check("a loop made in a bot turn carries bot_id in its frontmatter", "bot_id: \"bot_vu\"" in lp_text, lp_text)
 
-# ---- jeevi_task ----
-task_pl = load_plugin("jeevi-task")
+# ---- javis_task ----
+task_pl = load_plugin("javis-task")
 got = {}
 
 
@@ -117,10 +117,10 @@ saved = {}
 rf._save = lambda brain, data: saved.update(data)
 rf._register = lambda brain: None
 rf.notify_status = lambda: (True, "")
-rem = rf._create("b", "Gửi báo cáo", delay_min=5, created_by="jeevi_schedule", bot_id="bot_vu")
+rem = rf._create("b", "Gửi báo cáo", delay_min=5, created_by="javis_schedule", bot_id="bot_vu")
 bad = rf._create("b", "x", delay_min=5, bot_id="../../etc")
 view = rf._view(rem)
-check("a reminder keeps its bot and shows who made it", view["bot_id"] == "bot_vu" and view["created_by"] == "jeevi_schedule")
+check("a reminder keeps its bot and shows who made it", view["bot_id"] == "bot_vu" and view["created_by"] == "javis_schedule")
 check("a malformed bot id is dropped", "bot_id" not in bad)
 
 # ---- loops keep bot_id across a save ----
@@ -141,9 +141,9 @@ for i in range(3):
 check("repeat hints still see jobs a bot made", bool(store_hint.repeat_hints(hint_root)), store_hint.repeat_hints(hint_root))
 
 # ---- guessing older jobs from the turn log ----
-brain = Path(tempfile.mkdtemp(prefix="jeevi-botjobs-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="javis-botjobs-brain-"))
 root = str(brain.resolve())
-other = Path(tempfile.mkdtemp(prefix="jeevi-botjobs-other-"))
+other = Path(tempfile.mkdtemp(prefix="javis-botjobs-other-"))
 roots = {"main": root, "other": str(other.resolve())}
 bots = [{"id": "bot_vu", "name": "Jeevi Vũ", "icon": "headset", "brain": "main", "agent": {"brain": "main", "slug": "vu"}},
         {"id": "bot_shop", "name": "Shop", "brain": "main", "agent": {"brain": "main", "slug": "ghost"}},
@@ -156,12 +156,12 @@ logs = {
 }
 (brain / "Jeevi").mkdir(parents=True)
 (brain / "Jeevi" / "reminders.json").write_text(json.dumps({"reminders": [
-    {"id": "r_new", "bot_id": "bot_vu", "created_by": "jeevi_schedule", "created_at": now - 99999},       # stamped
-    {"id": "r_old", "created_by": "jeevi_schedule", "chat_id": "", "created_at": now - 3100},               # vu's turn
-    {"id": "r_both", "created_by": "jeevi_schedule", "chat_id": "", "created_at": now - 1100},              # two bots
-    {"id": "r_chat", "created_by": "jeevi_schedule", "chat_id": "s7", "created_at": now - 1100},            # shop's chat
+    {"id": "r_new", "bot_id": "bot_vu", "created_by": "javis_schedule", "created_at": now - 99999},       # stamped
+    {"id": "r_old", "created_by": "javis_schedule", "chat_id": "", "created_at": now - 3100},               # vu's turn
+    {"id": "r_both", "created_by": "javis_schedule", "chat_id": "", "created_at": now - 1100},              # two bots
+    {"id": "r_chat", "created_by": "javis_schedule", "chat_id": "s7", "created_at": now - 1100},            # shop's chat
     {"id": "r_dash", "created_by": "dashboard", "chat_id": "", "created_at": now - 3100},                  # owner typed
-    {"id": "r_far", "created_by": "jeevi_schedule", "chat_id": "", "created_at": now - 7100},              # other brain
+    {"id": "r_far", "created_by": "javis_schedule", "chat_id": "", "created_at": now - 7100},              # other brain
 ]}), encoding="utf-8")
 kb = TaskStore(Path(tempfile.mkdtemp()) / "kb.sqlite3")
 k_new = kb.enqueue(root, "Gom đơn", "x", created_by="bot:bot_vu")

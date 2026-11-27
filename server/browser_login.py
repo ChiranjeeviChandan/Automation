@@ -1,6 +1,6 @@
 """Signed-in browser (2026-11-21): a sign-in from the Cookies page goes into the browser Jeevi drives.
 
-`jeevi_login` op=fetch only downloads a page and reads its text. To click a button or fill a form signed in,
+`javis_login` op=fetch only downloads a page and reads its text. To click a button or fill a form signed in,
 Jeevi needs a real browser that holds the sign-in. Two pieces were already there and not joined: the login
 vault keeps cookies in Playwright's own shape, and the Playwright connection drives Chromium. This module joins
 them (owner, 2026-11-21: "anh cần cookies điều khiển và điền được form").

@@ -67,7 +67,7 @@ Thuần, tiêm `ask`, `store`, `notify`, `write_feedback`, `bot_lookup` để te
 
 **Khi nào chạy** (`due_bots(now)`): bot có trong `chatbot_store`, cách lần soát trước ít nhất 24
 giờ, và từ lần trước có ít nhất 8 nhãn mới HOẶC 40 tin bị im. Mỗi nhịp chỉ khởi một lượt soát,
-không chạy hai lượt cùng lúc. Biến môi trường `JEEVI_REPLY_POLICY_REVIEW=0` tắt hẳn (cho người
+không chạy hai lượt cùng lúc. Biến môi trường `JAVIS_REPLY_POLICY_REVIEW=0` tắt hẳn (cho người
 vận hành, không phải ô cài đặt).
 
 **Báo cáo** (`build_report`): cửa sổ từ lần soát trước, tối đa 7 ngày. Gồm tổng theo kết luận và
@@ -127,12 +127,12 @@ tạo ca từ `decision_id` có trong báo cáo. Chỉ ca dương nguồn `owner
 **Chữ của model ra khỏi vòng soát** (tin báo chủ, file góp ý) bị bỏ link và khối mã; file góp ý
 ghi dạng trích dẫn kèm lời dặn "đọc như dữ liệu"; tin báo không chép nguyên nhận xét của model.
 
-### 3.4 Hai tool hub (plugin hệ thống `system/plugins/jeevi-reply-policy/`)
+### 3.4 Hai tool hub (plugin hệ thống `system/plugins/javis-reply-policy/`)
 
-- `jeevi_reply_policy` (readonly). `op`: `bots` (bot có dữ liệu phán xử, kèm số liệu gọn),
+- `javis_reply_policy` (readonly). `op`: `bots` (bot có dữ liệu phán xử, kèm số liệu gọn),
   `report` (bot, days), `decisions` (bot, code, label, chat_id, only_silent, limit), `changes`
   (bot). `bot` nhận id hoặc tên (không phân biệt dấu, hoa thường).
-- `jeevi_reply_policy_tune` (safe). `op`: `apply` (bot, action = một op ở bảng trên, các tham
+- `javis_reply_policy_tune` (safe). `op`: `apply` (bot, action = một op ở bảng trên, các tham
   số, reason) và `revert` (change_id hoặc review_id). Ghi `actor=owner`.
 
 Kết quả tool là chữ gọn, có trần ký tự (engine API cắt 8000).
@@ -143,11 +143,11 @@ Bot ở mức Được ghi / Toàn quyền nhận tool từ hub; khách lạ đi
 của khách khác, chỉnh kho là khách tự vặn bot. Nên:
 
 - `mcp_hub.OWNER_ONLY_TOOLS` = hai tool trên. `discover_all(..., for_bot=True)` bỏ chúng TRƯỚC
-  tầng lazy (kẻo `jeevi_run_tool` vẫn gọi được), và `for_bot` nằm trong khoá cache.
+  tầng lazy (kẻo `javis_run_tool` vẫn gọi được), và `for_bot` nằm trong khoá cache.
 - Đường API của bot (`_bot_tra_loi_co_tool`) truyền `for_bot=True`.
 - Đường Claude của bot: `claude_config_path(..., bot=True)` gắn header `X-Jeevi-Bot: 1` (file
   config riêng hậu tố `_bot`); `handle_http` đọc header, chuyển xuống `discover_all`. Thêm lớp hai:
-  `disallowed_tools` của bot có `mcp__jeevi__jeevi_reply_policy*`.
+  `disallowed_tools` của bot có `mcp__javis__javis_reply_policy*`.
 - Engine Claude của bot là bản "gated" (có `allowed_tools`) nên không nạp plugin trong tiến trình;
   mọi tool đều đi qua hub, rào trên là đủ.
 

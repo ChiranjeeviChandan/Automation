@@ -9,7 +9,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-rp-review-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-rp-review-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -248,7 +248,7 @@ check("owner changes are never judged", ok and rv.evaluate_due(st, NOW + rv.EVAL
 
 # ---- operator switch ----
 os.environ[rv.REVIEW_ENV] = "0"
-check("JEEVI_REPLY_POLICY_REVIEW=0 turns it off", not rv.enabled())
+check("JAVIS_REPLY_POLICY_REVIEW=0 turns it off", not rv.enabled())
 os.environ.pop(rv.REVIEW_ENV)
 check("on by default", rv.enabled())
 

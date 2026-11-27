@@ -22,7 +22,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-staffreq-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-staffreq-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -59,7 +59,7 @@ TG2, _ = channel_accounts.create_account({"channel": "telegram", "token": "456:f
                                           "external_id": "other_test_bot"})
 STAFF = "900000001"          # the staff member's private chat with the bot
 CUST1, CUST2, OTHER = "700000001", "700000002", "700000009"
-VAULT = tempfile.mkdtemp(prefix="jeevi-staffreq-brain-")
+VAULT = tempfile.mkdtemp(prefix="javis-staffreq-brain-")
 contact = {"account_id": TG, "chat_id": STAFF, "chat_type": "private", "name": "Chị Lan"}
 
 bot_id, err = chatbot_store.create_bot({"name": "Shop", "agent_slug": "ban-hang", "brain": VAULT,

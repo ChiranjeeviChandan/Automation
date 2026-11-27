@@ -57,7 +57,7 @@ from typing import Any, Callable, List, Optional
 from fastapi import APIRouter, Body, Form, Query
 
 import cron_util
-import channel_context   # bóc khối JEEVI_* trước khi gửi Telegram - kênh chữ, không phải web
+import channel_context   # bóc khối JAVIS_* trước khi gửi Telegram - kênh chữ, không phải web
 import once_ledger       # outside actions of one firing run once, across retries (0.238.0)
 import work_log          # one line per finished run, for the Tasks page stats (0.428.0)
 import turn_context
@@ -92,7 +92,7 @@ def VN_TZ():
 VALID_MODE = {"notify", "task", "script"}
 PREFETCH_TIMEOUT_S = 120      # a recipe's read calls, all together, before the model starts (job_recipes.py)
 # The recurring job whose recipe `_run_task` may replay; "" for a one-off reminder and for every other caller.
-_RECIPE_JOB: contextvars.ContextVar = contextvars.ContextVar("jeevi_reminder_recipe_job", default="")
+_RECIPE_JOB: contextvars.ContextVar = contextvars.ContextVar("javis_reminder_recipe_job", default="")
 
 # Mức quyền của nhắc hẹn kiểu "task". Cùng bộ từ với loop để người dùng chỉ phải học một lần.
 VALID_MUC_QUYEN = {"suggest", "auto", "full"}
@@ -240,7 +240,7 @@ def _bell_notice(outcome: str, name: str, text: str, meta: dict, at: str = "") -
 
     A job that ran fine is a result, not a reminder: it lands in its chat or channel as before and is filed in the
     bell as already read, without a red dot or a push. It rings only when the run itself says the owner has to act
-    (`act` in its JEEVI_NOTIFY block). A failure the owner has to fix rings; a network error that Jeevi retries by
+    (`act` in its JAVIS_NOTIFY block). A failure the owner has to fix rings; a network error that Jeevi retries by
     itself does not. Only a plain reminder (mode notify) keeps the "reminder" group, urgent by default.
 
     Returns {"title", "summary", "group", "level"} for `_notify_owner` (main.py)."""
@@ -429,7 +429,7 @@ class RemindersDeps:
     # (brain, agent slug) -> that Partners-page assistant's system prompt for a background run; raises when the
     # assistant is gone. None = every task reminder runs on the brain's plain Jeevi prompt, as before.
     build_agent_prompt: Optional[Callable[[str, str], str]] = None
-    # (brain, agent slug, task, output) -> output without the JEEVI_LESSON lines, written to that assistant's
+    # (brain, agent slug, task, output) -> output without the JAVIS_LESSON lines, written to that assistant's
     # memory and run log like a workflow step. None = the output is posted as is.
     finish_agent_run: Optional[Callable[[str, str, str, str], str]] = None
     # A reminder run as an assistant runs on that assistant's own model and effort, like a Kanban job given to it
@@ -1088,8 +1088,8 @@ class RemindersFeature:
                 web = msg[2:]
             try:
                 # Telegram là kênh chữ thuần: mode "task" chạy chung system prompt/CLAUDE.md với
-                # chat nên body có thể mang khối JEEVI_METRICS/JEEVI_ASK - lọc trước khi gửi, kẻo
-                # lộ nguyên cụm "<!-- JEEVI_...: ... -->".
+                # chat nên body có thể mang khối JAVIS_METRICS/JAVIS_ASK - lọc trước khi gửi, kẻo
+                # lộ nguyên cụm "<!-- JAVIS_...: ... -->".
                 kw = {}
                 if _nhan_kw(self.deps.send_telegram, "viec"):
                     kw = {"viec": viec, "web": channel_context.strip_control_blocks(web)}
@@ -1243,7 +1243,7 @@ class RemindersFeature:
         else:
             argv = [str(rp)]   # file thực thi có shebang (đã kiểm tra os.X_OK lúc tạo)
         env = dict(os.environ)
-        env["JEEVI_BRAIN_ROOT"] = str(self.deps.brain_root(brain))
+        env["JAVIS_BRAIN_ROOT"] = str(self.deps.brain_root(brain))
         try:
             proc = await asyncio.create_subprocess_exec(
                 *argv, cwd=self.deps.brain_root(brain), env=env,
@@ -1407,7 +1407,7 @@ class RemindersFeature:
             cli = self.deps.aux_swap_spec(cli, mq, "reminder", spec)
         else:
             cli = aux_engine.apply(self.deps, cli, mode=mq, tag="reminder")
-        # Trần chung cho fork nền (mặc định không giới hạn từ 2026-11-07, env JEEVI_BG_MAX_WALL_S). Số cứng 300s cũ
+        # Trần chung cho fork nền (mặc định không giới hạn từ 2026-11-07, env JAVIS_BG_MAX_WALL_S). Số cứng 300s cũ
         # từng giết việc lịch thật đang chạy dở - xem doc tại aux_engine.bg_max_wall_s.
         cli.max_wall_s = aux_engine.bg_max_wall_s()
         if not cli.is_available():
@@ -1487,7 +1487,7 @@ class RemindersFeature:
             p = payload or {}
             brain = str(p.get("brain") or "brain")
             # Body thiếu 'brain' → rơi Brain Default. Sau khi recipe curl (channel_context) và tool
-            # jeevi_schedule đều gắn brain, thiếu brain là BẤT THƯỜNG (model quên) → log để soi chứ
+            # javis_schedule đều gắn brain, thiếu brain là BẤT THƯỜNG (model quên) → log để soi chứ
             # KHÔNG chặn (giữ tương thích caller cũ/thủ công cố ý dùng default). Đây từng là bug câm
             # "chat brain khác nhưng nhắc hẹn vẫn vào default".
             if not str(p.get("brain") or "").strip():

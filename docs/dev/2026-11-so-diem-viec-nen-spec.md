@@ -1,6 +1,6 @@
 # Sổ điểm việc nền: mỗi việc tự tìm model vừa đủ cho nó
 
-Spec viết ngày 10/11/2026, đi tiếp sau `2026-11-jeevi-nhe-token-spec.md`. Chủ repo chốt hướng bằng ba câu:
+Spec viết ngày 10/11/2026, đi tiếp sau `2026-11-javis-nhe-token-spec.md`. Chủ repo chốt hướng bằng ba câu:
 
 - "Jeevi là hệ thống tự học, tự cải tiến cả cách nó tự học nữa."
 - "Nó phải tự điều chỉnh các model nền cho được việc hoặc tiết kiệm token theo ý định của người dùng, chứ không thể
@@ -16,7 +16,7 @@ Mục 1 đến 6 là phần ĐÃ LÀM trong cùng PR. Mục 7 là phần chưa l
 
 | Thành phần | Là gì | Nằm ở đâu |
 |---|---|---|
-| **Ý định** | Điều chủ muốn, nói trong chat: `save` (tiết kiệm), `balanced` (để Jeevi tự cân, mặc định), `sure` (chắc ăn). Áp cho mọi việc nền hoặc riêng một việc | `job_scorecard.intent`, `set_intent`; tool `jeevi_tune` |
+| **Ý định** | Điều chủ muốn, nói trong chat: `save` (tiết kiệm), `balanced` (để Jeevi tự cân, mặc định), `sure` (chắc ăn). Áp cho mọi việc nền hoặc riêng một việc | `job_scorecard.intent`, `set_intent`; tool `javis_tune` |
 | **Thang** | Các model chat của nhà cung cấp, xếp từ nhẹ tới model của MAIN. Model chính đọc danh sách của chính nhà đó rồi xếp một lần; chỉ xếp lại khi danh sách đổi. Không có bảng tên model trong mã | `auto_background.build_prompt`, `parse` (khoá `ladder`) |
 | **Sổ điểm** | Mỗi lần chạy của một việc để lại một dòng: model nào, được việc không, tốn bao nhiêu. Từ đó việc tự leo hay tự hạ bậc | `server/job_scorecard.py`, `STATE_DIR/scorecard.sqlite3` |
 
@@ -52,7 +52,7 @@ chính đã chỉ làm "điểm giữa" khi xếp thang. `save` kéo việc ch�
 | Loop | `loop:<slug>@<brain>` | bước tự kiểm của loop báo đạt | bước tự kiểm báo chưa đạt | mạnh |
 | Kanban | `kanban:<route>` | bước nghiệm thu (`ai` hoặc `heuristic`) báo đạt | nghiệm thu báo chưa đạt | mạnh |
 | Nhắc hẹn làm việc | `reminder:<id>` | có nội dung trả về | chạy xong mà không trả gì | yếu |
-| Mọi việc | (việc đó) | chủ khen qua `jeevi_tune op=feedback` | chủ chê qua `jeevi_tune op=feedback` | theo lời chủ |
+| Mọi việc | (việc đó) | chủ khen qua `javis_tune op=feedback` | chủ chê qua `javis_tune op=feedback` | theo lời chủ |
 
 Chỗ ghi: `learn.LearnFeature.run_once`, `self_improve` (quanh `_run_cycle_inner`), `tasks._run_worker`,
 `reminders._fire`. Bước nghiệm thu Kanban là một engine riêng và chạy NGOÀI khối của việc, để nó không bị chấm bằng
@@ -67,7 +67,7 @@ làm thay, việc vẫn xong nhưng bậc đó bị tính một lần hỏng; n�
 Không có màn hình và không có ô cài đặt nào mới.
 
 - **Nói với Jeevi.** "Tiết kiệm token giúp anh", "việc gửi báo cáo phải thật chắc", "báo cáo sáng nay sai rồi", "việc
-  nền đang chạy model gì". Model chat gọi tool `jeevi_tune` (plugin hệ thống `jeevi-tune`, chỉ phiên của chủ thấy):
+  nền đang chạy model gì". Model chat gọi tool `javis_tune` (plugin hệ thống `javis-tune`, chỉ phiên của chủ thấy):
   `status`, `intent {level, job?}`, `feedback {job, good}`, `undo {id}`. Tên việc lấy theo lời chủ; nhiều việc khớp
   thì Jeevi hỏi lại.
 - **Chuông.** Mỗi lần một việc đổi model có một thông báo mức thấp: việc nào, từ model nào sang model nào, vì sao,
@@ -89,20 +89,20 @@ Không có màn hình và không có ô cài đặt nào mới.
 - **Chuỗi dự phòng việc nền** (`aux_engine._FallbackChain`): nơi duy nhất biết mắt nào trả lời, nên móc ở đó.
 - **Phân loại lỗi của chuỗi** (`aux_engine.cooldown_for`): tách "hết hạn mức, mất quyền, sập" khỏi lỗi về chính model.
 - **Bước tự kiểm của loop và bước nghiệm thu của Kanban**: đã có, giờ thành tín hiệu cho sổ điểm.
-- **Khuôn plugin hệ thống chỉ-của-chủ** (`jeevi-memory`, `OWNER_ONLY_TOOLS`): cho `jeevi_tune`.
+- **Khuôn plugin hệ thống chỉ-của-chủ** (`javis-memory`, `OWNER_ONLY_TOOLS`): cho `javis_tune`.
 - **Kênh thông báo của Jeevi Core** (`_notify_owner`, nhóm `cost`, mức `info`).
 
 ## 7. Chưa làm, theo thứ tự đáng làm
 
 Cập nhật: mục 2 dưới đây và phần luật bằng mã của mục 1 đã làm ở bước kế, xem
-`2026-11-vong-cai-tien-jeevi-core-spec.md`. Phần Jeevi Core suy xét bằng model mạnh vẫn chưa làm.
+`2026-11-vong-cai-tien-javis-core-spec.md`. Phần Jeevi Core suy xét bằng model mạnh vẫn chưa làm.
 
 1. **Vòng tự soát bằng model mạnh cho CÁCH HỌC**, theo đúng khuôn `chatbot_reply_policy_review.py`: gom báo cáo từ sổ
    điểm và nhật ký học, hỏi model chính, nhận tối đa vài thay đổi từ một danh sách núm đóng (thời gian chờ yên, học
    loại gì, ngưỡng thử hạ bậc), mỗi thay đổi dẫn bằng chứng, tự hoàn tác nếu số đo tệ đi. Đây là phần "tự cải tiến
    cả cách tự học" theo nghĩa đầy đủ; phần đã làm mới điều chỉnh MODEL, chưa điều chỉnh nhịp và nội dung học.
 2. **Bài học về cách học**: cho mẻ học đọc và ghi thêm vào kho bài học có phạm vi (`agent_lessons.py`), ví dụ khi chủ
-   xoá một ghi nhớ sai (`jeevi_memory op=forget`) thì thành một bài học và một lần "hỏng do model" của việc `learn`.
+   xoá một ghi nhớ sai (`javis_memory op=forget`) thì thành một bài học và một lần "hỏng do model" của việc `learn`.
 3. **Thêm tín hiệu**: cảm xúc chủ thả vào kết quả việc nền (`feedback_projector.py`), tin nhắn kế tiếp của chủ sau
    một kết quả (cách `auto_learning.py` đang làm), gợi ý câu tiếp theo có được dùng hay không.
 4. **Chi phí đầy đủ**: token hiện chỉ được cộng khi việc chạy qua chuỗi dự phòng hoặc là mẻ học. Engine đơn (không
@@ -115,10 +115,10 @@ Cập nhật: mục 2 dưới đây và phần luật bằng mã của mục 1 �
 
 Môi trường viết mã không có `claude` hay `codex` đăng nhập. Cần nhìn trên một máy đang chạy:
 
-- Model chính có xếp được thang hợp lý từ danh sách model thật của từng gói không (xem `jeevi_tune op=status`).
+- Model chính có xếp được thang hợp lý từ danh sách model thật của từng gói không (xem `javis_tune op=status`).
 - Câu lỗi thật của nhà cung cấp khi từ chối một model có rơi đúng vào nhóm "do model" không
   (`aux_engine._score_link`).
-- Model chat có tìm ra `jeevi_tune` khi chủ nói "tiết kiệm token" không (tool nằm sau `jeevi_search_tools`).
+- Model chat có tìm ra `javis_tune` khi chủ nói "tiết kiệm token" không (tool nằm sau `javis_search_tools`).
 
 Mọi đường lui đều giữ hành vi cũ: không có thang, không chọn được, hay sổ điểm lỗi thì việc nền chạy model khởi đầu
 của bậc nó, và nếu model đó bị từ chối thì chạy model của MAIN.

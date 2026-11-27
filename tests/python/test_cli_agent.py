@@ -10,7 +10,7 @@ What is pinned, through the real endpoints and the real CLI shell (`_tg_answer`)
 model engine faked:
   1. `agent` names an agent of the resolved brain: the turn runs with that agent's prompt (role,
      body, skills) and model, inside that brain. The turn ends like an agent chat on the dashboard
-     (the /chat caller is the authenticated owner): JEEVI_LESSON / JEEVI_RULE lines are stripped
+     (the /chat caller is the authenticated owner): JAVIS_LESSON / JAVIS_RULE lines are stripped
      from the answer and recorded (lesson store, owner rules), and the run is logged.
   2. The agent is not in the resolved brain, or the brain does not exist: 400 and no turn runs.
      A wrong brain must NOT fall back to the default brain, where an agent with the same slug
@@ -26,10 +26,10 @@ import tempfile
 from pathlib import Path
 from types import SimpleNamespace
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-cli-agent-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-cli-agent-")
 # The default brain lives under BRAINS_DIR: point it at a scratch folder so this test never
 # writes into the repo's brains/.
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-cli-agent-brains-")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-cli-agent-brains-")
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -59,8 +59,8 @@ def write_agent(brain, slug, body, model=""):
     (d / f"{slug}.md").write_text("\n".join(lines) + "\n" + body + "\n", encoding="utf-8")
 
 
-BRAIN = tempfile.mkdtemp(prefix="jeevi-cli-agent-spy-")
-OTHER = tempfile.mkdtemp(prefix="jeevi-cli-agent-other-")
+BRAIN = tempfile.mkdtemp(prefix="javis-cli-agent-spy-")
+OTHER = tempfile.mkdtemp(prefix="javis-cli-agent-other-")
 DEFAULT = str(main._default_brain_dir())
 write_agent(BRAIN, "quick-check", "QUICK CHECK ROLE BODY", model="sonnet")
 write_agent(OTHER, "other-only", "OTHER BRAIN AGENT BODY", model="haiku")
@@ -98,7 +98,7 @@ class FakeClaude:
                                 "engine": id(self)})
         yield {"type": "text", "content": "Report ready."}
         yield {"type": "final",
-               "content": "Report ready.\nJEEVI_LESSON: " + LESSON + "\nJEEVI_RULE: " + RULE,
+               "content": "Report ready.\nJAVIS_LESSON: " + LESSON + "\nJAVIS_RULE: " + RULE,
                "session_id": "fake-1", "tokens_in": 10, "tokens_out": 5, "cost_usd": 0}
 
 
@@ -165,17 +165,17 @@ check("agent: the CLI channel block is still there", "The terminal does NOT rend
 check("agent: runs inside the chosen brain", same_dir(run.get("cwd"), BRAIN), run.get("cwd"))
 check("agent: fast path and adaptive context are skipped (both answer in Jeevi's voice)",
       FAST.calls == 0 and ADAPTIVE.calls == 0, (FAST.calls, ADAPTIVE.calls))
-check("agent: JEEVI_LESSON / JEEVI_RULE never reach the client",
+check("agent: JAVIS_LESSON / JAVIS_RULE never reach the client",
       body.get("text") == "Report ready.", body.get("text"))
 # The turn ends through the dashboard's agent handler (_ket_luot_agent): lessons go to the agent's
 # private-chat lesson store, owner rules to its MEMORY.md, and the run to its run log.
 check("precondition: learning is on for the test brain",
       main.memory_control.learning_enabled(main._brain_memory_dir(BRAIN)))
-check("agent: the JEEVI_LESSON line is recorded in the agent's lesson store",
+check("agent: the JAVIS_LESSON line is recorded in the agent's lesson store",
       LESSON in main._dm_lessons_prompt(BRAIN, "quick-check", ""))
 _agent_mem = main._brain_memory_dir(BRAIN) / "agents" / "quick-check"
 _mem_txt = (_agent_mem / "MEMORY.md").read_text(encoding="utf-8") if (_agent_mem / "MEMORY.md").is_file() else ""
-check("agent: the JEEVI_RULE line is recorded as an owner rule",
+check("agent: the JAVIS_RULE line is recorded as an owner rule",
       RULE in _mem_txt and main.agent_rules.OWNER_RULES_HEADER in _mem_txt, _mem_txt[:300])
 _runs = "".join(f.read_text(encoding="utf-8") for f in (_agent_mem / "runs").glob("*.md")) \
     if (_agent_mem / "runs").is_dir() else ""
@@ -183,7 +183,7 @@ check("agent: the run is logged in the agent's run log", "analyse merchant.examp
 _sid_s1 = main._TG_SID_MAP.get("cli:s1@quick-check")
 _stored = [m.get("content") or "" for m in main.get_store().get_messages(_sid_s1)] if _sid_s1 else []
 check("agent: the stored conversation holds the stripped answer",
-      "Report ready." in _stored and not any("JEEVI_LESSON" in m or "JEEVI_RULE" in m for m in _stored),
+      "Report ready." in _stored and not any("JAVIS_LESSON" in m or "JAVIS_RULE" in m for m in _stored),
       _stored)
 
 r = chat("/chat/stream", brain=BRAIN, session="s2", agent="quick-check")
@@ -340,7 +340,7 @@ check("isolation (API): each agent's history holds only its own turn",
 # The CLI agent turn must get what an agent chat on the Partners page gets: the builder block
 # (where to write agents/workflows/skills), the lesson rule and the agent's learned lessons.
 main._ket_luot_agent(BRAIN, "api-one", "earlier dashboard question",
-                     "ok\nJEEVI_LESSON: PARITY LESSON MARKER", conv_sid="")
+                     "ok\nJAVIS_LESSON: PARITY LESSON MARKER", conv_sid="")
 _dash = main._agent_turn_system_prompt(BRAIN, "api-one", "")
 with api_engine():
     chat(brain=BRAIN, session="parity", agent="api-one", message="parity question")

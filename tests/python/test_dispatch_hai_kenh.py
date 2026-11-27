@@ -31,7 +31,7 @@ import sys
 import tempfile
 import time
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-dispatch-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-dispatch-"))
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -50,7 +50,7 @@ def check(name, cond):
         _fails.append(name)
 
 
-BRAIN = tempfile.mkdtemp(prefix="jeevi-dispatch-brain-")
+BRAIN = tempfile.mkdtemp(prefix="javis-dispatch-brain-")
 _THAT = channel_context.collect_turn_files      # bản THẬT (lỗi 9 cần chạy bộ lọc thật)
 
 

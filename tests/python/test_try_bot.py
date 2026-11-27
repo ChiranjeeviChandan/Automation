@@ -21,8 +21,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-try-")
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-try-")
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -58,7 +58,7 @@ async def _engine(text, meta, progress, *, channel="", bot=None, **kw):
 BRAIN = Path(tempfile.mkdtemp(prefix="brain-try-"))
 (BRAIN / "cai-dat.md").write_text(
     "# Hướng dẫn cài đặt Jeevi\n\n## Lỗi cổng 7777 đang được dùng\n\nNếu Jeevi báo lỗi cổng 7777 đang được dùng, "
-    "hãy tắt tiến trình Jeevi cũ rồi khởi động lại bằng file start-jeevi.bat.\n", encoding="utf-8")
+    "hãy tắt tiến trình Jeevi cũ rồi khởi động lại bằng file start-javis.bat.\n", encoding="utf-8")
 def _pin_all():
     """The Agent's Documents section (2026-11-09: a bot reads only what its Agent lists): every .md of this test brain.
     The grounding rules still drop operating folders and scoped files, so this test checks the same as before."""
@@ -80,7 +80,7 @@ class Judge:
         if purpose == "profile":
             return "Đảm nhiệm:\n- cài đặt Jeevi\nKhông đảm nhiệm:\n- chuyện riêng"
         if purpose == "bootstrap":
-            return json.dumps([{"text": "jeevi lỗi cổng thì làm sao", "verdict": "reply", "reason": "đúng ngành"}])
+            return json.dumps([{"text": "javis lỗi cổng thì làm sao", "verdict": "reply", "reason": "đúng ngành"}])
         if purpose == "teach":
             return json.dumps({"is_teaching": False})
         self.calls += 1
@@ -206,7 +206,7 @@ js = (ROOT / "dashboard" / "chatbots-try.js").read_text(encoding="utf-8")
 html = (ROOT / "dashboard" / "index.html").read_text(encoding="utf-8")
 cb = (ROOT / "dashboard" / "chatbots.js").read_text(encoding="utf-8")
 check("UI file is loaded by the page", "/static/chatbots-try.js" in html)
-check("bot card has a Try button wired to the panel", "cb-try" in cb and "JeeviTryBot" in cb)
+check("bot card has a Try button wired to the panel", "cb-try" in cb and "JavisTryBot" in cb)
 check("UI posts to the try route", "/try" in js and "FormData" in js)
 check("no em dash in this file", chr(0x2014) not in open(__file__, encoding="utf-8").read())
 

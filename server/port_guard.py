@@ -13,7 +13,7 @@ nothing stopped that.
 - port held otherwise: print one line and exit before any startup work.
 
 Only for a real server launch (`uvicorn main:app` or `python main.py`); importing main from tests does nothing.
-JEEVI_PORT_GUARD=0 turns it off.
+JAVIS_PORT_GUARD=0 turns it off.
 """
 import os
 import signal
@@ -26,7 +26,7 @@ from pathlib import Path
 import winproc
 
 SERVER_DIR = Path(__file__).resolve().parent
-_DONE_FLAG = "_JEEVI_PORT_GUARD_DONE"
+_DONE_FLAG = "_JAVIS_PORT_GUARD_DONE"
 
 
 def _arg(argv, name):
@@ -52,8 +52,8 @@ def server_launch(argv):
         return None
     if "main:app" not in argv and not _is_this_main(argv[0]):
         return None
-    port = _arg(argv, "--port") or os.getenv("JEEVI_PORT") or "7777"
-    host = _arg(argv, "--host") or os.getenv("JEEVI_HOST") or "127.0.0.1"
+    port = _arg(argv, "--port") or os.getenv("JAVIS_PORT") or "7777"
+    host = _arg(argv, "--host") or os.getenv("JAVIS_HOST") or "127.0.0.1"
     try:
         return host, int(port)
     except ValueError:
@@ -92,7 +92,7 @@ def process_cwd(pid):
     return ""
 
 
-def is_jeevi_server(command, cwd):
+def is_javis_server(command, cwd):
     """A uvicorn or `python main.py` running out of this same server folder."""
     if not command or not cwd:
         return False
@@ -106,7 +106,7 @@ def is_jeevi_server(command, cwd):
 
 def managed_by_launchd(environ):
     """launchd sets XPC_SERVICE_NAME to the job label for every process it starts."""
-    label = environ.get("JEEVI_LAUNCHD_LABEL", "com.jeevi.os")
+    label = environ.get("JAVIS_LAUNCHD_LABEL", "com.javis.os")
     return environ.get("XPC_SERVICE_NAME") == label
 
 
@@ -130,7 +130,7 @@ def _stop(pid, timeout=20.0):
 
 def decide(holders, managed):
     """'stop' (orphans to stop) or 'exit'. holders: [(pid, command, cwd)] of the processes listening on the port."""
-    if managed and holders and all(is_jeevi_server(cmd, cwd) for _, cmd, cwd in holders):
+    if managed and holders and all(is_javis_server(cmd, cwd) for _, cmd, cwd in holders):
         return "stop"
     return "exit"
 
@@ -140,7 +140,7 @@ def claim_port(argv=None, environ=None, log=None):
     argv = sys.argv if argv is None else argv
     environ = os.environ if environ is None else environ
     log = log or (lambda m: print(m, file=sys.stderr, flush=True))
-    if os.name == "nt" or environ.get("JEEVI_PORT_GUARD") == "0" or environ.get(_DONE_FLAG):
+    if os.name == "nt" or environ.get("JAVIS_PORT_GUARD") == "0" or environ.get(_DONE_FLAG):
         return "skipped"
     launch = server_launch(argv)
     if launch is None:

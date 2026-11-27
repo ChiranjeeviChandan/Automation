@@ -21,7 +21,7 @@ import tempfile
 import time
 from datetime import datetime, timezone
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-owner-clock-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-owner-clock-")
 # Act like a VPS: the process clock is UTC. Windows has no tzset; the checks still hold there because the owner's
 # timezone is applied explicitly, only the "server is on UTC" part is not simulated.
 os.environ["TZ"] = "UTC"

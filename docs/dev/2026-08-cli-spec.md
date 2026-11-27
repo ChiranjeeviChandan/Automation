@@ -35,7 +35,7 @@ và `command_fn`. Telegram là kênh thứ hai. **CLI là kênh thứ ba, đi qu
 VPS từ laptop mà không mở trình duyệt.
 
 **Lợi chiến lược: câu chuyện cài đặt.** Cửa vào Jeevi hôm nay là "dựng Docker trên VPS" - một
-rào cản lớn với người mới. `pipx install jeevi-cli` rồi gõ `jeevi` là cửa nhẹ hơn hẳn. Với
+rào cản lớn với người mới. `pipx install javis-cli` rồi gõ `javis` là cửa nhẹ hơn hẳn. Với
 lượng người đã fork repo, đây là đòn bẩy đáng giá hơn bản thân sự tiện tay.
 
 ## 3. Hiện trạng: bốn chỗ đang thiếu
@@ -47,7 +47,7 @@ và đường long-polling của Telegram. Không có endpoint nào nhận một
 lời. Hôm nay `curl` một câu hỏi vào Jeevi là không làm được.
 
 **3.2. Xác thực chỉ nhận cookie.** `_auth_guard` (main.py:163) kiểm
-`cfgmod.valid_session(request.cookies.get("jeevi_session"))`, và `/ws` cũng đọc `ws.cookies`.
+`cfgmod.valid_session(request.cookies.get("javis_session"))`, và `/ws` cũng đọc `ws.cookies`.
 Không có token cho client ngoài trình duyệt.
 
 Có sẵn MỘT tiền lệ đúng hướng: `/hub/mcp` xác thực bằng `Bearer` với `hub_token()`
@@ -73,7 +73,7 @@ markdown, ảnh nhúng `![](...)`, link tương đối - vô nghĩa trong termin
 - `POST /chat` một lượt (đồng bộ) và `POST /chat/stream` (SSE) cho phiên tương tác.
 - `POST /chat/jobs` + `GET /chat/jobs/{id}`: cùng lượt đó nhưng chạy nền, lấy kết quả sau (#1021).
 - Token cá nhân: tạo, liệt kê, thu hồi. Băm khi lưu.
-- Gói `jeevi-cli` cài bằng `pipx`/`uvx`, lệnh `jeevi`.
+- Gói `javis-cli` cài bằng `pipx`/`uvx`, lệnh `javis`.
 - Kênh `cli` trong `channel_context` + hợp đồng đầu ra hợp terminal.
 - Lệnh vận hành gọi endpoint SẴN CÓ: việc Kanban, phiên hội thoại, brain, loop, phiên bản.
 
@@ -221,11 +221,11 @@ Thư mục `cli/` trong repo, tách hẳn khỏi `server/`:
 
 ```
 cli/
-  pyproject.toml         # tên gói jeevi-cli, lệnh jeevi
-  jeevi_cli/
+  pyproject.toml         # tên gói javis-cli, lệnh javis
+  javis_cli/
     __init__.py
     __main__.py          # điểm vào, phân tích tham số
-    config.py            # đọc/ghi ~/.jeevi/config.json
+    config.py            # đọc/ghi ~/.javis/config.json
     client.py            # HTTP + SSE, gắn Bearer
     render.py            # gói -> terminal (màu, spinner, dòng ngữ cảnh)
     commands/
@@ -240,39 +240,39 @@ mục cho terminal, trong khi kênh CLI có luật CẤM bảng. Đã bỏ.
 **Không** kéo `fastapi`, `uvicorn` hay bất cứ thứ gì của server vào - gói CLI phải cài được
 trên máy chưa từng có Jeevi.
 
-Cấu hình ở `~/.jeevi/config.json`, `chmod 600`:
+Cấu hình ở `~/.javis/config.json`, `chmod 600`:
 
 ```json
 {
   "profiles": {
-    "vps": {"url": "https://jeevi.example.com", "token": "jvs_...", "brain": "My Bullet Journal"}
+    "vps": {"url": "https://javis.example.com", "token": "jvs_...", "brain": "My Bullet Journal"}
   },
   "default": "vps"
 }
 ```
 
-Biến môi trường `JEEVI_URL`, `JEEVI_TOKEN`, `JEEVI_PROFILE` đè lên file - để cắm vào CI và
+Biến môi trường `JAVIS_URL`, `JAVIS_TOKEN`, `JAVIS_PROFILE` đè lên file - để cắm vào CI và
 Docker mà không phải mount file.
 
 ### 5.6. Bộ lệnh
 
 ```
-jeevi "câu hỏi"              một lượt, in stdout, pipe được
-jeevi chat                   phiên tương tác (SSE)
-jeevi login <url>            dán token, thử kết nối, lưu profile
-jeevi status                 phiên bản, bộ não đang chạy, mức tiết kiệm
-jeevi task add "..."         giao việc Kanban
-jeevi tasks                  liệt kê việc
-jeevi brain ls [thư mục]     duyệt brain
-jeevi brain cat <file>       in nội dung file
-jeevi loops                  liệt kê loop
+javis "câu hỏi"              một lượt, in stdout, pipe được
+javis chat                   phiên tương tác (SSE)
+javis login <url>            dán token, thử kết nối, lưu profile
+javis status                 phiên bản, bộ não đang chạy, mức tiết kiệm
+javis task add "..."         giao việc Kanban
+javis tasks                  liệt kê việc
+javis brain ls [thư mục]     duyệt brain
+javis brain cat <file>       in nội dung file
+javis loops                  liệt kê loop
 ```
 
 Từ `status` trở xuống đều gọi endpoint SẴN CÓ (`/version`, `/runtime/diagnostics`,
 `/kanban/task`, `/files/list`, `/files/read`), không cần thêm gì ở server.
 
 Quy ước Unix bắt buộc: câu trả lời ra **stdout**, mọi thứ khác (spinner, trạng thái, dòng ngữ
-cảnh) ra **stderr**, mã thoát khác 0 khi lỗi. Thiếu ba thứ này thì `jeevi "..." > file.md` sẽ
+cảnh) ra **stderr**, mã thoát khác 0 khi lỗi. Thiếu ba thứ này thì `javis "..." > file.md` sẽ
 dính rác và cả CLI thành vô dụng cho việc kịch bản hoá.
 
 ## 6. Kế hoạch theo giai đoạn
@@ -297,16 +297,16 @@ compare_digest", "quên băm", "token đã thu hồi vẫn vào được", "dùn
 
 ### Giai đoạn 2 - CLI thật (2-3 ngày)
 
-`jeevi "..."`, `jeevi chat`, `jeevi login`, kênh `cli`, đóng gói, `POST /chat/stream`.
+`javis "..."`, `javis chat`, `javis login`, kênh `cli`, đóng gói, `POST /chat/stream`.
 
-Đạt khi: cài bằng `pipx` trên máy sạch rồi hỏi được brain trên VPS; `jeevi "..." | wc -l` ra
+Đạt khi: cài bằng `pipx` trên máy sạch rồi hỏi được brain trên VPS; `javis "..." | wc -l` ra
 số đúng (không rác ở stdout); gói lạ không làm vỡ CLI.
 
 ### Giai đoạn 3 - Lệnh vận hành (2-3 ngày)
 
 Việc, brain, loop, trạng thái. Không thêm endpoint mới.
 
-### Giai đoạn 4 - `jeevi up`, tuỳ chọn (chưa ước lượng)
+### Giai đoạn 4 - `javis up`, tuỳ chọn (chưa ước lượng)
 
 CLI tự bật server localhost nếu chưa chạy rồi tự gắn vào. Vẫn MỘT server, MỘT brain; CLI chỉ
 là thứ khởi động nó. Đây mới là thứ đổi được cửa vào sản phẩm, nhưng cũng là giai đoạn dễ phình
@@ -328,7 +328,7 @@ chính lời chú thích ở đó có nhắc tên các gói bị cấm, quét c�
 mình; đã dính đúng bẫy này một lần ở 0.14.3).
 
 **Người dùng tưởng CLI chạy được không cần server.** Chặn bằng tài liệu nói thẳng ngay dòng
-đầu, và `jeevi` khi không kết nối được thì báo đúng nguyên nhân kèm cách khắc phục, không báo
+đầu, và `javis` khi không kết nối được thì báo đúng nguyên nhân kèm cách khắc phục, không báo
 lỗi mạng chung chung.
 
 ## 8. Ba câu bỏ ngỏ - đã chốt ở v0.17.0
@@ -337,16 +337,16 @@ Chủ repo giao "dựng toàn bộ luôn các phase, phần nào cần phê duy�
 những đề xuất tốt nhất". Ba câu dưới đây chốt như sau, kèm lý do để sau này đổi thì biết đang
 đổi cái gì.
 
-1. **Tên gói: `jeevi-cli`, lệnh gõ là `jeevi`.** Người dùng không bao giờ gõ tên gói - họ gõ
-   `jeevi`, và cái đó vẫn ngắn đúng như mong muốn. Đổi lại, tên gói nói rõ đây là CLIENT chứ
+1. **Tên gói: `javis-cli`, lệnh gõ là `javis`.** Người dùng không bao giờ gõ tên gói - họ gõ
+   `javis`, và cái đó vẫn ngắn đúng như mong muốn. Đổi lại, tên gói nói rõ đây là CLIENT chứ
    không phải cả Jeevi, đúng thứ dễ hiểu nhầm nhất của tính năng này. Một người `pip install
-   jeevi` rồi tưởng mình vừa cài cả hệ thống là hiểu nhầm do chính cái tên gây ra.
+   javis` rồi tưởng mình vừa cài cả hệ thống là hiểu nhầm do chính cái tên gây ra.
 
-2. **Có làm giai đoạn 4, nhưng theo nghĩa hẹp: `jeevi up` KHỞI ĐỘNG bản Jeevi đã cài trên
+2. **Có làm giai đoạn 4, nhưng theo nghĩa hẹp: `javis up` KHỞI ĐỘNG bản Jeevi đã cài trên
    máy, chứ gói CLI không chứa server.** Nhét server vào gói CLI là kéo `fastapi`, `uvicorn`
    và toàn bộ phụ thuộc nặng về cho một người chỉ muốn hỏi một câu từ terminal - và tệ hơn, là
-   có hai đường cài Jeevi phải giữ đồng bộ mãi mãi. `jeevi up` đi tìm `server/main.py` thật
-   (qua `JEEVI_HOME`, thư mục hiện tại, hoặc `~/jeevi-os`), tìm không ra thì NÓI THẲNG là nó
+   có hai đường cài Jeevi phải giữ đồng bộ mãi mãi. `javis up` đi tìm `server/main.py` thật
+   (qua `JAVIS_HOME`, thư mục hiện tại, hoặc `~/javis-os`), tìm không ra thì NÓI THẲNG là nó
    không chứa server và chỉ ba cách xử lý, chứ không báo lỗi mơ hồ.
 
 3. **Token có hai mức ngay từ v1: `full` và `chat`.** Để quyền ngang session là mỗi máy muốn

@@ -20,8 +20,8 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-botanh-")
-os.environ["JEEVI_REPLY_POLICY_SHADOW"] = "1"
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-botanh-")
+os.environ["JAVIS_REPLY_POLICY_SHADOW"] = "1"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -90,7 +90,7 @@ nhieu = " ".join(f"![](attachments/{x})" for x in ("a.jpg", "b.png", "c.webp", "
 t, f = bot_images.pick(nhieu, B)
 check("tối đa 4 ảnh mỗi lần, ảnh thứ 5 ở lại trong chữ",
       len(f) == bot_images.MAX_IMAGES == 4 and t == "![](attachments/e.jpeg)", (t, len(f)))
-# The cap is 4 unless the machine sets JEEVI_BOT_MAX_IMAGES (issue #1634), clamped to 1..20.
+# The cap is 4 unless the machine sets JAVIS_BOT_MAX_IMAGES (issue #1634), clamped to 1..20.
 check("image cap from the environment: unset, empty or junk gives 4",
       [bot_images.max_images_from_env(x) for x in ("", "  ", "abc", "4.5")] == [4, 4, 4, 4])
 check("image cap from the environment: a number is used, clamped to 1..20",

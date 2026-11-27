@@ -12,7 +12,7 @@ import os
 import re
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-petmenu-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-petmenu-")
 
 import main  # noqa: E402
 import pet_menu  # noqa: E402

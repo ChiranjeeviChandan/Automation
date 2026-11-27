@@ -4,7 +4,7 @@
 
 The Chatbot page's Zalo-style bar (pin-bar.js) also sits above the main chat. chat-pins.js reads GET /sessions/<id>/pins,
 draws the bar as the first child of #chatArea (sticky, only when there is a pin), and a tap goes to the answer, paging
-back through older messages. app.js hands it the open chat and the pin mark through window.JeeviChatPinHost.
+back through older messages. app.js hands it the open chat and the pin mark through window.JavisChatPinHost.
 */
 const fs = require("fs");
 const path = require("path");
@@ -45,7 +45,7 @@ check("Move to top and Unpin go through the answer pin route", CP.indexOf('{ pin
 check("unpinning from the bar clears the pin under the answer", /H\.mark\(mid, false\)/.test(CP) && /mark\(mid, on\) \{/.test(APP));
 check("a pin not loaded yet pages back through older messages", /H\.loadOlder\(\)/.test(CP) && /loadOlder: \(\) => taiTinCu\(\)/.test(APP));
 check("a tap lights the answer up", CP.indexOf('el.classList.add("pin-flash")') !== -1 && /\.msg\.pin-flash \.bubble \{ animation: pb-flash/.test(CSS));
-check("the host tells the open chat", /window\.JeeviChatPinHost = \{\s*sid: \(\) => savedSessionId,/.test(APP));
+check("the host tells the open chat", /window\.JavisChatPinHost = \{\s*sid: \(\) => savedSessionId,/.test(APP));
 check("Partners names the answers after the partner", /currentName: function \(\) \{ var x = active \? dangChon\(\) : null;/.test(WS));
 check("the bar stays at the top while the chat scrolls", /\.chat-pinbar \{ position: sticky; top: 0;/.test(CSS));
 check("the server lists pins and moves one to the top", MAIN.indexOf('@app.get("/sessions/{session_id}/pins")') !== -1 &&

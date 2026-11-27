@@ -24,7 +24,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-gantay-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-gantay-"))
 
 from fastapi.testclient import TestClient  # noqa: E402
 import main  # noqa: E402
@@ -42,12 +42,12 @@ def check(name, cond, them=""):
 
 # Brain riêng trong thư mục tạm, cùng lối cô lập như test_tai_san_cuoc_chat: ghi vào brain
 # mặc định là rải file thật vào `brains/` của người chạy lẫn của CI.
-BRAIN = tempfile.mkdtemp(prefix="jeevi-brain-gantay-")
+BRAIN = tempfile.mkdtemp(prefix="javis-brain-gantay-")
 broot = Path(BRAIN)
 # KHOÁ trần duyệt vào đúng brain này. Không đặt thì `_files_ceiling` cho localhost trần tới cả
 # ổ đĩa (chủ máy tin cậy), đường dẫn tương đối tính từ "/" chứ không từ brain, và test sẽ đo
 # nhầm một cấu hình khác hẳn cấu hình mà giao diện đang chạy.
-os.environ["JEEVI_FILES_ROOT"] = BRAIN
+os.environ["JAVIS_FILES_ROOT"] = BRAIN
 (broot / "06 - Sources").mkdir(parents=True, exist_ok=True)
 (broot / "06 - Sources" / "bang-gia.md").write_text("Nước mắm 500ml: 120k", encoding="utf-8")
 (broot / "06 - Sources" / "brief.md").write_text("Brief landing", encoding="utf-8")

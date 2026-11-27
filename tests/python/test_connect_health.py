@@ -55,7 +55,7 @@ def test_status_code_inside_a_path_is_not_a_status():
     for err in ("FileNotFoundError: [Errno 2] No such file or directory: '/tmp/jt-24013-ab/no-such-binary'",
                 "FileNotFoundError: [Errno 2] No such file or directory: '/home/u401/bin/server'",
                 "[WinError 2] The system cannot find the file specified: 'C:\\Users\\a\\app-401\\srv.exe' (ENOENT)",
-                "process exited with code 1 (cwd /srv/401/jeevi)"):
+                "process exited with code 1 (cwd /srv/401/javis)"):
         kind, _ = connect_health.classify_error(err)
         assert kind == "spawn", (kind, err)
     # A path that holds 503 and nothing else recognisable is unknown, not "the service is not answering".

@@ -5,7 +5,7 @@ Chủ dự án 15/11/2026: "rà soát lại những lần anh sửa thiết kế
 chú thích trong mã, và khoảng 45 phiên Claude Code tháng 10-11/2026 (Jeevi, kho Jeevi Store, hoiminh.com, mặt đồng hồ
 Garmin). Gu của chủ giống nhau ở mọi dự án, nên phần chung áp cho cả những thứ làm ngoài Jeevi.
 
-Áp cho: dashboard (`dashboard/`), trang HTML của gói trong kho `jeevi-store`, và mọi trang HTML làm cho chủ xem. Luật
+Áp cho: dashboard (`dashboard/`), trang HTML của gói trong kho `javis-store`, và mọi trang HTML làm cho chủ xem. Luật
 cứng đã có test thì vẫn nằm ở `docs/quy-uoc-dev.md`; file này dẫn sang chứ không chép lại.
 
 Gặp hai luật ngược nhau: cái có ngày mới hơn thắng (xem mục 11).
@@ -106,7 +106,7 @@ Chủ thử trên iPhone, iPad và app thêm vào màn hình chính, thường g
 ## 4. Màu, sáng và tối
 
 - **Giao diện sáng là mặc định** ở mọi giờ: "đừng để mặc định giao diện tối nữa" (05/11). Tối và tự động theo giờ chỉ là
-  lựa chọn của người dùng (`localStorage["jeevi.theme"]`, `dashboard/theme.js`).
+  lựa chọn của người dùng (`localStorage["javis.theme"]`, `dashboard/theme.js`).
 - **Màu chỉ lấy từ biến của `dashboard/style.css`,** không viết mã màu trần (`tests/python/test_theme_tokens.py`). Màu
   chính:
   - cam nhấn `--accent`: #e85d1f khi sáng, #ff7a3c khi tối;
@@ -139,7 +139,7 @@ Chủ thử trên iPhone, iPad và app thêm vào màn hình chính, thường g
   3 link) và nút "Xem tất cả"; bấm vào mở "Kho lưu trữ" ngay trong bảng đó, có nút quay lại, tab Ảnh/File/Link kèm số,
   ô tìm, xếp theo ngày (ảnh theo tháng), phân trang. Mẫu ở tab Thông tin của trang Nhóm (`teams.js`, `assetsHtml`).
 - **Sửa một đoạn chữ thì mở khung rộng, không dùng `prompt()` của trình duyệt** (19/11: "popup làm lại khi sửa để mở
-  rộng ra dễ sửa"). Dùng chung `JeeviTextEdit.open(...)` (`dashboard/text-edit-dialog.js`): ô chữ tự giãn, đếm ký tự,
+  rộng ra dễ sửa"). Dùng chung `JavisTextEdit.open(...)` (`dashboard/text-edit-dialog.js`): ô chữ tự giãn, đếm ký tự,
   lựa chọn dạng chip, Ctrl+Enter lưu; điện thoại là bảng kéo lên. Danh sách dài thì nút Thêm đứng cạnh ô tìm ở trên
   đầu, không nằm cuối danh sách.
 - **Popup thay cho thả xuống** với nội dung chi tiết, và popup đứng yên tới khi người dùng tự đóng. Danh sách ngắn, đơn
@@ -247,7 +247,7 @@ Chủ thử trên iPhone, iPad và app thêm vào màn hình chính, thường g
 
 ## 9. Trang HTML của gói trong Jeevi Store
 
-Mẫu là trang của gói `jeevi.gate` 2.2.2 (`packs/jeevi.gate/plugins/jeevi-gate/plugin.py`, hàm `_trang_cai_dat`). Thứ
+Mẫu là trang của gói `javis.gate` 2.2.2 (`packs/javis.gate/plugins/javis-gate/plugin.py`, hàm `_trang_cai_dat`). Thứ
 tự trên trang:
 
 1. trạng thái (sẵn sàng, hoặc lỗi kèm cách sửa);
@@ -261,8 +261,8 @@ Mọi giải thích nằm sau nút (i), đóng sẵn.
 
 - Thân chữ 17px, tối thiểu 16px; nút cao 48px; không tràn ngang ở 390px; chụp cả sáng lẫn tối.
 - JS của trang viết thành chuỗi thường, đọc đường dẫn từ một khối JSON, để khỏi nhân đôi ngoặc trong f-string.
-- **Sáng/tối, màu và font theo dashboard** (từ `jeevi.gate` 2.2.2):
-  - một đoạn script trong `<head>` đọc `localStorage["jeevi.theme"]`, cùng phép tính với đoạn đầu
+- **Sáng/tối, màu và font theo dashboard** (từ `javis.gate` 2.2.2):
+  - một đoạn script trong `<head>` đọc `localStorage["javis.theme"]`, cùng phép tính với đoạn đầu
     `dashboard/index.html`; chưa chọn thì sáng;
   - màu lấy theo biến của `dashboard/style.css`;
   - font Be Vietnam Pro từ `/static/fonts/fonts.css`, mở được khi chưa đăng nhập.

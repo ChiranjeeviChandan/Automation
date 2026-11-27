@@ -11,7 +11,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-pack-updates-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-pack-updates-")
 
 import pack_install  # noqa: E402
 import pack_updates as PU  # noqa: E402
@@ -27,20 +27,20 @@ def check(name, cond, extra=""):
 
 
 STORE = [
-    {"id": "jeevi.zalo", "name": {"vi": "Zalo cá nhân", "en": "Personal Zalo"}, "version": "1.4.0"},
-    {"id": "jeevi.crm", "name": {"en": "Customer CRM"}, "version": "1.10.0"},
-    {"id": "jeevi.old", "name": {"en": "Old"}, "version": "0.9.0"},
-    {"id": "jeevi.not-installed", "name": {"en": "Other"}, "version": "2.0.0"},
+    {"id": "javis.zalo", "name": {"vi": "Zalo cá nhân", "en": "Personal Zalo"}, "version": "1.4.0"},
+    {"id": "javis.crm", "name": {"en": "Customer CRM"}, "version": "1.10.0"},
+    {"id": "javis.old", "name": {"en": "Old"}, "version": "0.9.0"},
+    {"id": "javis.not-installed", "name": {"en": "Other"}, "version": "2.0.0"},
 ]
-INSTALLED = {"jeevi.zalo": {"version": "1.3.0"}, "jeevi.crm": {"version": "1.9.0"}, "jeevi.old": {"version": "1.0.0"}}
+INSTALLED = {"javis.zalo": {"version": "1.3.0"}, "javis.crm": {"version": "1.9.0"}, "javis.old": {"version": "1.0.0"}}
 
 ups = PU.find_updates(STORE, INSTALLED)
 ids = {u["id"]: u for u in ups}
-check("an installed pack with a newer Store version is an update", "jeevi.zalo" in ids
-      and ids["jeevi.zalo"]["from"] == "1.3.0" and ids["jeevi.zalo"]["to"] == "1.4.0", ups)
-check("versions compare as numbers: 1.10.0 is newer than 1.9.0", "jeevi.crm" in ids)
-check("an older Store number is never an update", "jeevi.old" not in ids)
-check("a pack that is not installed is not an update", "jeevi.not-installed" not in ids)
+check("an installed pack with a newer Store version is an update", "javis.zalo" in ids
+      and ids["javis.zalo"]["from"] == "1.3.0" and ids["javis.zalo"]["to"] == "1.4.0", ups)
+check("versions compare as numbers: 1.10.0 is newer than 1.9.0", "javis.crm" in ids)
+check("an older Store number is never an update", "javis.old" not in ids)
+check("a pack that is not installed is not an update", "javis.not-installed" not in ids)
 
 item = PU.notify(ups)
 check("one bell notice for all new versions", item and item.get("kind") == "system" and item.get("channel") == PU.CHANNEL,
@@ -52,7 +52,7 @@ check("2026-11-23: the notice rings by default (not filed under Filtered)",
 check("it says Jeevi never updates on its own", item and ("không tự cập nhật" in item["body"]
                                                        or "never updates on its own" in item["body"]))
 check("the same versions do not ring again", PU.notify(ups) is None)
-again = PU.notify([dict(ids["jeevi.zalo"], to="1.5.0")])
+again = PU.notify([dict(ids["javis.zalo"], to="1.5.0")])
 check("the next version of a pack rings again", again is not None and "1.5.0" in again["body"], again)
 
 # The scheduler rhythm and the stale-catalog rule.
@@ -66,16 +66,16 @@ async def fake_lay(lam_moi=False):
 
 STALE, VER = [False], ["1.6.0"]
 packs_store.lay = fake_lay
-pack_install.doc_so = lambda: {"jeevi.zalo": {"version": "1.3.0"}}
+pack_install.doc_so = lambda: {"javis.zalo": {"version": "1.3.0"}}
 t0 = 1_900_000_000.0
 asyncio.run(PU.on_open(t0))
-check("opening the dashboard checks and announces", len(CALLS) == 1 and PU._load().get("jeevi.zalo") == "1.6.0",
+check("opening the dashboard checks and announces", len(CALLS) == 1 and PU._load().get("javis.zalo") == "1.6.0",
       PU._load())
 asyncio.run(PU.on_open(t0 + 60))
 check("opening it again within six hours does nothing", len(CALLS) == 1)
 STALE[0], VER[0] = True, "1.7.0"
 asyncio.run(PU.on_open(t0 + PU.INTERVAL + 5))
-check("a stale catalog is read but never announced", len(CALLS) == 2 and PU._load().get("jeevi.zalo") == "1.6.0",
+check("a stale catalog is read but never announced", len(CALLS) == 2 and PU._load().get("javis.zalo") == "1.6.0",
       (len(CALLS), PU._load()))
 
 # 0.340.0, owner 2026-10-26: no background scan. Nothing on the scheduler loop; the dashboard opening drives it.
@@ -85,7 +85,7 @@ check("the check rides on the dashboard opening (/version)",
       "asyncio.create_task(pack_updates.on_open())" in src[src.index('@app.get("/version")'):][:800])
 nj = (ROOT / "dashboard" / "notifications.js").read_text(encoding="utf-8")
 check("pressing the notice opens the Jeevi Store on the packs with an update",
-      'item.channel === "store:updates"' in nj and 'window.JeeviPacks.moKho("all", "", "", "", true)' in nj)
+      'item.channel === "store:updates"' in nj and 'window.JavisPacks.moKho("all", "", "", "", true)' in nj)
 pj = (ROOT / "dashboard" / "packs.js").read_text(encoding="utf-8")
 check("moKho can open on the 'has an update' group", "function moKho(loai, tuTrang, nhanTrang, tim, onlyUpdates)" in pj
       and "_openUpdatesNext = !!onlyUpdates" in pj and '_kho.nhom = onlyUpdates ? "Có bản mới" : "Tất cả"' in pj)

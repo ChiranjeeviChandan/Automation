@@ -14,7 +14,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-routechip-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-routechip-")
 
 import config as cfgmod  # noqa: E402
 import main  # noqa: E402

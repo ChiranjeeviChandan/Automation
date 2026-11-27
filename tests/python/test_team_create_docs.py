@@ -16,7 +16,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-team-create-docs-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-team-create-docs-"))
 
 from fastapi.testclient import TestClient  # noqa: E402
 import main as M  # noqa: E402
@@ -30,13 +30,13 @@ def check(name, cond, extra=""):
         fails.append(name)
 
 
-brain = Path(tempfile.mkdtemp(prefix="jeevi-brain-team-create-docs-")).resolve()
+brain = Path(tempfile.mkdtemp(prefix="javis-brain-team-create-docs-")).resolve()
 (brain / "agents").mkdir()
 (brain / "docs").mkdir()
 (brain / "agents" / "lan.md").write_text("---\nname: Lan\nrole: Thành viên\n---\nBạn là Lan.\n", encoding="utf-8")
 (brain / "docs" / "bang-gia.md").write_text("# Bảng giá\nRửa xe 100k\n", encoding="utf-8")
 (brain / "docs" / "quy-trinh.md").write_text("# Quy trình\n", encoding="utf-8")
-outside = Path(tempfile.mkdtemp(prefix="jeevi-outside-")) / "secret.md"
+outside = Path(tempfile.mkdtemp(prefix="javis-outside-")) / "secret.md"
 outside.write_text("not for a team", encoding="utf-8")
 
 M._TEAM_API.deps.spawn = lambda coro: coro.close() if hasattr(coro, "close") else None

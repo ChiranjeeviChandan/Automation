@@ -3,9 +3,9 @@
     python tests/run.py next_prompt
 
 Owner, 2026-11-07: Claude shows a likely next message grey in the empty chat box after it answers, and Tab fills it
-in; "em xem có thêm được vào jeevi không?". No network: the background brain (`next_prompt._ASK`) and the quick API
+in; "em xem có thêm được vào javis không?". No network: the background brain (`next_prompt._ASK`) and the quick API
 call are fakes. Pins: nothing is asked until Jeevi has said something; the prompt carries the chat, newest last, with
-hidden JEEVI_* blocks dropped and long replies cut from the front (the end holds the question); the quick API key goes
+hidden JAVIS_* blocks dropped and long replies cut from the front (the end holds the question); the quick API key goes
 first and the background brain is the fallback; an odd answer ("KHONG", a paragraph, a reply in Jeevi's voice with a
 lead) gives no suggestion; the long dash never comes out; results are cached; the switch in settings turns it off;
 the routes never error; main.py runs it on the BACKGROUND model in the no-tool sandbox.
@@ -22,7 +22,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-next-prompt-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-next-prompt-"))
 
 import main  # noqa: E402
 import config as cfgmod  # noqa: E402
@@ -43,7 +43,7 @@ def check(name, cond):
 CHAT = [
     {"role": "user", "text": "xem giúp anh 2 PR đang mở"},
     {"role": "assistant", "text": "Đề xuất: PR 1124 tạo nhánh thay thế, PR 1118 tách file test. "
-                                  "Anh chọn hướng nào cho mỗi PR?<!-- JEEVI_ASK: {\"question\":\"x\"} -->"},
+                                  "Anh chọn hướng nào cho mỗi PR?<!-- JAVIS_ASK: {\"question\":\"x\"} -->"},
 ]
 SAID = "ok làm theo đề xuất cho cả 2 PR đi"
 seen = []
@@ -89,7 +89,7 @@ check("no API key: the background brain answers", r == {"text": SAID, "source": 
 prompt = seen[0][1] if seen else ""
 check("the prompt carries both sides of the chat, newest last",
       prompt.index("xem giúp anh") < prompt.index("Anh chọn hướng nào"))
-check("hidden JEEVI_* blocks never reach the model", "JEEVI_ASK" not in prompt)
+check("hidden JAVIS_* blocks never reach the model", "JAVIS_ASK" not in prompt)
 check("the prompt asks for the USER's words, short, and KHONG when unsure",
       "giọng của NGƯỜI DÙNG" in prompt and "KHONG" in prompt)
 long_reply = "mở đầu " + "chữ " * 2000 + "câu hỏi cuối cùng?"
@@ -210,7 +210,7 @@ check("the prompt asks for the WHOLE sentence starting with what was typed",
 check("the prompt carries the chat and the suggestion that was showing",
       "Anh chọn hướng nào" in prompt and "<goi_y_cu>\n" + SAID + "\n</goi_y_cu>" in prompt and
       prompt.index("<hoi_thoai>") < prompt.index("<goi_y_cu>") < prompt.index("<da_go>"))
-check("hidden JEEVI_* blocks never reach the model here either", "JEEVI_ASK" not in prompt)
+check("hidden JAVIS_* blocks never reach the model here either", "JAVIS_ASK" not in prompt)
 seen.clear()
 finish({}, CHAT, DRAFT)
 check("no suggestion was showing: the prompt has no such block", seen and "<goi_y_cu>" not in seen[0][1])

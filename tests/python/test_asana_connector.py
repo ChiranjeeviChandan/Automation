@@ -17,7 +17,7 @@ import tempfile
 import urllib.parse
 from unittest.mock import patch
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-asana-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-asana-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -37,7 +37,7 @@ def check(name, cond, extra=""):
 
 
 RESOURCE = "https://mcp.asana.com/v2"
-REDIR = "https://jeevi.example/connect/oauth/callback"
+REDIR = "https://javis.example/connect/oauth/callback"
 
 # ---- 1. the catalog card
 cat = {c["id"]: c for c in json.loads((ROOT / "system" / "mcp-catalog.json").read_text(encoding="utf-8"))["connectors"]}

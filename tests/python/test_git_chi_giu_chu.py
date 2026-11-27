@@ -29,7 +29,7 @@ from pathlib import Path
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-gitchu-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-gitchu-"))
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -96,7 +96,7 @@ check("gọi lần hai không ghi lại vô ích (idempotent)", G._ensure_gitign
 d2 = tempfile.mkdtemp()
 (Path(d2) / ".gitignore").write_text(
     "# Jeevi brain - KHÔNG commit: khoá, log thô (có thể chứa secret), nhật ký nền.\n"
-    ".jeevi-learn.lock\nJeevi/learn-log/\nattachments/\ninbox/\n*.tmp\n\n"
+    ".javis-learn.lock\nJeevi/learn-log/\nattachments/\ninbox/\n*.tmp\n\n"
     "# luat rieng cua toi\nbao-mat/\n", encoding="utf-8")
 gi2 = _gi(d2)
 check("nâng cấp: giữ nguyên luật riêng của user", "bao-mat/" in gi2)

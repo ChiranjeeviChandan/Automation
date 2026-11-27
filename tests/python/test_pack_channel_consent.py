@@ -17,7 +17,7 @@ import os
 import tempfile
 import zipfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-pack-consent-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-pack-consent-")
 
 import pack_install  # noqa: E402
 
@@ -34,8 +34,8 @@ def make_zip(pid: str, channels: list) -> bytes:
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w") as z:
         prov = f"provides:\n  channels: [{', '.join(channels)}]\n" if channels else ""
-        z.writestr(f"{pid}/jeevi-pack.yaml",
-                   f"format: jeevi-pack\nspec: 1\nid: {pid}\nversion: 1.0.0\n"
+        z.writestr(f"{pid}/javis-pack.yaml",
+                   f"format: javis-pack\nspec: 1\nid: {pid}\nversion: 1.0.0\n"
                    f'name: {{vi: "{pid}", en: "{pid}"}}\ndescription: {{vi: "Thử"}}\n'
                    f"compat: {{app: \">=0.1.0\"}}\n" + prov)
         for rel in channels:

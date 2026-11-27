@@ -12,7 +12,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-exitreason-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-exitreason-"))
 
 import claude_agent_sdk  # noqa: E402
 import claude_exit_reason as xr  # noqa: E402
@@ -140,8 +140,8 @@ ClaudeSDK.is_available = lambda self: True
 claude_agent_sdk.ClaudeSDKClient = raising_client(EXC)
 try:
     eng = with_stderr(claude_engine(system_prompt="x", cwd=".", tag="exit-test"), [ROOT_LINE])
-    check("claude_engine installs the wrapper, once", getattr(ClaudeSDK.query, "_jeevi_exit_reason", False)
-          and xr.install() and not getattr(ClaudeSDK.query.__wrapped__, "_jeevi_exit_reason", False))
+    check("claude_engine installs the wrapper, once", getattr(ClaudeSDK.query, "_javis_exit_reason", False)
+          and xr.install() and not getattr(ClaudeSDK.query.__wrapped__, "_javis_exit_reason", False))
     evs = asyncio.run(events(eng.query("hi")))
     errs = [e["content"] for e in evs if e["type"] == "error"]
     check("ClaudeSDK.query: exit 1 as root names root, not the SDK placeholder",

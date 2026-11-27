@@ -16,7 +16,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-assets-scan-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-assets-scan-"))
 
 from fastapi.testclient import TestClient  # noqa: E402
 import channel_context  # noqa: E402
@@ -33,7 +33,7 @@ def check(name, cond, extra=""):
         fails.append(name)
 
 
-BRAIN = tempfile.mkdtemp(prefix="jeevi-brain-assets-scan-")
+BRAIN = tempfile.mkdtemp(prefix="javis-brain-assets-scan-")
 broot = Path(BRAIN).resolve()
 (broot / "docs").mkdir()
 for n in ("plan.md", "price.md", "moved.md", "late.md"):

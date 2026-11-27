@@ -80,7 +80,7 @@ function makeEnv() {
   };
   vm.createContext(ctx);
   vm.runInContext(read("vault-pins.js"), ctx);
-  env.api = win.JeeviVaultPins;
+  env.api = win.JavisVaultPins;
   return env;
 }
 

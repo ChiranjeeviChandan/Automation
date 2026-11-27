@@ -19,7 +19,7 @@ A `Value` wraps one such read (the signature of a few files, a small JSON store)
 So a change made through Jeevi shows at once. A change made behind its back (a hand edit, another process) shows
 on the event loop within RECHECK_S; on other threads it still shows at once.
 
-JEEVI_KEPT_OFF=1 switches the event-loop rules off: every caller then reads for itself as it did before.
+JAVIS_KEPT_OFF=1 switches the event-loop rules off: every caller then reads for itself as it did before.
 """
 from __future__ import annotations
 
@@ -66,7 +66,7 @@ def _behind(job: Callable[[], None]) -> None:
     """Run `job` on a helper thread. Daemon threads, so a read stuck on the disk never holds up a shutdown."""
     with _threads_lock:
         if len(_threads) < HELPERS:
-            t = threading.Thread(target=_work, name=f"jeevi-kept-{len(_threads)}", daemon=True)
+            t = threading.Thread(target=_work, name=f"javis-kept-{len(_threads)}", daemon=True)
             t.start()
             _threads.append(t)
     _jobs.put(job)
@@ -74,7 +74,7 @@ def _behind(job: Callable[[], None]) -> None:
 
 def on_loop() -> bool:
     """True when the caller is a thread that is running an asyncio event loop right now."""
-    if os.environ.get("JEEVI_KEPT_OFF") == "1":
+    if os.environ.get("JAVIS_KEPT_OFF") == "1":
         return False
     try:
         asyncio.get_running_loop()

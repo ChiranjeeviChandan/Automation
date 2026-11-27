@@ -19,7 +19,7 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-staff-aside-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-staff-aside-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -42,7 +42,7 @@ def run(coro):
     return asyncio.run(coro)
 
 
-BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-staff-aside-brain-"))
+BRAIN = Path(tempfile.mkdtemp(prefix="javis-staff-aside-brain-"))
 ENGINE_CALLS = []
 
 

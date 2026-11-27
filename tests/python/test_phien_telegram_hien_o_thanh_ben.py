@@ -25,8 +25,8 @@ import os
 import sys
 import tempfile
 
-_TMP = tempfile.mkdtemp(prefix="jeevi-tgside-")
-os.environ.setdefault("JEEVI_STATE_DIR", _TMP)
+_TMP = tempfile.mkdtemp(prefix="javis-tgside-")
+os.environ.setdefault("JAVIS_STATE_DIR", _TMP)
 os.environ.setdefault("BRAINS_DIR", os.path.join(_TMP, "brains"))
 
 try:

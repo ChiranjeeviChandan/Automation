@@ -27,7 +27,7 @@ hệ thống, `_scheduler_loop` (`server/main.py:3613-3656`), tick đúng 6 vi�
 | 3 | kanban | `main.py:3631` → `tasks.py:296` | Có |
 | 4 | reminders | `main.py:3636` → `reminders.py:312` | Có |
 | 5 | backup GitHub | `main.py:3641-3645` | Có |
-| 6 | jeevi index | `main.py:3650-3651` | Có |
+| 6 | javis index | `main.py:3650-3651` | Có |
 | - | **automations** | **không ở đâu cả** | **KHÔNG** |
 
 Hệ quả cụ thể: tạo một dòng `type: cron, status: active` ở tab Lịch thì nó hiện badge xanh
@@ -69,13 +69,13 @@ nên nó không thuộc về cuộc hợp nhất này.
 
 Chủ dự án nói người dùng sống ở chat. Đường chat tạo việc định kỳ hiện tại:
 
-Toàn bộ tool surface của hub là `jeevi_connections`, `jeevi_read_file`, `jeevi_list_dir`,
-`jeevi_write_file`, `jeevi_use_skill` (`server/mcp_hub.py:207-272`). **Không có
-`jeevi_schedule`.** `grep -rn "jeevi_schedule\|create_loop\|jeevi_remind\|jeevi_task"` = 0 hit.
+Toàn bộ tool surface của hub là `javis_connections`, `javis_read_file`, `javis_list_dir`,
+`javis_write_file`, `javis_use_skill` (`server/mcp_hub.py:207-272`). **Không có
+`javis_schedule`.** `grep -rn "javis_schedule\|create_loop\|javis_remind\|javis_task"` = 0 hit.
 
 Nên hôm nay:
 - Tạo loop = model **tự tay gõ YAML frontmatter** vào `Jeevi/loops/<slug>.md` qua
-  `jeevi_write_file`.
+  `javis_write_file`.
 - Tạo nhắc hẹn = model **shell ra `curl` POST /reminders qua Bash** (`reminders.py:17` ghi
   thẳng: "engine (Jeevi) tự gọi POST /reminders qua Bash curl từ localhost").
 - Tạo task Kanban = tương tự, curl.
@@ -149,11 +149,11 @@ Xoá:
   (`:3224`), `/automations/delete` (`:3251`), `/automations/sync` (`:3264`).
 - `_automations_path` (`:3145`), `_read_automations` (`:3149`), `_write_automations` (`:3161`).
 - Khối `caps["automations"]` (`_gather_capabilities`, `main.py:3324, 3352-3354`) và mục "##
-  Lịch (automations)" trong `_render_jeevi_index` (`main.py:3411-3413`). Đính chính khi soát
+  Lịch (automations)" trong `_render_javis_index` (`main.py:3411-3413`). Đính chính khi soát
   plan: khối này **không** rác vào system prompt. Nó đi vào `Jeevi/index.md` qua
-  `rebuild_jeevi_index` (`main.py:3462`), và vì list luôn rỗng nên `if caps["automations"]:`
+  `rebuild_javis_index` (`main.py:3462`), và vì list luôn rỗng nên `if caps["automations"]:`
   luôn falsy, section không bao giờ render. Là code chết, dọn cho sạch chứ không phải sửa bug.
-  (`_jeevi_capability_summary` tại `main.py:3477` không hề nhắc automations.)
+  (`_javis_capability_summary` tại `main.py:3477` không hề nhắc automations.)
 - Form `editAutomation` (`dashboard/studio.js:358-370`), rail `automations`
   (`dashboard/console.js:49, 65, 97, 107`).
 
@@ -187,7 +187,7 @@ thời gian và đường tạo**, KHÔNG phải nhét mọi thứ vào một fi
 
 Cái được hợp nhất giữa hai kho:
 1. **`parse_schedule()` dùng chung** cho cả hai (một field `schedule`, ba `kind`).
-2. **`jeevi_schedule` tạo được cả hai**, tự route theo `kind`/`action` (xem dưới). User và
+2. **`javis_schedule` tạo được cả hai**, tự route theo `kind`/`action` (xem dưới). User và
    model chỉ thấy một khái niệm "Việc"; chuyện nó rơi vào kho nào là chi tiết triển khai.
 3. **Một trang "Việc" duy nhất** hiển thị cả hai, đúng như `_loops_as_routines` +
    `pending_as_automations` đang làm sẵn.
@@ -199,7 +199,7 @@ mà loop không nên phủ.
 là giá trị thật của Jeevi (`self_improve.py:11` có comment cố ý tách state ra
 `loop-state.json` để "tránh giẫm chân user đang mở file trong Obsidian"). Đổi tên thư mục phải
 đụng 6 file loop trên 4 brain cộng `LEGACY_HASHES` (`system_sync.py:536`) và loop builtin
-`tu-cai-tien-jeevi` có mặt ở cả 4 brain, để đổi lấy đúng con số không. Đường dẫn là chi tiết
+`tu-cai-tien-javis` có mặt ở cả 4 brain, để đổi lấy đúng con số không. Đường dẫn là chi tiết
 triển khai; user nhìn thấy chữ "Việc".
 
 Frontmatter mới:
@@ -261,12 +261,12 @@ hại, và đó chính là thứ user muốn khi bật một việc.
 Giá trị: một việc không gắn connector POS thì **không cách nào** tạo đơn, bất kể prompt
 injection nói gì. `mode: suggest` chỉ là lời xin; scoping là rào.
 
-### Tool `jeevi_schedule` (đường chat)
+### Tool `javis_schedule` (đường chat)
 
-Thêm vào hub cạnh `jeevi_use_skill` (`mcp_hub.py:272`):
+Thêm vào hub cạnh `javis_use_skill` (`mcp_hub.py:272`):
 
 ```
-jeevi_schedule(op: create|list|cancel, name, schedule, prompt,
+javis_schedule(op: create|list|cancel, name, schedule, prompt,
                kind_hint?, connectors?, notify_only?)
 ```
 
@@ -307,7 +307,7 @@ bắt đầu phụ thuộc context chat.
 1. **`X-Jeevi-Connectors` là phần duy nhất phải sửa hub.** Hub là lớp cứng của mô hình bảo
    mật; sai ở đây là hỏng rào cho mọi engine, không chỉ loop. Cần test riêng cho: danh sách
    rỗng = hành vi cũ, danh sách sai tên = fail-closed chứ không fail-open.
-2. **Đổi `_eligible_overdue` đụng vòng chạy của loop builtin `tu-cai-tien-jeevi`** đang sống ở
+2. **Đổi `_eligible_overdue` đụng vòng chạy của loop builtin `tu-cai-tien-javis`** đang sống ở
    cả 4 brain. Cần test migration đọc được cả frontmatter cũ lẫn mới.
 3. **Zero test hiện phủ automations**, nên xoá thì an toàn, nhưng cũng nghĩa là không có lưới
    an toàn cho phần đổi tên UI. Cần test mới cho trang "Việc".

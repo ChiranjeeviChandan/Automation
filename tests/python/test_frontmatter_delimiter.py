@@ -17,7 +17,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-fm-state-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-fm-state-"))
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -115,7 +115,7 @@ for i, (meta, body) in enumerate((
         ({"name": "a", "steps": [{"agent": "x", "task": "y"}]}, "Body\n\n---\n\nAfter a rule."),
         ({"description": "dài: có dấu hai chấm", "tags": ["Sales", "AI"]}, ""),
         ({"name": "Viết email"}, "# Tiêu đề\n- [ ] việc\n"))):
-    p = Path(tempfile.mkdtemp(prefix="jeevi-fm-")) / f"s{i}.md"
+    p = Path(tempfile.mkdtemp(prefix="javis-fm-")) / f"s{i}.md"
     main._write_md(p, meta, body)
     texts.append((f"synthetic-{i}", p.read_text(encoding="utf-8")))
 n_same, differ = 0, []

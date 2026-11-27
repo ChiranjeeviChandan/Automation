@@ -34,18 +34,18 @@ check("cú pháp bash hợp lệ", _syntax.returncode == 0, _syntax.stderr)
 SRC = WD.read_text(encoding="utf-8")
 check("kick bằng launchctl kickstart -k (SIGTERM bị phớt thì launchd tự SIGKILL)",
       "kickstart -k" in SRC)
-check("LaunchAgent riêng com.jeevi.watchdog, không đè lên job chính com.jeevi.os",
-      "com.jeevi.watchdog" in SRC and "StartInterval" in SRC)
-check("nhãn job chính đổi được qua JEEVI_LAUNCHD_LABEL (đồng bộ với updater.py)",
-      "JEEVI_LAUNCHD_LABEL" in SRC)
+check("LaunchAgent riêng com.javis.watchdog, không đè lên job chính com.javis.os",
+      "com.javis.watchdog" in SRC and "StartInterval" in SRC)
+check("nhãn job chính đổi được qua JAVIS_LAUNCHD_LABEL (đồng bộ với updater.py)",
+      "JAVIS_LAUNCHD_LABEL" in SRC)
 
 
 def chay(state_dir: str, port: int):
     """Một nhát `watchdog.sh check` với kick giả + state riêng, trả stdout."""
     r = subprocess.run(
         ["bash", str(WD), "check"], capture_output=True, text=True, cwd=str(ROOT),
-        env={**os.environ, "JEEVI_PORT": str(port), "JEEVI_STATE_DIR": state_dir,
-             "JEEVI_WATCHDOG_FAILS": "3", "JEEVI_WATCHDOG_KICK_CMD": "echo DA_KICK"},
+        env={**os.environ, "JAVIS_PORT": str(port), "JAVIS_STATE_DIR": state_dir,
+             "JAVIS_WATCHDOG_FAILS": "3", "JAVIS_WATCHDOG_KICK_CMD": "echo DA_KICK"},
         timeout=30)
     return (r.stdout or "") + (r.stderr or "")
 

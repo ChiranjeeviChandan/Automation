@@ -21,8 +21,8 @@ import os
 import sys
 import tempfile
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-kenh-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-kenh-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -76,10 +76,10 @@ check("mặc định kênh bot vẫn là Telegram (bản ghi cũ không có chan
       chatbot_store.KENH_DEFAULT == "telegram")
 zp = channels.spec("zalo_personal")
 check("Zalo cá nhân là kênh kind=account, có công tắc ghi, có trả lời từ Jeevi",
-      zp and zp.kind == "account" and zp.nl("ghi_theo_cong_tac") and zp.nl("tra_loi_tu_jeevi"))
+      zp and zp.kind == "account" and zp.nl("ghi_theo_cong_tac") and zp.nl("tra_loi_tu_javis"))
 tg = channels.spec("telegram")
 check("Telegram: kind=bot, có nhóm, gửi file, trả lời từ Jeevi",
-      tg and tg.kind == "bot" and tg.nl("nhom") and tg.nl("gui_file") and tg.nl("tra_loi_tu_jeevi"))
+      tg and tg.kind == "bot" and tg.nl("nhom") and tg.nl("gui_file") and tg.nl("tra_loi_tu_javis"))
 ui = channels.cho_giao_dien()
 check("bản cho giao diện có logo, nhãn, năng lực, cách lấy token (giao diện không đoán theo id)",
       all(k in ui[0] for k in ("id", "nhan", "logo", "kind", "nang_luc", "lay_token", "tom_tat")))

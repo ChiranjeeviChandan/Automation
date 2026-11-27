@@ -19,7 +19,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-bot-history-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-bot-history-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

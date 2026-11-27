@@ -7,8 +7,8 @@ này làm xong có kết quả rồi mới tới thằng kia". The owner (17/11)
 người này cần đợi kết quả của người kia ... giống như mỗi người đi làm việc của họ khi được giao", "anh không muốn giới
 hạn team làm việc luôn".
 
-- Every waiting job starts at once; no cap on the jobs of a team nor on the teams at work (JEEVI_TEAM_JOBS and
-  JEEVI_TEAM_PARALLEL still set one).
+- Every waiting job starts at once; no cap on the jobs of a team nor on the teams at work (JAVIS_TEAM_JOBS and
+  JAVIS_TEAM_PARALLEL still set one).
 - Jobs given to the whole team no longer wait for each other behind the deputy lead.
 - Two jobs of the same assistant both start; the assistant works their turns one at a time, in the order asked, and a
   step waiting for a teammate busy in the same team is never stopped as "busy too long".
@@ -21,8 +21,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-TEMP = Path(tempfile.mkdtemp(prefix="jeevi-team-parallel-jobs-"))
-os.environ.setdefault("JEEVI_STATE_DIR", str(TEMP / "state"))
+TEMP = Path(tempfile.mkdtemp(prefix="javis-team-parallel-jobs-"))
+os.environ.setdefault("JAVIS_STATE_DIR", str(TEMP / "state"))
 (TEMP / "state").mkdir(exist_ok=True)
 
 import sessions  # noqa: E402
@@ -231,12 +231,12 @@ check("two jobs for the whole team and a member's job all run together", sorted(
 check("all three end", all(ts.get_task(x)["status"] == "done" for x in (l1, l2, m1)),
       [(ts.get_task(x)["status"], ts.get_task(x).get("block_kind")) for x in (l1, l2, m1)])
 
-# ───── JEEVI_TEAM_JOBS=1: one job at a time, as before ─────
-os.environ["JEEVI_TEAM_JOBS"] = "1"
+# ───── JAVIS_TEAM_JOBS=1: one job at a time, as before ─────
+os.environ["JAVIS_TEAM_JOBS"] = "1"
 try:
     r, tm, ts, fake, T, _ = world("mot-viec")
 finally:
-    os.environ.pop("JEEVI_TEAM_JOBS", None)
+    os.environ.pop("JAVIS_TEAM_JOBS", None)
 o1, o2 = job(r, T, "Việc A", "ag_minh"), job(r, T, "Việc B", "ag_hoa")
 
 
@@ -246,9 +246,9 @@ async def one():
     await r.wait_jobs()
     return now
 
-check("JEEVI_TEAM_JOBS=1 gives one job at a time back", asyncio.run(one()) == [o1])
+check("JAVIS_TEAM_JOBS=1 gives one job at a time back", asyncio.run(one()) == [o1])
 
-# ───── JEEVI_TEAM_PARALLEL / max_parallel_teams still cap the teams at work when set ─────
+# ───── JAVIS_TEAM_PARALLEL / max_parallel_teams still cap the teams at work when set ─────
 r, tm, ts, fake, T, new_team = world("hai-team", max_parallel_teams=2)
 T2 = new_team("team-hai")
 p = [job(r, T, f"A {s}", f"ag_{s}") for s in ("minh", "hoa", "tu")]

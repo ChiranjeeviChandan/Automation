@@ -10,7 +10,7 @@ Chạy tay / CI (không cần pytest, không chạm mạng):
 Phủ: có brain_root → recipe /reminders (Telegram + dashboard) chứa 'brain' đúng path và JSON hợp lệ;
 path có KHOẢNG TRẮNG vẫn là JSON chuỗi hợp lệ; recipe send-file KHÔNG bị chèn brain; thiếu brain_root
 → không có field brain (giữ tương thích) và có ghi chú cảnh báo rơi về Brain Default; có gợi ý dùng
-tool jeevi_schedule.
+tool javis_schedule.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401  - nạp server/ vào sys.path (xem tests/python/_paths.py)
 import json
@@ -19,7 +19,7 @@ import re
 import sys
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-chanbrain-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-chanbrain-"))
 
 import channel_context as cc  # noqa: E402
 
@@ -55,7 +55,7 @@ rj = _reminder_json(tg)
 check("TG: body /reminders là JSON hợp lệ", isinstance(rj, dict))
 check("TG: brain trong body = path phiên", (rj or {}).get("brain") == BRAIN)
 check("TG: vẫn giữ chat_id đúng người", (rj or {}).get("chat_id") == "12345")
-check("TG: gợi ý dùng tool jeevi_schedule", "jeevi_schedule" in tg)
+check("TG: gợi ý dùng tool javis_schedule", "javis_schedule" in tg)
 check("TG: fallback huỷ dùng đúng POST /reminders/cancel", "POST http://127.0.0.1:7777/reminders/cancel" in tg)
 check("TG: fallback huỷ dùng form-data id + brain", '--data-urlencode "id=<r_id>"' in tg
       and f'--data-urlencode "brain={BRAIN}"' in tg)

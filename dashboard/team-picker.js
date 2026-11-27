@@ -213,7 +213,7 @@
   // create box. The picker is team-github.js, saving into the box's state; teams.js attaches them to the new team's
   // chat once POST /teams answers (the same route as the "Repo GitHub" part of the team's Info tab).
   function repoLogo() {
-    var G = typeof window !== "undefined" && window.JeeviGithubRepos;
+    var G = typeof window !== "undefined" && window.JavisGithubRepos;
     return G && G.logo ? G.logo : ic("git-branch");
   }
   function setRepos(st, names) {
@@ -293,7 +293,7 @@
   }
 
   function face(a, size) {
-    var A = typeof window !== "undefined" && window.JeeviAvatar;
+    var A = typeof window !== "undefined" && window.JavisAvatar;
     if (A && A.html && a && a.slug) {
       return '<span class="tmp-face" aria-hidden="true">' + A.html({ slug: a.slug, avatar: a.avatar || undefined }, size) + "</span>";
     }
@@ -433,6 +433,6 @@
     addLink: addLink, removeLink: removeLink, docPayload: docPayload, docsCount: docsCount, docsHtml: docsHtml,
     docChipsHtml: docChipsHtml, docResultsHtml: docResultsHtml, docsSummaryHtml: docsSummaryHtml, searchRows: searchRows,
     setStrings: function (o) { FALLBACK = o || {}; } };
-  if (typeof window !== "undefined") window.JeeviTeamPicker = api;
+  if (typeof window !== "undefined") window.JavisTeamPicker = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

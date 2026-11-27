@@ -15,8 +15,8 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-team-gh-")
-BR = Path(tempfile.mkdtemp(prefix="jeevi-team-gh-brain-"))
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-team-gh-")
+BR = Path(tempfile.mkdtemp(prefix="javis-team-gh-brain-"))
 (BR / "agents").mkdir()
 for slug, name in (("lan", "Lan"), ("minh", "Minh")):
     (BR / "agents" / f"{slug}.md").write_text(f"---\nname: {name}\nrole: Thành viên\n---\nBạn là {name}.\n", encoding="utf-8")
@@ -136,7 +136,7 @@ async def _fake_inbox(chat, text, **kw):
 real_inbox = main._bo_vao_hom_thu
 main._bo_vao_hom_thu = _fake_inbox
 try:
-    ok = asyncio.run(main._github_notify(sid, "**o/r**\nĐã đẩy lên nhánh `jeevi/abc`, PR #7", True))
+    ok = asyncio.run(main._github_notify(sid, "**o/r**\nĐã đẩy lên nhánh `javis/abc`, PR #7", True))
 finally:
     main._bo_vao_hom_thu = real_inbox
 store = main.get_store()

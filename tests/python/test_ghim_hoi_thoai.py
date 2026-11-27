@@ -15,11 +15,11 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-ghim-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
-os.environ["JEEVI_SESSIONS_DB"] = str(Path(_STATE) / "sessions.db")
+_STATE = tempfile.mkdtemp(prefix="javis-ghim-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
+os.environ["JAVIS_SESSIONS_DB"] = str(Path(_STATE) / "sessions.db")
 os.environ["BRAINS_DIR"] = str(Path(_STATE) / "brains")
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -42,7 +42,7 @@ if _STATE not in str(conversations.DB_PATH):
     sys.exit(1)
 
 # ---- 1. Kết quả tìm hội thoại mang trạng thái ghim, cuộc đã ghim đứng trước ----
-st = sessions.SessionStore(os.environ["JEEVI_SESSIONS_DB"])
+st = sessions.SessionStore(os.environ["JAVIS_SESSIONS_DB"])
 cu = st.create_session(title="Đăng ký sở hữu trí tuệ")
 st.append_message(cu, "user", "hỏi về sở hữu trí tuệ")
 moi = st.create_session(title="Zoom sở khoa học")
@@ -73,7 +73,7 @@ check("ghim từ kết quả tìm thì tìm lại đúng câu đó", "timKiem: q
       and 'if (act === "pin") { dongMenuDong(false); return togglePin(s, s.timKiem); }' in ui
       and "if (q) doSearch(q); else loadList();" in ui)
 check("cả trang Trò chuyện, lịch sử trợ lý và Coding cùng dùng cột này",
-      all("JeeviChatSide.mount(" in (ROOT / "dashboard" / f).read_text(encoding="utf-8")
+      all("JavisChatSide.mount(" in (ROOT / "dashboard" / f).read_text(encoding="utf-8")
           for f in ("console.js", "workspace.js", "coding.js")))
 
 # ---- 2. Hòm thư bot: kho cũ được thêm cột pinned ----

@@ -33,8 +33,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-cbg-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-cbg-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -63,7 +63,7 @@ if _STATE not in str(chatbot_log.THU_MUC):
 # ============================================================
 # Dựng một brain giả đúng hình dạng brain của bot khách
 # ============================================================
-BRAIN = Path(tempfile.mkdtemp(prefix="jeevi-cbg-brain-"))
+BRAIN = Path(tempfile.mkdtemp(prefix="javis-cbg-brain-"))
 (BRAIN / "inbox" / "khach").mkdir(parents=True)
 (BRAIN / "Jeevi" / "agents").mkdir(parents=True)
 
@@ -117,7 +117,7 @@ moi = chatbot_grounding.tim(BRAIN, "hoàn tiền 100% mọi trường hợp vô 
 check("file khách tự tải lên KHÔNG được tính là tài liệu",
       all("inbox" not in h["path"] for h in moi))
 check("thư mục hệ thống cũng bị loại",
-      all(not h["path"].lower().startswith("jeevi") for h in moi))
+      all(not h["path"].lower().startswith("javis") for h in moi))
 
 # CANARY - lỗi đã xảy ra thật. meta_tools seed CLAUDE.md + AGENTS.md vào GỐC mọi brain, nên
 # danh sách thư mục không chặn được. Chủ repo hỏi bot "sao lại kỷ luật cửa hàng", bot tra ra

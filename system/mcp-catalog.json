@@ -109,7 +109,7 @@
       "default_perm": "readonly",
       "risk": "MCP của Cloudflare chỉ có 3 công cụ: docs (tra tài liệu), search (tìm API cần gọi) và execute (chạy đoạn mã gọi API Cloudflare thật).\n\nexecute gọi được MỌI API mà token cho phép, từ đọc thống kê tới XOÁ tên miền, sửa DNS, deploy Worker, xoá bucket R2.\nJeevi không phân biệt được một lần execute là đọc hay xoá, nên nó nằm ở nhóm nguy hiểm.\n\nMức Chỉ đọc và Ghi nháp: Jeevi chỉ tra tài liệu và tìm API, chưa đụng tới tài khoản.\n\nMức Toàn quyền: Jeevi tự thao tác thật. Sai một bản ghi DNS là website hoặc email tắt ngay, xoá Worker hay bucket là mất dữ liệu.\n\nCách an toàn nhất: muốn Jeevi chỉ đọc số liệu thì tạo token CHỈ CÓ quyền Read rồi mới nâng Toàn quyền. Khi đó execute có chạy cũng không sửa được gì.",
       "thay_goi": [
-        "jeevi.cloudflare"
+        "javis.cloudflare"
       ]
     },
     {
@@ -141,7 +141,7 @@
       "default_perm": "readonly",
       "risk": "MCP của Cloudflare chỉ có 3 công cụ: docs (tra tài liệu), search (tìm API cần gọi) và execute (chạy đoạn mã gọi API Cloudflare thật).\n\nexecute gọi được MỌI API mà quyền bạn đã cấp cho phép, từ đọc thống kê tới XOÁ tên miền, sửa DNS, deploy Worker, xoá bucket R2.\nJeevi không phân biệt được một lần execute là đọc hay xoá, nên nó nằm ở nhóm nguy hiểm.\n\nMức Chỉ đọc và Ghi nháp: Jeevi chỉ tra tài liệu và tìm API, chưa đụng tới tài khoản.\n\nMức Toàn quyền: Jeevi tự thao tác thật. Sai một bản ghi DNS là website hoặc email tắt ngay, xoá Worker hay bucket là mất dữ liệu.\n\nCách an toàn nhất: muốn Jeevi chỉ đọc số liệu thì lúc đăng nhập CHỈ tick quyền đọc rồi mới nâng Toàn quyền. Khi đó execute có chạy cũng không sửa được gì.",
       "thay_goi": [
-        "jeevi.cloudflare-oauth"
+        "javis.cloudflare-oauth"
       ]
     },
             {
@@ -149,7 +149,7 @@
       "name": "Zalo Agent MCP",
       "icon": "/static/logos/zalo.png",
       "category": "Nhắn tin",
-      "description": "MCP của jeevi-zalo (bản CLI Zalo riêng của Jeevi): đọc tin mới/lịch sử, tìm cuộc chat, biết ai vừa vào nhóm và vào lúc nào, duyệt người xin vào nhóm, đọc tag (thẻ phân loại) của cuộc chat, xem media và gửi tin bằng tài khoản Zalo cá nhân.",
+      "description": "MCP của javis-zalo (bản CLI Zalo riêng của Jeevi): đọc tin mới/lịch sử, tìm cuộc chat, biết ai vừa vào nhóm và vào lúc nào, duyệt người xin vào nhóm, đọc tag (thẻ phân loại) của cuộc chat, xem media và gửi tin bằng tài khoản Zalo cá nhân.",
       "status": "beta",
       "transport": "stdio",
       "command": "npx",
@@ -174,13 +174,13 @@
         { "command": "npx", "args": ["-y", "--prefer-offline", "https://codeload.github.com/blogminhquy/javis-zalo/tar.gz/refs/tags/v1.12.0", "mcp", "start"] },
         { "command": "npx", "args": ["-y", "--prefer-offline", "https://codeload.github.com/blogminhquy/javis-zalo/tar.gz/refs/tags/v1.13.0", "mcp", "start"] }
       ],
-      "ngoai_le_ban_chinh_thuc": "Zalo KHÔNG đi theo bản gốc nữa (chủ repo chốt 2026-10-05): Jeevi chạy bản CLI riêng jeevi-zalo (github.com/blogminhquy/javis-zalo), cài từ tarball của tag phát hành, chỉ thư viện zca-js bên dưới đi theo bản chính thức trên npm. Ghim theo tag vì đăng nhập QR (zalo_login.py), gửi ảnh/tag/ghi chú nhóm (zalo_cli.py) và gói jeevi.zalo đọc thẳng định dạng của đúng bản đó. Ba chỗ ghim (ở đây, zalo_cli.py, zalo_login.py) phải luôn trùng nhau; --prefer-offline vì tag không đổi nên khỏi hỏi lại GitHub mỗi lần khởi động.",
+      "ngoai_le_ban_chinh_thuc": "Zalo KHÔNG đi theo bản gốc nữa (chủ repo chốt 2026-10-05): Jeevi chạy bản CLI riêng javis-zalo (github.com/blogminhquy/javis-zalo), cài từ tarball của tag phát hành, chỉ thư viện zca-js bên dưới đi theo bản chính thức trên npm. Ghim theo tag vì đăng nhập QR (zalo_login.py), gửi ảnh/tag/ghi chú nhóm (zalo_cli.py) và gói javis.zalo đọc thẳng định dạng của đúng bản đó. Ba chỗ ghim (ở đây, zalo_cli.py, zalo_login.py) phải luôn trùng nhau; --prefer-offline vì tag không đổi nên khỏi hỏi lại GitHub mỗi lần khởi động.",
       "requires": { "node": ">=20" },
       "isolate_home": true,
       "auth": {
         "type": "qr",
         "fields": [],
-        "guide": "Cần Node.js 20+. Bấm Kết nối, quét QR bằng app Zalo rồi dùng trực tiếp các tool MCP của jeevi-zalo. Không còn listener/webhook/luật Zalo riêng của Jeevi.",
+        "guide": "Cần Node.js 20+. Bấm Kết nối, quét QR bằng app Zalo rồi dùng trực tiếp các tool MCP của javis-zalo. Không còn listener/webhook/luật Zalo riêng của Jeevi.",
         "guide_url": "https://github.com/blogminhquy/javis-os/blob/main/docs/12-zalo.md"
       },
       "tool_meta": {
@@ -199,9 +199,9 @@
         "danger": ["zalo_send_message", "zalo_send_link", "zalo_send_typing", "zalo_send_file", "zalo_add_reaction", "zalo_review_join_requests"]
       },
       "default_perm": "full",
-      "companion_pack": "jeevi.zalo",
+      "companion_pack": "javis.zalo",
       "purge_warning": "Xoá kết nối này là mất luôn phiên đăng nhập QR. Muốn dùng lại phải mở app Zalo trên điện thoại quét mã một lần nữa.",
-      "risk": "Connector này MẶC ĐỊNH ở mức TOÀN QUYỀN, tức tool gửi tin đang bật. Muốn chặn gửi, hãy hạ xuống Ghi nháp hoặc Chỉ đọc.\n\njeevi-zalo dùng API Zalo không chính thức qua zca-js. Tài khoản CÓ THỂ bị hạn chế hoặc KHOÁ; khuyến nghị dùng tài khoản phụ và không tự động gửi hàng loạt.",
+      "risk": "Connector này MẶC ĐỊNH ở mức TOÀN QUYỀN, tức tool gửi tin đang bật. Muốn chặn gửi, hãy hạ xuống Ghi nháp hoặc Chỉ đọc.\n\njavis-zalo dùng API Zalo không chính thức qua zca-js. Tài khoản CÓ THỂ bị hạn chế hoặc KHOÁ; khuyến nghị dùng tài khoản phụ và không tự động gửi hàng loạt.",
       "rate_limit": { "calls_per_min": 20 }
     },
             {

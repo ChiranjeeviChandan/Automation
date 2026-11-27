@@ -18,7 +18,7 @@ khi có plugin đăng ký (0 overhead khi không plugin nào dùng hook).
 AN TOÀN (lớp CỨNG - plugin chạy code Python THẬT trong tiến trình server):
     - Bundled: tự nạp khi effective-enabled (mặc định theo manifest `enabled:`).
     - Vault:  loaded when the manifest says enabled:true. Since 0.162.0 (owner decision) user and vault
-      plugins load by default; JEEVI_ENABLE_USER_PLUGINS=false opts out (it used to be opt-in, like
+      plugins load by default; JAVIS_ENABLE_USER_PLUGINS=false opts out (it used to be opt-in, like
       Hermes HERMES_ENABLE_PROJECT_PLUGINS).
     - Enable-state: bundled ở STATE_DIR/plugins.json (override, KHÔNG mutate file app);
       vault ở frontmatter plugin.yaml.
@@ -67,13 +67,13 @@ _HTTP_METHODS = frozenset({"GET", "POST", "PUT", "PATCH", "DELETE"})
 _HTTP_NGUON = frozenset({"bundled", "pack", "user"})
 
 # Tên tool builtin/lõi - plugin KHÔNG được trùng (mcp_hub cũng skip lúc merge, đây là lớp 2).
-_RESERVED_TOOLS = {"jeevi_connections", "jeevi_read_file", "jeevi_list_dir",
-                   "jeevi_write_file", "jeevi_use_skill", "jeevi_edit_file", "jeevi_search_files",
-                   "jeevi_run_command", "jeevi_terminal", "jeevi_process",
-                   "jeevi_web_search", "jeevi_web_fetch"}
+_RESERVED_TOOLS = {"javis_connections", "javis_read_file", "javis_list_dir",
+                   "javis_write_file", "javis_use_skill", "javis_edit_file", "javis_search_files",
+                   "javis_run_command", "javis_terminal", "javis_process",
+                   "javis_web_search", "javis_web_fetch"}
 
 # Name of the in-process plugin MCP server the Claude Agent SDK engine mounts (claude_sdk_engine).
-PLUGIN_SERVER = "jeevi-plugins"
+PLUGIN_SERVER = "javis-plugins"
 
 
 def grant_patterns(names) -> List[str]:
@@ -81,16 +81,16 @@ def grant_patterns(names) -> List[str]:
 
     Background lanes below Full run with an allowlist (Read/Write/Edit...) and no MCP, which used
     to mean no plugin tool at all: a Kanban job or a workflow step that had to make an image could
-    never reach `jeevi_generate_image` without opening Full access, which also opens posting and
+    never reach `javis_generate_image` without opening Full access, which also opens posting and
     messaging. Naming the tool here grants that one tool and nothing else. Both server names are
-    listed: the SDK engine serves plugins in-process as `jeevi-plugins`, and when the hub is
-    attached the same tool is also reachable as `mcp__jeevi__<name>`. The tool's own `min_mode`
+    listed: the SDK engine serves plugins in-process as `javis-plugins`, and when the hub is
+    attached the same tool is also reachable as `mcp__javis__<name>`. The tool's own `min_mode`
     is still checked at call time against the session mode, so this never lifts a level."""
     out: List[str] = []
     for n in names or ():
         n = str(n or "").strip()
         if _TOOL_RE.match(n):
-            out += [f"mcp__{PLUGIN_SERVER}__{n}", f"mcp__jeevi__{n}"]
+            out += [f"mcp__{PLUGIN_SERVER}__{n}", f"mcp__javis__{n}"]
     return list(dict.fromkeys(out))
 
 
@@ -117,10 +117,10 @@ def _env_user_enabled() -> bool:
 
     0.162.0, owner decision: YES BY DEFAULT. Each plugin still runs only when its own manifest says
     `enabled: true` (a plugin created from chat starts at `enabled: false`), and the permission level
-    of the caller still decides every tool call. Opt out with JEEVI_ENABLE_USER_PLUGINS=false (or
-    the old alias JEEVI_ENABLE_VAULT_PLUGINS=false) and a restart. The new name wins when both are
+    of the caller still decides every tool call. Opt out with JAVIS_ENABLE_USER_PLUGINS=false (or
+    the old alias JAVIS_ENABLE_VAULT_PLUGINS=false) and a restart. The new name wins when both are
     set; an empty value counts as not set. Bundled plugins never go through this gate."""
-    for k in ("JEEVI_ENABLE_USER_PLUGINS", "JEEVI_ENABLE_VAULT_PLUGINS"):
+    for k in ("JAVIS_ENABLE_USER_PLUGINS", "JAVIS_ENABLE_VAULT_PLUGINS"):
         v = str(os.getenv(k, "") or "").strip().lower()
         if v:
             return v not in _OFF_VALUES
@@ -132,7 +132,7 @@ _env_vault_enabled = _env_user_enabled
 
 
 def global_plugins_dir() -> Path:
-    """Thư mục plugin TOÀN CỤC (chung mọi brain) - JEEVI_STATE_DIR/plugins."""
+    """Thư mục plugin TOÀN CỤC (chung mọi brain) - JAVIS_STATE_DIR/plugins."""
     return GLOBAL_DIR
 
 
@@ -256,8 +256,8 @@ def _iter_plugin_dirs(vault_root: Optional[str]):
 def _slug_bundled() -> set:
     """Slug của plugin ĐI KÈM APP. Trình cài từ chối gói mang plugin trùng một trong số này.
 
-    Vì sao chặn ở lúc CÀI chứ không lúc nạp: một gói lặng lẽ thay `jeevi_task` hay
-    `jeevi_schedule` dưới một màn hình xác nhận chỉ nói "gói này chạy mã" là đúng kiểu bất ngờ
+    Vì sao chặn ở lúc CÀI chứ không lúc nạp: một gói lặng lẽ thay `javis_task` hay
+    `javis_schedule` dưới một màn hình xác nhận chỉ nói "gói này chạy mã" là đúng kiểu bất ngờ
     không nên có. Chặn sớm thì người dùng thấy lý do trước khi có gì rơi xuống đĩa."""
     try:
         return {d.name for d in BUNDLED_DIR.iterdir()
@@ -644,7 +644,7 @@ def shared_signature() -> tuple:
 
 def _import_entry(slug: str, source: str, entry: Path):
     """Nạp entry file thành module riêng. Chèn tạm dir vào sys.path để import phụ (nếu có)."""
-    mod_name = f"jeevi_plugin_{source}_{re.sub(r'[^a-z0-9_]', '_', slug.lower())}"
+    mod_name = f"javis_plugin_{source}_{re.sub(r'[^a-z0-9_]', '_', slug.lower())}"
     spec = importlib.util.spec_from_file_location(mod_name, str(entry))
     if not spec or not spec.loader:
         raise ImportError(f"không tạo được spec cho {entry}")
@@ -701,7 +701,7 @@ def _pack_duoc_nap(pdir: Path) -> Tuple[bool, str]:
        cài, vì ai ghi được `plugin.py` thì cũng ghi được `packs.json` - một chốt chỉ nằm ở
        trình cài thì chỉ gác được trình cài, không gác được lần nạp sau.
 
-    Cổng `JEEVI_ENABLE_USER_PLUGINS` KHÔNG áp ở đây, có chủ ý. Cổng đó bịt lỗ "thư mục ghi
+    Cổng `JAVIS_ENABLE_USER_PLUGINS` KHÔNG áp ở đây, có chủ ý. Cổng đó bịt lỗ "thư mục ghi
     được nên mã chạy mà không ai bấm gì" - đúng với `<brain>/plugins/` vì model ghi được vào
     vault. Trình cài phá bỏ đúng điều kiện đó: có người bấm, có màn hình liệt kê từng tệp .py,
     và có chữ ký ghi lại để đối chiếu. Cùng loại bảo đảm, chỉ theo TỪNG gói thay vì bật tắt
@@ -753,7 +753,7 @@ def _load_all(vault_root: Optional[str], scope_vault: bool = True) -> dict:
                 continue
             if source in ("user", "vault"):
                 if not env_ok:
-                    continue   # opted out on this machine: JEEVI_ENABLE_USER_PLUGINS=false
+                    continue   # opted out on this machine: JAVIS_ENABLE_USER_PLUGINS=false
                 if not valid_slug(slug):
                     errors[slug] = "slug không hợp lệ"
                     continue
@@ -970,12 +970,12 @@ async def _maybe_await(v):
 # Tools that queue work which runs LATER, and the argument holding that work's level (security fix, 2026-11-05 audit).
 # Both are `safe`, so an "auto" run (a customer bot, a loop reading untrusted text) could call them, and the work they
 # queued ran at Full access by default: shell, every connection. The level a run hands on is now capped at its own.
-_JOB_LEVEL_ARG = {"jeevi_schedule": "muc_quyen", "jeevi_task": "mode"}
+_JOB_LEVEL_ARG = {"javis_schedule": "muc_quyen", "javis_task": "mode"}
 _JOB_LEVEL_RANK = {"suggest": 0, "auto": 1, "full": 2}
 
 
 # Tools through which a turn leaves work for LATER (security fix, 2026-11-10).
-_QUEUE_TOOLS = frozenset({"jeevi_schedule", "jeevi_task", "jeevi_job"})
+_QUEUE_TOOLS = frozenset({"javis_schedule", "javis_task", "javis_job"})
 
 
 def _chatbot_turn() -> bool:
@@ -1010,14 +1010,14 @@ def _chatbot_queue_refusal(name: str, args: dict, mode: str) -> str:
         if m in ("", "full"):
             return ""
     a = args or {}
-    op = str(a.get("op") or ("create" if name == "jeevi_schedule" else "")).strip().lower()
+    op = str(a.get("op") or ("create" if name == "javis_schedule" else "")).strip().lower()
     if op == "list":
         return ""
-    if name == "jeevi_schedule" and op == "create" and a.get("notify_only") in (True, "true", "True", 1, "1"):
+    if name == "javis_schedule" and op == "create" and a.get("notify_only") in (True, "true", "True", 1, "1"):
         return ""
     return ("ERROR: chatbot trả lời khách ở mức dưới Toàn quyền không được giao việc cho AI chạy sau (việc nền, loop, "
             "nhắc hẹn có AI làm hộ) và không được sửa, huỷ hay trả lời việc đã có. Đây là rào bảo mật: việc đó sẽ chạy "
-            "bằng quyền của chủ, ngoài phạm vi của bot. Vẫn làm được: tạo lời nhắc CHỈ NHẮC bằng jeevi_schedule với "
+            "bằng quyền của chủ, ngoài phạm vi của bot. Vẫn làm được: tạo lời nhắc CHỈ NHẮC bằng javis_schedule với "
             "notify_only=true. Việc cần AI làm thì ghi lại để chủ tự giao, hoặc chủ nâng bot này lên Toàn quyền.")
 
 
@@ -1026,7 +1026,7 @@ def _cap_job_level(name: str, args: dict, mode: str):
 
     Full-access runs and gated Team steps (they go through the owner's approval) pass unchanged. Below Full, the level
     argument is set to the weaker of what was asked (missing = the tool's default, Full) and the run's own level, and
-    `jeevi_schedule op=update` is refused: it would rewrite the prompt of a job the owner may have made at Full."""
+    `javis_schedule op=update` is refused: it would rewrite the prompt of a job the owner may have made at Full."""
     why = _chatbot_queue_refusal(name, args, mode)
     if why:
         return args, why
@@ -1043,11 +1043,11 @@ def _cap_job_level(name: str, args: dict, mode: str):
         return args, ""
     tran = "auto" if eff == "safe" else "suggest"
     a = dict(args or {})
-    op = str(a.get("op") or ("create" if name == "jeevi_schedule" else "")).strip().lower()
-    if name == "jeevi_schedule" and op == "update":
+    op = str(a.get("op") or ("create" if name == "javis_schedule" else "")).strip().lower()
+    if name == "javis_schedule" and op == "update":
         return a, ("ERROR: việc chạy dưới mức Toàn quyền không được sửa việc đã lên lịch (việc đó có thể đang chạy "
                    "toàn quyền). Nhờ chủ sửa ở trang Việc, hoặc tạo việc mới.")
-    if name == "jeevi_task" and op != "add":
+    if name == "javis_task" and op != "add":
         return a, ""
     xin = str(a.get(field) or "full").strip().lower()
     if _JOB_LEVEL_RANK.get(xin, 2) > _JOB_LEVEL_RANK[tran]:
@@ -1064,7 +1064,7 @@ def _make_call(tool: dict, ctx: PluginContext, mode: str):
     async def _call(args):
         min_mode = _required_mode(tool, args)
         if str(mode or "").strip().lower() == "gated" and min_mode != "readonly":
-            # 0.207.0: a gated Team step. A plugin that writes or acts (review: `jeevi_task` and `jeevi_schedule` are
+            # 0.207.0: a gated Team step. A plugin that writes or acts (review: `javis_task` and `javis_schedule` are
             # `safe` yet queue work that runs at full later) needs the owner's approval of this exact call
             # (team_gate.py). Read-only plugin tools run.
             import asyncio
@@ -1154,7 +1154,7 @@ def unload(slug: str) -> dict:
                 ent["sig"] = None      # buộc dựng lại ở lần gọi sau
         an = f"_{re.sub(r'[^a-z0-9_]', '_', slug.lower())}"
         for mod in [m for m in list(sys.modules)
-                    if m.startswith("jeevi_plugin_") and m.endswith(an)]:
+                    if m.startswith("javis_plugin_") and m.endswith(an)]:
             sys.modules.pop(mod, None)
             ra["modules"] += 1
     return ra
@@ -1182,7 +1182,7 @@ def set_removed(slug: str, removed: bool) -> dict:
 def plugin_tools(mode: str = "full", vault_root: Optional[str] = None, *,
                  scope_vault: bool = True) -> Tuple[List[dict], Dict[str, dict]]:
     """(tools_spec, route) từ MỌI plugin đã nạp. mcp_hub merge vào discover_all.
-    tools_spec: [{fn, server:'jeevi', name, description, schema}]. route: {fn: {'call': async fn}}.
+    tools_spec: [{fn, server:'javis', name, description, schema}]. route: {fn: {'call': async fn}}.
 
     mode: mức quyền lượt chạy. vault_root: brain để ctx của plugin biết đang ở đâu.
     scope_vault=False: KHÔNG nạp plugin riêng-của-vault (chỉ bundled + global) nhưng ctx VẪN
@@ -1210,16 +1210,16 @@ def plugin_tools(mode: str = "full", vault_root: Optional[str] = None, *,
             if lp.source == "vault":
                 desc = f"[plugin {lp.slug}] {desc}"
             # `namespace` + `label` + `group_desc`: để hub xếp tool của MỖI plugin thành một
-            # nhóm RIÊNG trong thực đơn tool lười, thay vì gộp chung vào "jeevi".
+            # nhóm RIÊNG trong thực đơn tool lười, thay vì gộp chung vào "javis".
             #
             # Vì sao đây không phải chuyện thẩm mỹ: khi lazy bật, thực đơn là thứ DUY NHẤT
             # model đọc được về những gì nó với tới. Thiếu ba trường này thì 20 tool của gói
-            # TTS Dropship nằm lẫn trong dòng "jeevi (jeevi, 45 tool): skill của brain, danh
+            # TTS Dropship nằm lẫn trong dòng "javis (javis, 45 tool): skill của brain, danh
             # sách nguồn đang đấu, tiện ích nội bộ" - không một chữ nào nhắc tới sàn, đơn hàng
             # hay dropship. Model không có lý do gì để đoán là nên tìm, nên nó kết luận thẳng
-            # rằng gói chưa kết nối, dù tool vẫn gọi được qua jeevi_run_tool. Đúng vụ ngày
+            # rằng gói chưa kết nối, dù tool vẫn gọi được qua javis_run_tool. Đúng vụ ngày
             # 05/09/2026: người dùng báo "không lên đơn được" trong khi hub vẫn phục vụ đủ.
-            tools.append({"fn": fn, "server": "jeevi", "name": fn,
+            tools.append({"fn": fn, "server": "javis", "name": fn,
                           "description": desc, "schema": t["schema"],
                           "namespace": lp.slug, "label": lp.name,
                           "group_desc": lp.description})
@@ -1504,7 +1504,7 @@ def set_enabled(slug: str, enabled: bool, vault_root: Optional[str] = None) -> d
     gated = bool(enabled and not _env_user_enabled())
     note = localefmt.chu(
         "Đã bật trong manifest NHƯNG máy này đang tắt plugin do người dùng cài bằng "
-        "JEEVI_ENABLE_USER_PLUGINS=false. Bỏ biến đó (hoặc đặt true) rồi khởi động lại để chạy.",
+        "JAVIS_ENABLE_USER_PLUGINS=false. Bỏ biến đó (hoặc đặt true) rồi khởi động lại để chạy.",
         "Enabled in the manifest, BUT this machine turns user-installed plugins off with "
-        "JEEVI_ENABLE_USER_PLUGINS=false. Remove it (or set it to true) and restart to run it.") if gated else ""
+        "JAVIS_ENABLE_USER_PLUGINS=false. Remove it (or set it to true) and restart to run it.") if gated else ""
     return {"ok": True, "source": source, "gated": gated, "note": note}

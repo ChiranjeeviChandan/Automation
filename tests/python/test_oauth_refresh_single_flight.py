@@ -15,7 +15,7 @@ import os
 import tempfile
 import time
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-oauth-refresh-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-oauth-refresh-")
 
 import mcp_client  # noqa: E402
 import oauth_mcp  # noqa: E402

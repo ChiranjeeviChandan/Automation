@@ -3,7 +3,7 @@
     python tests/run.py workflow_hub_ungated      (no network, spawns nothing)
 
 The bug: `_workflow_agent_helpers._mk` built the Claude engine of an ungated step (a workflow run from chat, or a Kanban
-`wf:` job at `full`, where tools is None) with only `jeevi_vault` set. In-process plugins worked; every MCP registered
+`wf:` job at `full`, where tools is None) with only `javis_vault` set. In-process plugins worked; every MCP registered
 in Jeevi did not, so the agent reported "missing tool" and the Kanban job stopped at its acceptance check. The Codex
 branch of the same function already attached the hub (_apply_codex_hub), and route `auto` at `full` did too.
 
@@ -18,7 +18,7 @@ import tempfile
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-wf-hub-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-wf-hub-"))
 
 import main  # noqa: E402
 
@@ -43,15 +43,15 @@ try:
     c = mk("prompt", "sonnet", "anthropic-cli")
     check("1. Kanban wf: at full: the Claude step is on the hub", getattr(c, "mcp_config", None) == "/hub/claude-full.json",
           getattr(c, "mcp_config", None))
-    check("1. the hub level is the job's level", getattr(c, "jeevi_mode", None) == "full", getattr(c, "jeevi_mode", None))
-    check("1. the brain is still set for in-process plugins", bool(getattr(c, "jeevi_vault", None)))
+    check("1. the hub level is the job's level", getattr(c, "javis_mode", None) == "full", getattr(c, "javis_mode", None))
+    check("1. the brain is still set for in-process plugins", bool(getattr(c, "javis_vault", None)))
     check("1. full is not strict (ambient account connectors stay reachable)", not getattr(c, "mcp_strict", False))
 
     # 2. run from chat
     mk = main._workflow_agent_helpers("brain", None)[0]
     c = mk("prompt", "sonnet", "anthropic-cli")
     check("2. a run from chat gets the hub at full", getattr(c, "mcp_config", None) == "/hub/claude-full.json"
-          and getattr(c, "jeevi_mode", None) == "full", (getattr(c, "mcp_config", None), getattr(c, "jeevi_mode", None)))
+          and getattr(c, "javis_mode", None) == "full", (getattr(c, "mcp_config", None), getattr(c, "javis_mode", None)))
 
     # 3. gated run unchanged
     mk = main._workflow_agent_helpers("brain", ["Read", "Write"], "auto")[0]

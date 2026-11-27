@@ -313,7 +313,7 @@ CATALOG_GIA = {"version": 1, "connectors": [dict(KHUON_URL, name="Giả URL", ca
                                                  status="ready", default_perm="readonly")]}
 
 with tempfile.TemporaryDirectory() as tmp:
-    os.environ["JEEVI_STATE_DIR"] = tmp
+    os.environ["JAVIS_STATE_DIR"] = tmp
     # Hai bước, thiếu bước nào thì test ghi thẳng vào kho kết nối THẬT của người đang chạy:
     #
     # (1) Nạp lại `config` nữa, không chỉ hai module dưới: `config.STATE_DIR` tính MỘT LẦN lúc

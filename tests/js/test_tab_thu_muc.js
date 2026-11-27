@@ -33,7 +33,7 @@ check("module cây tự dựng đã bị gỡ",
 const HTML = D("index.html");
 check("trang không còn nạp module đó", HTML.indexOf("file-tree.js") === -1);
 const SESS = D("sessions-ui.js");
-check("cột trái không còn gọi module đó", SESS.indexOf("JeeviFileTree") === -1);
+check("cột trái không còn gọi module đó", SESS.indexOf("JavisFileTree") === -1);
 const CSS = D("style.css");
 check("CSS của module đó cũng dọn theo", CSS.indexOf("ftree") === -1);
 
@@ -41,7 +41,7 @@ check("CSS của module đó cũng dọn theo", CSS.indexOf("ftree") === -1);
 // 2. Cây Vault cho mượn, và trả lại đúng chỗ cũ
 // ============================================================
 const CON = D("console.js");
-check("có đường cho mượn panel Vault", /window\.JeeviVaultPanel\s*=\s*\{[^}]*borrow/.test(CON));
+check("có đường cho mượn panel Vault", /window\.JavisVaultPanel\s*=\s*\{[^}]*borrow/.test(CON));
 // Nhớ chỗ cũ bằng parentNode + nextSibling: trả về cuối danh sách là panel Vault nhảy xuống
 // dưới cột trái, khác hẳn chỗ nó vốn đứng.
 check("mượn thì nhớ đúng chỗ cũ để trả",
@@ -118,9 +118,9 @@ check("trang Trò chuyện vẫn giữ chốt tương ứng",
 // chuyện; trang Cộng sự không mượn nó nữa, nhưng vẫn trả về phòng phiên cũ còn giữ.
 check("cột phải trang Cộng sự có tab Công việc thay Thư mục", /data-rtab="cai"/.test(WS) && /data-rtab="viec"/.test(WS)
   && !/data-rtab="files"/.test(WS));
-check("trang Cộng sự không còn mượn panel Vault", !/JeeviVaultPanel\.borrow\(/.test(WS));
+check("trang Cộng sự không còn mượn panel Vault", !/JavisVaultPanel\.borrow\(/.test(WS));
 check("CANARY: rời tab / rời trang Cộng sự đều trả cây Vault về",
-  /function traCayThuMuc\(\)[^\n]*JeeviVaultPanel\.giveBack\(\)/.test(WS)
+  /function traCayThuMuc\(\)[^\n]*JavisVaultPanel\.giveBack\(\)/.test(WS)
   && /function roi\(\)[\s\S]{0,200}traCayThuMuc\(\)/.test(WS));
 check("CANARY: vẽ lại cột phải cũng trả cây về trước khi ghi đè",
   /function vePhai\(item\)[\s\S]{0,600}traCayThuMuc\(\)/.test(WS));
@@ -249,8 +249,8 @@ const sandbox = {
     ic: () => "<svg></svg>",
     t: tGia,
     addEventListener() {},
-    JeeviSessions: { brain: () => "My Bullet Journal", current: () => null },
-    JeeviVaultPanel: {
+    JavisSessions: { brain: () => "My Bullet Journal", current: () => null },
+    JavisVaultPanel: {
       borrow: (into) => { goi.push("borrow"); sandbox.window._into = into; return true; },
       giveBack: () => { goi.push("giveBack"); },
     },
@@ -262,10 +262,10 @@ sandbox.window.localStorage = sandbox.localStorage;
 vm.createContext(sandbox);
 vm.runInContext(SESS, sandbox);
 
-check("module phơi được hàm đổi tab", typeof sandbox.window.JeeviChatSide.tab === "function");
+check("module phơi được hàm đổi tab", typeof sandbox.window.JavisChatSide.tab === "function");
 
 const cot = fakeEl("aside");
-sandbox.window.JeeviChatSide.mount(cot);
+sandbox.window.JavisChatSide.mount(cot);
 
 check("cột trái có đủ hai tab", cot.querySelectorAll("cside-tab").length === 2);
 check("mặc định đứng ở tab Hội thoại",
@@ -273,7 +273,7 @@ check("mặc định đứng ở tab Hội thoại",
 // Chưa bấm sang thì KHÔNG được mượn: mượn sớm là màn chính mất panel dù người dùng chưa cần.
 check("CANARY: chưa bấm sang thì chưa mượn panel", goi.indexOf("borrow") < 0);
 
-sandbox.window.JeeviChatSide.tab("files");
+sandbox.window.JavisChatSide.tab("files");
 check("bấm sang Thư mục thì mượn panel Vault", goi[goi.length - 1] === "borrow");
 check("mượn vào đúng khung của tab đó",
   sandbox.window._into === cot.querySelectorAll('[data-pane="files"]')[0]);
@@ -281,13 +281,13 @@ check("khung Thư mục được bật, khung Hội thoại tắt",
   cot.querySelectorAll('[data-pane="files"]')[0]._cls.indexOf("on") >= 0
   && cot.querySelectorAll('[data-pane="chat"]')[0]._cls.indexOf("on") < 0);
 
-sandbox.window.JeeviChatSide.tab("chat");
+sandbox.window.JavisChatSide.tab("chat");
 check("CANARY: quay về Hội thoại thì TRẢ panel Vault", goi[goi.length - 1] === "giveBack");
 
 // Nhớ lựa chọn: dựng lại cột (đổi trang rồi quay lại) phải về đúng tab cũ.
-sandbox.window.JeeviChatSide.tab("files");
+sandbox.window.JavisChatSide.tab("files");
 const cot2 = fakeEl("aside");
-sandbox.window.JeeviChatSide.mount(cot2);
+sandbox.window.JavisChatSide.mount(cot2);
 check("dựng lại cột thì về đúng tab đang dùng",
   cot2.querySelectorAll('[data-pane="files"]')[0]._cls.indexOf("on") >= 0);
 

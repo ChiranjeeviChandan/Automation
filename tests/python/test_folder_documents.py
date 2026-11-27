@@ -19,7 +19,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-folder-docs-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-folder-docs-"))
 
 from fastapi.testclient import TestClient  # noqa: E402
 import main as M  # noqa: E402
@@ -36,8 +36,8 @@ def check(name, cond, extra=""):
         fails.append(name)
 
 
-brain = Path(tempfile.mkdtemp(prefix="jeevi-brain-folder-docs-")).resolve()
-os.environ["JEEVI_FILES_ROOT"] = str(brain)          # the browse ceiling is this brain, as on a server
+brain = Path(tempfile.mkdtemp(prefix="javis-brain-folder-docs-")).resolve()
+os.environ["JAVIS_FILES_ROOT"] = str(brain)          # the browse ceiling is this brain, as on a server
 (brain / "agents").mkdir()
 (brain / "agents" / "lan.md").write_text("---\nname: Lan\nrole: Thành viên\n---\nBạn là Lan.\n", encoding="utf-8")
 (brain / "Dự án Web" / "thiet-ke").mkdir(parents=True)
@@ -143,7 +143,7 @@ check("the Info tab adds a folder to an existing team", r.status_code == 200
 check("the brain root itself is not something to attach",
       team_docs.save([{"path": BRAIN, "name": "brain"}], staging=M.STAGING, brain_root=brain, dest_dir=brain / "x",
                      to_rel=lambda p: "", add=lambda rel, name: "id", pin=lambda fid: None, readable=()) == [])
-outside = Path(tempfile.mkdtemp(prefix="jeevi-outside-dir-"))
+outside = Path(tempfile.mkdtemp(prefix="javis-outside-dir-"))
 check("a folder outside the brain never gets in",
       team_docs.save([{"path": str(outside), "name": "o"}], staging=M.STAGING, brain_root=brain, dest_dir=brain / "x",
                      to_rel=lambda p: "o", add=lambda rel, name: "id", pin=lambda fid: None, readable=()) == [])
@@ -162,7 +162,7 @@ check("renderer: a folder tree spends the same budget as a pinned file", len(sec
       and all(len(x) <= 2000 + 60 for x in sections) and len([x for x in lines if "no room left to load" in x]) == 2, (lines, [len(x) for x in sections]))
 
 # ---- media_gc keeps what an attached folder holds -----------------------------------------------------------------------
-gc_root = Path(tempfile.mkdtemp(prefix="jeevi-gc-dir-"))
+gc_root = Path(tempfile.mkdtemp(prefix="javis-gc-dir-"))
 entries = [(str(gc_root / "attachments" / "kept" / "a.png"), 10, 0.0), (str(gc_root / "attachments" / "kept" / "sub" / "b.png"), 10, 0.0),
            (str(gc_root / "attachments" / "kept-not" / "c.png"), 10, 0.0), (str(gc_root / "attachments" / "d.png"), 10, 0.0)]
 gone = media_gc.plan_deletions(entries, 10 ** 9, 30, 0, giu_path={str(gc_root / "attachments" / "kept") + "/"})

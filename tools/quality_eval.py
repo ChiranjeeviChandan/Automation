@@ -6,7 +6,7 @@
 
 Owner, 17/11/2026: "anh cần vừa tiết kiệm và vừa không ảnh hưởng đến chất lượng kết quả". Tokens are measured in many
 places; this measures the other half. It sends each task of a set to a RUNNING Jeevi through the same /chat endpoint
-the CLI uses (token from `jeevi login`, or JEEVI_URL + JEEVI_TOKEN), in a fresh session per task, and records:
+the CLI uses (token from `javis login`, or JAVIS_URL + JAVIS_TOKEN), in a fresh session per task, and records:
 
   - the answer, and how many of the task's key facts it covers (`must`: each item is a list of accepted spellings,
     matched without accents and case, like Graphify's key-fact coverage);
@@ -14,7 +14,7 @@ the CLI uses (token from `jeevi login`, or JEEVI_URL + JEEVI_TOKEN), in a fresh 
   - seconds, and the tokens the turn used when Jeevi runs on this machine (read from the lines usage-events.jsonl
     gained during the task; background jobs running at the same moment are counted too, so run it on a quiet machine).
 
-Run the set before a change and after it (or with a saving switched off and on: JEEVI_RESULT_REPEAT_REFS=0, restart),
+Run the set before a change and after it (or with a saving switched off and on: JAVIS_RESULT_REPEAT_REFS=0, restart),
 then `compare`: per task the token change and the coverage change, and a WORSE flag when coverage drops or a banned
 string appears. Models are not deterministic, so --repeat 2 or 3 averages out the noise. A side by side .txt of the
 answers is written next to the second file, to read on a phone.
@@ -59,15 +59,15 @@ def score(answer: str, must: list, must_not: list) -> dict:
 
 
 def profile(url: str, token: str) -> tuple[str, str]:
-    """URL and token: flags, else JEEVI_URL/JEEVI_TOKEN, else the Jeevi CLI's default profile."""
+    """URL and token: flags, else JAVIS_URL/JAVIS_TOKEN, else the Jeevi CLI's default profile."""
     if not (url and token):
         try:
-            d = json.loads((Path.home() / ".jeevi" / "config.json").read_text(encoding="utf-8"))
-            p = (d.get("profiles") or {}).get(os.getenv("JEEVI_PROFILE") or d.get("default") or "") or {}
+            d = json.loads((Path.home() / ".javis" / "config.json").read_text(encoding="utf-8"))
+            p = (d.get("profiles") or {}).get(os.getenv("JAVIS_PROFILE") or d.get("default") or "") or {}
         except (OSError, ValueError):
             p = {}
-        url = url or os.getenv("JEEVI_URL") or p.get("url") or ""
-        token = token or os.getenv("JEEVI_TOKEN") or p.get("token") or ""
+        url = url or os.getenv("JAVIS_URL") or p.get("url") or ""
+        token = token or os.getenv("JAVIS_TOKEN") or p.get("token") or ""
     return url.rstrip("/"), token
 
 
@@ -108,16 +108,16 @@ def run(a) -> int:
 
     url, token = profile(a.url, a.token)
     if not url:
-        print("No Jeevi to ask: run `jeevi login <url>` first, or pass --url and --token.", file=sys.stderr)
+        print("No Jeevi to ask: run `javis login <url>` first, or pass --url and --token.", file=sys.stderr)
         return 2
     spec = json.loads(Path(a.set).read_text(encoding="utf-8"))
     tasks = [t for t in spec.get("tasks") or [] if not a.only or t.get("id") in a.only.split(",")]
     local = (urlparse(url).hostname or "") in ("127.0.0.1", "localhost", "::1")
     state_dir = Path(a.state_dir) if a.state_dir else (
-        Path(os.getenv("JEEVI_STATE_DIR") or ROOT / "server") if local else None)
+        Path(os.getenv("JAVIS_STATE_DIR") or ROOT / "server") if local else None)
     window = UsageWindow(state_dir)
     run_id = time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:4]
-    headers = {"User-Agent": "jeevi-quality-eval"}
+    headers = {"User-Agent": "javis-quality-eval"}
     if token:
         headers["Authorization"] = "Bearer " + token
     results = []
@@ -202,7 +202,7 @@ def main(argv=None) -> int:
     r.add_argument("--set", default=str(DEFAULT_SET))
     r.add_argument("--only", default="", help="comma-separated task ids")
     r.add_argument("--repeat", type=int, default=1)
-    r.add_argument("--brain", default=os.getenv("JEEVI_BRAIN", ""))
+    r.add_argument("--brain", default=os.getenv("JAVIS_BRAIN", ""))
     r.add_argument("--url", default="")
     r.add_argument("--token", default="")
     r.add_argument("--state-dir", default="", help="Jeevi state folder, to read token usage (local Jeevi only)")

@@ -27,11 +27,11 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-remote-tunnel-test-")
-os.environ["JEEVI_REQUIRE_LOGIN"] = "0"
-os.environ.pop("JEEVI_ADMIN_PASSWORD", None)
-os.environ.pop("JEEVI_HOST", None)
-os.environ.pop("JEEVI_PORT", None)
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-remote-tunnel-test-")
+os.environ["JAVIS_REQUIRE_LOGIN"] = "0"
+os.environ.pop("JAVIS_ADMIN_PASSWORD", None)
+os.environ.pop("JAVIS_HOST", None)
+os.environ.pop("JAVIS_PORT", None)
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -104,7 +104,7 @@ cfg_line = ('2026-10-20T03:47:15Z INF Updated to new configuration config="{\\"i
             '\\"Jeevi.Example.com\\", \\"service\\":\\"http://localhost:7777\\"}, {\\"service\\":\\"http_status:404\\"}],'
             ' \\"warp-routing\\":{\\"enabled\\":false}}" version=3')
 check("hostname and service read from a token tunnel's config line",
-      rt.parse_ingress(cfg_line) == [("jeevi.example.com", "http://localhost:7777")])
+      rt.parse_ingress(cfg_line) == [("javis.example.com", "http://localhost:7777")])
 check("an unrelated line is not a config line", rt.parse_ingress("INF Starting tunnel") is None)
 check("localhost:7777 points at this Jeevi", rt.service_points_here("http://localhost:7777"))
 check("127.0.0.1:7777 points at this Jeevi", rt.service_points_here("http://127.0.0.1:7777"))
@@ -115,20 +115,20 @@ check("default target is loopback on the Jeevi port", rt.local_target() == "http
 # ============================================================
 # 2. Settings: encrypted at rest, hidden from GET /settings, forces login
 # ============================================================
-check("login not required before the tunnel is on (JEEVI_REQUIRE_LOGIN=0)", c.require_login() is False)
+check("login not required before the tunnel is on (JAVIS_REQUIRE_LOGIN=0)", c.require_login() is False)
 c.update_settings({"remote_tunnel": {"enabled": False, "mode": "token", "token": TOKEN}})
 raw = json.loads(c.SETTINGS_PATH.read_text(encoding="utf-8"))
 check("token stored encrypted on disk", str(raw.get("remote_tunnel", {}).get("token", "")).startswith("enc:"))
 check("token decrypts back", c.read_settings()["remote_tunnel"]["token"] == TOKEN)
 check("GET /settings does not carry the token", TOKEN not in json.dumps(main.settings_get()))
 c.update_settings({"remote_tunnel": {"enabled": True}})
-check("tunnel on -> login required, even over JEEVI_REQUIRE_LOGIN=0", c.require_login() is True)
+check("tunnel on -> login required, even over JAVIS_REQUIRE_LOGIN=0", c.require_login() is True)
 c.update_settings({"remote_tunnel": {"enabled": False, "token": ""}})
 
 # ============================================================
 # 3. Routes and supervisor, with a fake cloudflared
 # ============================================================
-work = Path(tempfile.mkdtemp(prefix="jeevi-fake-cf-"))
+work = Path(tempfile.mkdtemp(prefix="javis-fake-cf-"))
 calls = work / "calls.log"
 fake = work / "cloudflared"
 fake.write_text(f"""#!{sys.executable}
@@ -188,7 +188,7 @@ r = cl.post("/remote-access/enable", data={"mode": "token", "token": f"cloudflar
 check("token mode accepted from the pasted install command", r.status_code == 200 and r.json().get("ok"), r.text)
 check("the quick tunnel was stopped before the named one started", wait_for(lambda: not alive(pid_quick), 5))
 check("token mode reaches running with the owner's hostname",
-      wait_for(lambda: rt.MANAGER.status()["url"] == "https://jeevi.example.com"
+      wait_for(lambda: rt.MANAGER.status()["url"] == "https://javis.example.com"
                and rt.MANAGER.status()["state"] == "running"))
 last = calls.read_text().splitlines()[-1]
 argv, env_token = last.split("|", 1)

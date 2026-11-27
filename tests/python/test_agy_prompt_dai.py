@@ -5,7 +5,7 @@
 Người dùng báo 2026-08-30, kèm ảnh: hội thoại 33 tin bằng tiếng Việt, và Jeevi trả về hai
 bong bóng đỏ
 
-    OSError: [Errno 7] Argument list too long: '/opt/jeevi/agy'
+    OSError: [Errno 7] Argument list too long: '/opt/javis/agy'
 
 rồi "(không có nội dung trả về)". Chat ngắn thì bình thường, nên nó trông như ngẫu nhiên.
 
@@ -30,7 +30,7 @@ import stat
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-agydai-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-agydai-"))
 
 import antigravity_cli as A  # noqa: E402
 
@@ -75,7 +75,7 @@ _HELP = ("Usage: agy [OPTIONS]\n  -p, --print <PROMPT>\n  --model <M>\n"
 
 def _gia_agy(dong_ra, ma=0):
     """`agy` giả: ghi lại argv/stdin nhận được rồi in ra dòng sự kiện đã khai."""
-    d = Path(tempfile.mkdtemp(prefix="jeevi-fakeagy-dai-"))
+    d = Path(tempfile.mkdtemp(prefix="javis-fakeagy-dai-"))
     p = d / "agy"
     p.write_text(
         "#!/usr/bin/env python3\n"

@@ -29,10 +29,10 @@ FAKE_STREAM = str(Path(__file__).with_name("_fake_agy_stream.py"))
 @pytest.fixture(autouse=True)
 def env(tmp_path, monkeypatch):
     monkeypatch.setenv("FAKE_AGY_DIR", str(tmp_path / "agy"))
-    monkeypatch.setenv("JEEVI_WARM_BUDGET_MB", "4000")
-    monkeypatch.setenv("JEEVI_AGY_MCP_HOME", "0")
-    monkeypatch.delenv("JEEVI_AGY_RESUME", raising=False)
-    monkeypatch.delenv("JEEVI_AGY_ACP", raising=False)
+    monkeypatch.setenv("JAVIS_WARM_BUDGET_MB", "4000")
+    monkeypatch.setenv("JAVIS_AGY_MCP_HOME", "0")
+    monkeypatch.delenv("JAVIS_AGY_RESUME", raising=False)
+    monkeypatch.delenv("JAVIS_AGY_ACP", raising=False)
     monkeypatch.setattr(agy, "co_co", lambda *names: any(n in (agy_acp.HELP_MARK, "--input-format") for n in names))
     pool = warm_pool.Pool()
     monkeypatch.setattr(warm_pool, "POOL", pool)
@@ -133,11 +133,11 @@ def test_a_thread_agy_does_not_know_gets_the_whole_context(tmp_path, env):
 
 def test_a_thread_opened_on_stream_json_resumes_on_acp(tmp_path, env, monkeypatch):
     async def go():
-        monkeypatch.setenv("JEEVI_AGY_ACP", "0")
+        monkeypatch.setenv("JAVIS_AGY_ACP", "0")
         old = make_cli(tmp_path)
         ev = await turn(old)
         assert not any(e["type"] == "thinking" for e in ev), "the stream-json path served this one"
-        monkeypatch.setenv("JEEVI_AGY_ACP", "1")
+        monkeypatch.setenv("JAVIS_AGY_ACP", "1")
         new = make_cli(tmp_path, session=old.session_id)
         ev = await turn(new)
         assert ev[0]["session_id"] == old.session_id and ev[0].get("cold") != "thread_lost"
@@ -174,7 +174,7 @@ def test_tool_steps_carry_their_output_and_hub_calls_their_real_name(tmp_path, e
         cli = make_cli(tmp_path)
         ev = await turn(cli, "BOOTSTRAP RUNCMD MCPCALL")
         calls = [e for e in ev if e["type"] == "tool_call"]
-        assert [c["name"] for c in calls] == ["run_command", "jeevi_connections"]
+        assert [c["name"] for c in calls] == ["run_command", "javis_connections"]
         assert calls[0]["input"]["CommandLine"] == "git status"
         assert calls[1]["input"] == {"op": "list", "toolSummary": "List connections"}
         results = [e for e in ev if e["type"] == "tool_result"]
@@ -291,11 +291,11 @@ def test_a_stream_json_slot_is_not_taken_for_an_acp_turn(tmp_path, env, monkeypa
     pool = env
 
     async def go():
-        monkeypatch.setenv("JEEVI_AGY_ACP", "0")
+        monkeypatch.setenv("JAVIS_AGY_ACP", "0")
         old = make_cli(tmp_path)
         await turn(old)
         assert pool.peek("chat-1") is not None
-        monkeypatch.setenv("JEEVI_AGY_ACP", "1")
+        monkeypatch.setenv("JAVIS_AGY_ACP", "1")
         new = make_cli(tmp_path, session=old.session_id)
         ev = await turn(new)
         assert ev[0]["warm"] is False and ev[0]["cold"] == "config_changed"
@@ -316,7 +316,7 @@ def test_the_session_gets_this_turn_s_hub_and_the_workspace_servers(tmp_path, en
     the workspace entries and this turn's hub entry on the session, on a new thread and on a resume alike."""
     (tmp_path / ".agents").mkdir()
     (tmp_path / ".agents" / "mcp_config.json").write_text(json.dumps({"mcpServers": {
-        "jeevi": {"serverUrl": "http://stale/hub", "headers": {"X-Jeevi-Vault": "/brains/other"}},
+        "javis": {"serverUrl": "http://stale/hub", "headers": {"X-Jeevi-Vault": "/brains/other"}},
         "notes": {"command": "node", "args": ["notes.js"], "env": {"TOKEN": "x"}},
         "off": {"serverUrl": "http://off", "disabled": True}}}), encoding="utf-8")
 
@@ -327,8 +327,8 @@ def test_the_session_gets_this_turn_s_hub_and_the_workspace_servers(tmp_path, en
         sent = servers_sent(tmp_path)[-1]
         assert sent["method"] == "session/new"
         by_name = {s["name"]: s for s in sent["mcpServers"]}
-        assert set(by_name) == {"jeevi", "notes"}, "a disabled entry stays out"
-        assert by_name["jeevi"] == {"type": "http", "name": "jeevi", "url": "http://127.0.0.1:7777/hub/mcp",
+        assert set(by_name) == {"javis", "notes"}, "a disabled entry stays out"
+        assert by_name["javis"] == {"type": "http", "name": "javis", "url": "http://127.0.0.1:7777/hub/mcp",
                                     "headers": [{"name": "Authorization", "value": "Bearer t0k"},
                                                 {"name": "X-Jeevi-Vault", "value": "/brains/a"}]}, \
             "this turn's hub wins over the workspace file"
@@ -340,7 +340,7 @@ def test_the_session_gets_this_turn_s_hub_and_the_workspace_servers(tmp_path, en
         again.hub_entry = HUB
         await turn(again)
         sent = servers_sent(tmp_path)[-1]
-        assert sent["method"] == "session/resume" and {s["name"] for s in sent["mcpServers"]} == {"jeevi", "notes"}
+        assert sent["method"] == "session/resume" and {s["name"] for s in sent["mcpServers"]} == {"javis", "notes"}
     run(go())
 
 
@@ -363,7 +363,7 @@ def test_a_hub_tool_named_the_acp_way_shows_its_real_name(tmp_path, env):
         cli.hub_entry = HUB
         ev = await turn(cli, "BOOTSTRAP MCPACP")
         call = [e for e in ev if e["type"] == "tool_call"][0]
-        assert call["name"] == "jeevi_connections"
+        assert call["name"] == "javis_connections"
         assert call["input"] == {"op": "list", "toolSummary": "List connections"}
         assert [e for e in ev if e["type"] == "tool_result"][0]["id"] == "call_4"
     run(go())
@@ -372,11 +372,11 @@ def test_a_hub_tool_named_the_acp_way_shows_its_real_name(tmp_path, env):
 # ---- pure parts ----
 
 def test_unwrap_mcp_name():
-    servers = agy_acp.server_names(type("C", (), {})(), [{"name": "jeevi"}, {"name": "probe_ws"}])
-    assert agy_acp.unwrap_mcp_name("mcp_jeevi_jeevi_run_tool", {"name": "pos_order", "args": {"id": 1},
+    servers = agy_acp.server_names(type("C", (), {})(), [{"name": "javis"}, {"name": "probe_ws"}])
+    assert agy_acp.unwrap_mcp_name("mcp_javis_javis_run_tool", {"name": "pos_order", "args": {"id": 1},
                                                                 "toolSummary": "Read order"}, servers) == \
         ("pos_order", {"id": 1, "toolSummary": "Read order"})
-    assert agy_acp.unwrap_mcp_name("mcp_jeevi_jeevi_task", {"op": "list"}, servers) == ("jeevi_task", {"op": "list"})
+    assert agy_acp.unwrap_mcp_name("mcp_javis_javis_task", {"op": "list"}, servers) == ("javis_task", {"op": "list"})
     assert agy_acp.unwrap_mcp_name("mcp_probe_ws_probe_secret_word", {}, servers) == ("probe_secret_word", {}), \
         "a server name with an underscore is matched whole"
     assert agy_acp.unwrap_mcp_name("run_command", {"CommandLine": "ls"}, servers) == \

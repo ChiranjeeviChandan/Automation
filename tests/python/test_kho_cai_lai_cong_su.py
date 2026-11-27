@@ -23,7 +23,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-kho-cai-lai-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-kho-cai-lai-")
 
 import pack_install  # noqa: E402
 import pack_vault  # noqa: E402
@@ -39,7 +39,7 @@ def check(name, cond, extra=""):
 
 
 PID = "acme.soul"
-MANIFEST = f"""format: jeevi-pack
+MANIFEST = f"""format: javis-pack
 spec: 1
 id: {PID}
 version: 1.0.0
@@ -56,7 +56,7 @@ CATALOG = {"id": PID, "kind": "agent", "provides": {"agents": ["vu"]}}
 def zip_bytes() -> bytes:
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w") as z:
-        z.writestr(f"{PID}/jeevi-pack.yaml", MANIFEST)
+        z.writestr(f"{PID}/javis-pack.yaml", MANIFEST)
         z.writestr(f"{PID}/agents/vu.md", AGENT)
     return buf.getvalue()
 
@@ -76,7 +76,7 @@ def store_says_installed() -> bool:
     return bool(hang) and not packs_route._gone_from_brain(PID, hang, CATALOG)
 
 
-brain = Path(tempfile.mkdtemp(prefix="jeevi-kho-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="javis-kho-brain-"))
 agents = brain / "agents"
 
 r = install(brain)

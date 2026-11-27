@@ -27,7 +27,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-sub-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-sub-")
 
 import adaptive_context_runtime as acr  # noqa: E402
 import config as cfg  # noqa: E402
@@ -182,7 +182,7 @@ check("khối ROUTER SKILL dài mới là thứ bị gập lại",
 # Cố ý KHÔNG gọi build_system_prompt() thật ở đây: nó quét brains/ của chính người dùng (dữ
 # liệu cá nhân, đã gitignore) và còn ghi mirror vào đó. Test không được đụng vào chỗ đó.
 check("khối ROUTER SKILL nằm SAU khối chỉ mục năng lực (bỏ cái dài, giữ cái ngắn)",
-      _bsp.find("_jeevi_capability_summary(") < _bsp.find("_skill_router_block("))
+      _bsp.find("_javis_capability_summary(") < _bsp.find("_skill_router_block("))
 
 # ============================================================
 # 6. Nhận ra lỗi HẾT LƯỢT của gói thuê bao

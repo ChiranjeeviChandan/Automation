@@ -41,14 +41,14 @@ import localefmt
 
 CACHE = STATE_DIR / "packs-store-cache.json"
 TTL = 6 * 3600
-FORMAT = "jeevi-pack-index"
+FORMAT = "javis-pack-index"
 FORMAT_VERSION = 1
 
 # Kho mặc định. Người dùng đổi được trong Cài đặt, nên đây chỉ là điểm khởi đầu.
 #
 # Kho nằm ở REPO RIÊNG chứ không trong repo Jeevi OS, và đó là điểm mấu chốt của cả tầng này:
 # thêm một gói vào kho không còn dính gì tới việc ra bản mới của app. Người phát hành đẩy một
-# commit vào `jeevi-store`, và mọi máy đang chạy Jeevi thấy ngay ở lần làm mới danh mục kế tiếp.
+# commit vào `javis-store`, và mọi máy đang chạy Jeevi thấy ngay ở lần làm mới danh mục kế tiếp.
 #
 # Tách repo còn mở được đường đóng góp: người lạ gửi Pull Request vào kho, chủ kho đọc mã rồi mới
 # trộn - mà không ai phải có quyền ghi vào mã nguồn Jeevi.
@@ -94,7 +94,7 @@ def _upstream(v) -> dict:
     The Store shows it as a "Follows the source repo" line with a link to github.com/<repo>, so the repo
     has to be a plain owner/name before it becomes a link: anything else drops the field and the card
     shows as an ordinary pack. The store refreshes these packs from the source daily
-    (jeevi-store `tools/theo-goc.py`); updating still goes through the usual confirm screen."""
+    (javis-store `tools/theo-goc.py`); updating still goes through the usual confirm screen."""
     if not isinstance(v, dict):
         return {}
     repo = _chuoi(v.get("repo"), 201)

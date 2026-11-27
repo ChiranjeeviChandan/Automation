@@ -12,7 +12,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="gate-note-brain-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="gate-note-brain-")
 
 import chat_bridge as CB  # noqa: E402
 

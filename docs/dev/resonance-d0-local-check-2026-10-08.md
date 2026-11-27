@@ -5,7 +5,7 @@
 | Mục | Giá trị |
 |---|---|
 | Mã chạy | Worktree sạch tách từ commit phát hành `438f83097db4ee64e96b7b4880deb581521f217a` (VERSION 0.86.0). Lúc kiểm, `main` đã lên 0.86.1 (#589) nhưng bản kiểm cố ý ghim 0.86.0 |
-| Cách chạy | `python server/main.py` của worktree đó, cổng 7788, `JEEVI_STATE_DIR` và `BRAINS_DIR` tạm, `JEEVI_REQUIRE_LOGIN=0`, môi trường bỏ biến `CLAUDE*` / `ANTHROPIC*` của phiên Claude Code (giữ `CLAUDE_CONFIG_DIR`) |
+| Cách chạy | `python server/main.py` của worktree đó, cổng 7788, `JAVIS_STATE_DIR` và `BRAINS_DIR` tạm, `JAVIS_REQUIRE_LOGIN=0`, môi trường bỏ biến `CLAUDE*` / `ANTHROPIC*` của phiên Claude Code (giữ `CLAUDE_CONFIG_DIR`) |
 | Claude Code trên máy | 2.1.293 (cùng bản build vào image Docker 0.86.0) |
 | Script | `exports/reviews/D0-localhost-0860-smoke.py` (ngoài git). Log server và thư mục dữ liệu tạm đã xoá khi dọn; kết quả dưới đây chép từ đầu ra của lần chạy |
 

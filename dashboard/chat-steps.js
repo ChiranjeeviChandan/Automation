@@ -57,8 +57,8 @@
     [/^(webfetch|web_fetch|fetch|read_url_content|fetch_url)$/, "app.step_v_web"],
     [/^(websearch|web_search|web_search_call|google_search|search_web)$/, "app.step_v_search"],
     [/^(task|agent|invoke_subagent|browser_subagent)$/, "app.step_v_agent"],
-    [/^(todowrite|todo_write|update_plan|todo_list|jeevi_plan|taskcreate|taskupdate)$/, "app.step_v_todo"],
-    [/^(skill|jeevi_use_skill)$/, "app.step_v_skill"]
+    [/^(todowrite|todo_write|update_plan|todo_list|javis_plan|taskcreate|taskupdate)$/, "app.step_v_todo"],
+    [/^(skill|javis_use_skill)$/, "app.step_v_skill"]
   ];
   function loaiCongCu(ten) {
     var t = String(ten || "").toLowerCase().trim();
@@ -299,7 +299,7 @@
      chay, bao nhieu buoc, buoc moi nhat la gi. Chi bung khi nguoi dung bam (`_moTay`). */
   function ve(el, st, dangChay) {
     if (!el) el = taoKhoi();
-    // Nhớ mạch để vẽ lại khi từ điển về (xem bộ nghe "jeevi:i18n" cuối file).
+    // Nhớ mạch để vẽ lại khi từ điển về (xem bộ nghe "javis:i18n" cuối file).
     el._st = st; el._dangChay = !!dangChay;
     var cu = chuanHoa(st);
     var txt = el.querySelector(".steps-sum-text");
@@ -342,12 +342,12 @@
   var API = { nhan: nhan, tomTat: tomTat, taoKhoi: taoKhoi, ve: ve, nhanDong: nhanBuoc, TRAN: TRAN,
               applyPlan: applyPlan, planResult: planResult, planSummary: planSummary, planLine: planLine,
               planHtml: planHtml };
-  if (typeof window !== "undefined") window.JeeviSteps = API;
+  if (typeof window !== "undefined") window.JavisSteps = API;
   // Mở lại hội thoại (restoreSession) vẽ khối bước TRƯỚC khi từ điển tải xong, lúc đó t() trả
   // về chính cái khoá, nên người dùng thấy chữ thô "app.steps_done" (chủ repo báo 27/09). Từ
   // điển về thì vẽ lại mọi khối đang có.
   if (typeof window !== "undefined" && window.addEventListener) {
-    window.addEventListener("jeevi:i18n", function () {
+    window.addEventListener("javis:i18n", function () {
       var ds = document.querySelectorAll(".msg-steps");
       for (var i = 0; i < ds.length; i++) {
         if (ds[i]._st) { try { ve(ds[i], ds[i]._st, ds[i]._dangChay); } catch (e) {} }
@@ -356,7 +356,7 @@
   }
   if (typeof module !== "undefined" && module.exports) module.exports = API;
 
-  /* The switch for jeevi_plan, the plan tool of the API brains (server/plan_tool.py), in the composer "+" menu.
+  /* The switch for javis_plan, the plan tool of the API brains (server/plan_tool.py), in the composer "+" menu.
      Claude Code, Codex and Grok plan with their own tools and are not affected. Stored on the server
      (settings.chat.plan_tool), read once. */
   if (typeof document === "undefined" || typeof window === "undefined" || typeof fetch !== "function" ||
@@ -378,9 +378,9 @@
       .catch(function () {});
   }
   function registerPlanMenu() {
-    if (!window.JeeviComposerMenu || !window.JeeviComposerMenu.register) return false;
+    if (!window.JavisComposerMenu || !window.JavisComposerMenu.register) return false;
     loadPlanTool();
-    window.JeeviComposerMenu.register({
+    window.JavisComposerMenu.register({
       id: "plan-tool", order: 91, label: "app.plan_menu",
       icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 5h8M13 12h8M13 19h8M3 17l2 2 4-4M3 7l2 2 4-4"/></svg>',
       hint: function () { return tw(planTool.enabled ? "app.plan_menu_on" : "app.plan_menu_off"); },

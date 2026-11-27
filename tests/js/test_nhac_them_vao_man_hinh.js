@@ -69,7 +69,7 @@ function check(name, cond, extra) {
 // ---- 1. Nhịp một ngày ----
 check("mốc một ngày tính bằng 24 giờ thật",
   /MOT_NGAY\s*=\s*24 \* 60 \* 60 \* 1000/.test(nudge));
-check("nhớ lần nhắc gần nhất trong localStorage", nudge.indexOf("jeevi.install.nhac_luc") !== -1);
+check("nhớ lần nhắc gần nhất trong localStorage", nudge.indexOf("javis.install.nhac_luc") !== -1);
 check("chỉ hiện lại khi đã qua đủ một ngày",
   /Date\.now\(\) - luc\) >= MOT_NGAY/.test(nudge));
 check("CANARY: ghi mốc NGAY LÚC HIỆN, không đợi người dùng bấm nút nào",
@@ -95,7 +95,7 @@ check("CANARY: ba điều kiện đi cùng nhau trước khi vẽ",
 check("không bung ngay lúc mở trang: không còn hẹn giờ cố định từ lúc tải",
   !/CHO_TRUOC_KHI_HIEN/.test(nudge) && !/setTimeout\(thu/.test(nudge));
 check("chỉ nhắc khi đã dùng thật đủ 3 phút, cộng dồn và lưu lại qua các lần mở",
-  /CAN_DUNG_MS\s*=\s*3 \* 60 \* 1000/.test(nudge) && nudge.indexOf("jeevi.install.da_dung_ms") !== -1
+  /CAN_DUNG_MS\s*=\s*3 \* 60 \* 1000/.test(nudge) && nudge.indexOf("javis.install.da_dung_ms") !== -1
   && /if \(daDung\(\) < CAN_DUNG_MS \|\| dangBiChe\(\) \|\| dangGo\(\)\) return;/.test(nudge));
 check("CANARY: màn đăng nhập, bộ cài đặt lần đầu (.modal-overlay.open) hay ngăn kéo menu đang mở thì không đếm, không nhắc",
   /\.modal-overlay\.open/.test(nudge) && /nav-open/.test(nudge));
@@ -118,15 +118,15 @@ check("trình duyệt không có hộp cài thì chỉ đường qua menu, khôn
   noiDung("instl.menu2_b", "Thêm vào màn hình chính"), VI["instl.menu2_b"]);
 
 // ---- 5. Dùng CHUNG một event beforeinstallprompt với nút trên thanh trạng thái ----
-check("app.js mở JeeviInstall cho nơi khác dùng chung", /window\.JeeviInstall = \{/.test(app));
+check("app.js mở JavisInstall cho nơi khác dùng chung", /window\.JavisInstall = \{/.test(app));
 // Soi ĐÚNG lời đăng ký listener, không soi chữ: file có nhắc tên event trong chú thích
 // giải thích vì sao iOS không có nút cài, và đó không phải cái đáng cấm.
 check("CANARY: install-nudge KHÔNG tự bắt beforeinstallprompt (bắt hai nơi là mất một nơi)",
   !/addEventListener\(\s*["']beforeinstallprompt["']/.test(nudge));
 check("và app.js vẫn là nơi DUY NHẤT bắt event đó",
   (app.match(/addEventListener\("beforeinstallprompt"/g) || []).length === 1);
-check("popup mượn hộp cài qua JeeviInstall.moHopCai",
-  /window\.JeeviInstall\.moHopCai\(\)/.test(nudge));
+check("popup mượn hộp cài qua JavisInstall.moHopCai",
+  /window\.JavisInstall\.moHopCai\(\)/.test(nudge));
 check("moHopCai trả về CÓ CÀI HAY KHÔNG để còn quyết định thôi nhắc",
   /ket && ket\.outcome === "accepted"/.test(app));
 

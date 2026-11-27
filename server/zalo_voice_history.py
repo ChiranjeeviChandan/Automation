@@ -1,7 +1,7 @@
 """Voice messages in `zalo_get_history` come with what they said (`transcript`).
 
 JumboKiz, 21/11/2026: a recurring job reading the owner's wife on personal Zalo met three voice messages in a row and
-could only answer "please type it", because jeevi-zalo gives a voice note as a bare CDN link (`type: chat.voice`,
+could only answer "please type it", because javis-zalo gives a voice note as a bare CDN link (`type: chat.voice`,
 `text` = the `.aac` URL) and nothing in a model's turn could hear it. The customer bots already heard voice
 (`chatbot_runtime.nghe_cho_bot`); the history tool, which every brain and background job reads, did not.
 
@@ -103,7 +103,7 @@ async def _hear(url: str) -> dict:
         return {"error": _why({"ly_do": "thieu_key"})}
     name = url.split("?", 1)[0].rsplit("/", 1)[-1] or "voice.aac"
     try:
-        with tempfile.TemporaryDirectory(prefix="jeevi-zvoice-") as d:
+        with tempfile.TemporaryDirectory(prefix="javis-zvoice-") as d:
             saved, why = await zalo_attachments.fetch_file({"url": url, "name": name}, Path(d), MAX_BYTES)
             if not saved:
                 return {"error": f"không tải được tin thoại: {why}"}

@@ -140,12 +140,12 @@ def buoc_mcp(idx, params):
     return {"event": "step_update", "step_update": sub}
 
 
-# Measured shape: every hub tool goes through call_mcp_tool -> jeevi_run_tool {name, args}.
-ra, _ = _chay([buoc_mcp(3, {"ServerName": "jeevi", "ToolName": "jeevi_run_tool",
-                            "Arguments": {"name": "jeevi_workflow", "args": {"op": "runs"}},
-                            "toolAction": "Calling jeevi_workflow", "toolSummary": "List workflow runs"})])
+# Measured shape: every hub tool goes through call_mcp_tool -> javis_run_tool {name, args}.
+ra, _ = _chay([buoc_mcp(3, {"ServerName": "javis", "ToolName": "javis_run_tool",
+                            "Arguments": {"name": "javis_workflow", "args": {"op": "runs"}},
+                            "toolAction": "Calling javis_workflow", "toolSummary": "List workflow runs"})])
 goi = [e for e in ra if e.get("type") == "tool_call"]
-check("call_mcp_tool through the hub shows the real tool", bool(goi) and goi[0]["name"] == "jeevi_workflow", goi)
+check("call_mcp_tool through the hub shows the real tool", bool(goi) and goi[0]["name"] == "javis_workflow", goi)
 check("its own arguments, with the model's summary for the label",
       bool(goi) and goi[0]["input"] == {"op": "runs", "toolSummary": "List workflow runs"}, goi)
 ra, _ = _chay([buoc_mcp(4, {"ServerName": "pos", "ToolName": "pos_order",
@@ -153,15 +153,15 @@ ra, _ = _chay([buoc_mcp(4, {"ServerName": "pos", "ToolName": "pos_order",
 goi = [e for e in ra if e.get("type") == "tool_call"]
 check("a direct MCP tool: its name and its (JSON string) arguments",
       bool(goi) and goi[0]["name"] == "pos_order" and goi[0]["input"] == {"query": "today"}, goi)
-ra, _ = _chay([buoc_mcp(5, {"ServerName": "jeevi"})])
+ra, _ = _chay([buoc_mcp(5, {"ServerName": "javis"})])
 goi = [e for e in ra if e.get("type") == "tool_call"]
 check("no ToolName: left as call_mcp_tool, nothing invented",
       bool(goi) and goi[0]["name"] == "call_mcp_tool", goi)
 
 import tool_label  # noqa: E402
 
-ra, _ = _chay([buoc_mcp(6, {"ServerName": "jeevi", "ToolName": "jeevi_run_tool",
-                            "Arguments": {"name": "jeevi_task", "args": {"title": "Viết bài"}}})])
+ra, _ = _chay([buoc_mcp(6, {"ServerName": "javis", "ToolName": "javis_run_tool",
+                            "Arguments": {"name": "javis_task", "args": {"title": "Viết bài"}}})])
 goi = [e for e in ra if e.get("type") == "tool_call"]
 check("hub call label reads the inner arguments", bool(goi) and tool_label.chi_tiet(goi[0]) == "Viết bài",
       tool_label.chi_tiet(goi[0]) if goi else "")

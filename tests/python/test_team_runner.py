@@ -2,7 +2,7 @@
 
     python tests/run.py team_runner
 
-Chỉ engine giả, không gọi model. Ca TC6 tới TC13, TC17 tới TC23 và khối JEEVI_TEAM sai khuôn (Review Focus 5).
+Chỉ engine giả, không gọi model. Ca TC6 tới TC13, TC17 tới TC23 và khối JAVIS_TEAM sai khuôn (Review Focus 5).
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
 import asyncio
@@ -11,8 +11,8 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-team-runner-")
-STATE = Path(os.environ["JEEVI_STATE_DIR"])
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-team-runner-")
+STATE = Path(os.environ["JAVIS_STATE_DIR"])
 
 import sessions  # noqa: E402
 import task_store  # noqa: E402
@@ -30,7 +30,7 @@ def check(name, cond, extra=""):
 
 def directive(**op):
     import json
-    return f"\n<!-- JEEVI_TEAM: {json.dumps(op, ensure_ascii=False)} -->"
+    return f"\n<!-- JAVIS_TEAM: {json.dumps(op, ensure_ascii=False)} -->"
 
 
 AGENTS = {"ag_lan": ("lan", "Lan"), "ag_minh": ("minh", "Minh"), "ag_hoa": ("hoa", "Hoa"), "ag_tu": ("tu", "Tú")}
@@ -180,7 +180,7 @@ sp = r.submit(T["team_id"], "Tuần này làm gì?", client_msg_id="c7")
 run(r.run_replies(sp))
 card = msgs(ss, T)[-1]
 check("D2 đề xuất việc thành thẻ, chưa có việc", card["meta"].get("proposal", {}).get("title") == "Bản tin tuần"
-      and "JEEVI_TEAM" not in card["content"] and len(ts.team_queue(T["team_id"])["waiting"]) == 1)
+      and "JAVIS_TEAM" not in card["content"] and len(ts.team_queue(T["team_id"])["waiting"]) == 1)
 tid_p = r.accept_proposal(T["team_id"], card["id"])
 check("D2 chủ bấm Tạo việc: một việc, bấm lại không thêm", tid_p and r.accept_proposal(T["team_id"], card["id"]) == tid_p
       and len(ts.team_queue(T["team_id"])["waiting"]) == 2)
@@ -211,7 +211,7 @@ check("TC10 mỗi tin có tác giả, nhãn việc, bước, vai", all(m["task_i
       and sorted(m["author_ref"] for m in agent_msgs[1:3]) == ["ag_hoa", "ag_minh"])
 check("TC10 bản tổng hợp gắn nhãn Kết quả việc", agent_msgs[-1]["meta"].get("job_result") is True
       and agent_msgs[-1]["meta"].get("applied") is True)
-check("TC10 khối chỉ dẫn không lọt vào tin", all("JEEVI_TEAM" not in m["content"] for m in agent_msgs))
+check("TC10 khối chỉ dẫn không lọt vào tin", all("JAVIS_TEAM" not in m["content"] for m in agent_msgs))
 check("TC10 brief của bước đến đúng người làm", "Viết nội dung" in fake.by("ag_minh", "work")[0]["prompt"]
       and "Làm ảnh" in fake.by("ag_hoa", "work")[0]["prompt"])
 check("TC10 bước cùng đợt được báo đồng đội đang làm song song", "Hoa" in fake.by("ag_minh", "work")[0]["prompt"]
@@ -491,7 +491,7 @@ check("TC22 lời nhắc nhóm X không chứa tin nhóm Y, chat riêng", "BÍ M
       and "CHUYỆN RIÊNG" not in px["prompt"] + px["system"] and "Nhóm X" in px["prompt"])
 check("TC21 mạch thành viên riêng theo nhóm", px["thread"] == f"teammate:{X['team_id']}:ag_minh")
 # 0.194.0: chat replies, plans and summaries stay text only; a Work/Help step of a job gets the member's own toolkit.
-check("TC23 lượt trò chuyện, lập kế hoạch, tổng hợp chỉ chữ: không có công cụ (không jeevi_goal)",
+check("TC23 lượt trò chuyện, lập kế hoạch, tổng hợp chỉ chữ: không có công cụ (không javis_goal)",
       all(c.get("tools") == [] and not c.get("tool_turn") for c in fake.calls if c["role"] not in TR.TOOL_ROLES))
 check("TC23 lượt Làm/Hỗ trợ của việc có bộ công cụ của trợ lý",
       all(c.get("tools") is None and c.get("tool_turn") for c in fake.calls if c["role"] in TR.TOOL_ROLES))
@@ -675,10 +675,10 @@ check("TC17 restart sau mốc engine: lượt interrupted tính một lần, bư
       and j2["task_id"] in rep["resumed"] and ts.get_task(j2["task_id"])["status"] == "team_running"
       and [s["status"] for s in tm.steps(j2["task_id"])].count("queued") == 1 and fake.calls == [])
 
-# ---------- Review Focus 5: khối JEEVI_TEAM sai khuôn ----------
+# ---------- Review Focus 5: khối JAVIS_TEAM sai khuôn ----------
 ss, ts, tm, fake, r, pub, inbox, gone = world("badops")
 T = make_team(tm, ss, "Khối sai")
-fake.say("ag_lan", "plan", "Chia.\n<!-- JEEVI_TEAM: {hỏng -->" + directive(op="fly") + directive(
+fake.say("ag_lan", "plan", "Chia.\n<!-- JAVIS_TEAM: {hỏng -->" + directive(op="fly") + directive(
     op="peter_feedback_placeholder_removed", message_id=1, note="x") + directive(
     op="assign", agent="ag_nguoi_ngoai", brief="x") + directive(op="assign", agent="ag_minh", brief="ok"))
 j = r.submit(T["team_id"], "Việc", as_job=True, client_msg_id="z1")
@@ -690,7 +690,7 @@ check("khối hỏng, op lạ, giao người ngoài nhóm: bỏ op, ghi chú; op
       "JSON" in notes and "ag_nguoi_ngoai" in notes and "fly" not in notes and "peter_feedback" not in notes
       and plan["meta"].get("notes", []).count(TR.UNKNOWN_OP_NOTE) == 1
       and [(c["agent_key"], c["role"]) for c in fake.calls] == [("ag_lan", "plan"), ("ag_minh", "work")]
-      and "JEEVI_TEAM" not in plan["content"])
+      and "JAVIS_TEAM" not in plan["content"])
 fake.calls.clear()
 fake.say("ag_minh", "member_reply", "Giao luôn." + directive(op="assign", agent="ag_hoa", brief="x"))
 run(r.run_replies(r.submit(T["team_id"], "Minh?", mentions=["ag_minh"], client_msg_id="z2")))
@@ -953,7 +953,7 @@ check("0.260.0 huỷ giữa đợt: việc huỷ, hai lượt đang chạy đề
       == ["interrupted", "interrupted"], [t["status"] for t in tm.turns(TID) if t["task_id"] == jj["task_id"]])
 check("0.260.0 huỷ xong không còn dòng khoá bận", all(tm.busy_of(k) is None for k in AGENTS))
 
-# JEEVI_TEAM_JOB_PARALLEL=1: lần lượt như trước.
+# JAVIS_TEAM_JOB_PARALLEL=1: lần lượt như trước.
 fake.calls.clear()
 live.update(now=0, peak=0)
 r.job_parallel = 1
@@ -966,22 +966,22 @@ run(r.dispatch_once(wait=True))
 check("0.260.0 một chỗ mỗi việc: bước Làm chạy lần lượt", live["peak"] == 1
       and ts.get_task(j["task_id"])["status"] == "done", live)
 
-# Regression: malformed JEEVI_TEAM directive in plan step must block instead of finishing as done.
+# Regression: malformed JAVIS_TEAM directive in plan step must block instead of finishing as done.
 ss_m, ts_m, tm_m, fake_m, r_m, _pub_m, _inbox_m, _gone_m = world("malformed_plan")
 team_m = make_team(tm_m, ss_m, "Malformed Plan")
 
 # 1. Unclosed directive block (missing closing -->) with no valid assign.
-fake_m.say("ag_lan", "plan", 'Plan 3 parts.\n<!-- JEEVI_TEAM: {"op": "assign", "agent": "ag_minh", "brief": "do x"}}')
+fake_m.say("ag_lan", "plan", 'Plan 3 parts.\n<!-- JAVIS_TEAM: {"op": "assign", "agent": "ag_minh", "brief": "do x"}}')
 job_unclosed = r_m.submit(team_m["team_id"], "Unclosed plan directive", as_job=True, client_msg_id="mp1")
 run(r_m.dispatch_once(wait=True))
 task_unclosed = ts_m.get_task(job_unclosed["task_id"])
 plan_msg_unclosed = [m for m in msgs(ss_m, team_m) if m["task_id"] == job_unclosed["task_id"] and m["meta"].get("role") == "plan"][0]
 plan_steps_unclosed = tm_m.steps(job_unclosed["task_id"])
-check("plan with unclosed JEEVI_TEAM directive blocks instead of finishing done",
+check("plan with unclosed JAVIS_TEAM directive blocks instead of finishing done",
       task_unclosed["status"] == "team_blocked" and task_unclosed["block_kind"] == "failed"
       and plan_steps_unclosed[0]["status"] == "failed"
       and not plan_msg_unclosed["meta"].get("job_result")
-      and "JEEVI_TEAM" not in plan_msg_unclosed["content"]
+      and "JAVIS_TEAM" not in plan_msg_unclosed["content"]
       and any("-->" in n for n in plan_msg_unclosed["meta"].get("notes", []))
       and [c["role"] for c in fake_m.calls] == ["plan"],
       (task_unclosed["status"], task_unclosed["block_kind"], plan_steps_unclosed[0]["status"], plan_msg_unclosed["meta"]))
@@ -989,13 +989,13 @@ ts_m.team_cancel(job_unclosed["task_id"])
 
 # 2. Closed-but-invalid JSON directive with no valid assign.
 fake_m.calls.clear()
-fake_m.say("ag_lan", "plan", "Plan.\n<!-- JEEVI_TEAM: {broken -->")
+fake_m.say("ag_lan", "plan", "Plan.\n<!-- JAVIS_TEAM: {broken -->")
 job_bad_json = r_m.submit(team_m["team_id"], "Broken JSON plan directive", as_job=True, client_msg_id="mp2")
 run(r_m.dispatch_once(wait=True))
 task_bad_json = ts_m.get_task(job_bad_json["task_id"])
 plan_msg_bad_json = [m for m in msgs(ss_m, team_m) if m["task_id"] == job_bad_json["task_id"] and m["meta"].get("role") == "plan"][0]
 plan_steps_bad_json = tm_m.steps(job_bad_json["task_id"])
-check("plan with invalid JSON JEEVI_TEAM directive and no assigns blocks instead of finishing done",
+check("plan with invalid JSON JAVIS_TEAM directive and no assigns blocks instead of finishing done",
       task_bad_json["status"] == "team_blocked" and task_bad_json["block_kind"] == "failed"
       and plan_steps_bad_json[0]["status"] == "failed"
       and not plan_msg_bad_json["meta"].get("job_result")
@@ -1007,8 +1007,8 @@ ts_m.team_cancel(job_bad_json["task_id"])
 # 3. Multi-line unclosed directive followed by a valid closed directive fails regex JSON parse and blocks cleanly.
 fake_m.calls.clear()
 fake_m.say("ag_lan", "plan",
-           'Plan.\n<!-- JEEVI_TEAM: {"op": "assign", "agent": "ag_minh", "brief": "a"}}\n'
-           '<!-- JEEVI_TEAM: {"op": "assign", "agent": "ag_hoa", "brief": "b"} -->')
+           'Plan.\n<!-- JAVIS_TEAM: {"op": "assign", "agent": "ag_minh", "brief": "a"}}\n'
+           '<!-- JAVIS_TEAM: {"op": "assign", "agent": "ag_hoa", "brief": "b"} -->')
 job_swallowed = r_m.submit(team_m["team_id"], "Swallowed plan directive", as_job=True, client_msg_id="mp3")
 run(r_m.dispatch_once(wait=True))
 task_swallowed = ts_m.get_task(job_swallowed["task_id"])
@@ -1025,7 +1025,7 @@ job_plain = r_m.submit(team_m["team_id"], "Plain plan", as_job=True, client_msg_
 run(r_m.dispatch_once(wait=True))
 task_plain = ts_m.get_task(job_plain["task_id"])
 plan_msg_plain = [m for m in msgs(ss_m, team_m) if m["task_id"] == job_plain["task_id"] and m["meta"].get("role") == "plan"][0]
-check("plain-text plan without JEEVI_TEAM marker still finishes done",
+check("plain-text plan without JAVIS_TEAM marker still finishes done",
       task_plain["status"] == "done" and plan_msg_plain["meta"].get("job_result") is True,
       (task_plain["status"], plan_msg_plain["meta"]))
 

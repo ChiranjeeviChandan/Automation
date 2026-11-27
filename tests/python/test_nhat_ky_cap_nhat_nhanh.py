@@ -22,7 +22,7 @@ import os
 import sys
 import tempfile
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-changelog-test-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-changelog-test-")
 
 import main  # noqa: E402
 

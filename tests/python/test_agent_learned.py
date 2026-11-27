@@ -20,14 +20,14 @@ import sys
 import tempfile
 from pathlib import Path
 
-STATE = tempfile.mkdtemp(prefix="jeevi-learned-")
-os.environ["JEEVI_STATE_DIR"] = STATE
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
+STATE = tempfile.mkdtemp(prefix="javis-learned-")
+os.environ["JAVIS_STATE_DIR"] = STATE
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:  # noqa: BLE001
     pass
-BR = Path(tempfile.mkdtemp(prefix="jeevi-learned-brain-"))
+BR = Path(tempfile.mkdtemp(prefix="javis-learned-brain-"))
 (BR / "agents").mkdir()
 (BR / "agents" / "viet-bai.md").write_text("---\nname: Viết bài\nrole: Viết bài Facebook\n---\nViết ngắn.\n",
                                            encoding="utf-8")
@@ -46,7 +46,7 @@ def check(name, cond, extra=""):
 
 
 # ═════ 1. AL.edit on a bare store ═════
-st = RS.GoalStore(Path(tempfile.mkdtemp(prefix="jeevi-learned-st-")) / "resonance.sqlite3")
+st = RS.GoalStore(Path(tempfile.mkdtemp(prefix="javis-learned-st-")) / "resonance.sqlite3")
 K, K2 = "k1", "k2"
 a = AL.add(st, agent_key=K, scope="team:A", kind="method", text="Báo số liệu kèm nguồn.", source="self")
 b = AL.add(st, agent_key=K, scope="team:A", kind="method", text="Câu ngắn.", source="self")

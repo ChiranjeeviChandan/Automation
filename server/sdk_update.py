@@ -4,7 +4,7 @@ Claude Code updates itself daily (claude_update.py), but the `claude-agent-sdk` 
 a Jeevi release changed `requirements.txt`. The two drift apart, and fixes in the SDK (CVE-2026-96620, fixed in 0.2.121,
 is the one that prompted this) waited for somebody to bump a number by hand.
 
-Once a day, on the same switch as the Claude Code update (Models page, or JEEVI_CLAUDE_AUTO_UPDATE=0), this module asks
+Once a day, on the same switch as the Claude Code update (Models page, or JAVIS_CLAUDE_AUTO_UPDATE=0), this module asks
 PyPI for a newer release and installs it. It is a package from the Internet going into the server's own environment, so
 every step is fenced:
 
@@ -189,7 +189,7 @@ def _python_ok(files: list, python=None) -> bool:
 
 
 def _fetch_releases() -> dict:
-    req = urllib.request.Request(PYPI_URL, headers={"Accept": "application/json", "User-Agent": "jeevi-os"})
+    req = urllib.request.Request(PYPI_URL, headers={"Accept": "application/json", "User-Agent": "javis-os"})
     with urllib.request.urlopen(req, timeout=30) as r:   # noqa: S310 - fixed https URL, no caller input
         if r.status != 200:
             raise OSError(f"PyPI answered {r.status}")
@@ -225,7 +225,7 @@ def _run(cmd: list, timeout: int):
 
 def _pip_install(version: str, constraints: str) -> tuple:
     """(ok, last line of pip's output)."""
-    fd, cpath = tempfile.mkstemp(prefix="jeevi-sdk-constraints-", suffix=".txt")
+    fd, cpath = tempfile.mkstemp(prefix="javis-sdk-constraints-", suffix=".txt")
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             f.write(constraints)

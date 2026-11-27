@@ -67,12 +67,12 @@ check("the home screen asks for it: on the first page and on every later visit",
   /veManChinh\(\) \{ ensureGraph\(\); if \(_cockpitCho\) capNhatManChinh\(\); \}/.test(app)
   && /firstPage\(id\) \{ if \(id === "home"\) ensureGraph\(\); \}/.test(app));
 check("console.js reports the page the app opened on, right after choosing it",
-  /khoiPhucTrang\(\);\n[\s\S]{0,900}window\.JeeviCockpit\.firstPage\(Alpine\.store\("nav"\)\.active\)/.test(con));
+  /khoiPhucTrang\(\);\n[\s\S]{0,900}window\.JavisCockpit\.firstPage\(Alpine\.store\("nav"\)\.active\)/.test(con));
 check("a safety net builds it anyway when console.js never reported and the home screen is in view",
   /setTimeout\(ensureGraphIfHome, 4000\);/.test(boot)
   && /function ensureGraphIfHome\(\) \{ if \(!_graphBuilding && _oManChinh\(\)\) ensureGraph\(\); \}/.test(app));
 check("console.js still calls veManChinh whenever the home screen comes into view",
-  /if \(active === "home"\) \{ try \{ if \(window\.JeeviCockpit\) window\.JeeviCockpit\.veManChinh\(\); \} catch \(e\) \{\} \}/.test(con));
+  /if \(active === "home"\) \{ try \{ if \(window\.JavisCockpit\) window\.JavisCockpit\.veManChinh\(\); \} catch \(e\) \{\} \}/.test(con));
 
 if (fails.length) { console.log("\nFAIL - test_idle_and_page_leaks: " + fails.length); process.exit(1); }
 console.log("\nOK - test_idle_and_page_leaks: all pass");

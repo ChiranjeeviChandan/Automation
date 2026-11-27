@@ -1,11 +1,11 @@
-"""Plan-name catalog (2026-11-04): the name a vendor sells a plan under today, kept in jeevi-store.
+"""Plan-name catalog (2026-11-04): the name a vendor sells a plan under today, kept in javis-store.
 
 Why
 ---
 Only Claude Code sends the plan's selling name (`planDisplayName`, see `plan_limits.ten_goi_claude`).
 Codex sends a CODE that no longer matches the name: `prolite` is the $100 tier, `pro` the renamed
 $200 one. Grok and Antigravity send little or nothing. A table in Jeevi's code would need a new
-release every time a vendor renames a plan (owner, 2026-11-04), so the table lives in jeevi-store
+release every time a vendor renames a plan (owner, 2026-11-04), so the table lives in javis-store
 (`plan-names.json`, next to `index.json`). A weekly cloud check opens a Pull Request there when a
 vendor renames something; the owner approves it, and every machine picks it up here.
 
@@ -30,7 +30,7 @@ from config import STATE_DIR
 CACHE = STATE_DIR / "plan-names-cache.json"
 TTL = 6 * 3600
 RETRY = 30 * 60
-FORMAT = "jeevi-plan-names"
+FORMAT = "javis-plan-names"
 FORMAT_VERSION = 1
 NHA = ("claude", "codex", "grok", "agy")
 MAX_BYTES = 64 * 1024
@@ -41,7 +41,7 @@ _STATE = {"mem": None, "running": False, "fail_at": 0.0}
 
 def ten_hop_le(v) -> bool:
     """1-40 characters of letters, digits, spaces and `.+-`, starting and ending on a letter or digit
-    (`+` may end it). The rule Claude Code applies to `plan_display_name`, and jeevi-store's checker."""
+    (`+` may end it). The rule Claude Code applies to `plan_display_name`, and javis-store's checker."""
     if not isinstance(v, str) or not 1 <= len(v) <= 40 or not v[0].isalnum():
         return False
     if len(v) > 1 and not (v[-1].isalnum() or v[-1] == "+"):
@@ -74,9 +74,9 @@ def lam_sach(d) -> dict:
 
 
 def url_danh_ba() -> str:
-    """`plan-names.json` next to the pack catalog the machine uses. `JEEVI_PLAN_NAMES_URL` overrides it;
+    """`plan-names.json` next to the pack catalog the machine uses. `JAVIS_PLAN_NAMES_URL` overrides it;
     an empty value turns the catalog off."""
-    env = os.environ.get("JEEVI_PLAN_NAMES_URL")
+    env = os.environ.get("JAVIS_PLAN_NAMES_URL")
     if env is not None:
         return env.strip()
     try:

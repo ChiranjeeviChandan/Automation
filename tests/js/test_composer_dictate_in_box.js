@@ -44,7 +44,7 @@ global.document = {
 global.window = {
   addEventListener() {},
   matchMedia: () => ({ matches: false }),
-  JeeviDictate: {
+  JavisDictate: {
     joinText: D.joinText, isPhoneUA: D.isPhoneUA, recentMessages: D.recentMessages, ear: () => "", isIOS: () => false,
     create(opts) {
       engine = { opts, started: 0, stopped: 0, cancelled: 0,

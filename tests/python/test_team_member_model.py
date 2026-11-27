@@ -30,7 +30,7 @@ class Registry:
         return {k: self.rows.get(k) for k in keys}
 
 
-d = Path(tempfile.mkdtemp(prefix="jeevi-team-model-"))
+d = Path(tempfile.mkdtemp(prefix="javis-team-model-"))
 root = str(d)
 META = [
     {"slug": "an", "name": "An", "provider": "anthropic-cli", "avatar": None, "title": "",

@@ -4,7 +4,7 @@
 
    Hai chỗ hiện:
    - Thẻ trợ lý: phần "judge" của khung nhịp (phần P dựng `GET /agents/{slug}/pulse`, mỗi phần tự vẽ):
-     `window.JeeviPulseParts.push({name: "judge", render})`. Phần P chưa có thì mảng chỉ nằm chờ, không lỗi.
+     `window.JavisPulseParts.push({name: "judge", render})`. Phần P chưa có thì mảng chỉ nằm chờ, không lỗi.
    - Hàng thành viên trong ngăn Nhóm (teams.js): ô `.agj-host[data-judge-slug][data-judge-ctx]`, `hydrate(root)` tải
      `GET /agents/{slug}/judge?context_ref=team:<id>` và vẽ đúng ngữ cảnh nhóm đó.
 
@@ -31,9 +31,9 @@
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
   // Nút "i" (info-tip.js, 0.175.0): có thì lời giải thích ẩn sau nút cạnh tiêu đề; không có (test Node) thì vẽ thẳng ra.
-  function infoBtn() { var J = typeof window !== "undefined" && window.JeeviInfo; return J ? J.btn(tw("info.more")) : ""; }
+  function infoBtn() { var J = typeof window !== "undefined" && window.JavisInfo; return J ? J.btn(tw("info.more")) : ""; }
   function infoBody(html) {
-    var J = typeof window !== "undefined" && window.JeeviInfo;
+    var J = typeof window !== "undefined" && window.JavisInfo;
     return J ? J.body(html) : '<div class="info-body">' + html + "</div>";
   }
 
@@ -156,7 +156,7 @@
 
   function brain() {
     try {
-      if (window.JeeviSessions && window.JeeviSessions.brain) return window.JeeviSessions.brain();
+      if (window.JavisSessions && window.JavisSessions.brain) return window.JavisSessions.brain();
       return (window.currentBrainPath && window.currentBrainPath()) || "brain";
     } catch (e) { return "brain"; }
   }
@@ -266,9 +266,9 @@
   var api = { decisionHtml: decisionHtml, contextHtml: contextHtml, viewHtml: viewHtml, postLabel: postLabel,
     labelUrl: labelUrl, viewUrl: viewUrl, hydrate: hydrate, render: render, refreshView: refreshView };
   if (typeof window !== "undefined") {
-    window.JeeviAgentJudge = api;
-    window.JeeviPulseParts = window.JeeviPulseParts || [];
-    window.JeeviPulseParts.push({ name: "judge", render: render });
+    window.JavisAgentJudge = api;
+    window.JavisPulseParts = window.JavisPulseParts || [];
+    window.JavisPulseParts.push({ name: "judge", render: render });
   }
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })();

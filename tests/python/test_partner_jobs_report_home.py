@@ -3,10 +3,10 @@
 Customer report 2026-11-04: an auto-post job set up in a partner (agent) chat sent its failures to Jeevi Core. Three
 causes, three fixes:
 
-1. jeevi_schedule left `chat_id` empty (an agent chat never told the model its `web:<id>`), so reports went to Jeevi
+1. javis_schedule left `chat_id` empty (an agent chat never told the model its `web:<id>`), so reports went to Jeevi
    Core. The tool now takes the chat from the turn the host set, and the agent prompt states the id.
 2. The job forgot which assistant made it and ran on the plain Jeevi prompt. It now carries `agent` and runs as that
-   assistant (prompt, memory, owner rules), its JEEVI_LESSON lines going to the assistant's memory.
+   assistant (prompt, memory, owner rules), its JAVIS_LESSON lines going to the assistant's memory.
 3. The incident desk always posted to Jeevi Core. A report now names the chat the job came from and the desk's
    messages go there.
 
@@ -21,8 +21,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-partner-jobs-"))
-sys.path.insert(0, str(ROOT / "system" / "plugins" / "jeevi-schedule"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-partner-jobs-"))
+sys.path.insert(0, str(ROOT / "system" / "plugins" / "javis-schedule"))
 
 import incident_desk as idk  # noqa: E402
 import luot_dang_chay  # noqa: E402
@@ -46,7 +46,7 @@ def _atomic_write(path, text):
     p.write_text(text, encoding="utf-8")
 
 
-VAULT = tempfile.mkdtemp(prefix="jeevi-partner-vault-")
+VAULT = tempfile.mkdtemp(prefix="javis-partner-vault-")
 
 
 def _with_turn(turn, fn):
@@ -57,7 +57,7 @@ def _with_turn(turn, fn):
         turn_context.reset(tok)
 
 
-# ── 1. jeevi_schedule takes the asking chat and the assistant from the host's turn ──
+# ── 1. javis_schedule takes the asking chat and the assistant from the host's turn ──
 partner_turn = turn_context.make("dashboard", chat_id="s-partner", la_chu=True, session_id="s-partner")
 partner_turn["assistant"] = "dang-bai"   # set by run_turn, like a chatbot turn's bot_id
 check("the host's assistant key survives bind/current",
@@ -108,7 +108,7 @@ check("reminder from a partner chat: chat and assistant in the payload",
       sent and sent[0].get("chat_id") == "web:s-partner" and sent[0].get("agent") == "dang-bai")
 
 # ── 2. the reminder store keeps the assistant and runs as it ──
-BRAIN = tempfile.mkdtemp(prefix="jeevi-partner-brain-")
+BRAIN = tempfile.mkdtemp(prefix="javis-partner-brain-")
 agent_prompts, finished = [], []
 
 
@@ -121,7 +121,7 @@ def _agent_prompt(brain, slug):
 
 def _finish(brain, slug, task, out):
     finished.append((slug, task))
-    return "\n".join(x for x in out.splitlines() if not x.startswith("JEEVI_LESSON:"))
+    return "\n".join(x for x in out.splitlines() if not x.startswith("JAVIS_LESSON:"))
 
 
 async def _send(chat_id, text, **kw):
@@ -155,7 +155,7 @@ class FakeCli:
         return True
 
     async def query(self, prompt):
-        yield {"type": "final", "content": "Đã đăng poster.\nJEEVI_LESSON: luôn kèm hashtag"}
+        yield {"type": "final", "content": "Đã đăng poster.\nJAVIS_LESSON: luôn kèm hashtag"}
 
 _real_engine = reminders.claude_engine
 reminders.claude_engine = FakeCli
@@ -164,7 +164,7 @@ try:
     check("run as the assistant: its prompt, not Jeevi's", seen[-1] == "SYS-AGENT dang-bai")
     check("lesson lines stripped from the posted result", body == "Đã đăng poster." and finished)
     body2, _ = asyncio.run(feature._run_task(BRAIN, "Đăng poster.", "full", agent="da-xoa"))
-    check("assistant gone -> plain Jeevi, job still runs", seen[-1] == "SYS-JEEVI" and "JEEVI_LESSON" in body2)
+    check("assistant gone -> plain Jeevi, job still runs", seen[-1] == "SYS-JEEVI" and "JAVIS_LESSON" in body2)
     asyncio.run(feature._run_task(BRAIN, "Nhắc gọi khách.", "full"))
     check("no assistant -> plain Jeevi as before", seen[-1] == "SYS-JEEVI")
 finally:
@@ -183,7 +183,7 @@ check("a failed reminder tells the incident desk its chat",
       hooked and hooked[-1].get("chat") == "web:s-partner")
 
 # ── 3. loops keep and use the assistant ──
-LOOP_BRAIN = tempfile.mkdtemp(prefix="jeevi-partner-loops-")
+LOOP_BRAIN = tempfile.mkdtemp(prefix="javis-partner-loops-")
 loop_prompts = []
 
 
@@ -194,11 +194,11 @@ class FakeLoopCli:
         return True
 
     async def query(self, prompt):
-        yield {"type": "final", "content": "Đã đăng 1 video.\nJEEVI_LESSON: giờ vàng là 20h"}
+        yield {"type": "final", "content": "Đã đăng 1 video.\nJAVIS_LESSON: giờ vàng là 20h"}
 
 lfeat = self_improve.LoopFeature(self_improve.LoopDeps(
     build_system_prompt=lambda b: "SYS-JEEVI", brain_root=lambda b: LOOP_BRAIN, aux_model=lambda: None,
-    atomic_write_text=_atomic_write, project_root=Path("."), state_dir=Path(os.environ["JEEVI_STATE_DIR"]),
+    atomic_write_text=_atomic_write, project_root=Path("."), state_dir=Path(os.environ["JAVIS_STATE_DIR"]),
     safe_tools=["Read"], readonly_tools=["Read"], build_agent_prompt=_agent_prompt, finish_agent_run=_finish))
 
 
@@ -220,7 +220,7 @@ lfeat.toggle("brain", "video")
 check("toggling keeps the assistant", "agent: dang-bai" in (d / "video.md").read_text(encoding="utf-8"))
 r = asyncio.run(lfeat.run_cycle("brain", "video", "manual"))
 check("loop round runs as the assistant", loop_prompts and loop_prompts[-1] == "SYS-AGENT dang-bai")
-check("loop round's lesson line is stripped", "JEEVI_LESSON" not in str(r.get("summary") or ""))
+check("loop round's lesson line is stripped", "JAVIS_LESSON" not in str(r.get("summary") or ""))
 
 # ── 4. the incident desk posts to the chat the job came from ──
 posts = []
@@ -233,7 +233,7 @@ async def post_with_chat(brain, text, chat=""):
 async def post_old(brain, text):
     posts.append((brain, "<old>", text))
 
-_desk_dir, _old_dir = Path(tempfile.mkdtemp(prefix="jeevi-inc-")), Path(tempfile.mkdtemp(prefix="jeevi-inc-"))
+_desk_dir, _old_dir = Path(tempfile.mkdtemp(prefix="javis-inc-")), Path(tempfile.mkdtemp(prefix="javis-inc-"))
 desk = idk.IncidentDesk(idk.IncidentDeps(state_dir=lambda: _desk_dir,
                                          post=post_with_chat, ask=None))
 

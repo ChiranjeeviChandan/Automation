@@ -41,7 +41,7 @@ def p95(values):
 
 def longest_chats():
     """(id, message count) of the longest chat and of a typical one, read straight from the store."""
-    state = os.environ.get("JEEVI_STATE_DIR") or ""
+    state = os.environ.get("JAVIS_STATE_DIR") or ""
     db = Path(state) / "conversations.db"
     if not db.exists():
         return []

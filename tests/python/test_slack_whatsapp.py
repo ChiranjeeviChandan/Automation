@@ -25,7 +25,7 @@ import os
 import sys
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-slackwa-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-slackwa-"))
 
 import channel_context  # noqa: E402
 import channels  # noqa: E402
@@ -614,7 +614,7 @@ check("both channels in the registry as bot channels with a token account",
 check("WhatsApp declares no groups, Slack does",
       channels.spec("slack").nl("nhom") and not channels.spec("whatsapp").nl("nhom"))
 check("both can send text from the inbox (owner takeover)",
-      channels.spec("slack").nl("tra_loi_tu_jeevi") and channels.spec("whatsapp").nl("tra_loi_tu_jeevi"))
+      channels.spec("slack").nl("tra_loi_tu_javis") and channels.spec("whatsapp").nl("tra_loi_tu_javis"))
 check("chatbot store accepts Slack channel ids", chatbot_store._CHAT_ID_RE.match("C0ABC1234") is not None)
 for src, prefix in (("slack", "slack:"), ("whatsapp", "whatsapp:")):
     b = channel_context.build_channel_block(src, {"chat_id": prefix + "X1", "user_name": "Kim",

@@ -302,7 +302,7 @@ Quy ước:
 
 ### 7.3 Storage
 
-Dùng SQLite trong `JEEVI_STATE_DIR`, ví dụ `capabilities.db`:
+Dùng SQLite trong `JAVIS_STATE_DIR`, ví dụ `capabilities.db`:
 
 ```sql
 CREATE TABLE capabilities (
@@ -2040,7 +2040,7 @@ Cùng họ lỗi đó, nhưng ở phía HTTP: `/workflows/resume` được thêm
 SSE, tức là buộc phải là `GET` (EventSource không POST được). Nó nằm sau `_auth_guard` nên
 không hở với người lạ, nhưng lớp chống CSRF sẵn có lại **không** phủ nó: `csrf_decision` chỉ
 xét Origin trên method ghi, trong khi điều hướng top-level bằng `GET` không gửi Origin và
-cookie `jeevi_session` đặt `SameSite=lax` thì vẫn đi kèm. Một trang lạ chỉ cần đẩy
+cookie `javis_session` đặt `SameSite=lax` thì vẫn đi kèm. Một trang lạ chỉ cần đẩy
 `location.href` sang là lệnh chạy trên máy nạn nhân, kể cả khi đã bật mật khẩu.
 
 Với `/workflows/resume` rủi ro thực tế thấp vì mã duyệt suy ra từ task + node + arguments nên

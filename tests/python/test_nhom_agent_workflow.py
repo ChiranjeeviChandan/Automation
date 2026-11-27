@@ -24,7 +24,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-nhom-state-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-nhom-state-"))
 
 import main  # noqa: E402
 from starlette.testclient import TestClient  # noqa: E402
@@ -43,7 +43,7 @@ main.cfgmod.gate_active = lambda: False   # test không đụng auth thật
 # base_url phải là IP: chưa bật cổng đăng nhập thì web_security siết Host để chống
 # DNS-rebinding, mà "testserver" mặc định của TestClient không nằm trong allowlist.
 client = TestClient(main.app, base_url="http://127.0.0.1")
-BRAIN = tempfile.mkdtemp(prefix="jeevi-nhom-brain-")
+BRAIN = tempfile.mkdtemp(prefix="javis-nhom-brain-")
 
 
 def fm(rel):
@@ -124,7 +124,7 @@ caps = main._gather_capabilities(BRAIN)
 check("caps: agent mang theo tag (0.100.0)", all(isinstance(a.get("tags"), list) for a in caps["agents"]))
 check("caps: workflow mang theo nhóm", all("group" in w for w in caps["workflows"]))
 
-idx = main._render_jeevi_index(caps)
+idx = main._render_javis_index(caps)
 # 0.100.0: agent nhiều tag không chia theo tiêu đề (chia thì agent hai tag hiện hai lần); tag ghi trên dòng.
 _agent_part = idx.split("## Agents", 1)[1].split("\n## Skills", 1)[0]
 check("index: agent ghi tag trên dòng, không chia tiêu đề theo nhóm",
@@ -136,7 +136,7 @@ check("index: agent nhóm Chung vẫn được liệt kê", "agent-cu" in idx)
 mot_nhom = {"agents": [{"slug": "a", "name": "A", "role": "r", "model": "", "skills": [],
                         "group": main.NHOM_MAC_DINH}],
             "skills": [], "workflows": [], "loops": [], "plugins": []}
-idx1 = main._render_jeevi_index(mot_nhom)
+idx1 = main._render_javis_index(mot_nhom)
 check("index: chỉ một nhóm thì không chèn tiêu đề nhóm thừa", "### Chung" not in idx1)
 
 # ============================================================

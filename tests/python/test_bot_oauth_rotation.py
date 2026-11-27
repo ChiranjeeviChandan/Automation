@@ -13,8 +13,8 @@ import tempfile
 import time
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-bot-oauth-state-")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-bot-oauth-brain-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-bot-oauth-state-")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-bot-oauth-brain-")
 
 import bot_oauth_rotation as R  # noqa: E402
 import engine  # noqa: E402
@@ -166,8 +166,8 @@ try:
     try:
         t = turn_context.bind(BOT)
         try:
-            tools = [{"fn": "jeevi_read_file", "schema": {}}]
-            routing = {"jeevi_read_file": "fake-sandbox-route"}
+            tools = [{"fn": "javis_read_file", "schema": {}}]
+            routing = {"javis_read_file": "fake-sandbox-route"}
             msg = [{"role": "user", "content": "Hello"}]
             got = asyncio.run(_collect_mcp("token-old", "chat-old", msg, tools, routing))
         finally:
@@ -179,7 +179,7 @@ try:
         engine._responses_with_mcp_account = orig_engine
 
     # Extra auth.json is not the global default credentials slot.
-    with tempfile.TemporaryDirectory(prefix="jeevi-bot-auth-") as dirname:
+    with tempfile.TemporaryDirectory(prefix="javis-bot-auth-") as dirname:
         folder = Path(dirname)
         auth = folder / "auth.json"
         orig_home = plan_accounts.home

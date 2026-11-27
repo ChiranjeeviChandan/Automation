@@ -49,7 +49,7 @@ check("the sample set loads and has no literal banned dash",
       and "\u2014" not in (ROOT / "tools/eval/sample_set.json").read_text(encoding="utf-8"))
 
 # ───────────────────────── 2. a run against a fake Jeevi ─────────────────────────
-STATE = Path(tempfile.mkdtemp(prefix="jeevi-qe-"))
+STATE = Path(tempfile.mkdtemp(prefix="javis-qe-"))
 EVENTS = STATE / "usage-events.jsonl"
 EVENTS.write_text(json.dumps({"in": 999, "out": 9}) + "\n", encoding="utf-8")   # older activity: not counted
 ANSWERS = {"good": "Doanh thu tuần này 3 triệu, 12 đơn hàng.", "bad": "Mình chưa rõ."}
@@ -57,7 +57,7 @@ MODE = {"answer": "good"}
 SEEN = []
 
 
-class _Jeevi(BaseHTTPRequestHandler):
+class _Javis(BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
@@ -74,7 +74,7 @@ class _Jeevi(BaseHTTPRequestHandler):
         self.wfile.write(raw)
 
 
-srv = ThreadingHTTPServer(("127.0.0.1", 0), _Jeevi)
+srv = ThreadingHTTPServer(("127.0.0.1", 0), _Javis)
 threading.Thread(target=srv.serve_forever, daemon=True).start()
 url = f"http://127.0.0.1:{srv.server_address[1]}"
 SET = STATE / "set.json"
@@ -110,9 +110,9 @@ check("bench: indented plugin JSON gets compact", rows["plugin_json"]["saved_pct
 # ───────────────────────── 4. section_ab_eval grading ─────────────────────────
 ab = load("section_ab_eval")
 loop_case = next(c for c in ab.CASES if c["id"] == "loop")
-for note, ans in [("yaml", "jeevi_schedule op: create\nmode: full\nenabled: false"),
-                  ("json", 'jeevi_schedule({"op": "create", "mode": "full", "enabled": false})'),
-                  ("kwargs", 'jeevi_schedule(op = "create", mode = "full", enabled = false)')]:
+for note, ans in [("yaml", "javis_schedule op: create\nmode: full\nenabled: false"),
+                  ("json", 'javis_schedule({"op": "create", "mode": "full", "enabled": false})'),
+                  ("kwargs", 'javis_schedule(op = "create", mode = "full", enabled = false)')]:
     check(f"ab grade: a {note} tool call covers the loop facts", ab.grade(ans, loop_case)["coverage"] == 1.0,
           ab.grade(ans, loop_case))
 agent_case = next(c for c in ab.CASES if c["id"] == "agent")

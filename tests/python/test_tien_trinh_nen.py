@@ -13,7 +13,7 @@ import time
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ttn-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ttn-")
 import asyncio  # noqa: E402
 import subprocess  # noqa: E402
 
@@ -33,7 +33,7 @@ if os.name == "nt":
     print("BỎ QUA: Windows không có nhóm tiến trình, mọi hàm là no-op.")
     sys.exit(0)
 
-WD = tempfile.mkdtemp(prefix="jeevi-ttn-wd-")
+WD = tempfile.mkdtemp(prefix="javis-ttn-wd-")
 
 
 def engine_bo_lai(lenh: str) -> int:

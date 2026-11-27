@@ -14,7 +14,7 @@ Use it when the job is just keeping an eye on a page: a competitor's price, a ne
 
 ## Create it by asking in chat
 
-Tell Jeevi something like "watch this page and tell me when the shirt drops below $20", with the link. Jeevi uses the `jeevi_watch` tool and replies with the watch id. Every engine can do this.
+Tell Jeevi something like "watch this page and tell me when the shirt drops below $20", with the link. Jeevi uses the `javis_watch` tool and replies with the watch id. Every engine can do this.
 
 ## Create it on the Recurring work page
 
@@ -53,7 +53,7 @@ Tick **Summarize changes with AI** and Jeevi calls the background model **once p
 
 ## Where the data lives
 
-`web_watch.sqlite3` in the Jeevi state folder (`JEEVI_STATE_DIR`), next to `kanban.sqlite3`.
+`web_watch.sqlite3` in the Jeevi state folder (`JAVIS_STATE_DIR`), next to `kanban.sqlite3`.
 
 ## Related
 

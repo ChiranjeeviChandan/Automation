@@ -23,8 +23,8 @@ import os
 import tempfile
 import time
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-auto-bg-"))
-os.environ["JEEVI_AUTO_BACKGROUND_PAUSED"] = "1"      # the scheduler must not run the tick under the test
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-auto-bg-"))
+os.environ["JAVIS_AUTO_BACKGROUND_PAUSED"] = "1"      # the scheduler must not run the tick under the test
 
 import main  # noqa: E402
 import config as cfgmod  # noqa: E402

@@ -1,9 +1,9 @@
-"""Danh bạ tên gói (04/11/2026): tên gói đang bán lấy từ jeevi-store, không ghi cứng trong mã Jeevi.
+"""Danh bạ tên gói (04/11/2026): tên gói đang bán lấy từ javis-store, không ghi cứng trong mã Jeevi.
 
     python tests/run.py plan_names
 
 Chủ repo 04/11/2026: "làm tự động hóa tên các gói của các nhà cung cấp khác luôn". Codex chỉ gửi mã
-(`prolite` là gói 100 đô), nên tên nằm ở `plan-names.json` của jeevi-store, máy tải về 6 giờ một lần.
+(`prolite` là gói 100 đô), nên tên nằm ở `plan-names.json` của javis-store, máy tải về 6 giờ một lần.
 Test này giữ: đọc không bao giờ chờ mạng, dữ liệu lạ bị bỏ, thứ tự ưu tiên tên.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
@@ -11,10 +11,10 @@ import json
 import os
 import tempfile
 
-_TMP = tempfile.mkdtemp(prefix="jeevi-pn-")
-os.environ["JEEVI_STATE_DIR"] = _TMP
+_TMP = tempfile.mkdtemp(prefix="javis-pn-")
+os.environ["JAVIS_STATE_DIR"] = _TMP
 U = "https://kho.example/plan-names.json"
-os.environ["JEEVI_PLAN_NAMES_URL"] = U
+os.environ["JAVIS_PLAN_NAMES_URL"] = U
 
 import plan_names as pn  # noqa: E402
 import plan_limits as pl  # noqa: E402
@@ -28,7 +28,7 @@ def check(ten, ok, them=None):
         fails.append(ten)
 
 
-GOC = {"format": "jeevi-plan-names", "format_version": 1, "updated": "2026-11-04",
+GOC = {"format": "javis-plan-names", "format_version": 1, "updated": "2026-11-04",
        "providers": {"codex": {"prolite": "Pro", "plus": "Plus", "PRO": "Pro 20x", "x y": "Hỏng",
                                "go": "<script>", "team": "Business"},
                      "claude": {"pro": "Pro"}, "la": {"a": "B"}, "grok": "khong-phai-bang"}}
@@ -59,12 +59,12 @@ goi_nen.clear()
 pn.bang(now=1_000_000.0 + pn.TTL + 60)
 check("vừa tải hỏng: nghỉ 30 phút rồi mới thử lại", goi_nen == [], goi_nen)
 pn._STATE["fail_at"] = 0.0
-os.environ["JEEVI_PLAN_NAMES_URL"] = "https://kho-khac.example/plan-names.json"
+os.environ["JAVIS_PLAN_NAMES_URL"] = "https://kho-khac.example/plan-names.json"
 pn._STATE["mem"] = None
 check("đổi kho thì không dùng bản lưu của kho cũ", pn.bang(now=1_000_000.0 + 60) == {})
-os.environ["JEEVI_PLAN_NAMES_URL"] = ""
+os.environ["JAVIS_PLAN_NAMES_URL"] = ""
 check("URL rỗng là tắt danh bạ", pn.bang() == {} and pn.url_danh_ba() == "")
-os.environ["JEEVI_PLAN_NAMES_URL"] = U
+os.environ["JAVIS_PLAN_NAMES_URL"] = U
 pn._STATE["mem"] = None
 
 # 3. Tải: hợp lệ thì lưu, hỏng thì giữ bản cũ.

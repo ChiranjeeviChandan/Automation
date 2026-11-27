@@ -4,7 +4,7 @@ Trạng thái: **ĐÃ CHỐT MỘT PHẦN ngày 27/10/2026** (chính sách merge
 mục 17). Các mục còn nhãn [ĐỀ XUẤT] vẫn chờ duyệt. Chưa có dòng code nào theo spec này.
 
 Nguồn: bản brainstorm "Jeevi - Brainstorm tích hợp GitHub vào chat" (28/10/2026, phiên Codex),
-cộng bản đánh giá đối chiếu với mã nguồn `jeevi-os` ngày 27/10/2026 (phiên Claude Code). Spec
+cộng bản đánh giá đối chiếu với mã nguồn `javis-os` ngày 27/10/2026 (phiên Claude Code). Spec
 này thay bản brainstorm làm tài liệu triển khai, không cần đọc lại bản kia.
 
 Quy ước đánh dấu trong tài liệu:
@@ -44,7 +44,7 @@ Bản brainstorm viết khi chưa đọc mã. Thực tế phần nền đã có 
 | Cần cho tính năng | Đã có ở đâu | Còn thiếu |
 |---|---|---|
 | Gắn nhiều thư mục vào một chat | `server/coding_store.py` (sổ thư mục theo brain, `thu_mucs`), gắn được ở mọi khung chat từ 0.347.0 | Nguồn "repo GitHub" bên cạnh "thư mục trên máy" |
-| Nhánh riêng, worktree riêng mỗi phiên | `coding_store.tao_worktree` (nhánh `jeevi/<phiên>`, đặt ở `STATE_DIR/worktrees`), `go_worktree` từ chối gỡ khi còn sửa dở | Worktree chỉ bám thư mục CHÍNH; việc nhiều repo cần một worktree cho mỗi repo |
+| Nhánh riêng, worktree riêng mỗi phiên | `coding_store.tao_worktree` (nhánh `javis/<phiên>`, đặt ở `STATE_DIR/worktrees`), `go_worktree` từ chối gỡ khi còn sửa dở | Worktree chỉ bám thư mục CHÍNH; việc nhiều repo cần một worktree cho mỗi repo |
 | Điểm hồi | `server/coding_checkpoint.py` (tag git) | Không |
 | Mức quyền Plan / Tự động / Toàn quyền | `coding_store.MUC_QUYEN`, `server/coding_ctx.py` | Không |
 | Engine Claude chạy thật | `server/claude_sdk_engine.py`, nạp `CLAUDE.md` của repo qua `setting_sources` | Không |
@@ -153,14 +153,14 @@ Phần dưới là [ĐỀ XUẤT]:
 - Token chỉ đi vào lệnh git theo cách của `git_brain._auth_url` (một lần, không lưu remote) và
   vào header API. Mọi log, lỗi, tin chat đi qua `secret_redact` trước khi hiện.
 - **ĐÃ LÀM 0.430.0 (chủ repo chốt 01/11/2026):** nút **Đăng nhập bằng GitHub** qua GitHub App
-  `Jeevi OS` (`github.com/apps/jeevi-os`, Client ID `Iv23limeL0BsyXptmTz2`), luồng Device Flow
+  `Jeevi OS` (`github.com/apps/javis-os`, Client ID `Iv23limeL0BsyXptmTz2`), luồng Device Flow
   (`server/github_oauth.py`). Không dùng luồng chuyển trang như Claude vì mỗi bản Jeevi một địa
   chỉ (không có callback cố định) và repo công khai không giữ được client secret. Người dùng bấm
   nút, dán mã ở `github.com/login/device`, bấm Authorize; sau đó cài app vào repo muốn cho Jeevi
   thấy. App tạo token không hết hạn (đã tắt "Expire user authorization tokens"); nếu sau này bật
   lại thì Jeevi giữ refresh token và thử làm mới, từ chối thì coi như đã đăng xuất. Ô dán token
-  vẫn giữ cho ai thích cách cũ. Fork tự đăng ký app khác thì đặt `JEEVI_GITHUB_CLIENT_ID` và
-  `JEEVI_GITHUB_APP_SLUG`.
+  vẫn giữ cho ai thích cách cũ. Fork tự đăng ký app khác thì đặt `JAVIS_GITHUB_CLIENT_ID` và
+  `JAVIS_GITHUB_APP_SLUG`.
 
 ### 5.2. Chọn repo trong chat
 
@@ -189,8 +189,8 @@ trong `STATE_DIR/repos`). Thư mục người dùng tự thêm bằng tay giữ 
 
 - Một **việc code** là một bản ghi gắn với một chat, có một hoặc nhiều repo. Mỗi repo trong việc
   có **một nhánh và một worktree riêng**. [ĐỀ XUẤT]
-- Tên nhánh: `jeevi/<slug-ngắn>-<id 6 ký tự>`, slug sinh từ nội dung việc, không dấu. Giữ tiền tố
-  `jeevi/` như hiện nay để người dùng nhận ra nhánh do Jeevi tạo.
+- Tên nhánh: `javis/<slug-ngắn>-<id 6 ký tự>`, slug sinh từ nội dung việc, không dấu. Giữ tiền tố
+  `javis/` như hiện nay để người dùng nhận ra nhánh do Jeevi tạo.
 - Mở rộng `coding_store` để worktree bám **từng repo** chứ không chỉ thư mục chính. Việc một repo
   vẫn đi đúng đường cũ.
 - Sửa code chạy song song được. Giới hạn số việc chạy đồng thời mỗi brain, mặc định **3**. [CHỐT]
@@ -316,7 +316,7 @@ kèm nguyên nhân, gửi về chat và inbox. Không lặp vô hạn.
 
 > **Cập nhật 08/11/2026 (chủ repo): review chéo do người dùng quyết.** Mặc định TẮT. Bật theo từng repo
 > (thẻ GitHub, dấu ba chấm, Review chéo), hoặc bấm **Review ngay** trên bảng chi tiết PR, hoặc nhắn trong chat
-> (tool `jeevi_github` op=review). Model review mặc định là chính model đang chat, không bắt buộc khác hãng;
+> (tool `javis_github` op=review). Model review mặc định là chính model đang chat, không bắt buộc khác hãng;
 > chọn model khác theo repo hay mỗi lần review. Phát hiện KHÔNG tự gửi về tác giả: Jeevi dừng merge và chờ
 > người dùng chọn **Sửa các lỗi này** hoặc **Bỏ qua, merge**. Commit mới làm phát hiện cũ hết hiệu lực.
 > Phần dưới là thiết kế ban đầu, giữ để tham khảo.
@@ -341,7 +341,7 @@ Anh Quý chốt: "xanh merge luôn, auto merge theo repo".
 
 - Mặc định: **CI xanh thì tự merge luôn**, không dừng chờ bấm tay.
 - Công tắc **tự merge theo từng repo**, mặc định bật. Tắt ở repo nào thì repo đó dừng ở **sẵn
-  sàng merge**, người dùng bấm Merge trong bảng chi tiết hoặc nói trong chat. Repo `jeevi-os`
+  sàng merge**, người dùng bấm Merge trong bảng chi tiết hoặc nói trong chat. Repo `javis-os`
   khớp sẵn với quy ước dev hiện tại (merge thẳng `main` khi CI xanh).
 - "Xanh" ở đây là đủ cả bộ điều kiện dưới, không chỉ dấu tích của CI. Tự merge chỉ chạy khi đủ:
   CI bắt buộc xanh trên đúng SHA, `mergeable` đúng, không có cảnh báo mục 7.4, review chéo không còn phát hiện mở, và yêu cầu review của repo (nếu có) đã thoả.
@@ -498,7 +498,7 @@ từng bước, mở bảng chi tiết, merge.
 
 ## 19. Lệnh goal triển khai trọn gói
 
-Dán nguyên khối dưới vào một phiên Claude Code mở trên repo `jeevi-os`. Phiên đó tự làm từ G1 tới
+Dán nguyên khối dưới vào một phiên Claude Code mở trên repo `javis-os`. Phiên đó tự làm từ G1 tới
 G5, mỗi giai đoạn một PR theo quy ước, xong hết mới kiểm toàn bộ và tự sửa tới khi sạch.
 
 ```text

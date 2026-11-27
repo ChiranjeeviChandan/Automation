@@ -4,12 +4,12 @@
 
 Owner, 18/11/2026: save tokens on long skills only with "cơ chế nào đó tìm thông tin nạp thông minh trước khi nạp", never
 at the cost of the answer. What this pins:
-  1. The real jeevi-builder: each clear request gets its own template plus every rule section, verbatim (no loss of
+  1. The real javis-builder: each clear request gets its own template plus every rule section, verbatim (no loss of
      what the task needs); vague or unrelated requests load the whole skill.
   2. Only menu-style skills are split: a one-procedure skill (the seo-audit case) loads whole unless it opts in.
   3. The canary share, the owner-only rule, the env switch and the Off saving level.
   4. Learning from use: a part fetched in two turns is loaded up front; two heavy turns make the skill load whole.
-  5. jeevi_use_skill (task, section, full) and the automatic skill path of the context runtime use it; the meter
+  5. javis_use_skill (task, section, full) and the automatic skill path of the context runtime use it; the meter
      counts it; the API loops hand it the turn's request.
 """
 from _paths import ROOT, SERVER  # noqa: E402,F401
@@ -21,10 +21,10 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-_TMP = Path(tempfile.mkdtemp(prefix="jeevi-sections-"))
-os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+_TMP = Path(tempfile.mkdtemp(prefix="javis-sections-"))
+os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
 (_TMP / "state").mkdir()
-os.environ.pop("JEEVI_SKILL_SECTIONS", None)
+os.environ.pop("JAVIS_SKILL_SECTIONS", None)
 
 import section_select as ss  # noqa: E402
 
@@ -37,7 +37,7 @@ def check(name, ok, extra=None):
         fails.append(name)
 
 
-BUILDER = (ROOT / ".claude" / "skills" / "jeevi-builder" / "SKILL.md").read_text(encoding="utf-8")
+BUILDER = (ROOT / ".claude" / "skills" / "javis-builder" / "SKILL.md").read_text(encoding="utf-8")
 
 # ───────────────────────── 1. parsing ─────────────────────────
 doc = """---
@@ -78,7 +78,7 @@ check("find_section: a top-level section comes with its children",
 check("find_section: accent and case free, prefix match", ss.find_section(doc, "ALP").startswith("### Alpha"))
 check("find_section: unknown title", ss.find_section(doc, "gamma") is None)
 
-# ───────────────────────── 2. the real jeevi-builder ─────────────────────────
+# ───────────────────────── 2. the real javis-builder ─────────────────────────
 TYPES = {"Agent": "Agent ->", "Loop": "Loop ->", "Plugin": "Plugin ->", "Workflow": "Workflow ->", "Skill": "Skill ->",
          "Team": "Nhóm chat ->"}
 CASES = [
@@ -98,7 +98,7 @@ CASES = [
 ]
 b_lines, b_pre, b_units = ss.parse(BUILDER)
 rule_texts = ["\n".join(b_lines[u.start:u.end]) for u in b_units if u.always]
-check("jeevi-builder: rule sections are found", len(rule_texts) >= 3, [u.title for u in b_units if u.always])
+check("javis-builder: rule sections are found", len(rule_texts) >= 3, [u.title for u in b_units if u.always])
 right = 0
 for request, want in CASES:
     sel = ss.select(BUILDER, request, ss.SKILL_MIN_CHARS)
@@ -112,7 +112,7 @@ for request, want in CASES:
     right += good
     if not good:
         print("     case:", request, "->", None if sel is None else sel.loaded)
-check(f"jeevi-builder: {right}/{len(CASES)} requests get exactly what they need, unsure ones load whole",
+check(f"javis-builder: {right}/{len(CASES)} requests get exactly what they need, unsure ones load whole",
       right == len(CASES))
 
 # 2b: a part that says another part's thing must be made first brings it along (found in the real-model A/B: a workflow
@@ -141,17 +141,17 @@ with patch.object(ss, "assigned", return_value=True):
     opted = procedure.replace("description: audit SEO\n", "description: audit SEO\nsections: select\n")
     check("the same skill splits when its frontmatter opts in",
           (ss.for_skill("seo-audit", opted, "crawlability problems", "", "s1") or "").startswith("[Jeevi loaded"))
-    picked = ss.for_skill("jeevi-builder", BUILDER, "", "Tạo agent viết email", "s1")
-    check("jeevi-builder is on the menu list, and the result says what was left out",
+    picked = ss.for_skill("javis-builder", BUILDER, "", "Tạo agent viết email", "s1")
+    check("javis-builder is on the menu list, and the result says what was left out",
           picked and picked.startswith("[Jeevi loaded") and 'section="<title>"' in picked and "full=true" in picked)
 
 with patch.object(ss, "_flag", wraps=ss._flag):
-    os.environ["JEEVI_SKILL_SECTIONS"] = "1"
-    check("JEEVI_SKILL_SECTIONS=1: every owner session", ss.assigned("any-session"))
+    os.environ["JAVIS_SKILL_SECTIONS"] = "1"
+    check("JAVIS_SKILL_SECTIONS=1: every owner session", ss.assigned("any-session"))
     check("but never without a session (bot, background job)", not ss.assigned(""))
-    os.environ["JEEVI_SKILL_SECTIONS"] = "0"
-    check("JEEVI_SKILL_SECTIONS=0: nobody", not ss.assigned("any-session"))
-    os.environ.pop("JEEVI_SKILL_SECTIONS")
+    os.environ["JAVIS_SKILL_SECTIONS"] = "0"
+    check("JAVIS_SKILL_SECTIONS=0: nobody", not ss.assigned("any-session"))
+    os.environ.pop("JAVIS_SKILL_SECTIONS")
 share = sum(ss.assigned(f"session-{i}") for i in range(2000)) / 2000
 check("by default about 10% of sessions", 0.06 < share < 0.14, share)
 import config  # noqa: E402
@@ -161,9 +161,9 @@ with patch.object(config, "read_settings", return_value={"context_runtime": {"sk
     check("settings can list a skill as safe to split", ss.opted_in("seo-audit", procedure))
 import tool_result_shaper  # noqa: E402
 with patch.object(tool_result_shaper, "settings", return_value={"on": False}):
-    os.environ["JEEVI_SKILL_SECTIONS"] = "1"
+    os.environ["JAVIS_SKILL_SECTIONS"] = "1"
     check("the Off saving level turns it off", not ss.assigned("any-session"))
-    os.environ.pop("JEEVI_SKILL_SECTIONS")
+    os.environ.pop("JAVIS_SKILL_SECTIONS")
 import turn_context as tc  # noqa: E402
 tok = tc.bind(tc.make("zalo", sender_id="khach", chat_id="c1", la_chu=False))
 check("a bot answering a customer has no session for it", ss.session_key() == "")
@@ -173,14 +173,14 @@ check("the owner's chat session is the key", ss.session_key() == "sess-9")
 tc.reset(tok)
 
 # ───────────────────────── 4. learning from use ─────────────────────────
-key = ss.text_key("skill", "jeevi-builder", BUILDER)
+key = ss.text_key("skill", "javis-builder", BUILDER)
 agent_title = next(u.title for u in b_units if u.title.startswith("Agent ->"))
 check("section= names resolve to the real heading", ss.resolve_title(BUILDER, "agent") == agent_title)
 TEAM_ASK = "Lập nhóm chat gồm trợ lý marketing và trợ lý bán hàng"
 for n in range(2):   # two turns that had to fetch the Agent template after a team request
-    ss.note_load("skill", "jeevi-builder", key, f"turn-{n}")
-    ss.note_fetch("skill", "jeevi-builder", f"turn-{n}", agent_title)
-    ss.note_fetch("skill", "jeevi-builder", f"turn-{n}", agent_title)   # the same part twice counts once
+    ss.note_load("skill", "javis-builder", key, f"turn-{n}")
+    ss.note_fetch("skill", "javis-builder", f"turn-{n}", agent_title)
+    ss.note_fetch("skill", "javis-builder", f"turn-{n}", agent_title)   # the same part twice counts once
 full_now, extra = ss.learned(key)
 check("a part fetched in two turns is learned", extra == {agent_title} and not full_now, (full_now, extra))
 check("learned titles are matched like headings",
@@ -189,57 +189,57 @@ check("before learning, a team request leaves the Agent template out",
       "### Agent ->" not in ss.select(BUILDER, TEAM_ASK, ss.SKILL_MIN_CHARS).text)
 sel = ss.select(BUILDER, TEAM_ASK, ss.SKILL_MIN_CHARS, ss.learned(key))
 check("the learned part now comes up front", sel is not None and "### Agent ->" in sel.text)
-ss.note_fetch("skill", "jeevi-builder", "never-loaded", "Loop")
+ss.note_fetch("skill", "javis-builder", "never-loaded", "Loop")
 check("a fetch with no selective load before it is not counted", "Loop" not in (ss.learned(key)[1]))
 for n in range(2):   # two heavy turns: the whole skill, or two extra parts
-    ss.note_load("skill", "jeevi-builder", key, f"heavy-{n}")
-    ss.note_fetch("skill", "jeevi-builder", f"heavy-{n}", "*")
+    ss.note_load("skill", "javis-builder", key, f"heavy-{n}")
+    ss.note_fetch("skill", "javis-builder", f"heavy-{n}", "*")
 check("two heavy turns: the skill loads whole from then on",
       ss.learned(key)[0] and ss.select(BUILDER, "Tạo agent viết email", ss.SKILL_MIN_CHARS, ss.learned(key)) is None)
-check("a changed skill starts over", ss.learned(ss.text_key("skill", "jeevi-builder", BUILDER + " ")) == (False, set()))
+check("a changed skill starts over", ss.learned(ss.text_key("skill", "javis-builder", BUILDER + " ")) == (False, set()))
 (_TMP / "state" / "section_learning.json").unlink()
 
-# ───────────────────────── 5. through jeevi_use_skill and the automatic skill path ─────────────────────────
+# ───────────────────────── 5. through javis_use_skill and the automatic skill path ─────────────────────────
 import mcp_hub  # noqa: E402
 vault = _TMP / "brain"
-(vault / "skills" / "jeevi-builder").mkdir(parents=True)
-(vault / "skills" / "jeevi-builder" / "SKILL.md").write_text(BUILDER, encoding="utf-8")
+(vault / "skills" / "javis-builder").mkdir(parents=True)
+(vault / "skills" / "javis-builder" / "SKILL.md").write_text(BUILDER, encoding="utf-8")
 _tools, route = mcp_hub._builtin_tools("full", str(vault))
-use = route["jeevi_use_skill"]["call"]
-desc = next(t["description"] for t in _tools if t["fn"] == "jeevi_use_skill")
-check("jeevi_use_skill offers task, section and full", "task=" in desc and "section=" in desc and "full=true" in desc)
+use = route["javis_use_skill"]["call"]
+desc = next(t["description"] for t in _tools if t["fn"] == "javis_use_skill")
+check("javis_use_skill offers task, section and full", "task=" in desc and "section=" in desc and "full=true" in desc)
 
 
 async def _use(args):
     return await use(args)
 
-os.environ["JEEVI_SKILL_SECTIONS"] = "1"
+os.environ["JAVIS_SKILL_SECTIONS"] = "1"
 tok = tc.bind(tc.make("dashboard", la_chu=True, session_id="sess-use"))
 try:
-    got = asyncio.run(_use({"name": "jeevi-builder", "task": "tạo agent viết email"}))
-    check("jeevi_use_skill with a task: the parts it needs", got.startswith("[Jeevi loaded") and "### Agent ->" in got
+    got = asyncio.run(_use({"name": "javis-builder", "task": "tạo agent viết email"}))
+    check("javis_use_skill with a task: the parts it needs", got.startswith("[Jeevi loaded") and "### Agent ->" in got
           and "### Loop ->" not in got, got[:120])
-    part = asyncio.run(_use({"name": "jeevi-builder", "section": "Loop"}))
+    part = asyncio.run(_use({"name": "javis-builder", "section": "Loop"}))
     check("section= brings one part", part.startswith("### Loop ->") or "\n### Loop ->" in part[:400], part[:80])
-    whole = asyncio.run(_use({"name": "jeevi-builder", "full": True}))
+    whole = asyncio.run(_use({"name": "javis-builder", "full": True}))
     check("full=true brings the whole skill", "### Loop ->" in whole and "### Agent ->" in whole and len(whole) >= len(BUILDER))
-    bad = asyncio.run(_use({"name": "jeevi-builder", "section": "nope"}))
+    bad = asyncio.run(_use({"name": "javis-builder", "section": "nope"}))
     check("an unknown section lists the real ones", bad.startswith("ERROR") and "Agent ->" in bad)
     learned_titles = {t for t in json.loads((_TMP / "state" / "section_learning.json").read_text(encoding="utf-8"))
-                      [ss.text_key("skill", "jeevi-builder", BUILDER)]["extra"]}
-    check("a fetch through jeevi_use_skill is recorded under the real heading",
+                      [ss.text_key("skill", "javis-builder", BUILDER)]["extra"]}
+    check("a fetch through javis_use_skill is recorded under the real heading",
           learned_titles == {next(u.title for u in b_units if u.title.startswith("Loop ->"))}, learned_titles)
-    plain = asyncio.run(_use({"name": "jeevi-builder"}))
+    plain = asyncio.run(_use({"name": "javis-builder"}))
     check("no task and no request known: the whole skill", "### Loop ->" in plain and not plain.startswith("[Jeevi"))
     ss.QUESTION.set("Tạo một loop kiểm tra đơn mới")
-    from_turn = asyncio.run(_use({"name": "jeevi-builder"}))
+    from_turn = asyncio.run(_use({"name": "javis-builder"}))
     check("the turn's request alone is enough to choose", from_turn.startswith("[Jeevi loaded") and "### Loop ->" in from_turn)
     ss.QUESTION.set("")
 finally:
     tc.reset(tok)
 tok = tc.bind(tc.make("zalo", sender_id="khach", chat_id="c1", la_chu=False))
 try:
-    bot = asyncio.run(_use({"name": "jeevi-builder", "task": "tạo agent viết email"}))
+    bot = asyncio.run(_use({"name": "javis-builder", "task": "tạo agent viết email"}))
     check("a bot turn always gets the whole skill", "### Loop ->" in bot and not bot.startswith("[Jeevi"))
 finally:
     tc.reset(tok)
@@ -247,20 +247,20 @@ finally:
 from capability_registry import CapabilityRegistry  # noqa: E402
 from lazy_skill_runtime import LazySkillSource  # noqa: E402
 lazy = LazySkillSource(CapabilityRegistry(_TMP / "state" / "registry"))
-picked = lazy.resolve(vault, "Tạo agent jeevi-builder viết email chăm sóc khách", session_key="sess-lazy")
+picked = lazy.resolve(vault, "Tạo agent javis-builder viết email chăm sóc khách", session_key="sess-lazy")
 check("automatic skill path: a long menu skill now loads its needed parts instead of falling back",
       picked.action == "load" and "### Agent ->" in picked.context_item.content
       and "### Loop ->" not in picked.context_item.content, (picked.action, picked.reason))
-old = lazy.resolve(vault, "Tạo agent jeevi-builder viết email chăm sóc khách")
+old = lazy.resolve(vault, "Tạo agent javis-builder viết email chăm sóc khách")
 check("without a session the old fallback stays", old.action == "fallback" and old.reason == "body_over_limit",
       (old.action, old.reason))
-os.environ.pop("JEEVI_SKILL_SECTIONS")
+os.environ.pop("JAVIS_SKILL_SECTIONS")
 
 import tool_result_reuse  # noqa: E402
 tool_result_reuse._LOG_POOL.submit(lambda: None).result(timeout=5)
 stats = mcp_hub.result_size_stats(7)
 check("the meter counts what selective loading kept out", stats.get("saved_chars", 0) > 0 and
-      any(r["tool"] in ("jeevi_use_skill", "lazy_skill") for r in stats.get("by_tool") or []), stats.get("by_tool"))
+      any(r["tool"] in ("javis_use_skill", "lazy_skill") for r in stats.get("by_tool") or []), stats.get("by_tool"))
 
 import engine  # noqa: E402
 ss.QUESTION.set("")
@@ -383,15 +383,15 @@ for lang, (wf, line, ag, ask) in deps.items():
 # A request in another language than the skill: the model passes task= in the skill's language.
 JA_ASK = "古い顧客にフォローメールを書くエージェントを作って"
 with patch.object(ss, "assigned", return_value=True), patch.object(ss, "_meter"):
-    got = ss.for_skill("jeevi-builder", BUILDER, "tạo agent viết email chăm sóc khách cũ", JA_ASK, "lang-1")
+    got = ss.for_skill("javis-builder", BUILDER, "tạo agent viết email chăm sóc khách cũ", JA_ASK, "lang-1")
     check("Japanese request, task in the skill's language: the Agent part", got is not None and "### Agent ->" in got)
-    check("Japanese request with no task: the whole skill, as before", ss.for_skill("jeevi-builder", BUILDER, "",
+    check("Japanese request with no task: the whole skill, as before", ss.for_skill("javis-builder", BUILDER, "",
                                                                                    JA_ASK, "lang-2") is None)
-    got = ss.for_skill("jeevi-builder", BUILDER, "", "Crea un agente que escriba correos a clientes antiguos", "lang-3")
+    got = ss.for_skill("javis-builder", BUILDER, "", "Crea un agente que escriba correos a clientes antiguos", "lang-3")
     check("a Spanish request finds the Agent part on its own (agente = agent)", got is not None and "### Agent ->" in got)
-    got = ss.for_skill("jeevi-builder", BUILDER, "", "Erstelle einen Agenten, der Kaltakquise-Mails schreibt", "lang-4")
+    got = ss.for_skill("javis-builder", BUILDER, "", "Erstelle einen Agenten, der Kaltakquise-Mails schreibt", "lang-4")
     check("a German request too (Agenten = agent)", got is not None and "### Agent ->" in got)
-check("jeevi_use_skill asks for task in the skill's language", "in the language of the skill's description"
+check("javis_use_skill asks for task in the skill's language", "in the language of the skill's description"
       in open(os.path.join(SERVER, "mcp_hub.py"), encoding="utf-8").read())
 check("words: any script", ss.words("作成する") == ["作成", "成す", "する"] and ss.words("नियम पालन") == ["नियम", "पालन"]
       and ss.words("루프를") == ["루프", "프를"] and ss.words("Đơn hàng, Café!") == ["don", "hang", "cafe"])

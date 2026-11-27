@@ -9,7 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 SCRATCH = Path(tempfile.mkdtemp(prefix="trial-catalog-"))
-for key, child in {"JEEVI_STATE_DIR": "state", "BRAIN_PATH": "brain", "BRAINS_DIR": "brains",
+for key, child in {"JAVIS_STATE_DIR": "state", "BRAIN_PATH": "brain", "BRAINS_DIR": "brains",
                    "OBSIDIAN_VAULT_PATH": "vault", "SOURCES_PATH": "sources"}.items():
     os.environ[key] = str(SCRATCH / child)
 

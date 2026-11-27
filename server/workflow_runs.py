@@ -1,4 +1,4 @@
-"""Kho lịch sử chạy quy trình - SQLite trong JEEVI_STATE_DIR.
+"""Kho lịch sử chạy quy trình - SQLite trong JAVIS_STATE_DIR.
 
 Vì sao có: tới 0.58.5, bấm Chạy ở trang Quy trình thì kết quả chỉ stream vào một ngăn kéo tạm,
 đóng là mất, và Jeevi không có chỗ nào để tra "quy trình chạy gần nhất ra sao". Kho này ghi

@@ -1,4 +1,4 @@
-"""Duyệt người xin vào nhóm Zalo (0.84.7, jeevi-zalo 1.2.0).
+"""Duyệt người xin vào nhóm Zalo (0.84.7, javis-zalo 1.2.0).
 
     python tests/run.py zalo_xin_vao_nhom      (KHÔNG mạng, MCP giả)
 
@@ -17,7 +17,7 @@ import sys
 import tempfile
 import time
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-zpxin-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-zpxin-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:

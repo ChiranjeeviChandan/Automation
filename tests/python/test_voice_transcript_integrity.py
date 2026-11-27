@@ -24,8 +24,8 @@ class LocalCorrections(unittest.TestCase):
                 self.assertEqual(nghe_sua.sua(text, ["Jeevi"]), text)
 
     def test_ui_context_is_not_speech(self):
-        context = '[NGỮ CẢNH GIAO DIỆN: chọn="David ơi"; kênh=giọng]\n\n'
-        self.assertEqual(nghe_sua.sua(context + "David ơi", ["Jeevi"]), context + "Jeevi ơi")
+        context = '[NGỮ CẢNH GIAO DIỆN: chọn="Jivi ơi"; kênh=giọng]\n\n'
+        self.assertEqual(nghe_sua.sua(context + "Jivi ơi", ["Jeevi"]), context + "Jeevi ơi")
 
 
 class ModelCorrections(unittest.TestCase):
@@ -51,8 +51,8 @@ class ModelCorrections(unittest.TestCase):
 
     def test_local_spelling_corrections_may_be_shorter(self):
         for original, proposed in [
-            ("David mở lịch", "Jeevi mở lịch"),
-            ("Gia vít ơi mở lịch", "Jeevi ơi mở lịch"),
+            ("Jivi mở lịch", "Jeevi mở lịch"),
+            ("Gi vi ơi mở lịch", "Jeevi ơi mở lịch"),
             ("mở Open Router", "mở OpenRouter"),
             ("Jeevi mở lịch", "Jeevi, mở lịch."),
         ]:
@@ -61,7 +61,7 @@ class ModelCorrections(unittest.TestCase):
 
     def test_preserves_ui_context_while_correcting_only_speech(self):
         prefix = '[NGỮ CẢNH GIAO DIỆN: trang=models; chọn="bản 200"; kênh=giọng]\n\n'
-        self.assertEqual(voice_brain.safe_transcript_rewrite(prefix + "David mở lịch", "Jeevi mở lịch"),
+        self.assertEqual(voice_brain.safe_transcript_rewrite(prefix + "Jivi mở lịch", "Jeevi mở lịch"),
                          prefix + "Jeevi mở lịch")
         self.assertEqual(voice_brain.safe_transcript_rewrite(prefix + "Jeevi mở lịch", "Jeevi"),
                          prefix + "Jeevi mở lịch")
@@ -72,7 +72,7 @@ class ModelCorrections(unittest.TestCase):
 
     def test_open_file_block_is_not_speech(self):
         # 0.65.29: đang mở file trong trình sửa thì dashboard chèn khối FILE ĐANG MỞ trước khối
-        # NGỮ CẢNH GIAO DIỆN. Khối đó bị coi là lời nói, nên dòng JEEVI_NGHE (chỉ có lời nói)
+        # NGỮ CẢNH GIAO DIỆN. Khối đó bị coi là lời nói, nên dòng JAVIS_NGHE (chỉ có lời nói)
         # trông như "cắt mất chữ", bị từ chối, và cả lượt lặng lẽ sang bộ não chính (chủ dự án
         # báo 02/10: chọn Antigravity mà lượt nói vẫn do Claude trả lời).
         file_block = ("[FILE ĐANG MỞ trong trình sửa của Jeevi: /data/brain/ghi-chu.md\n"
@@ -87,13 +87,13 @@ class ModelCorrections(unittest.TestCase):
                 self.assertEqual((head, speech), (prefix, "nghe anh nói chưa"))
                 self.assertEqual(voice_brain.safe_transcript_rewrite(original, "Nghe anh nói chưa?"),
                                  prefix + "Nghe anh nói chưa?")
-                self.assertEqual(nghe_sua.sua(prefix + "David ơi", ["Jeevi"]), prefix + "Jeevi ơi")
+                self.assertEqual(nghe_sua.sua(prefix + "Jivi ơi", ["Jeevi"]), prefix + "Jeevi ơi")
 
     def test_model_cannot_rewrite_literal_identifiers(self):
         for original, proposed in [
             ("mở David.txt", "mở Jeevi.txt"),
-            ("xem https://david.com", "xem https://jeevi.com"),
-            ("email david@example.com", "email jeevi@example.com"),
+            ("xem https://david.com", "xem https://javis.com"),
+            ("email david@example.com", "email javis@example.com"),
         ]:
             with self.subTest(original=original):
                 self.assertEqual(voice_brain.safe_transcript_rewrite(original, proposed), original)

@@ -41,8 +41,8 @@ check("provider label no longer says OAuth (Jeevi never reads that token)",
       '"id": "anthropic-cli", "label": "Claude Code"' in main_src)
 check("Claude and Codex cards learn whether this is the Docker build",
       main_src.count('item["docker"] = deploy_info.deploy_mode() == "docker"') == 2)
-check("and which variable points at the binary", 'item["cli_env"] = "JEEVI_CLAUDE_BIN"' in main_src
-      and 'item["cli_env"] = "JEEVI_CODEX_BIN"' in main_src)
+check("and which variable points at the binary", 'item["cli_env"] = "JAVIS_CLAUDE_BIN"' in main_src
+      and 'item["cli_env"] = "JAVIS_CODEX_BIN"' in main_src)
 
 # ---- 2. The card ----
 js = (ROOT / "dashboard" / "console.js").read_text(encoding="utf-8")

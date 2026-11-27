@@ -11,7 +11,7 @@ cập nhật nó nữa.
 
 Nên Jeevi tự chạy `agy update` mỗi ngày một lần. Khác Claude Code, đường này chạy được cả trong
 Docker: `agy` nằm ở `~/.local/bin` của chính user chạy Jeevi, nên ghi đè được. Tắt bằng
-JEEVI_AGY_AUTO_UPDATE=0.
+JAVIS_AGY_AUTO_UPDATE=0.
 """
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ _TRANG_THAI = "agy-update.json"
 
 def bat() -> bool:
     """Tự cập nhật hằng ngày có bật không."""
-    return (os.environ.get("JEEVI_AGY_AUTO_UPDATE") or "1").strip().lower() not in (
+    return (os.environ.get("JAVIS_AGY_AUTO_UPDATE") or "1").strip().lower() not in (
         "0", "false", "no", "off")
 
 

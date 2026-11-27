@@ -16,9 +16,9 @@ import tempfile
 import time
 from pathlib import Path
 
-_STATE = Path(tempfile.mkdtemp(prefix="jeevi-res-a4-"))
-os.environ["JEEVI_STATE_DIR"] = str(_STATE)
-os.environ.pop("JEEVI_RESONANCE_CALL_CEILING", None)
+_STATE = Path(tempfile.mkdtemp(prefix="javis-res-a4-"))
+os.environ["JAVIS_STATE_DIR"] = str(_STATE)
+os.environ.pop("JAVIS_RESONANCE_CALL_CEILING", None)
 
 import resonance as R  # noqa: E402
 import resonance_grants as G  # noqa: E402
@@ -102,7 +102,7 @@ class World:
         e = eng or self.eng
         return R.GoalDeps(engine_factory=lambda s, t: (e, {"provider": "fake", "model": "fake-1", "text_only": True}),
                           budget=R.CallBudget(0), clock=self.clock, store=self.store,
-                          principal=RS.Principal("agent", "jeevi", self.brain), brain_root=self.brain,
+                          principal=RS.Principal("agent", "javis", self.brain), brain_root=self.brain,
                           evidence=EV, notify=_notes)
 
     def next(self):

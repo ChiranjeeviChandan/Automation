@@ -18,7 +18,7 @@ import asyncio
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-gpt-ear-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-gpt-ear-"))
 
 import main  # noqa: E402
 import stt  # noqa: E402
@@ -197,7 +197,7 @@ try:
     run(stt.listen_any(b"x", "a.ogg", {"groq": "g", "chatgpt": {"access_token": "tok"}}))
     check("no order given: Groq first, as before", CALLS == ["groq"])
     CALLS.clear()
-    ANSWERS["chatgpt"] = {"ok": False, "ly_do": "loi", "noi_voi_jeevi": "x"}
+    ANSWERS["chatgpt"] = {"ok": False, "ly_do": "loi", "noi_voi_javis": "x"}
     res = run(stt.listen_any(b"x", "a.ogg", keys, order=["chatgpt"]))
     check("ChatGPT ear down -> the next ear hears the voice message",
           CALLS == ["chatgpt", "groq"] and res["ear"] == "groq", CALLS)
@@ -211,7 +211,7 @@ try:
     check("dashboard mic: ChatGPT ear down -> Groq hears the sentence",
           CALLS == ["chatgpt", "groq"] and res["ok"] and res["text"] == "nghe bằng groq", (CALLS, res))
     CALLS.clear()
-    ANSWERS["chatgpt"] = {"ok": False, "ly_do": "khong_nghe_ro", "noi_voi_jeevi": "x"}
+    ANSWERS["chatgpt"] = {"ok": False, "ly_do": "khong_nghe_ro", "noi_voi_javis": "x"}
     res = run(voice_ear.transcribe_upload(cfg(GPT, GROQ), b"x", "v.webm", "auto", "", provider="chatgpt",
                                           fallbacks=["groq"]))
     check("silence is silence: no second ear, the browser keeps its text",

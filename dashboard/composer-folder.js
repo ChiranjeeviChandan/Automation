@@ -2,7 +2,7 @@
  *
  * The server runs the conversation's turns inside the pinned folder (coding_store binding,
  * POST /coding/session/{sid}/pin). The "+" menu gets a "Pin working folder" panel: brain
- * folders first, a search box, and "Browse another folder..." through JeeviFolderPicker.
+ * folders first, a search box, and "Browse another folder..." through JavisFolderPicker.
  * A small chip after the Fast mode bolt shows the pinned folder; nothing shows when unpinned.
  * Pure helpers are exported for node tests. Never use the em dash character here.
  */
@@ -42,9 +42,9 @@
   var XIC = '<svg class="cp-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
   function tw(k, v) { return window.t ? window.t(k, v) : k; }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-  function brain() { try { return (window.JeeviSessions && window.JeeviSessions.brain()) || "brain"; } catch (e) { return "brain"; } }
-  function sid() { try { return (window.JeeviSessions && window.JeeviSessions.current()) || ""; } catch (e) { return ""; } }
-  function icon() { return (window.JeeviComposerMenu && window.JeeviComposerMenu.icon && window.JeeviComposerMenu.icon.folder) || ""; }
+  function brain() { try { return (window.JavisSessions && window.JavisSessions.brain()) || "brain"; } catch (e) { return "brain"; } }
+  function sid() { try { return (window.JavisSessions && window.JavisSessions.current()) || ""; } catch (e) { return ""; } }
+  function icon() { return (window.JavisComposerMenu && window.JavisComposerMenu.icon && window.JavisComposerMenu.icon.folder) || ""; }
   function narrow() { return !!(window.matchMedia && window.matchMedia("(max-width: 860px)").matches); }
   function getJson(url, opt) {
     return fetch(url, Object.assign({ credentials: "same-origin" }, opt || {}))
@@ -67,7 +67,7 @@
   }
 
   function announce() {
-    try { window.dispatchEvent(new CustomEvent("jeevi:pinned-folder-changed", { detail: { sid: sid(), folder: folder } })); } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent("javis:pinned-folder-changed", { detail: { sid: sid(), folder: folder } })); } catch (e) {}
   }
   // The tray on top of the composer card (#cpCtx; under it on 21/11/2026, on top since 22/11), first in it, before the
   // GitHub repos. It hides while empty; .is-two marks folder AND repos (same rule in github-connect.js).
@@ -88,10 +88,10 @@
       chip.addEventListener("click", function (e) {
         e.stopPropagation();
         if (e.target && e.target.closest && e.target.closest(".cp-pin-x")) {
-          pin("").then(function (msg) { if (msg && window.JeeviAttach) window.JeeviAttach.note(msg); });
+          pin("").then(function (msg) { if (msg && window.JavisAttach) window.JavisAttach.note(msg); });
           return;
         }
-        if (window.JeeviComposerMenu) window.JeeviComposerMenu.openItem("folder");
+        if (window.JavisComposerMenu) window.JavisComposerMenu.openItem("folder");
       });
     }
     if (chip.parentElement !== host || chip.previousElementSibling) host.insertBefore(chip, host.firstChild);
@@ -161,7 +161,7 @@
       if (d && d.ok !== false) { if (state.accept(n, newSid)) apply(d); return; }
       // The pin failed (folder gone, path unreadable): drop the chip and say why, the turn runs in the brain.
       apply(null);
-      if (window.JeeviAttach) window.JeeviAttach.note((d && d.error) || tw("cp.pin_failed"));
+      if (window.JavisAttach) window.JavisAttach.note((d && d.error) || tw("cp.pin_failed"));
     });
   }
 
@@ -221,7 +221,7 @@
         if (b.dataset.unpin) { pinTo("").then(done); return; }
         if (b.dataset.browse) {
           api.close();
-          if (window.JeeviFolderPicker) window.JeeviFolderPicker.open({ tieuDe: tw("cp.pin_folder"), nhanDung: tw("cp.pin_folder"), demMd: false,
+          if (window.JavisFolderPicker) window.JavisFolderPicker.open({ tieuDe: tw("cp.pin_folder"), nhanDung: tw("cp.pin_folder"), demMd: false,
             brain: brainOf(), batDau: cur && isAbs(cur.path) ? cur.path : "", chon: function (p) { return pinTo(p); } });
           return;
         }
@@ -242,16 +242,16 @@
   var panel = makePanel();
 
   function init() {
-    if (!window.JeeviComposerMenu) return;
-    window.JeeviComposerMenu.register({ id: "folder", order: 20, icon: icon(), label: "cp.pin_folder",
+    if (!window.JavisComposerMenu) return;
+    window.JavisComposerMenu.register({ id: "folder", order: 20, icon: icon(), label: "cp.pin_folder",
       hint: function () { return folder ? chipLabel(folder.name, 18) : ""; }, panel: panel });
-    window.addEventListener("jeevi:sessions-changed", refresh);
+    window.addEventListener("javis:sessions-changed", refresh);
     window.addEventListener("resize", renderChip);
-    window.addEventListener("jeevi:i18n", renderChip);
+    window.addEventListener("javis:i18n", renderChip);
     refresh();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 
-  window.JeeviPinnedFolder = { claimPending: claimPending, current: function () { return folder; }, refresh: refresh, pin: pin,
+  window.JavisPinnedFolder = { claimPending: claimPending, current: function () { return folder; }, refresh: refresh, pin: pin,
     panelFor: makePanel };
 })();

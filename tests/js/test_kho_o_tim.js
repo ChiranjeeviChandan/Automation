@@ -78,9 +78,9 @@ const goi = (id, ten, mo) => ({
 const DANH_MUC = {
   ok: true, fetched_at: Math.floor(Date.now() / 1000),
   packs: [
-    goi("jeevi.pancake-pos", "Pancake POS", "Don hang, doanh thu"),
-    goi("jeevi.shopify", "Shopify", "Tra cuu san pham"),
-    goi("jeevi.webcake", "Webcake", "Dung trang ban hang"),
+    goi("javis.pancake-pos", "Pancake POS", "Don hang, doanh thu"),
+    goi("javis.shopify", "Shopify", "Tra cuu san pham"),
+    goi("javis.webcake", "Webcake", "Dung trang ban hang"),
   ],
 };
 
@@ -89,7 +89,7 @@ globalThis.Alpine = win.Alpine;
 new Function("window", "document", "fetch",
   fs.readFileSync(path.join(ROOT, "dashboard", "packs.js"), "utf8"))(
   win, doc, () => Promise.resolve({ json: () => Promise.resolve(DANH_MUC) }));
-const P = win.JeeviPacks || {};
+const P = win.JavisPacks || {};
 
 check("packs.js phoi ra veKho / ghiConTro / traConTro",
   typeof P.veKho === "function" && typeof P.ghiConTro === "function"

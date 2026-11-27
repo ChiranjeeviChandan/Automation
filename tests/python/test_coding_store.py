@@ -26,8 +26,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-coding-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
+_STATE = tempfile.mkdtemp(prefix="javis-coding-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -51,9 +51,9 @@ def git(args, cwd):
 
 
 def repo_moi(ten):
-    d = tempfile.mkdtemp(prefix=f"jeevi-{ten}-")
+    d = tempfile.mkdtemp(prefix=f"javis-{ten}-")
     git(["init", "-q", "-b", "main"], d)
-    git(["config", "user.email", "test@jeevi.local"], d)
+    git(["config", "user.email", "test@javis.local"], d)
     git(["config", "user.name", "Jeevi Test"], d)
     Path(d, "README.md").write_text("xin chao\n", encoding="utf-8")
     git(["add", "-A"], d)
@@ -75,7 +75,7 @@ if not co_git:
 REPO = repo_moi("repo")
 
 # ---- 1. Thêm thư mục ----
-khong_git = tempfile.mkdtemp(prefix="jeevi-khonggit-")
+khong_git = tempfile.mkdtemp(prefix="javis-khonggit-")
 tm_thuong = coding_store.them_thu_muc(khong_git, brain="b1")
 check("THƯ MỤC THƯỜNG (không git) vẫn thêm được", bool(tm_thuong.get("id")))
 check("và đọc ra đúng là không phải git", coding_store.la_git(khong_git) is False)
@@ -145,7 +145,7 @@ except coding_store.LoiCoding:
 wt = coding_store.tao_worktree(SID)
 check("worktree được tạo", Path(wt["worktree"]).is_dir())
 check("worktree mở NHÁNH MỚI chứ không checkout nhánh gốc",
-      wt["nhanh"].startswith("jeevi/") and wt["nhanh"] != "main")
+      wt["nhanh"].startswith("javis/") and wt["nhanh"] != "main")
 check("cwd của phiên chuyển sang worktree", coding_store.cwd_cua_phien(SID) == wt["worktree"])
 check("nhánh gốc vẫn đang được checkout ở cây chính", coding_store.nhanh_hien_tai(REPO) == "main")
 
@@ -172,7 +172,7 @@ check("điểm hồi thứ hai đánh số 2", d2["tag"].endswith("/2"))
 check("sổ giữ cả hai mốc", len(coding_store.danh_sach_diem_hoi(SID)) == 2)
 
 try:
-    coding_store.rollback(SID, "jeevi/phienkhac/1")
+    coding_store.rollback(SID, "javis/phienkhac/1")
     check("rollback bằng tag của phiên khác bị từ chối", False)
 except coding_store.LoiCoding:
     check("rollback bằng tag của phiên khác bị từ chối", True)

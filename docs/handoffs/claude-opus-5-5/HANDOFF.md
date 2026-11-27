@@ -273,7 +273,7 @@ code-first; direct compose/Library reuse; **scope M2 mới ưu tiên trên lịc
 - PowerShell trong worktree trên. Dùng Python hiện có
   `D:\Project\Jeevi-OS\.venv\Scripts\python.exe -B` với cwd worktree;
   không ghi/cài vào checkout chính. `tests/run.py` là runner isolation thật.
-  No-real flags: JEEVI_NO_REAL_JUDGE_ENGINE/REVIEW_ENGINE/TEAM_ENGINE=1.
+  No-real flags: JAVIS_NO_REAL_JUDGE_ENGINE/REVIEW_ENGINE/TEAM_ENGINE=1.
 - `.superpowers/` ignored trong worktree giữ logs/briefs/reports/review packages/
   source freezes/CI raw logs và checkpoint khôi phục. Giữ nguyên tại chỗ;
   không `git clean -fdx`, mass-copy blobs, xóa/move worktree/key.

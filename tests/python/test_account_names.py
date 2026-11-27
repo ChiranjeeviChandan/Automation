@@ -16,8 +16,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-_TMP = Path(tempfile.mkdtemp(prefix="jeevi-acname-"))
-os.environ["JEEVI_STATE_DIR"] = str(_TMP / "state")
+_TMP = Path(tempfile.mkdtemp(prefix="javis-acname-"))
+os.environ["JAVIS_STATE_DIR"] = str(_TMP / "state")
 os.environ["HOME"] = str(_TMP / "home")
 os.environ["USERPROFILE"] = str(_TMP / "home")
 for v in ("CODEX_HOME", "GROK_HOME", "CLAUDE_CONFIG_DIR"):

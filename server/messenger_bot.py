@@ -74,7 +74,7 @@ import stt
 from bot_gateway import HangLuot, dong_vet, parse_chat_ids, ten_tool
 from whatsapp_bot import verify_signature  # noqa: F401  - same Meta signature scheme, re-exported
 
-GRAPH_VERSION = os.getenv("JEEVI_MESSENGER_GRAPH_VERSION", os.getenv("JEEVI_WHATSAPP_GRAPH_VERSION", "v23.0"))
+GRAPH_VERSION = os.getenv("JAVIS_MESSENGER_GRAPH_VERSION", os.getenv("JAVIS_WHATSAPP_GRAPH_VERSION", "v23.0"))
 GRAPH = f"https://graph.facebook.com/{GRAPH_VERSION}"
 
 MAX_MSG = bot_split.CHANNELS["messenger"].max_len   # Messenger allows 2000; keep a margin for multi-byte counting
@@ -94,7 +94,7 @@ LIKE_STICKERS = {"369239263222822", "369239343222814", "369239383222810"}
 # so a setup without it still counts as receiving messages, it only misses the staff's files.
 ECHO_FIELD = "message_echoes"
 # Written on every message the bot sends; Meta returns it on the echo, so the bot's own sends are told from a person's.
-ECHO_TAG = "jeevi"
+ECHO_TAG = "javis"
 CHANNEL = "messenger"
 FEED_FIELD = "feed"           # Page comments (0.434.0); optional, the bot works without it
 COMMENT_PREFIX = "cmt:"       # conversation id of a comment thread: cmt:<top-level comment id>
@@ -939,9 +939,9 @@ class MessengerBot(HangLuot):
             try:
                 kq = await self.stt_fn(data, f"messenger_{int(time.time())}.mp4")
             except Exception as e:
-                kq = {"ok": False, "noi_voi_jeevi": stt.loi_thanh_dong("loi", f"{type(e).__name__}: {e}")}
+                kq = {"ok": False, "noi_voi_javis": stt.loi_thanh_dong("loi", f"{type(e).__name__}: {e}")}
             if not (kq or {}).get("ok"):
-                return (kq or {}).get("noi_voi_jeevi") or stt.loi_thanh_dong("loi")
+                return (kq or {}).get("noi_voi_javis") or stt.loi_thanh_dong("loi")
             return stt.khoi_thoai(kq.get("text"), "Messenger")
         ddir = self.download_dir(chat) if callable(self.download_dir) else self.download_dir
         d = Path(ddir) if ddir else Path("messenger-inbox")

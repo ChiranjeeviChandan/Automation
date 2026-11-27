@@ -1,4 +1,4 @@
-"""Kênh Zalo CÁ NHÂN: tài khoản đã quét QR ở trang Kết nối (MCP `jeevi-zalo`). Đọc tin bằng
+"""Kênh Zalo CÁ NHÂN: tài khoản đã quét QR ở trang Kết nối (MCP `javis-zalo`). Đọc tin bằng
 vòng cursor ở `zalo_personal_channel`, gửi tin bằng tool `zalo_send_message` của chính MCP đó.
 
 Gửi từ kênh này là gửi DƯỚI DANH TÍNH CHỦ (không phải bot), nên Hộp thư nói rõ điều đó ở ô
@@ -66,7 +66,7 @@ def bat(account_id: str, on: bool) -> dict:
 
 
 async def nhap_lich_su(account_id: str) -> dict:
-    """Nhập tin cũ (khoảng 2 tuần jeevi-zalo giữ được) vào Hộp thư, xem `zalo_personal_channel.nhap_lich_su`."""
+    """Nhập tin cũ (khoảng 2 tuần javis-zalo giữ được) vào Hộp thư, xem `zalo_personal_channel.nhap_lich_su`."""
     import zalo_personal_channel
     return await zalo_personal_channel.nhap_lich_su(account_id)
 
@@ -92,7 +92,7 @@ NGHI_GIUA_DOAN = 1.2        # giây nghỉ giữa hai đoạn của một câu t
 _CHO_CAT = (re.compile(r"\n\s*\n"), re.compile(r"\n"), re.compile(r"[.!?…:;](?=\s)"), re.compile(r"\s"))
 _TAG_STATE: dict = {}       # conn_id -> {"fails": số lần hỏng liên tiếp, "until": giờ hết nghỉ}
 # "Đang soạn tin" while the bot writes a private reply (0.413.0, owner 30/10/2026: customers should not be able to tell
-# the bot from a person). Needs the MCP tool `zalo_send_typing` (jeevi-zalo >= 1.9.0); an older MCP answers "tool not
+# the bot from a person). Needs the MCP tool `zalo_send_typing` (javis-zalo >= 1.9.0); an older MCP answers "tool not
 # found" and the indicator is simply skipped for TYPING_OFF seconds, the reply itself never waits on it.
 TYPING_TOOL = "zalo_send_typing"
 TYPING_DELAY = 1.5          # seconds: a turn that ends quickly (silence, takeover) never shows the indicator
@@ -107,7 +107,7 @@ _TYPING_OFF_UNTIL: dict = {}  # conn_id -> time the indicator may be tried again
 _TOOL_MISSING = ("not found", "unknown tool", "no such tool")
 # Link card (owner report 19/11/2026: a link the bot sent showed as bare text, while the same link typed in the Zalo app
 # shows the page's title and thumbnail). Zalo's card is built by the SENDER, so a reply holding a link goes out through
-# `zalo_send_link` (jeevi-zalo >= 1.13.0) instead of `zalo_send_message`. An older MCP answers "tool not found": the
+# `zalo_send_link` (javis-zalo >= 1.13.0) instead of `zalo_send_message`. An older MCP answers "tool not found": the
 # reply goes out as before, and the tool is not tried again on that account for LINK_OFF seconds.
 LINK_TOOL = "zalo_send_link"
 LINK_OFF = 3600
@@ -243,14 +243,14 @@ def _tag_result(conn_id: str, ok: bool) -> None:
 
 
 def _style_args(styles) -> list:
-    """`--style` arguments of `jeevi-zalo msg send` for `zalo_markup.to_zalo` styles (positions in UTF-16 units)."""
+    """`--style` arguments of `javis-zalo msg send` for `zalo_markup.to_zalo` styles (positions in UTF-16 units)."""
     specs = [f"{int(a)}:{int(n)}:{name}" for a, n, name in styles or () if int(n) > 0 and name in zalo_markup.STYLE_NAMES]
     return ["--style"] + specs if specs else []
 
 
 async def _send_styled(conn: dict, chat_id: str, text: str, loai: int, styles) -> Optional[tuple]:
-    """Send one message WITH text styles (bold, colours...) through `jeevi-zalo msg send --style` (0.413.0): the MCP
-    send tool took plain text only before jeevi-zalo 1.9.0. Returns `(ok, error)` once there is an outcome, or None when
+    """Send one message WITH text styles (bold, colours...) through `javis-zalo msg send --style` (0.413.0): the MCP
+    send tool took plain text only before javis-zalo 1.9.0. Returns `(ok, error)` once there is an outcome, or None when
     nothing was sent and the caller should send the plain text through the MCP. A timeout is an outcome (the CLI may
     have sent it already), like `_send_tagged`."""
     import zalo_cli
@@ -347,7 +347,7 @@ async def gui(tk: dict, chat_id: str, text: str, chat_type: str = "private", men
 
     `mention={"uid", "name"}` (chỉ có nghĩa trong nhóm): tag người đó, xem `_send_tagged`.
 
-    Khoá kiểu cuộc chat mà MCP jeevi-zalo (và zalo-agent-cli 1.6.2 trước nó) THẬT SỰ đọc là `threadType` (mcp-tools.js), không
+    Khoá kiểu cuộc chat mà MCP javis-zalo (và zalo-agent-cli 1.6.2 trước nó) THẬT SỰ đọc là `threadType` (mcp-tools.js), không
     phải `type` như tài liệu mcp-guide ghi. MCP bỏ qua khoá lạ mà không báo lỗi, nên gửi `type` một
     mình thì tin nhóm đi như chat riêng và Zalo không giao được (chủ thấy bot trả lời trong Hộp thư
     mà nhóm im, 29/09/2026). Gửi cả hai: `threadType` cho bản đang ghim, `type` cho bản khác
@@ -451,7 +451,7 @@ async def _send_link(conn: dict, chat_id: str, text: str, loai: int, url: str) -
             print(f"[zalo-personal] link card failed, sending plain text: {msg[:200]}", file=sys.stderr)
         return None
     if not (isinstance(d, dict) and d.get("success") is True):
-        # Only a plain "sent" from jeevi-zalo counts; anything else and nothing is assumed to have gone out.
+        # Only a plain "sent" from javis-zalo counts; anything else and nothing is assumed to have gone out.
         zc.forget_link_echo(cid, str(chat_id), url)
         return None
     if "messageId" in d and not d.get("messageId"):
@@ -493,7 +493,7 @@ async def _gui_mot(conn: dict, chat_id: str, text: str, chat_type: str, mention=
         return False, str(e)[:300]
     if isinstance(d, dict) and d.get("success") is False:
         return False, str(d.get("error") or d.get("message") or localefmt.chu("Zalo từ chối", "Zalo refused"))[:300]
-    # jeevi-zalo returns the id Zalo gave the message. "success" without one means Zalo never confirmed it (0.283.0,
+    # javis-zalo returns the id Zalo gave the message. "success" without one means Zalo never confirmed it (0.283.0,
     # 22/10/2026: replies in the bot history that never reached the customer): report a failure, so the inbox marks the
     # reply as not sent instead of showing it as delivered.
     if isinstance(d, dict) and d.get("success") is True and "messageId" in d and not d.get("messageId"):
@@ -503,7 +503,7 @@ async def _gui_mot(conn: dict, chat_id: str, text: str, chat_type: str, mention=
 
 
 async def send_typing(conn_id: str, chat_id: str, chat_type: str = "private") -> bool:
-    """Show "đang soạn tin" in one chat (0.413.0, `zalo_send_typing` of jeevi-zalo >= 1.9.0). True when Zalo took it.
+    """Show "đang soạn tin" in one chat (0.413.0, `zalo_send_typing` of javis-zalo >= 1.9.0). True when Zalo took it.
 
     Never raises: the indicator is a nicety. Only an MCP WITHOUT the tool mutes the whole connection for TYPING_OFF
     seconds. Any other failure (Zalo refused this one chat, the MCP was restarting, a timeout) only ends the indicator
@@ -521,7 +521,7 @@ async def send_typing(conn_id: str, chat_id: str, chat_type: str = "private") ->
             "threadId": str(chat_id), "threadType": 1 if str(chat_type or "") == "group" else 0})
     except asyncio.CancelledError:
         raise
-    except Exception as e:      # noqa: BLE001 - older jeevi-zalo: "Tool zalo_send_typing not found"
+    except Exception as e:      # noqa: BLE001 - older javis-zalo: "Tool zalo_send_typing not found"
         msg = str(e)
         if any(k in msg.lower() for k in _TOOL_MISSING):
             _TYPING_OFF_UNTIL[cid] = time.time() + TYPING_OFF
@@ -566,7 +566,7 @@ class TypingHandle:
 
 async def send_reaction(tk: dict, chat_id: str, msg_id: str, name: str, chat_type: str = "private",
                       cli_msg_id: str = ""):
-    """Put an emoji reaction on one message (0.334.0, jeevi-zalo >= 1.7.0 `zalo_add_reaction`). `(ok, error)`.
+    """Put an emoji reaction on one message (0.334.0, javis-zalo >= 1.7.0 `zalo_add_reaction`). `(ok, error)`.
 
     `cli_msg_id` is optional: the MCP looks it up from its buffer or history when it is missing."""
     import zalo_personal_channel
@@ -971,7 +971,7 @@ class Transport:
         quoted = str(rt.get("text") or rt.get("msg") or "").strip()
         if quoted and not quoted.startswith("{"):
             meta["reply_to_text"] = quoted[:1000]
-        # Labels the owner put on this chat in the Zalo app (0.281.0, jeevi-zalo 1.6.0): the bot can skip chats tagged
+        # Labels the owner put on this chat in the Zalo app (0.281.0, javis-zalo 1.6.0): the bot can skip chats tagged
         # e.g. "Gia đình" (`chatbot_runtime._ly_do_im`) and sees the tags in its prompt. Cached per connection, so this
         # await costs nothing on most messages; any failure leaves the list empty and the turn runs as before.
         try:

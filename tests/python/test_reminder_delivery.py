@@ -10,13 +10,13 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-reminder-delivery-state-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-reminder-delivery-state-")
 
 import reminders  # noqa: E402
 
 fails = []
 sent = []
-brain = Path(tempfile.mkdtemp(prefix="jeevi-reminder-delivery-brain-"))
+brain = Path(tempfile.mkdtemp(prefix="javis-reminder-delivery-brain-"))
 
 
 def check(name, cond):

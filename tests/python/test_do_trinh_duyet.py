@@ -33,7 +33,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-dotd-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-dotd-")
 
 import optional_tools as ot  # noqa: E402
 

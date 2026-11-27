@@ -43,7 +43,7 @@ ADAPTER_STATUS = {"none": "spec", "hmac_sha256": "spec", "stripe": "spec", "gith
 STRIPE_TOLERANCE_S = 300
 OVERLAP_DEFAULT_H = 24
 OVERLAP_MAX_H = 168
-DEFAULT_TOKEN_HEADER = "x-jeevi-token"
+DEFAULT_TOKEN_HEADER = "x-javis-token"
 # Systeme.io (spec §10, [S5]): signature header `X-Webhook-Signature`, HMAC-SHA256 hex over the JSON as Systeme
 # normalises it (Unicode and slash escaping), dedup on `X-Webhook-Message-Id` (stable across retries), never the attempt
 # id. The exact normalisation could not be read from developer.systeme.io from this environment, so the check accepts

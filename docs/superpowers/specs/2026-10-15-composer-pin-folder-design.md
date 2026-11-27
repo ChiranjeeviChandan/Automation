@@ -20,11 +20,11 @@ Status: approved by the owner on 2026-10-15 (chat). Follows PR #663 (0.153.0, co
 - `main._cwd_luot_chat(row, brain)` already runs ANY session's turn in `coding_store.cwd_cua_phien(sid)`
   when the session has a folder, otherwise in the brain root. Only the prompt block (`_khoi_coding`) and
   the permission level (`_muc_quyen_luot_chat`) are limited to `coding:` channel sessions.
-- `JeeviFolderPicker.open({...})` (folder-picker.js) is a shared folder browser on `GET /browse`.
+- `JavisFolderPicker.open({...})` (folder-picker.js) is a shared folder browser on `GET /browse`.
 - `GET /files/search?mode=name&include_dirs=1` searches names inside the brain root.
-- `JeeviModelBar.claimPending(sid)` is called by app.js when the first message mints a session id; the
+- `JavisModelBar.claimPending(sid)` is called by app.js when the first message mints a session id; the
   same moment is where a folder pinned on an empty chat must be applied.
-- `jeevi:sessions-changed` fires when the open session changes.
+- `javis:sessions-changed` fires when the open session changes.
 
 ## Design
 
@@ -35,7 +35,7 @@ pattern as "Pick a file from the brain"):
 - a search box (debounced, `GET /files/search?mode=name&include_dirs=1`, folders only);
 - with an empty query: the top-level folders of the brain (from `GET /files/list` of the brain root),
   hidden and heavy folders excluded (`.git`, `node_modules`, `.obsidian`, `.trash`, dot folders);
-- a last row "Browse another folder..." that opens `JeeviFolderPicker` (owner chose: brain first, plus
+- a last row "Browse another folder..." that opens `JavisFolderPicker` (owner chose: brain first, plus
   browsing outside the brain, like the Coding page today);
 - when a folder is pinned, two extra rows on top: the current folder (disabled, shows the name) and
   "Unpin".
@@ -71,12 +71,12 @@ sent, so the first turn already runs in the folder.
 - `_muc_quyen_luot_chat` is unchanged (non-coding stays `full`).
 
 **Removed.** The upload-every-file folder flow: `#folderInput`, `handleFolder`, `pickFolderFiles`,
-`runQueue`, `JeeviAttach.queue` and the `cp.folder_*` strings that only it used.
+`runQueue`, `JavisAttach.queue` and the `cp.folder_*` strings that only it used.
 
 **Coding page.** Remove the "Pick a folder" / folder chip and its menu (`thumuc` chip, add/detach/forget
 rows, `moKhungThemThuMuc`) and the `#cdIdentity` line ("Working inside the brain..."). The worktree,
 branch, restore point and Plan/Auto/Full chips stay and keep reading `/coding/session/{sid}`. The page
-refreshes them when the composer pins or unpins (new event `jeevi:pinned-folder-changed`).
+refreshes them when the composer pins or unpins (new event `javis:pinned-folder-changed`).
 
 ### B. Compact agent Work tab
 

@@ -1,4 +1,4 @@
-"""jeevi_scout: a read-only run on the background model that returns only its findings.
+"""javis_scout: a read-only run on the background model that returns only its findings.
 
     python tests/run.py scout
 
@@ -16,7 +16,7 @@ import json
 import os
 import tempfile
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-scout-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-scout-"))
 
 import aux_engine  # noqa: E402
 import config  # noqa: E402
@@ -158,7 +158,7 @@ check("a broken engine falls back to the main model", out.startswith("ERROR:") a
 scout.configure(empty_runner)
 out = run(scout.run(BRAIN, TASK))
 check("an empty report falls back with the engine's reason", out.startswith("ERROR:") and "plan limit reached" in out, out)
-os.environ["JEEVI_SCOUT_MAX_WALL_S"] = "30"
+os.environ["JAVIS_SCOUT_MAX_WALL_S"] = "30"
 scout.configure(hanging_runner)
 _real_wait = asyncio.wait_for
 
@@ -171,7 +171,7 @@ try:
     out = run(scout.run(BRAIN, TASK))
 finally:
     asyncio.wait_for = _real_wait
-    os.environ.pop("JEEVI_SCOUT_MAX_WALL_S")
+    os.environ.pop("JAVIS_SCOUT_MAX_WALL_S")
 check("a scout that never finishes is given up on", out.startswith("ERROR:") and "still working" in out, out)
 check("no slot leaks after failures", scout._active == 0)
 
@@ -182,14 +182,14 @@ async def long_runner(vault_root, prompt, tag, wall_s):
 scout.configure(long_runner)
 out = run(scout.run(BRAIN, TASK))
 check("a long report is stored whole and shown as a view",
-      len(out) <= scout.ANSWER_CHARS + 800 and "jeevi_stored_result ref=tr_" in out and "FINDING 0:" in out, len(out))
+      len(out) <= scout.ANSWER_CHARS + 800 and "javis_stored_result ref=tr_" in out and "FINDING 0:" in out, len(out))
 ref = out.split("ref=")[1].split()[0]
 check("the whole report is readable by its reference, from the same brain only",
       "FINDING 199:" in (store.get(ref, BRAIN) or {}).get("text", "") and store.get(ref, "/other") is None)
 
-os.environ["JEEVI_SCOUT"] = "0"
-check("JEEVI_SCOUT=0 switches it off", not scout.available() and run(scout.run(BRAIN, TASK)).startswith("ERROR:"))
-os.environ.pop("JEEVI_SCOUT")
+os.environ["JAVIS_SCOUT"] = "0"
+check("JAVIS_SCOUT=0 switches it off", not scout.available() and run(scout.run(BRAIN, TASK)).startswith("ERROR:"))
+os.environ.pop("JAVIS_SCOUT")
 _real_read = config.read_settings
 config.read_settings = lambda: {"mcp": {"scout": False}}
 check("mcp.scout=false switches it off", not scout.enabled())
@@ -213,30 +213,30 @@ tools, route = run(mcp_hub.discover_all("full", vault_root=BRAIN, include_plugin
 names = {t["fn"] for t in tools}
 search = next(t for t in tools if t["fn"] == mcp_hub._LAZY_SEARCH)
 check("behind the tool search the scout costs one line per turn, not a whole tool",
-      "jeevi_scout" not in names and "jeevi_scout(task)" in search["description"], sorted(names))
+      "javis_scout" not in names and "javis_scout(task)" in search["description"], sorted(names))
 hint = mcp_hub.SCOUT_HINT.format(run=mcp_hub._LAZY_RUN)
 check("that line stays short", len(hint) < 160, len(hint))
-found = json.loads(run(mcp_client.call_route(route, mcp_hub._LAZY_SEARCH, {"query": "jeevi_scout"})))
+found = json.loads(run(mcp_client.call_route(route, mcp_hub._LAZY_SEARCH, {"query": "javis_scout"})))
 check("a search by its name returns the scout with its arguments",
-      found["tools"][0]["name"] == "jeevi_scout" and "task" in found["tools"][0]["schema"]["properties"], found["tools"][0]["name"])
-out = run(mcp_client.call_route(route, mcp_hub._LAZY_RUN, {"name": "jeevi_scout", "args": {"task": TASK, "effort": "quick"}}))
+      found["tools"][0]["name"] == "javis_scout" and "task" in found["tools"][0]["schema"]["properties"], found["tools"][0]["name"])
+out = run(mcp_client.call_route(route, mcp_hub._LAZY_RUN, {"name": "javis_scout", "args": {"task": TASK, "effort": "quick"}}))
 check("calling it through the hub runs a scout for that brain",
       "revenue 12,300,000 VND" in out and _seen[-1]["vault"] == BRAIN and _seen[-1]["tag"] == "scout-quick", out[:120])
-check("a brain with no connected source carries no jeevi_query on every turn", "jeevi_query" not in names)
+check("a brain with no connected source carries no javis_query on every turn", "javis_query" not in names)
 tools_s, route_s = run(mcp_hub.discover_all("suggest", vault_root=BRAIN, include_plugins=False, force_refresh=True))
-out = run(mcp_client.call_route(route_s, mcp_hub._LAZY_RUN, {"name": "jeevi_scout", "args": {"task": TASK}}))
+out = run(mcp_client.call_route(route_s, mcp_hub._LAZY_RUN, {"name": "javis_scout", "args": {"task": TASK}}))
 check("a read-only run may send a scout too (a scout only reads)", "revenue 12,300,000 VND" in out, out[:120])
 tools_b, route_b = run(mcp_hub.discover_all("full", vault_root=BRAIN, include_plugins=False, force_refresh=True, for_bot=True))
 bot_search = [t for t in tools_b if t["fn"] == mcp_hub._LAZY_SEARCH]
 check("a customer bot never gets it: not listed, not hinted, not callable",
-      "jeevi_scout" not in {t["fn"] for t in tools_b} and "jeevi_scout" not in route_b
-      and all("jeevi_scout" not in t["description"] for t in bot_search)
+      "javis_scout" not in {t["fn"] for t in tools_b} and "javis_scout" not in route_b
+      and all("javis_scout" not in t["description"] for t in bot_search)
       and (mcp_hub._LAZY_RUN not in route_b or run(mcp_client.call_route(
-          route_b, mcp_hub._LAZY_RUN, {"name": "jeevi_scout", "args": {"task": TASK}})).startswith("ERROR:")))
+          route_b, mcp_hub._LAZY_RUN, {"name": "javis_scout", "args": {"task": TASK}})).startswith("ERROR:")))
 config.read_settings = lambda: {"mcp": {"lazy_tools": "off"}}
 mcp_hub._cache.clear()
 tools_o, _ = run(mcp_hub.discover_all("full", vault_root=BRAIN, include_plugins=False, force_refresh=True))
-spec = next(t for t in tools_o if t["fn"] == "jeevi_scout")
+spec = next(t for t in tools_o if t["fn"] == "javis_scout")
 check("with the tool search off the scout is listed like any tool, small and fixed",
       len(json.dumps(spec, ensure_ascii=False)) < 1500, len(json.dumps(spec)))
 scout.configure(None)
@@ -244,7 +244,7 @@ mcp_hub._cache.clear()
 config.read_settings = lambda: {"mcp": {"lazy_tools": "on"}}
 tools_n, _ = run(mcp_hub.discover_all("full", vault_root=BRAIN, include_plugins=False, force_refresh=True))
 check("without a runner the tool is neither listed nor hinted",
-      "jeevi_scout" not in {t["fn"] for t in tools_n} and all("jeevi_scout" not in t.get("description", "") for t in tools_n))
+      "javis_scout" not in {t["fn"] for t in tools_n} and all("javis_scout" not in t.get("description", "") for t in tools_n))
 config.read_settings = _real_read
 
 if _fails:

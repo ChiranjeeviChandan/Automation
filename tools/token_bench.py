@@ -83,9 +83,9 @@ class _Model(BaseHTTPRequestHandler):
 
 
 def _run_loop_scenarios() -> list[dict]:
-    os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-token-bench-")
-    os.environ["JEEVI_API_STREAM_TOOLS"] = "0"
-    os.environ.pop("JEEVI_TOOL_RESULT_SHAPING", None)
+    os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-token-bench-")
+    os.environ["JAVIS_API_STREAM_TOOLS"] = "0"
+    os.environ.pop("JAVIS_TOOL_RESULT_SHAPING", None)
     sys.path.insert(0, str(SERVER))
     import engine  # noqa: E402
     import tool_result_reuse  # noqa: E402
@@ -142,12 +142,12 @@ def _run_loop_scenarios() -> list[dict]:
 
     rows = []
     for name, why, calls in _scenarios():
-        os.environ["JEEVI_RESULT_REPEAT_REFS"] = "0"
-        os.environ["JEEVI_TOOL_RESULT_SHAPING"] = "0"
+        os.environ["JAVIS_RESULT_REPEAT_REFS"] = "0"
+        os.environ["JAVIS_TOOL_RESULT_SHAPING"] = "0"
         tool_result_shaper.settings(force=True)   # the switch is cached for a few seconds
         before, _ = asyncio.run(one(calls))
-        os.environ.pop("JEEVI_RESULT_REPEAT_REFS")
-        os.environ.pop("JEEVI_TOOL_RESULT_SHAPING")
+        os.environ.pop("JAVIS_RESULT_REPEAT_REFS")
+        os.environ.pop("JAVIS_TOOL_RESULT_SHAPING")
         tool_result_shaper.settings(force=True)
         after, refs = asyncio.run(one(calls))
         rows.append({"scenario": name, "what": why, "rounds": len(calls) + 1, "chars_before": before,
@@ -235,12 +235,12 @@ def _fmt(n: int) -> str:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--only", choices=("loop", "machine", "skills"), default="")
-    ap.add_argument("--state-dir", default=os.getenv("JEEVI_STATE_DIR") or str(SERVER))
+    ap.add_argument("--state-dir", default=os.getenv("JAVIS_STATE_DIR") or str(SERVER))
     ap.add_argument("--brains", default=os.getenv("BRAINS_DIR") or str(ROOT / "brains"))
     ap.add_argument("--days", type=int, default=7)
     ap.add_argument("--json", default="")
     a = ap.parse_args(argv)
-    state_dir = Path(a.state_dir)   # read before the loop part points JEEVI_STATE_DIR at a temp folder
+    state_dir = Path(a.state_dir)   # read before the loop part points JAVIS_STATE_DIR at a temp folder
     report: dict = {"when": time.strftime("%Y-%m-%d %H:%M")}
 
     if a.only in ("", "machine"):

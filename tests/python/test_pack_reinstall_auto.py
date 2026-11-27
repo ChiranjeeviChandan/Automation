@@ -21,9 +21,9 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-STATE = tempfile.mkdtemp(prefix="jeevi-pack-auto-")
-os.environ["JEEVI_STATE_DIR"] = STATE
-BR = Path(tempfile.mkdtemp(prefix="jeevi-pack-auto-brain-")).resolve()
+STATE = tempfile.mkdtemp(prefix="javis-pack-auto-")
+os.environ["JAVIS_STATE_DIR"] = STATE
+BR = Path(tempfile.mkdtemp(prefix="javis-pack-auto-brain-")).resolve()
 (BR / "agents").mkdir()
 
 import main  # noqa: E402
@@ -58,12 +58,12 @@ OWNER = RS.Principal("owner", "owner", str(BR))
 
 
 def pack_zip(pid: str, name: str, agents: dict) -> bytes:
-    manifest = (f"format: jeevi-pack\nspec: 1\nid: {pid}\nversion: 1.0.0\n"
+    manifest = (f"format: javis-pack\nspec: 1\nid: {pid}\nversion: 1.0.0\n"
                 f'name: {{vi: "{name}", en: "{name} EN"}}\ndescription: {{vi: "Thử"}}\n'
                 f"compat: {{app: \">=0.1.0\"}}\nprovides:\n  agents: [{', '.join(agents)}]\n")
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w") as z:
-        z.writestr(f"{pid}/jeevi-pack.yaml", manifest)
+        z.writestr(f"{pid}/javis-pack.yaml", manifest)
         for slug, body in agents.items():
             z.writestr(f"{pid}/agents/{slug}.md", f"---\ntype: agent\nname: {slug}\nslug: {slug}\n---\n{body}\n")
     return buf.getvalue()
@@ -252,7 +252,7 @@ check("a pack file the user edited is the user's", "plan" not in pack_vault.agen
 listing()
 check("and its origin is dropped", plan["agent_key"] not in store.agent_origins(str(BR)))
 check("a brain that holds none of the pack's files maps nothing",
-      pack_vault.agent_packs(tempfile.mkdtemp(prefix="jeevi-pack-auto-other-")) == {})
+      pack_vault.agent_packs(tempfile.mkdtemp(prefix="javis-pack-auto-other-")) == {})
 check("sync reports what it changed", agent_presence.sync(store, str(BR), [m for m in listing()]) ==
       {"missing": [], "restored": []})
 

@@ -26,7 +26,7 @@ import time
 from pathlib import Path
 from types import SimpleNamespace
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-long-token-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-long-token-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -38,7 +38,7 @@ import config as cfgmod  # noqa: E402
 
 # 2026-11-26: a connector-capable login on this machine would run first (claude_auth.login_first); these tests are
 # about the token alone, so they see no login file.
-claude_auth.login_file = lambda: Path(tempfile.mkdtemp(prefix="jeevi-no-login-")) / ".credentials.json"
+claude_auth.login_file = lambda: Path(tempfile.mkdtemp(prefix="javis-no-login-")) / ".credentials.json"
 
 _fails = []
 TOK = "sk-ant-oat01-" + "Ab3_x-" * 15 + "Q9zK"

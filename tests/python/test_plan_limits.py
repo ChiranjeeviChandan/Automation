@@ -11,9 +11,9 @@ import json
 import os
 import tempfile
 
-_TMP = tempfile.mkdtemp(prefix="jeevi-pl-")
-os.environ["JEEVI_STATE_DIR"] = _TMP
-os.environ["JEEVI_CODEX_SESSIONS_DIR"] = os.path.join(_TMP, "codex")
+_TMP = tempfile.mkdtemp(prefix="javis-pl-")
+os.environ["JAVIS_STATE_DIR"] = _TMP
+os.environ["JAVIS_CODEX_SESSIONS_DIR"] = os.path.join(_TMP, "codex")
 
 import plan_limits as pl  # noqa: E402
 

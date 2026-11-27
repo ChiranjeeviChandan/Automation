@@ -13,11 +13,11 @@ import tempfile
 import time
 from pathlib import Path
 
-_TMP = tempfile.mkdtemp(prefix="jeevi-unread-")
-os.environ["JEEVI_STATE_DIR"] = _TMP
-os.environ["JEEVI_SESSIONS_DB"] = str(Path(_TMP) / "conv.db")
-os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="jeevi-unread-brains-")
-os.environ["JEEVI_ALLOWED_HOSTS"] = "testserver"
+_TMP = tempfile.mkdtemp(prefix="javis-unread-")
+os.environ["JAVIS_STATE_DIR"] = _TMP
+os.environ["JAVIS_SESSIONS_DB"] = str(Path(_TMP) / "conv.db")
+os.environ["BRAINS_DIR"] = tempfile.mkdtemp(prefix="javis-unread-brains-")
+os.environ["JAVIS_ALLOWED_HOSTS"] = "testserver"
 
 import sessions  # noqa: E402
 
@@ -56,12 +56,12 @@ check("unread is a real bool in the list", isinstance(u[web], bool))
 # Every partner kind lights the dot; bot and team chats never do (Teams keep their own unread count, customer bot
 # chats are read in the bot inbox).
 kinds = {ch: st.create_session(brain="/b", engine="cli", channel=ch)
-         for ch in ("workflow:viet-blog", "coding:jeevi-os", "bot:shop", "team:marketing", "teammate:an")}
+         for ch in ("workflow:viet-blog", "coding:javis-os", "bot:shop", "team:marketing", "teammate:an")}
 for sid in kinds.values():
     st.append_message(sid, "user", "giao việc")
     st.append_message(sid, "assistant", "xong rồi")
 check("workflow and coding chats count as partner chats",
-      st.is_unread(kinds["workflow:viet-blog"]) is True and st.is_unread(kinds["coding:jeevi-os"]) is True)
+      st.is_unread(kinds["workflow:viet-blog"]) is True and st.is_unread(kinds["coding:javis-os"]) is True)
 check("bot and team chats never get the history dot",
       not any(st.is_unread(kinds[ch]) for ch in ("bot:shop", "team:marketing", "teammate:an")))
 for sid in kinds.values():

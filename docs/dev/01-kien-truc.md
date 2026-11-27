@@ -29,7 +29,7 @@ Vẫn có đường API thuần (OpenRouter/OpenAI/Anthropic/Gemini) cho ai khô
 │ 3. ENGINE    │  │ 4. MCP HUB  (mcp_hub.py)            │
 │  bộ não      │◄─┤  cổng tool DUY NHẤT cho mọi engine  │
 │  claude_sdk  │  │  - Claude/Codex thấy hub như 1 MCP  │
-│  codex CLI   │  │    server http tên "jeevi"          │
+│  codex CLI   │  │    server http tên "javis"          │
 │  engine.py   │  │  - engine API gọi in-process        │
 │  (API thuần) │  │  Hub enforce 3 mức quyền + audit    │
 └──────────────┘  └──────┬──────────────────────────────┘
@@ -63,7 +63,7 @@ Có **ba** kho state khác nhau, đừng lẫn:
 
 | Kho | Đường dẫn | Chứa gì | Ai sở hữu |
 |-----|-----------|---------|-----------|
-| **STATE_DIR** | `server/` (mặc định), hoặc `$JEEVI_STATE_DIR` = `/data/state` trên Docker | `settings.json` (có secret, đã mã hoá), branding, token hub, plugin enable-state, `conversations.db` | Jeevi, gitignored |
+| **STATE_DIR** | `server/` (mặc định), hoặc `$JAVIS_STATE_DIR` = `/data/state` trên Docker | `settings.json` (có secret, đã mã hoá), branding, token hub, plugin enable-state, `conversations.db` | Jeevi, gitignored |
 | **BRAIN (vault)** | `brains/<tên>/` | Ghi chú, Wiki, Memory, skills, agents, workflows, loops | Người dùng, đẩy được lên GitHub |
 | **Code tree** | `server/`, `dashboard/`, `system/` | Mã nguồn + plugin/loop/catalog bundled | Repo. **Trên Docker là read-only** |
 

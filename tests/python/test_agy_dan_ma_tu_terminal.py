@@ -38,7 +38,7 @@ import terminal  # noqa: E402
 import antigravity_cli  # noqa: E402
 
 _GIU = {k: os.environ.get(k) for k in
-        ("JEEVI_TERMINAL_REMOTE", "SSH_CONNECTION", "SSH_CLIENT", "DISPLAY", "WAYLAND_DISPLAY")}
+        ("JAVIS_TERMINAL_REMOTE", "SSH_CONNECTION", "SSH_CLIENT", "DISPLAY", "WAYLAND_DISPLAY")}
 
 
 def _dat(**kv):
@@ -84,11 +84,11 @@ try:
               terminal._env().get("SSH_CONNECTION") == "10.0.0.9 51234 10.0.0.1 22")
 
         # ---- 4. Công tắc tay ----
-        _dat(JEEVI_TERMINAL_REMOTE="0")
-        check("JEEVI_TERMINAL_REMOTE=0 tắt được (bố trí lạ: X11 forwarding...)",
+        _dat(JAVIS_TERMINAL_REMOTE="0")
+        check("JAVIS_TERMINAL_REMOTE=0 tắt được (bố trí lạ: X11 forwarding...)",
               terminal._khong_co_trinh_duyet() is False)
-        _dat(JEEVI_TERMINAL_REMOTE="1", DISPLAY=":0")
-        check("JEEVI_TERMINAL_REMOTE=1 bật được kể cả khi có DISPLAY",
+        _dat(JAVIS_TERMINAL_REMOTE="1", DISPLAY=":0")
+        check("JAVIS_TERMINAL_REMOTE=1 bật được kể cả khi có DISPLAY",
               terminal._khong_co_trinh_duyet() is True)
 
     # ---- 5. Máy để bàn chạy THẲNG (macOS/Windows): trình duyệt ở ngay trước mặt ----

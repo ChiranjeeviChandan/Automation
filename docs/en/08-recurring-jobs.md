@@ -266,7 +266,7 @@ You do not have to use this page. Tell Jeevi directly in [Chat](02-chat-and-voic
 - "Is anything still running?"
 - "Cancel the order scanning job."
 
-Jeevi uses the `jeevi_schedule` tool (a bundled plugin) to pick the right store: interval schedules become files in `Jeevi/loops/`; fixed repeating times and one-shots go into the reminder store. The tool sets a proper slug and **blocks duplicate names**: if a job with that name exists, it reports an error and tells you to edit the old one rather than spawning a copy.
+Jeevi uses the `javis_schedule` tool (a bundled plugin) to pick the right store: interval schedules become files in `Jeevi/loops/`; fixed repeating times and one-shots go into the reminder store. The tool sets a proper slug and **blocks duplicate names**: if a job with that name exists, it reports an error and tells you to edit the old one rather than spawning a copy.
 
 Two hard safety rails on this path, which no parameter can change:
 
@@ -384,7 +384,7 @@ The **file body** (below the second `---`) is exactly the "Task description" you
 
 **The result says the Claude CLI is not installed.** The brain is not ready on the machine. See [Getting started & first-run setup](01-getting-started.md) and [Troubleshooting & FAQ](17-troubleshooting.md).
 
-**Running on ChatGPT reports `bwrap: Failed to make / slave: Permission denied`.** Codex (ChatGPT) wraps all of its file reads and writes in bubblewrap, and bubblewrap cannot start inside a Docker container, so the background job cannot read a single file. The Docker image since version 0.25.9 already disables that particular sandbox (`JEEVI_CODEX_SANDBOX=off`), so **updating to a newer build** is enough. If you build your own container, set that environment variable, or move background work to the Claude brain. Details in [.env configuration](16-env-configuration.md).
+**Running on ChatGPT reports `bwrap: Failed to make / slave: Permission denied`.** Codex (ChatGPT) wraps all of its file reads and writes in bubblewrap, and bubblewrap cannot start inside a Docker container, so the background job cannot read a single file. The Docker image since version 0.25.9 already disables that particular sandbox (`JAVIS_CODEX_SANDBOX=off`), so **updating to a newer build** is enough. If you build your own container, set that environment variable, or move background work to the Claude brain. Details in [.env configuration](16-env-configuration.md).
 
 **A loop complains that there is no business data.** It can only read real numbers once you connect a source. Go to [Connections & business data](09-connections-and-business-data.md) to connect a POS, ads account or sales channel. With no source, the iteration stops and says so in one line.
 
@@ -405,4 +405,4 @@ The **file body** (below the second `---`) is exactly the "Task description" you
 - [Models & engines](10-models-and-engines.md) - picking a cheap model for background work.
 - [File manager](05-file-manager.md) - opening job definition files and log files.
 - [Chat & voice](02-chat-and-voice.md) - creating jobs and reminders in words.
-- [Plugins](20-plugins.md) - understanding `jeevi_schedule` and the other bundled tools.
+- [Plugins](20-plugins.md) - understanding `javis_schedule` and the other bundled tools.

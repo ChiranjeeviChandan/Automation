@@ -53,9 +53,9 @@ const noi = (k, chu) => CB.includes(k) && tu(k, chu);
 check("index.html có nạp module trang Chatbot", /chatbots\.js\?v=/.test(HTML));
 // So bằng thẻ <script> chứ không bằng tên file: console.js được NHẮC trong hơn chục comment
 // nằm phía trên, nên indexOf("console.js") trần trụi trỏ vào comment đầu tiên.
-check("nạp TRƯỚC console.js (console gọi window.JeeviChatbots)",
+check("nạp TRƯỚC console.js (console gọi window.JavisChatbots)",
   HTML.indexOf('src="/static/chatbots.js') < HTML.indexOf('src="/static/console.js'));
-check("module phơi ra đúng một cửa vào", /window\.JeeviChatbots\s*=\s*\{\s*render:\s*render\s*\}/.test(CB));
+check("module phơi ra đúng một cửa vào", /window\.JavisChatbots\s*=\s*\{\s*render:\s*render\s*\}/.test(CB));
 // RAIL_ITEMS nay là danh sách ID phẳng (nhãn lấy từ từ điển i18n). Id `chatbots` VẪN còn (nó
 // là nguồn icon + nhãn, và là bí danh cho lệnh nói / bookmark cũ) nhưng KHÔNG được hiện thành
 // một mục trên thanh bên: trang Chatbot là tab của trang Hội thoại từ 0.61.0.
@@ -69,7 +69,7 @@ check("CANARY: mục chưa xếp nhóm cũng phải đi qua RAIL_AN",
 check("console định tuyến sang trang Chatbot",
   /if \(id === "chatbots"\) return renderChatbots\(el\)/.test(CON));
 check("console uỷ quyền cho module chứ không tự vẽ lại",
-  /window\.JeeviChatbots/.test(CON));
+  /window\.JavisChatbots/.test(CON));
 check("có icon riêng cho mục Chatbot", /chatbots:\s*"[a-z-]+"/.test(CON));
 check("CSS của trang đã có", /\.cb-grid/.test(CSS) && /\.cb-card/.test(CSS));
 
@@ -108,7 +108,7 @@ check("CANARY: form bot KHÔNG còn ô token", CB.indexOf('id="cbToken"') === -1
 check("CANARY: form bot KHÔNG còn tự gọi verify-token", CB.indexOf("/chatbots/verify-token") === -1);
 check("CANARY: form bot KHÔNG còn gửi token lên server", !/chung\.token = /.test(CB));
 check("nối kênh mới thì gọi lại modal Thêm tài khoản của tab Kênh",
-  /JeeviConversations && window\.JeeviConversations\.themTaiKhoan/.test(CB) &&
+  /JavisConversations && window\.JavisConversations\.themTaiKhoan/.test(CB) &&
   noi("cb.noi_kenh_moi", "Kết nối kênh mới"));
 check("nối xong thì nạp lại danh sách tài khoản và TÍCH SẴN con vừa nối",
   /function noiKenhMoi\(/.test(CB) && /onXong: async function \(tk\)/.test(CB) &&
@@ -208,7 +208,7 @@ check("trang chỉ cách xem brain khác", noi("cb.intro_8", "Đổi brain ở �
 check("thẻ bot không nhắc lại brain", !/ic\("brain"\) \+ ' ' \+ esc\(b\.brain\)/.test(CB));
 // Trang "Agents" riêng đã gộp vào trang Cộng sự, nên nút này phải dẫn tới "workspace": dẫn
 // sang một id trang không còn tồn tại thì rail không sáng mục nào và khung giữa trắng trơn.
-check("có nút sang trang Cộng sự để tạo trợ lý", /id="cbNewAgent"/.test(CB) && /JeeviNav\.go\("workspace"\)/.test(CB));
+check("có nút sang trang Cộng sự để tạo trợ lý", /id="cbNewAgent"/.test(CB) && /JavisNav\.go\("workspace"\)/.test(CB));
 // Vai trò dài làm <option> tràn ngang khỏi hộp, mà <option> thì không tạo kiểu được.
 check("vai trò Agent bị cắt ngắn trước khi vào option", /vai\.slice\(0, 34\)/.test(CB));
 check("CSS chặn select nở rộng ra khỏi form", /\.cb-form select \{[^}]*text-overflow: ellipsis/.test(CSS));
@@ -216,7 +216,7 @@ check("CSS chặn select nở rộng ra khỏi form", /\.cb-form select \{[^}]*t
 // `{ go: navigateTo }` thành object có thêm openGroup/setCollapsed và `go` đi qua store Alpine
 // để bung luôn nhóm chứa trang. Khoá cứng nguyên văn thì mỗi lần thêm cửa là test đỏ oan.
 check("console phơi cửa chuyển trang cho module ngoài",
-  /window\.JeeviNav = \{/.test(CON) && /\bgo\((id)?\)/.test(CON));
+  /window\.JavisNav = \{/.test(CON) && /\bgo\((id)?\)/.test(CON));
 // Vai trò dài làm <option> tràn ngang khỏi hộp, mà <option> thì không tạo kiểu được.
 check("vai trò Agent bị cắt ngắn trước khi vào option", /vai\.slice\(0, 34\)/.test(CB));
 check("CSS chặn select nở rộng ra khỏi form", /\.cb-form select \{[^}]*text-overflow: ellipsis/.test(CSS));
@@ -364,7 +364,7 @@ check("và KHÔNG gửi id nhóm thừa lên server",
   /var co = coNhomForm\(\)/.test(CB) && /groups: co \? ds\("group"\)\.join\("\\n"\) : ""/.test(CB));
 check("thẻ bot nói thẳng khi chưa có kênh nào",
   noi("cb.chua_token", "chưa có kênh"));
-check("mở form từ tab Tài khoản bot với tài khoản tích sẵn", /jeevi:chatbot-new/.test(CB) && /chonSan/.test(CB));
+check("mở form từ tab Tài khoản bot với tài khoản tích sẵn", /javis:chatbot-new/.test(CB) && /chonSan/.test(CB));
 check("cảnh báo riêng tư chỉ hiện khi bot có tài khoản Telegram",
   /a\.channel === "telegram"/.test(CB) && /coTelegram && duNhom/.test(CB));
 check("bộ lọc kênh chỉ hiện khi có từ hai kênh trở lên",

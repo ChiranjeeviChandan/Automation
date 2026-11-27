@@ -10,7 +10,7 @@ import team_engine
 class FakeCodex:
     def __init__(self):
         self.extra_config = ['features.code_mode=true', 'model="gpt-6-astra"']
-        self.profile, self.hub_turn, self.sandbox = "jeevi", True, "workspace-write"
+        self.profile, self.hub_turn, self.sandbox = "javis", True, "workspace-write"
 
 
 cc = team_engine.codex_text_only(FakeCodex())

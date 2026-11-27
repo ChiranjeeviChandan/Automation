@@ -18,7 +18,7 @@ import tempfile
 import types
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-matmuon-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-matmuon-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -70,7 +70,7 @@ def cdn(request):
 mt = httpx.MockTransport(cdn)
 _goc_httpx = iv.httpx
 iv.httpx = types.SimpleNamespace(AsyncClient=lambda **kw: httpx.AsyncClient(transport=mt, **kw), Timeout=httpx.Timeout)
-D = Path(tempfile.mkdtemp(prefix="jeevi-matmuon-dl-"))
+D = Path(tempfile.mkdtemp(prefix="javis-matmuon-dl-"))
 p, why = asyncio.run(iv.fetch_image("https://f21-zpc.zdn.vn/octet-jpg", D, "m1"))
 check("Zalo photo labelled octet-stream: saved as .jpg", p is not None and p.suffix == ".jpg" and p.read_bytes() == JPEG, why)
 p, why = asyncio.run(iv.fetch_image("https://f21-zpc.zdn.vn/octet-png.jpg", D, "m2"))

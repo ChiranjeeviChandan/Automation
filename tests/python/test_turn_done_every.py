@@ -12,7 +12,7 @@ import tempfile
 
 from _paths import ROOT, SERVER  # noqa: E402,F401
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-tde-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-tde-")
 
 import turn_done_notice as N  # noqa: E402
 import webpush  # noqa: E402
@@ -62,10 +62,10 @@ sw = (ROOT / "dashboard" / "sw.js").read_text(encoding="utf-8")
 push_js = (ROOT / "dashboard" / "push.js").read_text(encoding="utf-8")
 noti = (ROOT / "dashboard" / "notifications.js").read_text(encoding="utf-8")
 main = (SERVER / "main.py").read_text(encoding="utf-8")
-check("sw asks the tab which chat it shows", "jeevi-which-session" in sw and "d.session_id" in sw)
+check("sw asks the tab which chat it shows", "javis-which-session" in sw and "d.session_id" in sw)
 check("sw keeps the old rule for a tab that does not answer", "sid === null" in sw)
-check("the tab answers with its chat", "jeevi-which-session" in push_js and "JeeviSessions.current()" in push_js)
-check("a tap opens the chat", "mo_phien" in noti and "JeeviSessions.open(sid)" in noti)
+check("the tab answers with its chat", "javis-which-session" in push_js and "JavisSessions.current()" in push_js)
+check("a tap opens the chat", "mo_phien" in noti and "JavisSessions.open(sid)" in noti)
 check("the bell has the switch", "notificationPushEvery" in noti and "turn_done" in noti)
 check("server saves the switch", '["turn_done"] = "all" if' in main)
 check("a short turn pushes when the switch is on", "return _bao_luot_xong_ngan(conv_sid, text)" in main)

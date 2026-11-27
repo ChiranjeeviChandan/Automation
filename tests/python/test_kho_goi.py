@@ -119,7 +119,7 @@ check("a pack without upstream has an empty one", packs_store._lam_sach({"id": "
 
 # ─────────────── 4. Kho: đọc, cache, và suy biến ───────────────
 INDEX_TOT = json.dumps({
-    "format": "jeevi-pack-index", "format_version": 1,
+    "format": "javis-pack-index", "format_version": 1,
     "store": {"name": "Kho thử"},
     "packs": [
         {"id": "acme.a", "name": {"vi": "Gói A"}, "version": "1.0.0", "category": "sales",
@@ -183,7 +183,7 @@ with tempfile.TemporaryDirectory() as td:
         # Định dạng lạ.
         for raw, dau in (
             (b'{"format": "cai gi do", "packs": []}', "không phải danh mục"),
-            (json.dumps({"format": "jeevi-pack-index", "format_version": 99,
+            (json.dumps({"format": "javis-pack-index", "format_version": 99,
                          "packs": []}).encode(), "mới hơn"),
             (b"khong phai json", ""),
         ):
@@ -243,13 +243,13 @@ check("kho hỏng KHÔNG làm hỏng phần gói đã cài",
 # Tách repo là điểm mấu chốt: thêm một gói không còn dính tới việc ra bản mới của app, và người
 # lạ gửi Pull Request vào kho được mà không cần quyền ghi vào mã nguồn Jeevi.
 check("kho mặc định trỏ sang repo riêng, không phải repo Jeevi OS",
-      "jeevi-store" in packs_store.STORE_MAC_DINH
-      and "jeevi-os" not in packs_store.STORE_MAC_DINH)
+      "javis-store" in packs_store.STORE_MAC_DINH
+      and "javis-os" not in packs_store.STORE_MAC_DINH)
 check("và đọc qua raw.githubusercontent (không phải trang HTML của GitHub)",
       packs_store.STORE_MAC_DINH.startswith("https://raw.githubusercontent.com/"))
 
 idx = json.loads((ROOT / "system" / "pack-index.json").read_text(encoding="utf-8"))
-check("repo có sẵn tệp danh mục", idx.get("format") == "jeevi-pack-index")
+check("repo có sẵn tệp danh mục", idx.get("format") == "javis-pack-index")
 check("và nó đọc được bằng chính bộ đọc",
       all(packs_store._lam_sach(x)["id"] for x in idx.get("packs", [])) if idx.get("packs") else True)
 check("có tài liệu cách phát hành gói",
@@ -261,7 +261,7 @@ check("có tài liệu cách phát hành gói",
 check("danh mục cũ vẫn còn cho bản chưa cập nhật", bool(idx.get("packs")))
 check("và mọi địa chỉ tải trong đó là tuyệt đối, trỏ sang kho mới",
       all((g.get("download") or {}).get("url", "").startswith("https://")
-          and "jeevi-store" in g["download"]["url"] for g in idx.get("packs", [])))
+          and "javis-store" in g["download"]["url"] for g in idx.get("packs", [])))
 check("danh mục cũ tự nói là đã đông lại, để không ai thêm nhầm vào đó",
       "ĐÔNG LẠI" in (idx.get("_doc") or ""))
 # Gói thật đã dọn sang repo kho, nên repo này không còn ôm tệp .zip nào nữa.
@@ -300,11 +300,11 @@ src_con = (DASHBOARD / "console.js").read_text(encoding="utf-8")
 src_ws = (DASHBOARD / "workspace.js").read_text(encoding="utf-8")
 check("mọi loại năng lực có đường sang kho, trợ lý và quy trình đi qua Cộng sự",
       all(x in src_con for x in ('skills: "skill"', 'plugins: "tool"', 'mcp: "connector"'))
-      and 'window.JeeviPacks.moKho(S.loai, "workspace",' in src_ws
+      and 'window.JavisPacks.moKho(S.loai, "workspace",' in src_ws
       and 'data-loai="agent"' in src_ws and 'data-loai="workflow"' in src_ws)
 # Năm bản sao của lưới kho là năm thứ sẽ lệch nhau sau vài tháng. Tab chỉ ĐIỀU HƯỚNG.
 check("tab kho điều hướng sang kho chứ không nhúng bản sao lưới",
-      "JeeviPacks.moKho(kind" in src_con and "veKho" not in src_con)
+      "JavisPacks.moKho(kind" in src_con and "veKho" not in src_con)
 # Kho không nằm trên thanh bên, nên vào rồi mà không có nút quay lại là người dùng thấy mình
 # bị lạc. Tab phải truyền cả trang gốc, và kho phải vẽ nút đó.
 check("tab truyền cả trang gốc để kho vẽ được nút quay lại",

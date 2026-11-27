@@ -22,7 +22,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-conflict-labels-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-conflict-labels-"))
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:  # noqa: BLE001
@@ -42,7 +42,7 @@ def check(name, cond, extra=""):
 
 def recall(files: dict, query: str, limit: int = 12):
     """Write `files` into a fresh brain and recall `query` from a fresh index."""
-    root = Path(tempfile.mkdtemp(prefix="jeevi-conflict-labels-"))
+    root = Path(tempfile.mkdtemp(prefix="javis-conflict-labels-"))
     brain = root / "b"
     for relative, text in files.items():
         path = brain / relative

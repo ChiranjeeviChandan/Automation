@@ -11,8 +11,8 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 SCRATCH = Path(tempfile.mkdtemp(prefix="main-attachments-"))
-for key, child in {"JEEVI_STATE_DIR": "state", "BRAINS_DIR": "brains", "OBSIDIAN_VAULT_PATH": "vault",
-                   "BRAIN_PATH": "brain", "SOURCES_PATH": "sources", "JEEVI_SESSIONS_DB": "sessions.sqlite3"}.items():
+for key, child in {"JAVIS_STATE_DIR": "state", "BRAINS_DIR": "brains", "OBSIDIAN_VAULT_PATH": "vault",
+                   "BRAIN_PATH": "brain", "SOURCES_PATH": "sources", "JAVIS_SESSIONS_DB": "sessions.sqlite3"}.items():
     os.environ[key] = str(SCRATCH / child)
 
 import main

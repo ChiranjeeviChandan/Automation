@@ -26,7 +26,7 @@ from pathlib import Path
 
 from _paths import ROOT, SERVER  # noqa: E402,F401  - nạp server/ vào sys.path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-botnguoi-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-botnguoi-"))
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -146,7 +146,7 @@ async def t_ban_thi_xep_hang():
 
     tg = FakeTelegram()
     b = bot_khach(answer)
-    await b._dispatch(tg, "42", "anh có nói chuyện được với em không jeevi vũ", {})
+    await b._dispatch(tg, "42", "anh có nói chuyện được với em không javis vũ", {})
     await b._dispatch(tg, "42", ":)", {})
     await b._dispatch(tg, "42", "alo", {})
 
@@ -159,7 +159,7 @@ async def t_ban_thi_xep_hang():
     cong.set()
     await cho_xong(b, "42")
     check("khách: trả lời xong lượt đầu thì gộp mấy câu chờ thành MỘT lượt",
-          thay == ["anh có nói chuyện được với em không jeevi vũ", ":)\nalo"])
+          thay == ["anh có nói chuyện được với em không javis vũ", ":)\nalo"])
     check("khách: cả hai lượt đều có câu trả lời gửi đi", len(tg.texts()) == 2)
 
     # Owner bot: until 0.212 it answered "busy, send /stop" and the message was lost. Since 0.213.0 the message is
@@ -290,7 +290,7 @@ async def t_khong_goi_ten_thi_im():
     # Chặn KÈM một câu (nhóm chưa được bật) thì vẫn nói câu đó, nhưng vẫn không tốn lượt.
     tg2 = FakeTelegram()
     b2 = bot_khach(answer, precheck_fn=lambda text, meta: {"reply": "Em chưa được bật ạ."})
-    await b2._dispatch(tg2, "-100", "jeevi ơi", {})
+    await b2._dispatch(tg2, "-100", "javis ơi", {})
     await cho_xong(b2, "-100")
     check("nhóm chưa bật: nói đúng một câu, không gọi engine",
           goi == [] and tg2.texts() == ["Em chưa được bật ạ."])
@@ -298,10 +298,10 @@ async def t_khong_goi_ten_thi_im():
     # None = cho chạy. Đây là ca duy nhất được phép hiện "đang nhập…".
     tg3 = FakeTelegram()
     b3 = bot_khach(answer, precheck_fn=lambda text, meta: None)
-    await b3._dispatch(tg3, "-100", "@jeevi giá bao nhiêu", {})
+    await b3._dispatch(tg3, "-100", "@javis giá bao nhiêu", {})
     await cho_xong(b3, "-100")
     check("có gọi tên bot: mới chạy lượt và mới hiện 'đang nhập…'",
-          goi == ["@jeevi giá bao nhiêu"] and "sendChatAction" in tg3.methods())
+          goi == ["@javis giá bao nhiêu"] and "sendChatAction" in tg3.methods())
 
     # precheck NỔ thì phải chạy tiếp, không được nuốt câu của khách.
     def _no(text, meta):
@@ -312,7 +312,7 @@ async def t_khong_goi_ten_thi_im():
     await b4._dispatch(tg4, "-100", "câu của khách", {})
     await cho_xong(b4, "-100")
     check("precheck hỏng thì vẫn trả lời, không nuốt câu của khách",
-          goi == ["@jeevi giá bao nhiêu", "câu của khách"])
+          goi == ["@javis giá bao nhiêu", "câu của khách"])
 
 
 def t_precheck_hop_dong():

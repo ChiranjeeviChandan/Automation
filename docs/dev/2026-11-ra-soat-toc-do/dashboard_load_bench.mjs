@@ -3,10 +3,10 @@
 // Not a test: no pass/fail, never picked up by CI. Read-only against a running Jeevi.
 //
 //   node docs/dev/2026-11-ra-soat-toc-do/dashboard_load_bench.mjs                      # http://127.0.0.1:7777, 5 runs per case
-//   JEEVI_URL=http://host:7777 RUNS=7 node docs/dev/2026-11-ra-soat-toc-do/dashboard_load_bench.mjs
-//   JEEVI_BENCH_COOKIE=<value of the jeevi_session cookie> node docs/dev/2026-11-ra-soat-toc-do/dashboard_load_bench.mjs
+//   JAVIS_URL=http://host:7777 RUNS=7 node docs/dev/2026-11-ra-soat-toc-do/dashboard_load_bench.mjs
+//   JAVIS_BENCH_COOKIE=<value of the javis_session cookie> node docs/dev/2026-11-ra-soat-toc-do/dashboard_load_bench.mjs
 //
-// Without JEEVI_BENCH_COOKIE the page stops at the sign-in form, so "ready" means "the sign-in form can be typed in".
+// Without JAVIS_BENCH_COOKIE the page stops at the sign-in form, so "ready" means "the sign-in form can be typed in".
 // The scripts and styles are the same either way (the page loads them before it knows who is looking); only the data
 // requests after sign-in are missing. With the cookie, "ready" means "the chat box can be typed in".
 //
@@ -15,9 +15,9 @@ import { createRequire } from "node:module";
 import fs from "node:fs";
 
 const require = createRequire(import.meta.url);
-const URL_ = process.env.JEEVI_URL || "http://127.0.0.1:7777";
+const URL_ = process.env.JAVIS_URL || "http://127.0.0.1:7777";
 const RUNS = Number(process.env.RUNS || 5);
-const COOKIE = process.env.JEEVI_BENCH_COOKIE || "";
+const COOKIE = process.env.JAVIS_BENCH_COOKIE || "";
 const OUT = process.env.OUT || "";
 
 function loadPlaywright() {
@@ -99,7 +99,7 @@ for (const c of CASES) {
   for (let i = 0; i < RUNS; i++) {
     const context = await browser.newContext({ viewport: c.viewport, isMobile: !!c.mobile, hasTouch: !!c.mobile,
                                                deviceScaleFactor: c.mobile ? 3 : 1, serviceWorkers: "allow" });
-    if (COOKIE) await context.addCookies([{ name: "jeevi_session", value: COOKIE, url: URL_ }]);
+    if (COOKIE) await context.addCookies([{ name: "javis_session", value: COOKIE, url: URL_ }]);
     cold.push(await oneLoad(context, c));    // empty cache
     warm.push(await oneLoad(context, c));    // same profile again: what a returning visit costs
     await context.close();

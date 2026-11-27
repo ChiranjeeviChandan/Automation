@@ -24,7 +24,7 @@ import tempfile
 import threading
 from pathlib import Path
 
-os.environ["JEEVI_STATE_DIR"] = tempfile.mkdtemp(prefix="jeevi-ghi-")
+os.environ["JAVIS_STATE_DIR"] = tempfile.mkdtemp(prefix="javis-ghi-")
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -33,7 +33,7 @@ except Exception:
 from _fake_github import FakeGitHub, GOOD_TOKEN, git  # noqa: E402
 
 fake = FakeGitHub()
-os.environ["JEEVI_GITHUB_API"] = fake.url
+os.environ["JAVIS_GITHUB_API"] = fake.url
 
 import github_repos as r  # noqa: E402
 import github_work as w  # noqa: E402
@@ -112,9 +112,9 @@ class Listener(threading.Thread):
 
 # A default install keeps its state inside the Jeevi checkout (STATE_DIR is `server/`), so every clone is made in a
 # folder that belongs to ANOTHER git repo, with an origin of its own. `git clone` reads none of that repo's config.
-STATE = os.environ["JEEVI_STATE_DIR"]
+STATE = os.environ["JAVIS_STATE_DIR"]
 git(["init", "-q", STATE], STATE)
-git(["config", "remote.origin.url", "https://github.com/someone/jeevi-os.git"], STATE)
+git(["config", "remote.origin.url", "https://github.com/someone/javis-os.git"], STATE)
 
 BRAIN = tempfile.mkdtemp(prefix="brain-")
 r.connect(GOOD_TOKEN)

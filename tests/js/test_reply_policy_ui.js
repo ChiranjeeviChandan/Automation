@@ -24,11 +24,11 @@ const fails = [];
 const check = (name, cond, extra) => { console.log((cond ? "ok   " : "FAIL ") + name + (!cond && extra ? "  [" + extra + "]" : "")); if (!cond) fails.push(name); };
 
 // ---- nạp module với window giả ----
-const win = { t: (k, v) => (v ? k + JSON.stringify(v) : k), JeeviI18n: { locale: () => "vi-VN" } };
+const win = { t: (k, v) => (v ? k + JSON.stringify(v) : k), JavisI18n: { locale: () => "vi-VN" } };
 const ctx = { window: win, document: { createElement: () => ({ set innerHTML(x) {}, firstChild: null }) }, fetch: () => Promise.reject(new Error("no net")), console, Date };
 vm.createContext(ctx);
 vm.runInContext(MOD, ctx);
-const RP = win.JeeviReplyPolicy;
+const RP = win.JavisReplyPolicy;
 check("module chỉ phơi ra bốn hàm: formHtml, summary, openPanel, codeLabel (nhãn mã im cho Hộp thư)",
   RP && JSON.stringify(Object.keys(RP).sort()) === JSON.stringify(["codeLabel", "formHtml", "openPanel", "summary"]), RP && Object.keys(RP).join(","));
 
@@ -48,9 +48,9 @@ check("lưu bot KHÔNG gửi reply_policy nữa (form không được ghi đè a
   CB.indexOf("chung.reply_policy") < 0 && CB.indexOf("RP.read") < 0 && CB.indexOf("RP.bind") < 0);
 // Owner, 12/11/2026: "em bật nó luôn hiện cho anh". The item used to appear only in Auto-judge mode and people kept asking where it was.
 check("the bot card lists the judge menu item for every bot, whatever its reply mode",
-  /\(window\.JeeviReplyPolicy\s*\?\s*'<button class="cb-rp"/.test(CB) && !/b\.reply_when === "auto"\s*\?\s*'<button class="cb-rp"/.test(CB));
+  /\(window\.JavisReplyPolicy\s*\?\s*'<button class="cb-rp"/.test(CB) && !/b\.reply_when === "auto"\s*\?\s*'<button class="cb-rp"/.test(CB));
 check("the card opens the panel telling it whether the judge is idle, and how to reach the bot form",
-  /JeeviReplyPolicy\.openPanel\(b, \{ idle: b\.reply_when !== "auto", onEdit: function \(\) \{ moForm\(b\); \} \}\)/.test(CB));
+  /JavisReplyPolicy\.openPanel\(b, \{ idle: b\.reply_when !== "auto", onEdit: function \(\) \{ moForm\(b\); \} \}\)/.test(CB));
 check("an idle panel says so in one short line, with the how-to behind (i) and an Edit button",
   /if \(!opts\.idle\) return "";/.test(MOD) && /tt\("rp\.idle"\)\) \+ infoBtn\(\)/.test(MOD)
   && /infoBody\(esc\(tt\("rp\.idle_h"\)\)\)/.test(MOD) && /class="s-btn-ghost rp-edit"/.test(MOD)
@@ -60,7 +60,7 @@ check("the Edit button closes the panel before it opens the bot form",
 check("an idle panel does not promise that posting in the group starts the log",
   /opts\.idle \? tt\("rp\.empty_idle"\) : tt\("rp\.empty"\)/.test(MOD));
 check("the panel opened from the inbox (no opts) draws no idle line", /opts = opts \|\| \{\};/.test(MOD));
-check("dòng tóm tắt của thẻ dùng JeeviReplyPolicy.summary", /JeeviReplyPolicy\.summary\(b\)/.test(CB));
+check("dòng tóm tắt của thẻ dùng JavisReplyPolicy.summary", /JavisReplyPolicy\.summary\(b\)/.test(CB));
 check("index.html nạp module TRƯỚC chatbots.js", HTML.indexOf("chatbots-reply-policy.js") > 0
   && HTML.indexOf("chatbots-reply-policy.js") < HTML.indexOf("/static/chatbots.js"));
 check("panel gọi đủ các đường API còn lại", ["/reply-policy", "?limit=100", "/label", "/forget", "/cases/", "/delete"].every((s) => MOD.indexOf(s) >= 0));

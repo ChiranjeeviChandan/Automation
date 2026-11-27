@@ -15,7 +15,7 @@ import sys
 import tempfile
 import time
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-yt-test-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-yt-test-"))
 
 import httpx  # noqa: E402
 import youtube_read as yt  # noqa: E402
@@ -246,10 +246,10 @@ async def main():
     assert desc["youtube-read"]["enabled"] and desc["youtube-read"]["loaded"], desc["youtube-read"]
     assert desc["youtube-read"]["min_mode"] == "readonly"
     tools, route = plugins_host.plugin_tools("suggest", None)
-    assert "jeevi_youtube_read" in {t["fn"] for t in tools}, "tool phải chạy được cả ở chế độ suggest"
-    out = await route["jeevi_youtube_read"]["call"]({})
+    assert "javis_youtube_read" in {t["fn"] for t in tools}, "tool phải chạy được cả ở chế độ suggest"
+    out = await route["javis_youtube_read"]["call"]({})
     assert out.startswith("ERROR:"), out
-    mo_ta = [t for t in tools if t["fn"] == "jeevi_youtube_read"][0]["description"]
+    mo_ta = [t for t in tools if t["fn"] == "javis_youtube_read"][0]["description"]
     assert "WebFetch" in mo_ta, "mô tả phải chặn engine CLI đi nhầm đường WebFetch"
 
     # 13) đường dây plugin -> module -> render còn nguyên (tham số truyền đúng, kết quả render ra chữ)
@@ -263,7 +263,7 @@ async def main():
     goc_read = yt.read
     yt.read = _gia
     try:
-        out = await route["jeevi_youtube_read"]["call"](
+        out = await route["javis_youtube_read"]["call"](
             {"url": "https://youtu.be/dQw4w9WgXcQ", "lang": "en", "start_min": 12, "timestamps": False})
     finally:
         yt.read = goc_read

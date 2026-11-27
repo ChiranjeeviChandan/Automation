@@ -10,10 +10,10 @@ from pathlib import Path
 import _paths  # noqa: F401  (puts server/ on sys.path)
 
 # The routes write settings.json: point the whole process at a throwaway state folder before config is imported.
-_state = tempfile.mkdtemp(prefix="jeevi-tree-prefs-")
-os.environ["JEEVI_STATE_DIR"] = _state
+_state = tempfile.mkdtemp(prefix="javis-tree-prefs-")
+os.environ["JAVIS_STATE_DIR"] = _state
 os.environ["BRAINS_DIR"] = os.path.join(_state, "brains")
-os.environ["JEEVI_SESSIONS_DB"] = os.path.join(_state, "sessions.db")
+os.environ["JAVIS_SESSIONS_DB"] = os.path.join(_state, "sessions.db")
 
 import vault_tree_prefs as vt  # noqa: E402
 

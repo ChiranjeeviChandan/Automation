@@ -18,7 +18,7 @@ import os
 import tempfile
 from pathlib import Path
 
-os.environ.setdefault("JEEVI_STATE_DIR", tempfile.mkdtemp(prefix="jeevi-pack-brain-"))
+os.environ.setdefault("JAVIS_STATE_DIR", tempfile.mkdtemp(prefix="javis-pack-brain-"))
 
 import pack_vault  # noqa: E402
 
@@ -31,7 +31,7 @@ def check(name, cond, extra=None):
         fails.append(name)
 
 
-tmp = Path(tempfile.mkdtemp(prefix="jeevi-pack-brain-fs-"))
+tmp = Path(tempfile.mkdtemp(prefix="javis-pack-brain-fs-"))
 saved_dir = pack_vault.HIEU_UNG_DIR
 pack_vault.HIEU_UNG_DIR = tmp / "packs-state"
 pack_vault.HIEU_UNG_DIR.mkdir(parents=True)
@@ -40,27 +40,27 @@ try:
     brain_b = tmp / "Brain Looptours"
     (brain_a / "agents").mkdir(parents=True)
     brain_b.mkdir()
-    agent = brain_a / "agents" / "jeevi-vu.md"
+    agent = brain_a / "agents" / "javis-vu.md"
     agent.write_text("---\nname: Jeevi Vũ\n---\n", encoding="utf-8")
-    pack_vault._ghi_so("jeevi.demo", {"brain": str(brain_a), "items": {
-        "agents/jeevi-vu": {"loai": "agents", "slug": "jeevi-vu", "duong": str(agent), "hash": pack_vault._hash(agent)}}})
+    pack_vault._ghi_so("javis.demo", {"brain": str(brain_a), "items": {
+        "agents/javis-vu": {"loai": "agents", "slug": "javis-vu", "duong": str(agent), "hash": pack_vault._hash(agent)}}})
 
-    w = pack_vault.brain_of("jeevi.demo", str(brain_a))
+    w = pack_vault.brain_of("javis.demo", str(brain_a))
     check("in the brain that holds the items: named, not 'other'",
           w["brain"] == str(brain_a) and w["name"] == "Brain Trịnh Lan Anh" and w["present"] == 1
           and w["here"] == 1 and w["other"] is False, w)
-    w = pack_vault.brain_of("jeevi.demo", str(brain_b))
+    w = pack_vault.brain_of("javis.demo", str(brain_b))
     check("from another brain: the same name, flagged as another brain",
           w["name"] == "Brain Trịnh Lan Anh" and w["present"] == 1 and w["other"] is True, w)
-    check("with no open brain given nothing is flagged", pack_vault.brain_of("jeevi.demo")["other"] is False)
+    check("with no open brain given nothing is flagged", pack_vault.brain_of("javis.demo")["other"] is False)
     check("a path spelled differently is still the same brain",
-          pack_vault.brain_of("jeevi.demo", str(brain_a) + os.sep)["other"] is False)
+          pack_vault.brain_of("javis.demo", str(brain_a) + os.sep)["other"] is False)
 
     agent.unlink()
-    w = pack_vault.brain_of("jeevi.demo", str(brain_b))
+    w = pack_vault.brain_of("javis.demo", str(brain_b))
     check("once the items are gone there is nothing in 'another brain' to warn about",
           w["present"] == 0 and w["other"] is False, w)
-    w = pack_vault.brain_of("jeevi.unknown", str(brain_b))
+    w = pack_vault.brain_of("javis.unknown", str(brain_b))
     check("a pack with no ledger (connector only) is never flagged",
           w["brain"] == "" and w["present"] == 0 and w["other"] is False, w)
 finally:

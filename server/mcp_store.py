@@ -450,7 +450,7 @@ def set_default(cid):
 
 
 NOTEBOOKLM_ENV = "NOTEBOOKLM_AUTH_JSON"
-NOTEBOOKLM_MARK = ".jeevi-paste.sha256"
+NOTEBOOKLM_MARK = ".javis-paste.sha256"
 
 
 def notebooklm_session_file(env: dict, home: str) -> bool:
@@ -461,7 +461,7 @@ def notebooklm_session_file(env: dict, home: str) -> bool:
     `<HOME>/.notebooklm/profiles/default/storage_state.json` (the connection's own isolated HOME, file 0600, folders
     0700) and the env value is removed, so the library reads the file and saves rotated cookies into it. The file is
     rewritten only when the owner pastes a NEW session (its hash differs from the one noted beside it), never over the
-    library's newer cookies. `JEEVI_NOTEBOOKLM_PASTE` carries a hash prefix so a new paste changes the spawn spec and
+    library's newer cookies. `JAVIS_NOTEBOOKLM_PASTE` carries a hash prefix so a new paste changes the spawn spec and
     restarts the server. On any error the env value stays as before. True when the file is in use."""
     raw = str((env or {}).get(NOTEBOOKLM_ENV) or "")
     if not raw.strip() or not home:
@@ -481,14 +481,14 @@ def notebooklm_session_file(env: dict, home: str) -> bool:
         except OSError:
             noted = ""
         if noted != digest or not target.is_file():
-            tmp = folder / ".storage_state.json.jeevi-tmp"
+            tmp = folder / ".storage_state.json.javis-tmp"
             fd = os.open(str(tmp), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
             with os.fdopen(fd, "w", encoding="utf-8") as fh:
                 fh.write(raw)
             os.replace(tmp, target)
             mark.write_text(digest, encoding="utf-8")
         env.pop(NOTEBOOKLM_ENV, None)
-        env["JEEVI_NOTEBOOKLM_PASTE"] = digest[:12]
+        env["JAVIS_NOTEBOOKLM_PASTE"] = digest[:12]
         return True
     except OSError as e:
         print(f"[mcp_store] notebooklm session file: {type(e).__name__}: {e}", file=sys.stderr)
@@ -674,7 +674,7 @@ def resolved(enabled_only=True):
             except Exception as e:
                 print(f"[mcp_store] oauth env {c['id']}: {type(e).__name__}: {e}", file=sys.stderr)
         if c.get("connector_id") == "zalo" and (c.get("transport") or "http") == "stdio":
-            # Live push (2026-11-10): jeevi-zalo 1.10.0 wakes Jeevi when a message arrives, so the read loop stops
+            # Live push (2026-11-10): javis-zalo 1.10.0 wakes Jeevi when a message arrives, so the read loop stops
             # asking on a timer. Set HERE, not where the loop builds its spec: the session's identity includes its
             # env, and every caller of this connection (loop, hub tools, health check) must hand over the same one.
             try:

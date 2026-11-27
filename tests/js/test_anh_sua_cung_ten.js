@@ -59,7 +59,7 @@ check("mọi chỗ vẽ lại bong bóng của Jeevi đều chuyển phiên bả
   /markdownToHtml\(t\.text, undefined, t\.bubble\.dataset\.anhV\)/.test(app)
   && /markdownToHtml\(shownText, undefined, msgEl\.dataset\.anhV\)/.test(app)
   && /markdownToHtml\(s\.text, undefined, s\.el\.dataset\.anhV\)/.test(app)
-  && /markdownToHtml\(_liveJeeviText, undefined, _liveJeeviBubble\.dataset\.anhV\)/.test(app));
+  && /markdownToHtml\(_liveJavisText, undefined, _liveJavisBubble\.dataset\.anhV\)/.test(app));
 
 if (fails.length) { console.log("\nFAIL:", fails.length, fails); process.exit(1); }
 console.log("\nOK - ảnh sửa cùng tên hiện ảnh mới");

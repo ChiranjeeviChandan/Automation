@@ -1,5 +1,5 @@
 """Stats tab benefit numbers (0.399.0; owner, 2026-10-29: "thêm được chỉ số nào cho người dùng cảm thấy được nhiều lợi ích
-nhất khi sử dụng chatbot của jeevi").
+nhất khi sử dụng chatbot của javis").
 
     python tests/python/test_chatbot_stats_loi_ich.py
 
@@ -14,9 +14,9 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 
-_STATE = tempfile.mkdtemp(prefix="jeevi-stats-loi-ich-")
-os.environ["JEEVI_STATE_DIR"] = _STATE
-os.environ["JEEVI_SESSIONS_DB"] = str(Path(_STATE) / "sessions.db")
+_STATE = tempfile.mkdtemp(prefix="javis-stats-loi-ich-")
+os.environ["JAVIS_STATE_DIR"] = _STATE
+os.environ["JAVIS_SESSIONS_DB"] = str(Path(_STATE) / "sessions.db")
 os.environ["BRAINS_DIR"] = str(Path(_STATE) / "brains")
 try:
     sys.stdout.reconfigure(encoding="utf-8")

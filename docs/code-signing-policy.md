@@ -8,7 +8,7 @@ Free code signing provided by [SignPath.io](https://about.signpath.io/), certifi
 
 Only one file: **`JeeviOS-Setup.exe`**, the Windows installer of JEEVI OS, published on the [`desktop` release](https://github.com/blogminhquy/javis-os/releases/tag/desktop).
 
-- It is built from this repository by the public workflow [`.github/workflows/desktop-installers.yml`](../.github/workflows/desktop-installers.yml), on GitHub-hosted runners, from [`packaging/windows/jeevi-setup.iss`](../packaging/windows/jeevi-setup.iss). Nobody builds or signs a release on a personal computer.
+- It is built from this repository by the public workflow [`.github/workflows/desktop-installers.yml`](../.github/workflows/desktop-installers.yml), on GitHub-hosted runners, from [`packaging/windows/javis-setup.iss`](../packaging/windows/javis-setup.iss). Nobody builds or signs a release on a personal computer.
 - It contains the installer script `bootstrap.ps1`, two short text pages, an icon and the wizard pictures. No third-party binary is packed inside it.
 - The signing key never leaves SignPath. The workflow hands the freshly built file to SignPath, which checks that it came out of that workflow run, and returns it signed. The repository holds no certificate and no private key.
 - The publisher shown by Windows is **SignPath Foundation**, which vouches that the file was built from this repository.

@@ -67,7 +67,7 @@ _GIT_BAD = ("--output", "--ext-diff", "--textconv", "-o")
 # loads into the server, Claude/Grok/Codex settings carry hooks, git config runs fsmonitor, Jeevi/ holds loops and
 # reminders that run on their own).
 PROTECTED_PARTS = ("plugins", ".claude", ".git", ".grok", ".codex", ".agents", ".gemini", ".antigravity", "Jeevi",
-                   ".jeevi")
+                   ".javis")
 PROTECTED_FILES = (".mcp.json", ".mcp_hub.json", "CLAUDE.md", "AGENTS.md", "GEMINI.md")
 _PROTECTED_PARTS_CF = frozenset(x.casefold() for x in PROTECTED_PARTS)
 _PROTECTED_FILES_CF = frozenset(x.casefold() for x in PROTECTED_FILES)
@@ -263,7 +263,7 @@ def bash_readonly(command: str) -> bool:
 def protected_rel(rel: Any) -> bool:
     """A path (relative to a step folder) that runs or configures code: plugins/, .claude/, .git/, Jeevi/..."""
     # Compared without case and without trailing dots or spaces (2026-11-10): macOS and Windows open `Plugins/`,
-    # `jeevi/loops` and `claude.md` as the protected folders and file, so an exact match let those spellings through.
+    # `javis/loops` and `claude.md` as the protected folders and file, so an exact match let those spellings through.
     parts = [x.rstrip(". ").casefold() for x in Path(str(rel or "")).parts if x not in ("", ".")]
     parts = [x for x in parts if x]
     if not parts:
@@ -312,7 +312,7 @@ def _native_args(tool: str, inp: dict) -> Any:
 def is_native(tool: str) -> bool:
     """A tool name an approval request declares that the PreToolUse hook (not the hub) will see at call time."""
     t = str(tool or "")
-    return t in NATIVE_DECLARABLE or (t.startswith("mcp__") and not t.startswith("mcp__jeevi__"))
+    return t in NATIVE_DECLARABLE or (t.startswith("mcp__") and not t.startswith("mcp__javis__"))
 
 
 def short_text(text: Any, n: int = LABEL_COMMAND_MAX) -> str:
@@ -333,7 +333,7 @@ def native_label(tool: str, inp: Any) -> str:
 def classify_native(tool: str, inp: dict, roots: list) -> str:
     """'free' (runs) or 'outside' (needs approval)."""
     name = str(tool or "")
-    if name.startswith("mcp__jeevi__") or name.startswith("mcp__jeevi-plugins__"):
+    if name.startswith("mcp__javis__") or name.startswith("mcp__javis-plugins__"):
         return "free"           # the hub and the plugin host apply the gate themselves
     if name in NATIVE_FREE:
         return "free"
@@ -367,7 +367,7 @@ def native_check(gate_id: Optional[str], tool: str, inp: dict) -> tuple:
 # never look like the step's.
 
 PROTECT_MAX_FILES = 2000
-_PROTECT_SKIP = ("Jeevi", ".jeevi")
+_PROTECT_SKIP = ("Jeevi", ".javis")
 
 
 def _protected_files(root: Path) -> list:
@@ -430,17 +430,17 @@ def provider_support(provider: str, *, codex_sandbox: Optional[str] = "workspace
         return {"ok": True, "approved_actions": True, "reason": ""}
     if p == CODEX:
         if codex_sandbox != "workspace-write":
-            # Issue 1551: the stock Docker image sets JEEVI_CODEX_SANDBOX=off, and the old text gave a Docker + ChatGPT
+            # Issue 1551: the stock Docker image sets JAVIS_CODEX_SANDBOX=off, and the old text gave a Docker + ChatGPT
             # owner no way to keep Codex. It now names the setting that turns the sandbox back on.
             from localefmt import chu  # lazy: this module keeps its imports light
             return {"ok": False, "approved_actions": False,
-                    "reason": chu("Codex đang chạy không có sandbox riêng (JEEVI_CODEX_SANDBOX=off, mặc định của ảnh "
+                    "reason": chu("Codex đang chạy không có sandbox riêng (JAVIS_CODEX_SANDBOX=off, mặc định của ảnh "
                                   "Docker) nên Jeevi không chặn được lệnh máy của nó trước khi chạy. Muốn giữ Codex "
-                                  "trên Docker: đặt JEEVI_CODEX_SANDBOX=auto và cho container chạy được sandbox, xem "
+                                  "trên Docker: đặt JAVIS_CODEX_SANDBOX=auto và cho container chạy được sandbox, xem "
                                   "tài liệu Cấu hình env",
-                                  "Codex runs without its own sandbox (JEEVI_CODEX_SANDBOX=off, the Docker image "
+                                  "Codex runs without its own sandbox (JAVIS_CODEX_SANDBOX=off, the Docker image "
                                   "default), so Jeevi cannot stop its shell commands before they run. To keep Codex on "
-                                  "Docker, set JEEVI_CODEX_SANDBOX=auto and let the container run the sandbox, see the "
+                                  "Docker, set JAVIS_CODEX_SANDBOX=auto and let the container run the sandbox, see the "
                                   "env configuration guide")}
         return {"ok": True, "approved_actions": True, "reason": ""}
     if p in api_providers:

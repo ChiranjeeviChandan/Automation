@@ -72,9 +72,9 @@ function makeEnv(o) {
   const view = () => ({ ok: true, repos: env.attached.map((n) => ({ full_name: n, default_branch: "main", base_branch: "main" })), icon: null });
   const win = {
     t: (k, v) => k + (v ? JSON.stringify(v) : ""),
-    JeeviSessions: { brain: () => "brain", current: () => env.sid },
-    JeeviComposerMenu: { register(it) { env.item = it; }, openItem(id) { env.opened.push(id); } },
-    JeeviAttach: { note(s) { env.notes.push(s); } },
+    JavisSessions: { brain: () => "brain", current: () => env.sid },
+    JavisComposerMenu: { register(it) { env.item = it; }, openItem(id) { env.opened.push(id); } },
+    JavisAttach: { note(s) { env.notes.push(s); } },
     matchMedia: () => ({ matches: false }),
     addEventListener() {}, dispatchEvent() {},
   };
@@ -105,7 +105,7 @@ function makeEnv(o) {
   };
   vm.createContext(ctx);
   vm.runInContext(SRC, ctx);
-  env.api = win.JeeviGithubRepos;
+  env.api = win.JavisGithubRepos;
   env.chip = () => elems.ghChip || null;
   env.chipHtml = () => (elems.ghChip ? elems.ghChip.innerHTML.replace(/&quot;/g, '"') : "");
   // A box as the + menu hands one to the panel; `click(attr, i)` is a tap on the element carrying that attribute.
@@ -132,12 +132,12 @@ function makeEnv(o) {
 }
 
 (async () => {
-  // ---- 1 and 2. The swap that "jumped back": add the brain repo, then take jeevi-os off while it holds unsaved work.
-  let e = makeEnv({ sid: "s1", attached: ["blog/jeevi-os"], dirty: { "blog/jeevi-os": "dirty" }, remote: ["blog/jeevi-os", "loc/brain"] });
+  // ---- 1 and 2. The swap that "jumped back": add the brain repo, then take javis-os off while it holds unsaved work.
+  let e = makeEnv({ sid: "s1", attached: ["blog/javis-os"], dirty: { "blog/javis-os": "dirty" }, remote: ["blog/javis-os", "loc/brain"] });
   await settle();
   check("an open chat with a repo shows the chip with an X", e.chip() && /class="cp-pin-open"/.test(e.chip().innerHTML) && /class="cp-pin-x"/.test(e.chip().innerHTML), e.chip() && e.chip().innerHTML.slice(0, 200));
   check("the chip is a group, not a button holding buttons", !!e.chip() && e.chip().type === undefined);
-  check("the X says what it removes", /gh\.remove_chat\{"name":"blog\/jeevi-os"\}/.test(e.chipHtml()));
+  check("the X says what it removes", /gh\.remove_chat\{"name":"blog\/javis-os"\}/.test(e.chipHtml()));
 
   let p = e.openPanel();
   await settle();
@@ -154,20 +154,20 @@ function makeEnv(o) {
   const before = e.posts().length;
   p.click("data-nothing", 0);
   await settle();
-  check("a tap on a chosen row does nothing: only its X removes it", e.posts().length === before && e.attached.join() === "blog/jeevi-os");
+  check("a tap on a chosen row does nothing: only its X removes it", e.posts().length === before && e.attached.join() === "blog/javis-os");
 
   p.click("data-gh-i", 1);
   await settle();
   const addCall = e.posts().slice(-1)[0];
   check("a tap adds ONE repo: the request names it and leaves the rest alone",
     /\/github\/session\/s1\/repos$/.test(addCall.url) && addCall.body.add === "loc/brain" && addCall.body.repos === undefined, JSON.stringify(addCall));
-  check("both repos are on the chat now", e.attached.join() === "blog/jeevi-os,loc/brain" && (p.out.innerHTML.match(/class="gh-row-x"/g) || []).length === 2);
+  check("both repos are on the chat now", e.attached.join() === "blog/javis-os,loc/brain" && (p.out.innerHTML.match(/class="gh-row-x"/g) || []).length === 2);
 
   p.click("data-gh-x", 0);
   await settle();
   const rm = e.posts().slice(-1)[0];
-  check("the X removes ONE repo through /detach, without force", /\/github\/session\/s1\/detach$/.test(rm.url) && rm.body.full_name === "blog/jeevi-os" && rm.body.force === "", JSON.stringify(rm));
-  check("a refused removal keeps the repo that was just added (no more jumping back)", e.attached.join() === "blog/jeevi-os,loc/brain"
+  check("the X removes ONE repo through /detach, without force", /\/github\/session\/s1\/detach$/.test(rm.url) && rm.body.full_name === "blog/javis-os" && rm.body.force === "", JSON.stringify(rm));
+  check("a refused removal keeps the repo that was just added (no more jumping back)", e.attached.join() === "blog/javis-os,loc/brain"
     && /loc<\/span>|loc ·/.test(p.out.innerHTML) && (p.out.innerHTML.match(/class="gh-row-x"/g) || []).length === 2);
   check("the row asks: keep it, or remove it and delete the changes",
     /class="gh-sel is-asking"/.test(p.out.innerHTML) && /gh\.ask_dirty/.test(p.out.innerHTML) && /data-gh-keep="1"/.test(p.out.innerHTML)
@@ -184,7 +184,7 @@ function makeEnv(o) {
   p.click("data-gh-force", 0);
   await settle();
   const forced = e.posts().slice(-1)[0];
-  check("Remove anyway sends force", /\/detach$/.test(forced.url) && forced.body.force === "1" && forced.body.full_name === "blog/jeevi-os");
+  check("Remove anyway sends force", /\/detach$/.test(forced.url) && forced.body.force === "1" && forced.body.full_name === "blog/javis-os");
   check("the chat ends on the brain repo alone", e.attached.join() === "loc/brain" && /gh\.remove_chat\{"name":"loc\/brain"\}/.test(e.chipHtml()));
 
   // ---- 4. The chip's own X.
@@ -195,12 +195,12 @@ function makeEnv(o) {
   check("the chip's X takes a clean repo off in one tap, and the chip goes", e.attached.length === 0 && !e.chip() && e.host.hidden === true);
   check("it does not open the panel for that", e.opened.length === 0);
 
-  e = makeEnv({ sid: "s3", attached: ["a/clean", "blog/jeevi-os"], dirty: { "blog/jeevi-os": "unpushed" }, remote: ["a/clean", "blog/jeevi-os"] });
+  e = makeEnv({ sid: "s3", attached: ["a/clean", "blog/javis-os"], dirty: { "blog/javis-os": "unpushed" }, remote: ["a/clean", "blog/javis-os"] });
   await settle();
   check("several repos: the X counts them", /gh\.remove_all\{"n":2\}/.test(e.chipHtml()));
   e.clickChip(".cp-pin-x");
   await settle();
-  check("the chip's X on a repo with unsaved work keeps it and opens the picker", e.attached.join() === "blog/jeevi-os" && e.opened.join() === "github");
+  check("the chip's X on a repo with unsaved work keeps it and opens the picker", e.attached.join() === "blog/javis-os" && e.opened.join() === "github");
   p = e.openPanel();
   await settle();
   check("the picker opens straight on the list, on that repo's question, without raising the keyboard",

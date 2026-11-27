@@ -63,7 +63,7 @@ check("a job in review asks for approval", byId("k:t6").st === "ask");
 check("ready jobs wait their turn today", byId("k:t4").st === "queue" && byId("k:t4").date === "2026-10-30");
 check("a job held to a future time is scheduled on that day", byId("k:t8").st === "sched" && byId("k:t8").date === "2026-10-31");
 check("the agent prefix of the idempotency key names the assistant", byId("k:t8").who === "kt");
-check("unassigned work belongs to Jeevi Core", byId("k:t4").who === "jeevi-core");
+check("unassigned work belongs to Jeevi Core", byId("k:t4").who === "javis-core");
 check("a done Kanban job is dated when it finished, with its run time", byId("k:t5").st === "done" && byId("k:t5").date === "2026-10-29" && byId("k:t5").took === 360);
 check("a cron reminder is a recurring job", m.recurring.some(r => r.id === "r:r1" && r.on && r.sc === "8:00 every day"));
 check("its next run is an item tomorrow at 08:00", byId("r:r1").date === "2026-10-31" && byId("r:r1").time === "08:00");
@@ -115,7 +115,7 @@ const store = { projects: [], tasks: [
   { id: "c", title: "Find a printer", date: null, status: "open" },
   { id: "d", title: "Run PLR ads", date: "2026-10-29", status: "done", done_at: 1 },
   { id: "e", title: "Read 30 min", date: "2026-10-01", time: "21:00", repeat: { unit: "day", n: 1 }, status: "open", done_dates: { "2026-10-28": { at: 1, by: "me" } } },
-  { id: "f", title: "Swim", date: "2026-09-01", repeat: { unit: "week", n: 1, days: [2, 4, 6] }, status: "open", done_dates: { "2026-10-29": { at: 1, by: "jeevi" } } },
+  { id: "f", title: "Swim", date: "2026-09-01", repeat: { unit: "week", n: 1, days: [2, 4, 6] }, status: "open", done_dates: { "2026-10-29": { at: 1, by: "javis" } } },
 ] };
 const mm = M.mineModel(store, "2026-10-30");
 const mi = id => mm.items.find(i => i.id === id);
@@ -133,8 +133,8 @@ check("repeating tasks are listed as recurring", mm.recurring.map(r => r.id).sor
 check("Overdue holds the one-off and the missed occurrence", JSON.stringify(mids("over")) === JSON.stringify(["m:b", "mo:e:2026-10-29"]));
 check("a project list holds its open tasks", JSON.stringify(mids("proj:p1")) === JSON.stringify(["m:a"]));
 check("repeat text", M.repHuman({ unit: "week", n: 1, days: [6, 2] }) .indexOf("nv.rep.weekly") === 0);
-check("a weekly Jeevi schedule is a cron", M.jeeviSchedule({ unit: "week", n: 1, days: [4, 2] }, "2026-11-03", "06:30").cron === "30 6 * * 2,4");
-check("every 3 days for Jeevi is a fixed step", M.jeeviSchedule({ unit: "day", n: 3 }, "2026-11-03", "06:30").repeat_min === 4320);
+check("a weekly Jeevi schedule is a cron", M.javisSchedule({ unit: "week", n: 1, days: [4, 2] }, "2026-11-03", "06:30").cron === "30 6 * * 2,4");
+check("every 3 days for Jeevi is a fixed step", M.javisSchedule({ unit: "day", n: 3 }, "2026-11-03", "06:30").repeat_min === 4320);
 
 // ---- habits (0.424.0) ----
 const dn = (iso, n) => M.addDays(iso, n);
@@ -200,7 +200,7 @@ check("a Kanban job created by bot:<id> belongs to that bot", bid("k:t4").who ==
 check("a Kanban job with its own assistant keeps it", bid("k:t1").who === "nd");
 check("the history and the log follow the bot too", bid("rh:h1").who === "vu" && bm.log.some(l => l.ref === "rh:h1" && l.who === "vu"));
 check("the loop log line follows its loop", bm.log.some(l => /^ads/.test(l.title) && l.who === "bot:bot_shop"));
-check("the rest stays with Jeevi Core", bid("r:r2").who === "jeevi-core" && brec("w:w1").who === "jeevi-core");
+check("the rest stays with Jeevi Core", bid("r:r2").who === "javis-core" && brec("w:w1").who === "javis-core");
 
 // no Vietnamese text in the running code of the page (it goes through i18n)
 // Issue 1480: a repeating job whose runs were skipped (an earlier run was late or long) says so next to its schedule.
@@ -216,7 +216,7 @@ const js = fs.readFileSync(path.join(__dirname, "..", "..", "dashboard", "tasks.
 check("the nav points to the Tasks page", /ids: \["tasks", "webhooks"\]/.test(fs.readFileSync(path.join(__dirname, "..", "..", "dashboard", "console.js"), "utf8")));
 check("old page ids open the Tasks page", /kanban: "tasks", selfimprove: "tasks"/.test(fs.readFileSync(path.join(__dirname, "..", "..", "dashboard", "console.js"), "utf8")));
 check("the page asks which chatbot made which job", /getJSON\("\/tasks\/bots\?brain=" \+ enc\)/.test(js));
-check("the page exposes mount and unmount", /window\.JeeviTasks = \{ mount: mount, unmount: unmount/.test(js));
+check("the page exposes mount and unmount", /window\.JavisTasks = \{ mount: mount, unmount: unmount/.test(js));
 
 // ---- unverified acceptance honesty on done and review Kanban cards ----
 const um = M.model({
@@ -239,7 +239,7 @@ const vm = require("node:vm");
 const rCtx = { window: { t: k => k, ic: () => "" }, document: {}, localStorage: { getItem: () => null, setItem() {} } };
 vm.createContext(rCtx);
 vm.runInContext(
-  js.replace("window.JeeviTasks = {", "window._t = { chip: chip, row: row, detailHtml: detailHtml, setAi: function (a) { S = { ai: a, sel: null, hidden: {} }; } };\n  window.JeeviTasks = {"),
+  js.replace("window.JavisTasks = {", "window._t = { chip: chip, row: row, detailHtml: detailHtml, setAi: function (a) { S = { ai: a, sel: null, hidden: {} }; } };\n  window.JavisTasks = {"),
   rCtx
 );
 rCtx.window._t.setAi(um);

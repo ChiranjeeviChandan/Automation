@@ -1,7 +1,7 @@
 <!-- translated-from: README.md sha256:2e10ad3d2a86 -->
 <div align="center">
 
-<a href="https://jeevios.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
+<a href="https://javisos.com"><img src="../../assets/social-preview.png" width="100%" alt="Jeevi OS: Your AI Workforce. Never miss the best AI."></a>
 
 # Jeevi OS
 
@@ -9,13 +9,13 @@
 
 Jeevi OS convierte a **Claude, ChatGPT, Gemini, Grok** y los modelos que elijas en un equipo que trabaja 24/7 en tu propia máquina o servidor. Cada compañero tiene un rol, comparte la misma memoria y herramientas, y sigue trabajando en segundo plano. Cuando sale un modelo mejor, cambias y conservas todo lo que aprendieron.
 
-**🌐 Sitio web: [jeevios.com](https://jeevios.com)** · Código abierto · Autoalojado · 14 proveedores de IA
+**🌐 Sitio web: [javisos.com](https://javisos.com)** · Código abierto · Autoalojado · 14 proveedores de IA
 
 [![GitHub stars](https://img.shields.io/github/stars/blogminhquy/javis-os?style=flat&logo=github&label=stars)](https://github.com/blogminhquy/javis-os/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](../../../LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/blogminhquy/javis-os?color=f97316)](https://github.com/blogminhquy/javis-os/commits/main)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab?logo=python&logoColor=white)](../../../requirements.txt)
-[![Docker](https://img.shields.io/badge/docker-ghcr.io-2496ed?logo=docker&logoColor=white)](https://github.com/blogminhquy/javis-os/pkgs/container/jeevi-os)
+[![Docker](https://img.shields.io/badge/docker-ghcr.io-2496ed?logo=docker&logoColor=white)](https://github.com/blogminhquy/javis-os/pkgs/container/javis-os)
 [![MCP](https://img.shields.io/badge/tools-Model%20Context%20Protocol-8b5cf6)](https://modelcontextprotocol.io)
 
 <!-- flags:start -->
@@ -38,7 +38,7 @@ Jeevi OS convierte a **Claude, ChatGPT, Gemini, Grok** y los modelos que elijas 
 
 [🇬🇧 English](../../../README.md) · [🇻🇳 Tiếng Việt](../vi/README.md) · [🇨🇳 简体中文](../zh/README.md) · 🇪🇸 **Español** · [🇯🇵 日本語](../ja/README.md) · [🇮🇳 हिन्दी](../hi/README.md) · [🇧🇷 Português](../pt-BR/README.md) · [🇰🇷 한국어](../ko/README.md) · [🇷🇺 Русский](../ru/README.md) · [🇩🇪 Deutsch](../de/README.md) · [🇫🇷 Français](../fr/README.md) · [🇮🇩 Bahasa Indonesia](../id/README.md) · [🌍 Ayuda a traducir](../../../CONTRIBUTING.md#translations)
 
-[Inicio rápido](#-inicio-rápido) · [Por qué Jeevi](#-por-qué-jeevi) · [Cerebros](#-12-cerebros-un-solo-kit-de-herramientas) · [Funciones](#-funciones) · [Instalación](#-instalación) · [Documentación](../../../docs/en/README.md) · [Apoyo](#-apoya-a-jeevi-os)
+[Inicio rápido](#-inicio-rápido) · [Por qué Jeevi](#-por-qué-javis) · [Cerebros](#-12-cerebros-un-solo-kit-de-herramientas) · [Funciones](#-funciones) · [Instalación](#-instalación) · [Documentación](../../../docs/en/README.md) · [Apoyo](#-apoya-a-javis-os)
 
 <br>
 
@@ -56,8 +56,8 @@ Jeevi OS convierte a **Claude, ChatGPT, Gemini, Grok** y los modelos que elijas 
 
 | Máquina | Un solo comando lo instala todo |
 |---|---|
-| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi && chmod +x install.sh && ./install.sh` |
-| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi; powershell -ExecutionPolicy Bypass -File install.ps1` |
+| **Linux / macOS** | `git clone https://github.com/blogminhquy/javis-os.git javis && cd javis && chmod +x install.sh && ./install.sh` |
+| **Windows** | `git clone https://github.com/blogminhquy/javis-os.git javis; cd javis; powershell -ExecutionPolicy Bypass -File install.ps1` |
 | **Docker** | `curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml && docker compose up -d` |
 
 Después abre **http://localhost:7777**. El instalador configura Python, los cuatro cerebros CLI de suscripción (`claude`, `codex`, `agy`, `grok`) y un `.env`, y luego arranca el servidor. Inicias sesión en cada cerebro **desde la página Models del panel**, sin tener que escribir más comandos.
@@ -119,7 +119,7 @@ Lo que ganas con eso:
 | **Trabajo** | Responde y se queda esperando | **Loops en segundo plano, recordatorios y una cola de tareas gestionada por la IA** que te informan de los resultados |
 | **Interfaz** | Un cuadro de chat | Panel + grafo de conocimiento + **voz manos libres** + Telegram, Slack, WhatsApp, Zalo + una CLI |
 | **Tu trabajo** | Se queda en los servidores del proveedor, en el formato del proveedor | **Archivos planos en tu máquina**: historial, memoria, skills, agents y workflows pasan tal cual a cualquier modelo nuevo |
-| **Despliegue** | La nube de otra persona | **Autoalojado**: [Hostinger](https://www.hostinger.com?REFERRALCODE=JEEVIOS) en un clic, Docker o cualquier VPS |
+| **Despliegue** | La nube de otra persona | **Autoalojado**: [Hostinger](https://www.hostinger.com?REFERRALCODE=JAVISOS) en un clic, Docker o cualquier VPS |
 
 > 💡 **La filosofía: la capacidad vive en Jeevi, no en el modelo.** Todos los cerebros reciben la misma caja de herramientas a través de un único hub de conexiones compartido (el MCP Hub). Cambiar de Claude a Gemini no te cuesta nada salvo el acceso a la shell, que solo tienen los motores CLI.
 
@@ -249,7 +249,7 @@ flowchart LR
 <details open>
 <summary><b>Opción 1: Hostinger Docker Manager (dominio + HTTPS, en un clic)</b></summary>
 
-> 🛒 **¿Aún no tienes VPS?** [Consigue un VPS de Hostinger aquí](https://www.hostinger.com?REFERRALCODE=JEEVIOS). Trae Docker Manager integrado, así que Jeevi se instala en un clic. Cuando esté listo, vuelve a los pasos de abajo.
+> 🛒 **¿Aún no tienes VPS?** [Consigue un VPS de Hostinger aquí](https://www.hostinger.com?REFERRALCODE=JAVISOS). Trae Docker Manager integrado, así que Jeevi se instala en un clic. Cuando esté listo, vuelve a los pasos de abajo.
 
 VPS de Hostinger → **Docker Manager → Compose → URL** → pega el archivo de Hostinger y pulsa **Deploy**:
 
@@ -257,17 +257,17 @@ VPS de Hostinger → **Docker Manager → Compose → URL** → pega el archivo 
 https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.hostinger.yml
 ```
 
-El cuadro **Environment** solo necesita tres campos: `DOMAIN_NAME`, `JEEVI_ADMIN_USER`, `JEEVI_ADMIN_PASSWORD`, más un `JEEVI_AUTO_UPDATE` opcional (ponlo en `true` y Jeevi se actualiza solo cada día).
+El cuadro **Environment** solo necesita tres campos: `DOMAIN_NAME`, `JAVIS_ADMIN_USER`, `JAVIS_ADMIN_PASSWORD`, más un `JAVIS_AUTO_UPDATE` opcional (ponlo en `true` y Jeevi se actualiza solo cada día).
 
 Configura `DOMAIN_NAME` para que el Traefik de Hostinger emita el certificado HTTPS:
-- **Enlace gratuito** (sin comprar dominio): `DOMAIN_NAME=jeevi.<vps-hostname>.hstgr.cloud` (el hostname está en hPanel → VPS, p. ej. `jeevi.srv1562015.hstgr.cloud`).
+- **Enlace gratuito** (sin comprar dominio): `DOMAIN_NAME=javis.<vps-hostname>.hstgr.cloud` (el hostname está en hPanel → VPS, p. ej. `javis.srv1562015.hstgr.cloud`).
 - **Tu propio dominio:** `DOMAIN_NAME=example.com` y apunta un registro A a la IP del VPS.
 
 Espera de 1-3 minutos a que llegue el certificado y luego abre `https://<DOMAIN_NAME>`.
 
 **Tres pasos que se hacen una sola vez:**
-1. **Haz pública la imagen de GHCR:** GitHub → repositorio → **Packages** → `jeevi-os` → *Package settings* → Visibility = **Public**.
-2. **Crea la cuenta de administrador:** rellena `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` (recomendado), o abre la app justo después del despliegue y crea una tú mismo. Mientras no exista un administrador, quien abra primero el enlace puede crearlo. Después **activa la 2FA** ([Seguridad y cuentas](../../../docs/en/14-security-and-accounts.md)).
+1. **Haz pública la imagen de GHCR:** GitHub → repositorio → **Packages** → `javis-os` → *Package settings* → Visibility = **Public**.
+2. **Crea la cuenta de administrador:** rellena `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` (recomendado), o abre la app justo después del despliegue y crea una tú mismo. Mientras no exista un administrador, quien abra primero el enlace puede crearlo. Después **activa la 2FA** ([Seguridad y cuentas](../../../docs/en/14-security-and-accounts.md)).
 3. **Inicia sesión en un cerebro** en la página **Models**.
 
 Detalles y solución de problemas: [DEPLOY.en.md](../../../DEPLOY.en.md).
@@ -277,18 +277,18 @@ Detalles y solución de problemas: [DEPLOY.en.md](../../../DEPLOY.en.md).
 <details>
 <summary><b>Opción 2: Docker en cualquier VPS (sin clonar)</b></summary>
 
-> 🛒 **¿Necesitas un VPS?** Un [VPS de Hostinger](https://www.hostinger.com?REFERRALCODE=JEEVIOS) también sirve para esta opción.
+> 🛒 **¿Necesitas un VPS?** Un [VPS de Hostinger](https://www.hostinger.com?REFERRALCODE=JAVISOS) también sirve para esta opción.
 
 ```bash
 # Docker required (don't have it?  curl -fsSL https://get.docker.com | sh)
-mkdir jeevi && cd jeevi
+mkdir javis && cd javis
 curl -fsSLO https://raw.githubusercontent.com/blogminhquy/javis-os/main/docker-compose.yml
 
-docker compose run --rm jeevi claude auth login --claudeai   # sign in to Claude once (optional)
+docker compose run --rm javis claude auth login --claudeai   # sign in to Claude once (optional)
 docker compose up -d                                          # pull the image and run
 ```
 
-Abre `http://<vps-ip>:7777` y define enseguida el usuario y la contraseña de administrador (al menos 8 caracteres), o predefine `JEEVI_ADMIN_USER` + `JEEVI_ADMIN_PASSWORD` en el entorno. Después activa la 2FA.
+Abre `http://<vps-ip>:7777` y define enseguida el usuario y la contraseña de administrador (al menos 8 caracteres), o predefine `JAVIS_ADMIN_USER` + `JAVIS_ADMIN_PASSWORD` en el entorno. Después activa la 2FA.
 
 Acceso remoto sin dominio: `docker compose --profile tunnel up -d`, y luego `docker compose logs tunnel | grep trycloudflare` muestra un enlace HTTPS.
 
@@ -298,13 +298,13 @@ Acceso remoto sin dominio: `docker compose --profile tunnel up -d`, y luego `doc
 <summary><b>Opción 3: Linux o macOS, sin Docker</b></summary>
 
 ```bash
-git clone https://github.com/blogminhquy/javis-os.git jeevi && cd jeevi
+git clone https://github.com/blogminhquy/javis-os.git javis && cd javis
 chmod +x install.sh && ./install.sh
 ```
 
 El script instala Python, Node y los cerebros CLI, crea un venv, registra un servicio que arranca con el sistema y muestra la dirección.
 
-🍎 **macOS, ábrelo como una app:** haz doble clic en `JEEVI OS.app` (o en `Start JEEVI OS.command`). Para arrancar al iniciar sesión: `./bin/jeevi-autostart.sh install`. Detalles: [bin/README.md](../../../bin/README.md).
+🍎 **macOS, ábrelo como una app:** haz doble clic en `JEEVI OS.app` (o en `Start JEEVI OS.command`). Para arrancar al iniciar sesión: `./bin/javis-autostart.sh install`. Detalles: [bin/README.md](../../../bin/README.md).
 
 </details>
 
@@ -312,7 +312,7 @@ El script instala Python, Node y los cerebros CLI, crea un venv, registra un ser
 <summary><b>Opción 4: Windows (equipo personal)</b></summary>
 
 ```powershell
-git clone https://github.com/blogminhquy/javis-os.git jeevi; cd jeevi
+git clone https://github.com/blogminhquy/javis-os.git javis; cd javis
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
@@ -320,23 +320,23 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 
 ```
 Run with a visible window (live log):  setup.bat
-Run silently from then on:             start-jeevi.vbs   (log at server\jeevi.log)
-Stop:                                  stop-jeevi.bat
+Run silently from then on:             start-javis.vbs   (log at server\javis.log)
+Stop:                                  stop-javis.bat
 Dashboard:                             http://localhost:7777
 ```
 
-🪟 **Ábrelo como una app:** después de la primera ejecución, haz doble clic en **`JEEVI OS.bat`**. El servidor arranca en segundo plano y el panel se abre en **su propia ventana**, con su propia entrada en la barra de tareas. Para arrancar al iniciar sesión: `jeevi-autostart.bat install` (para quitarlo: `uninstall`).
+🪟 **Ábrelo como una app:** después de la primera ejecución, haz doble clic en **`JEEVI OS.bat`**. El servidor arranca en segundo plano y el panel se abre en **su propia ventana**, con su propia entrada en la barra de tareas. Para arrancar al iniciar sesión: `javis-autostart.bat install` (para quitarlo: `uninstall`).
 
 </details>
 
 <details>
 <summary><b>Varias instancias de Jeevi en un mismo VPS</b></summary>
 
-Los Brains, los ajustes y las cuentas se mantienen totalmente separados por instancia. Solo cambian tres valores entre ellas: `JEEVI_NAME`, `JEEVI_HOST_PORT`, `DOMAIN_NAME`.
+Los Brains, los ajustes y las cuentas se mantienen totalmente separados por instancia. Solo cambian tres valores entre ellas: `JAVIS_NAME`, `JAVIS_HOST_PORT`, `DOMAIN_NAME`.
 
 - **Hostinger:** vuelve a desplegar `docker-compose.hostinger.yml` como un segundo stack y rellena esos tres campos.
 - **VPS gestionado por ti:** ejecuta una sola vez el proxy compartido `docker-compose.proxy.yml` para toda la máquina y luego dale a cada instancia su propia carpeta con `docker-compose.multi.yml`. El proxy descubre las instancias nuevas y solicita el SSL por sí solo.
-- **Nativo:** `JEEVI_NAME=jeevi-shop JEEVI_PORT=7778 ./install.sh`.
+- **Nativo:** `JAVIS_NAME=javis-shop JAVIS_PORT=7778 ./install.sh`.
 
 Paso a paso: [DEPLOY.en.md](../../../DEPLOY.en.md).
 
@@ -389,14 +389,14 @@ Todas las líneas pueden quedarse vacías y Jeevi sigue funcionando. Copia `env.
 
 | Variable | Significado | Valor por defecto |
 |---|---|---|
-| `JEEVI_HOST` | Dirección de escucha. `127.0.0.1` = solo esta máquina, `0.0.0.0` = pública | `127.0.0.1` |
-| `JEEVI_PORT` | Puerto | `7777` |
-| `JEEVI_REQUIRE_LOGIN` | `1`/`0` para forzar el inicio de sesión o desactivarlo (por defecto: activado cuando escucha de forma pública) | *(auto)* |
-| `JEEVI_ADMIN_USER` / `JEEVI_ADMIN_PASSWORD` | Crea el administrador durante el despliegue | - |
-| `JEEVI_ALLOWED_HOSTS` | Hostnames adicionales en la lista de permitidos (protección contra CSRF y DNS rebinding) | localhost + tu dominio |
-| `JEEVI_STATE_DIR` | Dónde se guardan los ajustes, las sesiones y la clave de cifrado | `server/` (Docker: `/data/state`) |
+| `JAVIS_HOST` | Dirección de escucha. `127.0.0.1` = solo esta máquina, `0.0.0.0` = pública | `127.0.0.1` |
+| `JAVIS_PORT` | Puerto | `7777` |
+| `JAVIS_REQUIRE_LOGIN` | `1`/`0` para forzar el inicio de sesión o desactivarlo (por defecto: activado cuando escucha de forma pública) | *(auto)* |
+| `JAVIS_ADMIN_USER` / `JAVIS_ADMIN_PASSWORD` | Crea el administrador durante el despliegue | - |
+| `JAVIS_ALLOWED_HOSTS` | Hostnames adicionales en la lista de permitidos (protección contra CSRF y DNS rebinding) | localhost + tu dominio |
+| `JAVIS_STATE_DIR` | Dónde se guardan los ajustes, las sesiones y la clave de cifrado | `server/` (Docker: `/data/state`) |
 | `BRAINS_DIR` | Carpeta principal que contiene todos los Brains | `brains/` (Docker: `/brains`) |
-| `JEEVI_ENABLE_USER_PLUGINS` | `false` desactiva tus propios plugins (ejecutan Python real dentro del servidor) | *(activado)* |
+| `JAVIS_ENABLE_USER_PLUGINS` | `false` desactiva tus propios plugins (ejecutan Python real dentro del servidor) | *(activado)* |
 | `TTS_VOICE` / `TTS_RATE` | Voz y velocidad de Edge TTS | `en-US-EmmaMultilingualNeural` / `+5%` |
 
 ---
@@ -407,7 +407,7 @@ Todas las líneas pueden quedarse vacías y Jeevi sigue funcionando. Copia `env.
 - **2FA (TOTP)**, límite de intentos de inicio de sesión, contraseñas de al menos 8 caracteres, cookies `Secure` bajo HTTPS y sesiones que caducan a los 30 días.
 - **Protección contra CSRF y DNS rebinding**: se rechaza cualquier petición de escritura procedente de un origen desconocido.
 - **Los secretos se cifran** en `settings.json` (API keys, tokens OAuth, tokens de bots) con una clave propia de cada máquina.
-- **Tus propios plugins se cargan por defecto, pero cada uno queda apagado hasta que lo actives** en la app; define `JEEVI_ENABLE_USER_PLUGINS=false` para desactivarlos todos.
+- **Tus propios plugins se cargan por defecto, pero cada uno queda apagado hasta que lo actives** en la app; define `JAVIS_ENABLE_USER_PLUGINS=false` para desactivarlos todos.
 - **Los permisos de las conexiones los aplica** el hub, no el modelo: una cuenta de solo lectura no puede usarse para enviar, pagar ni publicar.
 
 ¿Has encontrado una vulnerabilidad? Sigue [SECURITY.md](../../../SECURITY.md) en lugar de abrir un issue público.
@@ -416,7 +416,7 @@ Todas las líneas pueden quedarse vacías y Jeevi sigue funcionando. Copia `env.
 
 ## 🔄 Actualización
 
-En la app: **Settings → Updates → Update now**, con una barra de progreso y un botón para revertir si la nueva versión falla. En un VPS: `cd jeevi && ./update.sh` (descarga la nueva imagen y reinicia; tus datos en los volúmenes se conservan).
+En la app: **Settings → Updates → Update now**, con una barra de progreso y un botón para revertir si la nueva versión falla. En un VPS: `cd javis && ./update.sh` (descarga la nueva imagen y reinicia; tus datos en los volúmenes se conservan).
 
 ---
 
@@ -425,7 +425,7 @@ En la app: **Settings → Updates → Update now**, con una barra de progreso y 
 | Síntoma | Qué hacer |
 |---|---|
 | La página Models dice que una CLI no está instalada, pero sí lo está | **Reinicia Jeevi**: el proceso en ejecución conserva el PATH del momento en que arrancó. |
-| El puerto 7777 está ocupado y la nueva versión no arranca | Detén primero el proceso antiguo (`stop-jeevi.bat`, o mata el PID) y vuelve a arrancar. |
+| El puerto 7777 está ocupado y la nueva versión no arranca | Detén primero el proceso antiguo (`stop-javis.bat`, o mata el PID) y vuelve a arrancar. |
 | Hostinger no puede descargar la imagen | Pon el paquete de GHCR en **Public** y espera a que termine la compilación de GitHub Actions. |
 | Un cerebro dice que no tiene la sesión iniciada | **Models** → la tarjeta de ese proveedor → iniciar sesión. |
 
@@ -436,7 +436,7 @@ Más en [docs/en/17-troubleshooting.md](../../../docs/en/17-troubleshooting.md).
 ## 📂 Estructura del repositorio
 
 ```
-jeevi-os/
+javis-os/
 ├── server/          # FastAPI backend: engines, connections, background work, channels, memory
 ├── dashboard/       # Frontend (plain JS, no build step)
 │   └── i18n/        # Interface strings, one JSON file per language
@@ -510,6 +510,6 @@ Jeevi OS es gratuito y de código abierto, y sigue siendo una sola persona la qu
 <div align="center">
 <br>
 <a href="https://nguyenminhquy.com"><img src="../../assets/author.webp" width="96" height="96" alt="Minh Quý"></a><br>
-<b><a href="https://jeevios.com">jeevios.com</a></b><br>
+<b><a href="https://javisos.com">javisos.com</a></b><br>
 Hecho con ☕ en Vietnam por <b><a href="https://nguyenminhquy.com">Minh Quý</a></b>
 </div>
